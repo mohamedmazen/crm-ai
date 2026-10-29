@@ -201,6 +201,23 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->activeSubscription;
     }
 
+    /**
+     * The plan currently granting this user access: the client's plan when they
+     * belong to one, otherwise their own subscription's plan.
+     */
+    public function effectivePlan(): ?Plan
+    {
+        if ($this->client_id && $this->client) {
+            $plan = $this->client->effectivePlan();
+
+            if ($plan) {
+                return $plan;
+            }
+        }
+
+        return $this->activeSubscription?->plan;
+    }
+
     // -------------------------------------------------------------------------
     // Role / status helpers
     // -------------------------------------------------------------------------

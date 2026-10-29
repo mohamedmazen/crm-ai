@@ -60,6 +60,12 @@ class InvitationController extends Controller
                 ]);
             }
         } else {
+            $client = $invitation->client;
+
+            if ($client && ! $client->hasAvailableSeat(reservedSeats: 1)) {
+                abort(402, __('Your plan does not have an available seat for this invitation.'));
+            }
+
             $user = User::create([
                 'name' => $request->name,
                 'email' => $invitation->email,

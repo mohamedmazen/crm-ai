@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Workspace;
 use App\Modules\Broadcasting\Models\UsageMeter;
 use App\Modules\Integrations\Services\CredentialResolver;
+use App\Services\FeatureGate;
 use App\Services\I18n\I18nFileService;
 use App\Services\OnboardingService;
 use App\Services\StorageManager;
@@ -78,6 +79,8 @@ class HandleInertiaRequests extends Middleware
                 'demo_mode' => false,
                 'app_version' => env('APP_VERSION', '1.0.0'),
                 'onboardingSummary' => null,
+                'plan' => null,
+                'plan_features' => [],
             ];
         }
 
@@ -262,7 +265,7 @@ class HandleInertiaRequests extends Middleware
                 $workspace = Workspace::with('client')->find($workspaceId);
                 if ($workspace && $workspace->isAccessibleBy($user)) {
                     $currentWorkspace = ['id' => $workspace->id, 'name' => $workspace->name];
-                    $plan = $workspace->client?->activePlan();
+                    $plan = $workspace->client?->effectivePlan();
                 }
             }
             try {
@@ -343,6 +346,8 @@ class HandleInertiaRequests extends Middleware
             'timezone' => $user?->timezone ?? 'UTC',
             'currentWorkspace' => $currentWorkspace,
             'workspaces' => $workspacesForSwitcher,
+            'plan' => $plan ? ['name' => $plan->name, 'slug' => $plan->slug] : null,
+            'plan_features' => FeatureGate::forPlan($plan)->all(),
             'locale' => $locale,
             'dir' => $dir,
             'i18n' => [

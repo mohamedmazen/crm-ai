@@ -95,7 +95,7 @@ function StatusBadge({ status }) {
     );
 }
 
-function ChannelCard({ icon: Icon, iconBg, title, count, children }) {
+function ChannelCard({ icon: Icon, iconBg, title, count, emptyText = null, children }) {
     const { t } = useTranslation();
     return (
         <div className="rounded-2xl border bg-white dark:bg-neutral-900 shadow-sm overflow-hidden border-neutral-200 dark:border-neutral-700">

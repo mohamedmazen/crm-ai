@@ -184,7 +184,17 @@ class MetaInboundWebhookTest extends TestCase
         $entryId = 'entry_dup_test_1';
         $body = [
             'object' => 'whatsapp_business_account',
-            'entry' => [['id' => $entryId, 'changes' => []]],
+            'entry' => [[
+                'id' => $entryId,
+                'changes' => [[
+                    'field' => 'message_template_status_update',
+                    'value' => [
+                        'event' => 'APPROVED',
+                        'message_template_name' => 'dedupe_template',
+                        'message_template_language' => 'en',
+                    ],
+                ]],
+            ]],
         ];
         $payload = json_encode($body);
         $headers = ['X-Hub-Signature-256' => $this->signPayload($payload)];

@@ -24,11 +24,18 @@ function safeRoute(name, ...args) {
  * and items. Keep all nav changes here only.
  */
 export default function useClientNav() {
-    const { auth, branding } = usePage().props;
+    const { auth, branding, plan_features } = usePage().props;
     const { t } = useTranslation();
     const user = auth?.user;
     const docsUrl = branding?.docs_url;
     const isClientAdmin = user?.client_role === 'administrator';
+    const planFeatures = plan_features ?? {};
+
+    // Items that declare a feature stay visible but carry a lock badge when the
+    // plan does not include them, so the sidebar doubles as an upgrade surface.
+    const gateItem = (item) => (
+        item.feature && !planFeatures[item.feature] ? { ...item, locked: true } : item
+    );
 
     const accountItems = [
         { label: t('nav.dashboard'), href: safeRoute('client.dashboard'), icon: <LayoutDashboard className={iconClass} />, activePattern: 'client.dashboard' },
@@ -126,7 +133,7 @@ export default function useClientNav() {
     ];
 
     // Group order: daily operations first, then growth tools, periodic review, then account-adjacent config (usage-frequency–based).
-    return [
+    const groups = [
         { type: 'group', label: t('nav.group_account'),      items: accountItems },
         { type: 'group', label: t('nav.group_inbox'),         items: inboxItems },
         { type: 'group', label: t('nav.group_social_media'),  items: socialItems },
@@ -143,4 +150,9 @@ export default function useClientNav() {
         { type: 'group', label: t('nav.group_developer'),     items: developerItems },
         { type: 'group', label: t('nav.group_account'),       items: accountSettingsItems },
     ];
+
+    return groups.map((group) => ({
+        ...group,
+        items: group.items.map(gateItem),
+    }));
 }

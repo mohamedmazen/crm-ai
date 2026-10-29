@@ -15,6 +15,7 @@ use App\Http\Middleware\EnsureUserRole;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\RedirectIfAdminAuthenticated;
 use App\Http\Middleware\RequestIdMiddleware;
+use App\Http\Middleware\RequireFeature;
 use App\Http\Middleware\RequirePermission;
 use App\Http\Middleware\SecureHeaders;
 use App\Http\Middleware\SetLocale;
@@ -115,6 +116,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'client.scope' => EnsureClientScope::class,
             'licensed' => EnsureLicensed::class,
             'limit' => EnforceLimit::class,
+            'feature' => RequireFeature::class,
             'api.ability' => CheckApiAbility::class,
         ]);
         // Shared middleware stack for all client module routes (mirrors routes/client.php).

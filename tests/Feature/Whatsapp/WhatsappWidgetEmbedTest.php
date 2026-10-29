@@ -64,11 +64,13 @@ class WhatsappWidgetEmbedTest extends TestCase
 
         // Sub-directory install (document root above public/): the URL must carry the prefix.
         URL::forceRootUrl('https://example.test/public');
+        URL::forceScheme('https');
         $this->assertSame(
             "https://example.test/public/widgets/whatsapp/{$widget->widget_key}.js",
             $widget->fresh()->embed_url,
         );
         URL::forceRootUrl(null);
+        URL::forceScheme(null);
     }
 
     public function test_generated_script_parses_as_valid_javascript_for_any_content(): void

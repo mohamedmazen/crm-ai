@@ -29,6 +29,7 @@ class Plan extends Model
         'paddle_yearly_id',
         'features',
         'limits',
+        'feature_flags',
         'featured',
         'popular',
         'white_label_enabled',
@@ -45,6 +46,7 @@ class Plan extends Model
             'trial_days' => 'integer',
             'features' => 'array',
             'limits' => 'array',
+            'feature_flags' => 'array',
             'featured' => 'boolean',
             'popular' => 'boolean',
             'white_label_enabled' => 'boolean',
@@ -68,12 +70,53 @@ class Plan extends Model
         return $this->belongsTo(Currency::class, 'currency_code', 'code');
     }
 
+    /**
+     * Whether the plan unlocks the given feature gate.
+     *
+     * A flag of null means the feature is enabled without a limit (for example
+     * `custom_fields => null` on Business). A numeric flag is both a switch and
+     * a cap: 0 disables the feature, a positive number enables it. Flags live in
+     * `feature_flags`; `white_label_enabled` remains the fallback for installs
+     * that predate the JSON column.
+     */
     public function hasFeature(string $feature): bool
     {
-        return match ($feature) {
-            'white_label' => $this->white_label_enabled,
-            default => false,
-        };
+        $flags = $this->feature_flags;
+
+        if (is_array($flags) && array_key_exists($feature, $flags)) {
+            return $this->flagIsEnabled($flags[$feature]);
+        }
+
+        return $feature === 'white_label' && (bool) $this->white_label_enabled;
+    }
+
+    /**
+     * The numeric cap attached to a feature gate, or null when the flag is
+     * missing or unlimited.
+     */
+    public function featureLimit(string $feature): ?int
+    {
+        $flags = $this->feature_flags;
+        $value = is_array($flags) ? ($flags[$feature] ?? null) : null;
+
+        return is_numeric($value) ? (int) $value : null;
+    }
+
+    private function flagIsEnabled(mixed $value): bool
+    {
+        if ($value === null) {
+            return true;
+        }
+
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        if (is_numeric($value)) {
+            return (int) $value > 0;
+        }
+
+        return (bool) $value;
     }
 
     /**

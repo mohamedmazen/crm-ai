@@ -93,4 +93,33 @@ class Client extends Model
     {
         return $this->status === self::STATUS_ACTIVE;
     }
+
+    /**
+     * Seats currently reserved: real users plus invitations that are still
+     * pending. Counting invites stops a client from oversubscribing the plan
+     * between sending an invite and the invitee accepting it.
+     */
+    public function seatUsage(): int
+    {
+        $pendingInvitations = Invitation::query()
+            ->where('client_id', $this->id)
+            ->whereNull('accepted_at')
+            ->where('expires_at', '>', now())
+            ->count();
+
+        return $this->users()->count() + $pendingInvitations;
+    }
+
+    /**
+     * Whether another person can be added under the plan's `users` cap.
+     * A null limit means unlimited. Pass $reservedSeats when the caller is
+     * about to consume a reservation that seatUsage() already counted (for
+     * example accepting a pending invitation).
+     */
+    public function hasAvailableSeat(int $reservedSeats = 0): bool
+    {
+        $limit = $this->effectivePlan()?->limitValue('users');
+
+        return $limit === null || ($this->seatUsage() - $reservedSeats) < (int) $limit;
+    }
 }

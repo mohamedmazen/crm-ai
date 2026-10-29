@@ -1,11 +1,12 @@
 import { Link } from '@inertiajs/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, Plus, X } from 'lucide-react';
+import { ChevronDown, Lock, Plus, X } from 'lucide-react';
 import { useBranding } from '@/hooks/useBranding';
 
 function NavGroup({ label, items, onClose }) {
     const [open, setOpen] = useState(true);
+    const { t } = useTranslation();
 
     return (
         <div className="mb-0.5">
@@ -56,9 +57,14 @@ function NavGroup({ label, items, onClose }) {
                                     </span>
                                 )}
                                 <span className="truncate">{item.label}</span>
-                                {isActive && (
+                                {item.locked ? (
+                                    <Lock
+                                        className="ml-auto h-3 w-3 shrink-0 text-white/50"
+                                        aria-label={t('ui.feature_locked_title')}
+                                    />
+                                ) : isActive ? (
                                     <span className="ml-auto h-1.5 w-1.5 rounded-full bg-white/70 shrink-0" />
-                                )}
+                                ) : null}
                             </Link>
                         );
                     })}
@@ -148,6 +154,12 @@ export default function Sidebar({
                                     </span>
                                 )}
                                 <span className="truncate">{item.label}</span>
+                                {item.locked && (
+                                    <Lock
+                                        className="ml-auto h-3 w-3 shrink-0 text-white/50"
+                                        aria-label={t('ui.feature_locked_title')}
+                                    />
+                                )}
                             </Link>
                         );
                     })}

@@ -45,7 +45,7 @@ Route::middleware(['verified'])->group(function () {
 
     // Team management (client admins only)
     Route::get('/team', [TeamController::class, 'index'])->name('team.index');
-    Route::post('/team', [TeamController::class, 'store'])->name('team.store');
+    Route::post('/team', [TeamController::class, 'store'])->name('team.store')->middleware('limit:users');
     Route::put('/team/{member}', [TeamController::class, 'update'])->name('team.update');
     Route::delete('/team/{member}', [TeamController::class, 'destroy'])->name('team.destroy');
 
@@ -80,7 +80,7 @@ Route::middleware(['verified'])->group(function () {
     Route::delete('/profile/sessions', [SessionController::class, 'destroy'])->name('profile.sessions.destroy');
 
     // Team invitations (send/revoke, client admin only)
-    Route::post('/invitations', [InvitationController::class, 'store'])->name('invitations.store');
+    Route::post('/invitations', [InvitationController::class, 'store'])->name('invitations.store')->middleware('limit:users');
     Route::delete('/invitations/{invitation}', [InvitationController::class, 'destroy'])->name('invitations.destroy');
 
     // API Tokens & Docs
