@@ -14,11 +14,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            // Core / framework data. NOTE: no AdminUserSeeder — the platform
-            // super-admin is created interactively by the installer, never seeded.
             UserSeeder::class,
             PermissionSeeder::class,
             RoleSeeder::class,
+            AdminUserSeeder::class,
             CurrencySeeder::class,
             LocaleSeeder::class,
             TranslationSeeder::class,

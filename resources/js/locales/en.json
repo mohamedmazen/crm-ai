@@ -176,8 +176,13 @@
     "client": {
         "profile": {
             "edit": "Edit",
-            "2fa": "2Fa",
-            "sessions": "Sessions",
+            "2fa": {
+                "enable": "Enable",
+                "disable": "Disable"
+            },
+            "sessions": {
+                "destroy": "Destroy"
+            },
             "update": "Update",
             "destroy": "Destroy"
         },
@@ -341,7 +346,10 @@
             "index": "Index",
             "store": "Store",
             "destroy": "Destroy",
-            "contacts": "Contacts"
+            "contacts": {
+                "attach": "Attach",
+                "detach": "Detach"
+            }
         },
         "whatsapp": {
             "templates": {
@@ -364,7 +372,7 @@
                 "edit": "Edit"
             },
             "setup": {
-                "destroy": "Destroy"
+                "manual": "Manual"
             }
         },
         "broadcasts": {
@@ -396,7 +404,13 @@
             "start": "Start",
             "templates": "Templates",
             "assign": "Assign",
-            "setup": "Setup",
+            "setup": {
+                "destroy": "Destroy",
+                "resubscribe": "Resubscribe",
+                "manual": {
+                    "instagram": "Instagram"
+                }
+            },
             "activities": {
                 "index": "Index"
             }
@@ -566,11 +580,7 @@
                 "connect": "Connect"
             }
         },
-        "workspaces": {
-            "switch": "Switch",
-            "index": "Index",
-            "store": "Store"
-        },
+        "workspaces": "Workspaces",
         "settings": {
             "update": "Update",
             "notifications": "Notifications",
@@ -829,11 +839,7 @@
         "tax_rates": "Tax Rates",
         "landing_page": "Site Content",
         "cms_pages": "CMS Pages",
-        "license": {
-            "index": "Index",
-            "deactivate": "Deactivate",
-            "activate": "Activate"
-        },
+        "license": "License",
         "cron_setup": "Cron Setup",
         "support": {
             "index": "Index",
@@ -950,40 +956,38 @@
         "secret_key_hint": "Server-side secret key — keep this private",
         "stripe_webhook_hint": "Webhook signing secret (whsec_…) from the Stripe dashboard",
         "webhook_hint": "Webhook secret used to verify incoming gateway events",
-        "clients": {
+        "clients": "Clients",
+        "subscriptions": {
             "index": "Index",
-            "users": {
-                "index": "Index",
-                "store": "Store",
-                "update": "Update",
-                "destroy": "Destroy"
-            },
-            "impersonate": "Impersonate",
-            "destroy": "Destroy",
-            "export": "Export",
             "store": "Store",
-            "update": "Update"
+            "export": "Export"
         },
-        "subscriptions": "Subscriptions",
-        "payments": {
-            "index": "Index"
-        },
-        "plans": {
+        "payments": "Payments",
+        "plans": "Plans",
+        "currencies": {
             "index": "Index",
             "update": "Update",
-            "duplicate": "Duplicate",
-            "destroy": "Destroy",
-            "reorder": "Reorder",
             "store": "Store"
         },
-        "currencies": "Currencies",
-        "admins": {
+        "admins": "Admins",
+        "settings": {
             "index": "Index",
-            "destroy": "Destroy",
-            "store": "Store",
-            "update": "Update"
+            "general": {
+                "update": "Update"
+            },
+            "logo": {
+                "upload": "Upload",
+                "delete": "Delete"
+            },
+            "favicon": {
+                "upload": "Upload",
+                "delete": "Delete"
+            },
+            "update": "Update",
+            "firebase": {
+                "update": "Update"
+            }
         },
-        "settings": "Settings",
         "ai": {
             "index": "Index"
         },

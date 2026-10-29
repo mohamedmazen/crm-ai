@@ -170,13 +170,8 @@
     "client": {
         "profile": {
             "edit": "تعديل",
-            "2fa": {
-                "enable": "Enable",
-                "disable": "Disable"
-            },
-            "sessions": {
-                "destroy": "Destroy"
-            },
+            "2fa": "2Fa",
+            "sessions": "Sessions",
             "update": "Update",
             "destroy": "Destroy"
         },
@@ -340,10 +335,7 @@
             "index": "القائمة",
             "store": "حفظ",
             "destroy": "حذف",
-            "contacts": {
-                "attach": "Attach",
-                "detach": "Detach"
-            }
+            "contacts": "Contacts"
         },
         "whatsapp": {
             "templates": {
@@ -365,7 +357,10 @@
                 "create": "إنشاء",
                 "edit": "تعديل"
             },
-            "setup": "Setup"
+            "setup": {
+                "destroy": "Destroy",
+                "manual": "Manual"
+            }
         },
         "broadcasts": {
             "campaigns": {
@@ -397,7 +392,10 @@
             "templates": "القوالب",
             "assign": "تعيين",
             "setup": {
-                "destroy": "Destroy"
+                "resubscribe": "Resubscribe",
+                "manual": {
+                    "instagram": "Instagram"
+                }
             },
             "activities": {
                 "index": "Index"
@@ -544,7 +542,11 @@
                 "connect": "اتصال"
             }
         },
-        "workspaces": "Workspaces",
+        "workspaces": {
+            "switch": "Switch",
+            "index": "Index",
+            "store": "Store"
+        },
         "settings": {
             "update": "تحديث",
             "notifications": "الإشعارات",
@@ -910,38 +912,40 @@
         "secret_key_hint": "المفتاح السري للخادم — حافظ على سريته",
         "stripe_webhook_hint": "سر توقيع Webhook‏ (whsec_…) من لوحة تحكم Stripe",
         "webhook_hint": "سر Webhook المستخدم للتحقق من أحداث بوابة الدفع الواردة",
-        "clients": "Clients",
-        "subscriptions": {
+        "clients": {
             "index": "Index",
+            "users": {
+                "index": "Index",
+                "store": "Store",
+                "update": "Update",
+                "destroy": "Destroy"
+            },
+            "impersonate": "Impersonate",
+            "destroy": "Destroy",
+            "export": "Export",
             "store": "Store",
-            "export": "Export"
+            "update": "Update"
         },
-        "payments": "Payments",
-        "plans": "Plans",
-        "currencies": {
+        "subscriptions": "Subscriptions",
+        "payments": {
+            "index": "Index"
+        },
+        "plans": {
             "index": "Index",
             "update": "Update",
+            "duplicate": "Duplicate",
+            "destroy": "Destroy",
+            "reorder": "Reorder",
             "store": "Store"
         },
-        "admins": "Admins",
-        "settings": {
+        "currencies": "Currencies",
+        "admins": {
             "index": "Index",
-            "general": {
-                "update": "Update"
-            },
-            "logo": {
-                "upload": "Upload",
-                "delete": "Delete"
-            },
-            "favicon": {
-                "upload": "Upload",
-                "delete": "Delete"
-            },
-            "update": "Update",
-            "firebase": {
-                "update": "Update"
-            }
+            "destroy": "Destroy",
+            "store": "Store",
+            "update": "Update"
         },
+        "settings": "Settings",
         "ai": {
             "index": "الفهرس"
         },
@@ -1025,11 +1029,7 @@
         "recent_payments": "Recent payments",
         "amount": "Amount",
         "last_n_days": "Last {{n}} days",
-        "license": {
-            "index": "Index",
-            "deactivate": "Deactivate",
-            "activate": "Activate"
-        },
+        "license": "License",
         "add_currency": "Add Currency",
         "currency_inherit": "Platform default",
         "exchange_rate_hint": "Exchange rate is how much one unit of the currency is worth in USD — EUR is 1.087, INR is about 0.012. The currency with rate 1 is the reference. Setting a currency as Default makes it the platform-wide currency for anyone who has not picked their own."
