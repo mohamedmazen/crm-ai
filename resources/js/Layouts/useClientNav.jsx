@@ -43,6 +43,7 @@ export default function useClientNav() {
 
     const accountSettingsItems = [
         { label: t('nav.workspaces'), href: safeRoute('client.workspaces.index'), icon: <Layers className={iconClass} />,   activePattern: 'client.workspaces.*' },
+        { label: t('nav.custom_fields') || 'Custom Fields', href: safeRoute('client.custom-fields.index'), icon: <SlidersHorizontal className={iconClass} />, activePattern: 'client.custom-fields.*', feature: 'custom_fields' },
         { label: t('nav.settings'),   href: safeRoute('client.settings.index'),   icon: <Settings className={iconClass} />, activePattern: 'client.settings.*' },
     ];
 

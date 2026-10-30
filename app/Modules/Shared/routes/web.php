@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Shared\Http\Controllers\ContactController;
+use App\Modules\Shared\Http\Controllers\CustomFieldController;
 use App\Modules\Shared\Http\Controllers\SegmentController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,4 +31,11 @@ Route::middleware(['web', 'client-app'])->prefix('app')->name('client.')->group(
     Route::get('/segments/{segment}/contacts', [SegmentController::class, 'manageContacts'])->name('segments.contacts');
     Route::post('/segments/{segment}/contacts', [SegmentController::class, 'attachContacts'])->name('segments.contacts.attach');
     Route::delete('/segments/{segment}/contacts/{contact}', [SegmentController::class, 'detachContact'])->name('segments.contacts.detach');
+
+    // Custom Fields
+    Route::get('/custom-fields', [CustomFieldController::class, 'index'])->name('custom-fields.index');
+    Route::post('/custom-fields', [CustomFieldController::class, 'store'])->name('custom-fields.store');
+    Route::put('/custom-fields/{customField}', [CustomFieldController::class, 'update'])->name('custom-fields.update');
+    Route::delete('/custom-fields/{customField}', [CustomFieldController::class, 'destroy'])->name('custom-fields.destroy');
+    Route::post('/custom-fields/{entityType}/{entityId}', [CustomFieldController::class, 'saveValues'])->name('custom-fields.values.save');
 });

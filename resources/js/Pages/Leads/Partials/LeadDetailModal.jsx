@@ -1,6 +1,6 @@
 import Modal from '@/Components/ui/Modal';
 import Button from '@/Components/ui/Button';
-import { Phone, Globe, MapPin, Star, History, BarChart3, DollarSign, CheckCircle2, User, CheckSquare, Tag } from 'lucide-react';
+import { Phone, Globe, MapPin, Star, History, BarChart3, DollarSign, CheckCircle2, User, CheckSquare, Tag, Sliders } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { router } from '@inertiajs/react';
@@ -9,6 +9,7 @@ import FollowUpBadge from './FollowUpBadge';
 import ActivityTimeline from './ActivityTimeline';
 import LogActivityForm from './LogActivityForm';
 import LeadTasksManager from './LeadTasksManager';
+import LeadCustomFieldsEditor from './LeadCustomFieldsEditor';
 
 /**
  * Lead detail: the follow-up history first, because "what happened with this
@@ -40,6 +41,11 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
             key: 'tasks',
             label: `${t('leads.tab_tasks') || 'Tasks'}${detail?.tasks?.length ? ` (${detail.tasks.length})` : ''}`,
             Icon: CheckSquare,
+        },
+        {
+            key: 'custom_fields',
+            label: `${t('leads.tab_custom_fields') || 'Custom Fields'}${detail?.custom_fields?.length ? ` (${detail.custom_fields.length})` : ''}`,
+            Icon: Sliders,
         },
         { key: 'deal', label: t('leads.tab_deal') || 'Deal & Economics', Icon: DollarSign },
         { key: 'score', label: t('leads.tab_score'), Icon: BarChart3 },
@@ -166,6 +172,8 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
                             </div>
                         ) : tab === 'tasks' ? (
                             <LeadTasksManager lead={lead} tasks={detail.tasks ?? []} teamMembers={teamMembers} />
+                        ) : tab === 'custom_fields' ? (
+                            <LeadCustomFieldsEditor lead={lead} customFields={detail.custom_fields ?? []} />
                         ) : tab === 'deal' ? (
                             <DealEditor lead={lead} stageHistory={detail.stage_history ?? []} />
                         ) : (

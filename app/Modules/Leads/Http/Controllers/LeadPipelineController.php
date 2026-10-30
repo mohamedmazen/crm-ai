@@ -254,6 +254,7 @@ class LeadPipelineController extends Controller
                 'name' => $t->name,
                 'color' => $t->color,
             ])->values(),
+            'custom_fields' => app(\App\Modules\Shared\Services\CustomFieldService::class)->fieldsWithValues($wid, 'lead', $lead->id),
         ];
     }
 
@@ -358,6 +359,17 @@ class LeadPipelineController extends Controller
             'success',
             $user ? __('Lead assigned to :name.', ['name' => $user->name]) : __('Lead unassigned.')
         );
+    }
+
+    public function updateCustomFields(Request $request, Lead $lead): RedirectResponse
+    {
+        $wid = $this->workspaceId($request);
+        abort_unless((int) $lead->workspace_id === $wid, 403);
+
+        $values = $request->input('values', []);
+        app(\App\Modules\Shared\Services\CustomFieldService::class)->syncValues($wid, 'lead', $lead->id, $values);
+
+        return back()->with('success', __('Custom fields updated.'));
     }
 
     public function storeStage(Request $request): RedirectResponse

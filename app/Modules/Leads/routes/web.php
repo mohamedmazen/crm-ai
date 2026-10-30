@@ -46,6 +46,9 @@ Route::middleware(['web', 'client-app'])->prefix('app/leads')->name('client.lead
     Route::patch('/tasks/{task}/toggle', [LeadTaskController::class, 'toggle'])->name('tasks.toggle');
     Route::delete('/tasks/{task}', [LeadTaskController::class, 'destroy'])->name('tasks.destroy');
 
+    // Lead custom fields
+    Route::put('/{lead}/custom-fields', [LeadPipelineController::class, 'updateCustomFields'])->name('custom-fields.update');
+
     // Bulk actions
     Route::post('/bulk-assign', [LeadBulkActionController::class, 'assign'])->name('bulk.assign');
     Route::post('/bulk-stage', [LeadBulkActionController::class, 'moveStage'])->name('bulk.stage');
