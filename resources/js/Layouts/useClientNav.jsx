@@ -110,6 +110,10 @@ export default function useClientNav() {
         { label: t('nav.social_accounts'), href: safeRoute('client.social.accounts.index'),  icon: <Share2 className={iconClass} />,          activePattern: 'client.social.accounts.*' },
     ];
 
+    const captureItems = [
+        { label: t('nav.forms') || 'Forms', href: safeRoute('client.sales.forms.index'), icon: <FileText className={iconClass} />, activePattern: 'client.sales.forms.*', feature: 'forms' },
+    ];
+
     const leadsItems = [
         { label: t('nav.tasks') || 'Tasks', href: safeRoute('client.tasks.index'), icon: <CheckSquare className={iconClass} />, activePattern: 'client.tasks.*' },
         { label: t('nav.companies') || 'Companies', href: safeRoute('client.leads.companies.index'), icon: <Building2 className={iconClass} />, activePattern: 'client.leads.companies.*', feature: 'companies' },
@@ -148,6 +152,7 @@ export default function useClientNav() {
         { type: 'group', label: t('nav.group_automations'),   items: automationItems },
         { type: 'group', label: t('nav.group_ecommerce'),    items: ecommerceItems },
         { type: 'group', label: t('nav.group_ai'),            items: aiItems },
+        { type: 'group', label: t('nav.group_capture'),       items: captureItems },
         { type: 'group', label: t('nav.group_leads'),         items: leadsItems },
         { type: 'group', label: t('nav.group_reports'),       items: reportsItems },
         { type: 'group', label: t('nav.group_support'),       items: supportItems },

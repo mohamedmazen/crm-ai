@@ -30,3 +30,7 @@ database/.DS_Store
 /WhatsMe
 /release
 /Chat-Agent-App
+
+**/caddy
+frankenphp
+frankenphp-worker.php
