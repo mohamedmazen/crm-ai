@@ -62,6 +62,22 @@ export function LeadCardView({ lead, onOpen, dragging = false, overlay = false, 
                 </div>
             )}
 
+            {lead.tags && lead.tags.length > 0 && (
+                <div className="mt-1.5 flex flex-wrap items-center gap-1">
+                    {lead.tags.slice(0, 3).map((tag) => (
+                        <span
+                            key={tag.id}
+                            className="inline-flex items-center rounded bg-neutral-100 px-1.5 py-0.2 text-[10px] font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
+                        >
+                            {tag.name}
+                        </span>
+                    ))}
+                    {lead.tags.length > 3 && (
+                        <span className="text-[10px] text-neutral-400">+{lead.tags.length - 3}</span>
+                    )}
+                </div>
+            )}
+
             <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-neutral-500 dark:text-neutral-400">
                 {lead.phone && (
                     <span className="inline-flex items-center gap-1">

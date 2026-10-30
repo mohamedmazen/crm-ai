@@ -162,7 +162,7 @@ class LeadPipelineController extends Controller
                 'weightedValue' => (float) ($totals[$s->id]->weighted_value ?? 0),
                 'leads' => $matching()
                     ->where('stage_id', $s->id)
-                    ->with(['contact:id,lead_id', 'assignedUser:id,name'])
+                    ->with(['contact:id,lead_id', 'assignedUser:id,name', 'tags:id,name,color'])
                     ->boardOrdered()
                     ->limit(self::CARDS_PER_COLUMN)
                     ->get(),
@@ -203,6 +203,7 @@ class LeadPipelineController extends Controller
                 'stageHistory.toStage:id,name',
                 'stageHistory.user:id,name',
                 'tasks.assignedUser:id,name',
+                'tags:id,name,color',
             ])
             ->find($leadId);
 
@@ -247,6 +248,11 @@ class LeadPipelineController extends Controller
                 'to_stage' => $h->toStage?->name,
                 'user' => $h->user?->name,
                 'changed_at' => $h->changed_at?->toIso8601String(),
+            ])->values(),
+            'tags' => $lead->tags->map(fn ($t) => [
+                'id' => $t->id,
+                'name' => $t->name,
+                'color' => $t->color,
             ])->values(),
         ];
     }

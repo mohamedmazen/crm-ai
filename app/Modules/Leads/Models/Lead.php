@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -96,6 +97,11 @@ class Lead extends Model
     public function tasks(): HasMany
     {
         return $this->hasMany(LeadTask::class, 'lead_id')->orderBy('due_at');
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(LeadTag::class, 'lead_tag_pivot', 'lead_id', 'tag_id');
     }
 
     /** Follow-up history, newest first. */

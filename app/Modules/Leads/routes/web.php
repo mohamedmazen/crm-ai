@@ -1,6 +1,9 @@
 <?php
 
+use App\Modules\Leads\Http\Controllers\LeadBulkActionController;
 use App\Modules\Leads\Http\Controllers\LeadController;
+use App\Modules\Leads\Http\Controllers\LeadExportController;
+use App\Modules\Leads\Http\Controllers\LeadImportController;
 use App\Modules\Leads\Http\Controllers\LeadPipelineController;
 use App\Modules\Leads\Http\Controllers\LeadTaskController;
 use App\Modules\Leads\Http\Controllers\PipelineSettingsController;
@@ -42,6 +45,16 @@ Route::middleware(['web', 'client-app'])->prefix('app/leads')->name('client.lead
     Route::put('/tasks/{task}', [LeadTaskController::class, 'update'])->name('tasks.update');
     Route::patch('/tasks/{task}/toggle', [LeadTaskController::class, 'toggle'])->name('tasks.toggle');
     Route::delete('/tasks/{task}', [LeadTaskController::class, 'destroy'])->name('tasks.destroy');
+
+    // Bulk actions
+    Route::post('/bulk-assign', [LeadBulkActionController::class, 'assign'])->name('bulk.assign');
+    Route::post('/bulk-stage', [LeadBulkActionController::class, 'moveStage'])->name('bulk.stage');
+    Route::post('/bulk-tags', [LeadBulkActionController::class, 'tags'])->name('bulk.tags');
+    Route::post('/bulk-delete', [LeadBulkActionController::class, 'destroy'])->name('bulk.destroy');
+
+    // Import and Export
+    Route::get('/export', [LeadExportController::class, 'export'])->name('export');
+    Route::post('/import', [LeadImportController::class, 'import'])->name('import');
 
     Route::delete('/{lead}', [LeadController::class, 'destroy'])->name('destroy');
 });

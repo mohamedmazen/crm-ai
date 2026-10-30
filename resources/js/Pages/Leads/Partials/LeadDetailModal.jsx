@@ -1,6 +1,6 @@
 import Modal from '@/Components/ui/Modal';
 import Button from '@/Components/ui/Button';
-import { Phone, Globe, MapPin, Star, History, BarChart3, DollarSign, CheckCircle2, User, CheckSquare } from 'lucide-react';
+import { Phone, Globe, MapPin, Star, History, BarChart3, DollarSign, CheckCircle2, User, CheckSquare, Tag } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { router } from '@inertiajs/react';
@@ -117,6 +117,20 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
                                 </span>
                             )}
                         </div>
+
+                        {detail.tags && detail.tags.length > 0 && (
+                            <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+                                <Tag className="h-3.5 w-3.5 text-neutral-400" />
+                                {detail.tags.map(t => (
+                                    <span
+                                        key={t.id}
+                                        className="inline-flex items-center rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium text-brand-700 dark:bg-brand-900/30 dark:text-brand-300 border border-brand-200/50 dark:border-brand-800"
+                                    >
+                                        {t.name}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
 
                         <div className="mt-4 flex gap-1" role="tablist">
                             {TABS.map(({ key, label, Icon }) => (
