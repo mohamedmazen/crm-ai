@@ -44,7 +44,7 @@ class Lead extends Model
     }
 
     protected $fillable = [
-        'workspace_id', 'pipeline_id', 'name', 'phone', 'email', 'website', 'address', 'city', 'country',
+        'workspace_id', 'company_id', 'pipeline_id', 'name', 'phone', 'email', 'website', 'address', 'city', 'country',
         'lat', 'lng', 'category', 'rating', 'review_count', 'google_place_id', 'whatsapp_status',
         'pushed_to_contacts', 'stage_id', 'board_position', 'stage_changed_at',
         'status', 'deal_value', 'currency', 'probability', 'expected_close_date', 'won_at', 'lost_at', 'close_reason_id',
@@ -127,6 +127,11 @@ class Lead extends Model
     public function stage(): BelongsTo
     {
         return $this->belongsTo(LeadPipelineStage::class, 'stage_id');
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class, 'company_id');
     }
 
     /**

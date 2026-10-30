@@ -1,6 +1,6 @@
 import Modal from '@/Components/ui/Modal';
 import Button from '@/Components/ui/Button';
-import { Phone, Globe, MapPin, Star, History, BarChart3, DollarSign, CheckCircle2, User, CheckSquare, Tag, Sliders } from 'lucide-react';
+import { Phone, Globe, MapPin, Star, History, BarChart3, DollarSign, CheckCircle2, User, CheckSquare, Tag, Sliders, Building2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { router } from '@inertiajs/react';
@@ -28,6 +28,18 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
         router.put(
             route('client.leads.pipeline.assign', lead.id),
             { user_id: userId ? Number(userId) : null },
+            {
+                preserveScroll: true,
+                preserveState: true,
+            }
+        );
+    };
+
+    const handleAssignCompany = (companyId) => {
+        if (!lead) return;
+        router.put(
+            route('client.leads.assign-company', lead.id),
+            { company_id: companyId ? Number(companyId) : null },
             {
                 preserveScroll: true,
                 preserveState: true,
@@ -100,28 +112,59 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
                             )}
                         </div>
 
-                        <div className="mt-3 flex items-center gap-2">
-                            <User className="h-3.5 w-3.5 text-neutral-400" />
-                            <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                                {t('leads.assigned_to') || 'Assigned to'}:
-                            </span>
-                            <select
-                                value={lead.assigned_user_id ?? ''}
-                                onChange={(e) => handleAssign(e.target.value)}
-                                className="rounded-soft border-soft bg-white py-1 px-2.5 text-xs font-medium text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
-                            >
-                                <option value="">{t('leads.unassigned') || 'Unassigned'}</option>
-                                {teamMembers.map((u) => (
-                                    <option key={u.id} value={u.id}>
-                                        {u.name}
-                                    </option>
-                                ))}
-                            </select>
-                            {lead.assigned_at && (
-                                <span className="text-[11px] text-neutral-400">
-                                    ({new Date(lead.assigned_at).toLocaleDateString()})
+                        <div className="mt-3 flex flex-wrap items-center gap-4">
+                            <div className="flex items-center gap-2">
+                                <User className="h-3.5 w-3.5 text-neutral-400" />
+                                <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                                    {t('leads.assigned_to') || 'Assigned to'}:
                                 </span>
-                            )}
+                                <select
+                                    value={lead.assigned_user_id ?? ''}
+                                    onChange={(e) => handleAssign(e.target.value)}
+                                    className="rounded-soft border-soft bg-white py-1 px-2.5 text-xs font-medium text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+                                >
+                                    <option value="">{t('leads.unassigned') || 'Unassigned'}</option>
+                                    {teamMembers.map((u) => (
+                                        <option key={u.id} value={u.id}>
+                                            {u.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                {lead.assigned_at && (
+                                    <span className="text-[11px] text-neutral-400">
+                                        ({new Date(lead.assigned_at).toLocaleDateString()})
+                                    </span>
+                                )}
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <Building2 className="h-3.5 w-3.5 text-neutral-400" />
+                                <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                                    {t('leads.company') || 'Company'}:
+                                </span>
+                                {lead.company ? (
+                                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-brand-600 dark:text-brand-400">
+                                        <a
+                                            href={route('client.leads.companies.show', lead.company.id)}
+                                            className="hover:underline"
+                                            target="_blank"
+                                            rel="noreferrer"
+                                        >
+                                            {lead.company.name}
+                                        </a>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleAssignCompany(null)}
+                                            className="text-neutral-400 hover:text-red-500"
+                                            title={t('common.remove')}
+                                        >
+                                            &times;
+                                        </button>
+                                    </span>
+                                ) : (
+                                    <CompanyPicker onSelect={(c) => handleAssignCompany(c?.id)} />
+                                )}
+                            </div>
                         </div>
 
                         {detail.tags && detail.tags.length > 0 && (
@@ -362,6 +405,95 @@ function ScoreBreakdown({ breakdown }) {
                     </li>
                 ))}
             </ul>
+        </div>
+    );
+}
+
+function CompanyPicker({ onSelect }) {
+    const { t } = useTranslation();
+    const [open, setOpen] = useState(false);
+    const [query, setQuery] = useState('');
+    const [results, setResults] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    const handleSearch = async (val) => {
+        setQuery(val);
+        setLoading(true);
+        try {
+            const res = await fetch(route('client.leads.companies.search', { q: val }));
+            if (res.ok) {
+                const data = await res.json();
+                setResults(data);
+            }
+        } catch {
+            setResults([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleOpen = () => {
+        setOpen(true);
+        handleSearch('');
+    };
+
+    if (!open) {
+        return (
+            <button
+                type="button"
+                onClick={handleOpen}
+                className="text-xs text-brand-600 hover:text-brand-700 dark:text-brand-400 font-medium underline"
+            >
+                {t('leads.link_company') || '+ Link Company'}
+            </button>
+        );
+    }
+
+    return (
+        <div className="relative inline-block">
+            <div className="flex items-center gap-1">
+                <input
+                    type="text"
+                    value={query}
+                    autoFocus
+                    placeholder={t('common.search') || 'Search company...'}
+                    onChange={(e) => handleSearch(e.target.value)}
+                    className="w-36 rounded-soft border-soft bg-white px-2 py-0.5 text-xs text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+                />
+                <button
+                    type="button"
+                    onClick={() => setOpen(false)}
+                    className="text-xs text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
+                >
+                    &times;
+                </button>
+            </div>
+            {open && (
+                <div className="absolute left-0 top-full z-20 mt-1 max-h-48 w-52 overflow-y-auto rounded-soft border border-soft bg-white p-1 shadow-lg dark:bg-neutral-800">
+                    {loading ? (
+                        <div className="p-2 text-center text-xs text-neutral-400">{t('common.loading')}</div>
+                    ) : results.length === 0 ? (
+                        <div className="p-2 text-center text-xs text-neutral-400">{t('common.no_results') || 'No companies found'}</div>
+                    ) : (
+                        results.map((comp) => (
+                            <button
+                                key={comp.id}
+                                type="button"
+                                onClick={() => {
+                                    onSelect(comp);
+                                    setOpen(false);
+                                }}
+                                className="flex w-full flex-col items-start rounded-soft px-2 py-1.5 text-start text-xs text-neutral-700 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-700/60"
+                            >
+                                <span className="font-medium">{comp.name}</span>
+                                {comp.domain && (
+                                    <span className="text-[10px] text-neutral-400">{comp.domain}</span>
+                                )}
+                            </button>
+                        ))
+                    )}
+                </div>
+            )}
         </div>
     );
 }

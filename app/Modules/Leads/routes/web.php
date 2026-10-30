@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Leads\Http\Controllers\CompanyController;
 use App\Modules\Leads\Http\Controllers\LeadBulkActionController;
 use App\Modules\Leads\Http\Controllers\LeadController;
 use App\Modules\Leads\Http\Controllers\LeadExportController;
@@ -48,6 +49,15 @@ Route::middleware(['web', 'client-app'])->prefix('app/leads')->name('client.lead
 
     // Lead custom fields
     Route::put('/{lead}/custom-fields', [LeadPipelineController::class, 'updateCustomFields'])->name('custom-fields.update');
+    Route::put('/{lead}/assign-company', [LeadPipelineController::class, 'assignCompany'])->name('assign-company');
+
+    // Companies (Feature: companies)
+    Route::middleware('feature:companies')->group(function () {
+        Route::get('/companies/search', [CompanyController::class, 'searchJson'])->name('companies.search');
+        Route::post('/companies/{company}/attach/{lead}', [CompanyController::class, 'attachLead'])->name('companies.attach-lead');
+        Route::post('/companies/{company}/detach/{lead}', [CompanyController::class, 'detachLead'])->name('companies.detach-lead');
+        Route::resource('companies', CompanyController::class);
+    });
 
     // Bulk actions
     Route::post('/bulk-assign', [LeadBulkActionController::class, 'assign'])->name('bulk.assign');

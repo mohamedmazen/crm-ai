@@ -194,6 +194,7 @@ class LeadPipelineController extends Controller
         $lead = Lead::where('workspace_id', $wid)
             ->with([
                 'stage:id,name',
+                'company:id,name,domain,website',
                 'contact:id,lead_id',
                 'closeReason:id,name,type',
                 'pipeline:id,name',
@@ -215,10 +216,11 @@ class LeadPipelineController extends Controller
             'lead' => Arr::only($lead->toArray(), [
                 'id', 'name', 'phone', 'email', 'website', 'address', 'category',
                 'rating', 'review_count', 'score', 'score_band', 'score_breakdown',
-                'stage_id', 'pipeline_id', 'status', 'deal_value', 'currency',
+                'stage_id', 'pipeline_id', 'company_id', 'status', 'deal_value', 'currency',
                 'probability', 'expected_close_date', 'won_at', 'lost_at',
                 'close_reason_id', 'assigned_user_id', 'assigned_at', 'next_follow_up_at', 'last_activity_at',
             ]) + [
+                'company' => $lead->company ? ['id' => $lead->company->id, 'name' => $lead->company->name, 'domain' => $lead->company->domain] : null,
                 'contact' => $lead->contact ? ['id' => $lead->contact->id] : null,
                 'pipeline' => $lead->pipeline ? ['id' => $lead->pipeline->id, 'name' => $lead->pipeline->name] : null,
                 'assigned_user' => $lead->assignedUser ? ['id' => $lead->assignedUser->id, 'name' => $lead->assignedUser->name, 'email' => $lead->assignedUser->email] : null,
@@ -328,6 +330,7 @@ class LeadPipelineController extends Controller
             'expected_close_date' => ['nullable', 'date'],
             'status' => ['nullable', Rule::in(['new', 'contacted', 'qualified', 'converted', 'lost'])],
             'close_reason_id' => ['nullable', 'integer'],
+            'company_id' => ['nullable', 'integer'],
         ]);
 
         $lead->update($data);
@@ -359,6 +362,25 @@ class LeadPipelineController extends Controller
             'success',
             $user ? __('Lead assigned to :name.', ['name' => $user->name]) : __('Lead unassigned.')
         );
+    }
+
+    public function assignCompany(Request $request, Lead $lead): RedirectResponse
+    {
+        $wid = $this->workspaceId($request);
+        abort_unless((int) $lead->workspace_id === $wid, 403);
+
+        $data = $request->validate([
+            'company_id' => ['nullable', 'integer'],
+        ]);
+
+        if (! empty($data['company_id'])) {
+            $company = \App\Modules\Leads\Models\Company::where('workspace_id', $wid)->findOrFail($data['company_id']);
+            $lead->update(['company_id' => $company->id]);
+        } else {
+            $lead->update(['company_id' => null]);
+        }
+
+        return back()->with('success', __('Company updated.'));
     }
 
     public function updateCustomFields(Request $request, Lead $lead): RedirectResponse
