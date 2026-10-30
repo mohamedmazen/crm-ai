@@ -42,9 +42,10 @@ class Lead extends Model
     }
 
     protected $fillable = [
-        'workspace_id', 'name', 'phone', 'email', 'website', 'address', 'city', 'country',
+        'workspace_id', 'pipeline_id', 'name', 'phone', 'email', 'website', 'address', 'city', 'country',
         'lat', 'lng', 'category', 'rating', 'review_count', 'google_place_id', 'whatsapp_status',
         'pushed_to_contacts', 'stage_id', 'board_position', 'stage_changed_at',
+        'status', 'deal_value', 'currency', 'probability', 'expected_close_date', 'won_at', 'lost_at', 'close_reason_id',
         'score', 'score_band', 'score_breakdown', 'scored_at',
         'next_follow_up_at', 'last_activity_at',
     ];
@@ -57,11 +58,31 @@ class Lead extends Model
             'score' => 'integer',
             'score_breakdown' => 'array',
             'board_position' => 'integer',
+            'deal_value' => 'decimal:2',
+            'probability' => 'integer',
+            'expected_close_date' => 'date',
+            'won_at' => 'datetime',
+            'lost_at' => 'datetime',
             'scored_at' => 'datetime',
             'stage_changed_at' => 'datetime',
             'next_follow_up_at' => 'datetime',
             'last_activity_at' => 'datetime',
         ];
+    }
+
+    public function pipeline(): BelongsTo
+    {
+        return $this->belongsTo(LeadPipeline::class, 'pipeline_id');
+    }
+
+    public function closeReason(): BelongsTo
+    {
+        return $this->belongsTo(LeadCloseReason::class, 'close_reason_id');
+    }
+
+    public function stageHistory(): HasMany
+    {
+        return $this->hasMany(LeadStageHistory::class, 'lead_id')->orderByDesc('changed_at');
     }
 
     /** Follow-up history, newest first. */

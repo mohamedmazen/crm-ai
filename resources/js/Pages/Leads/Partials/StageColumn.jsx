@@ -30,6 +30,11 @@ export default function StageColumn({ stage, onOpenLead, onEditStage }) {
                     <span className="shrink-0 rounded-full bg-neutral-100 px-1.5 text-xs text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
                         {stage.total ?? stage.leads.length}
                     </span>
+                    {stage.totalValue > 0 && (
+                        <span className="shrink-0 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                            ${Number(stage.totalValue).toLocaleString()}
+                        </span>
+                    )}
                 </div>
                 <button
                     type="button"

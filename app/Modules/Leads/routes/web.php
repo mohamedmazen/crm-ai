@@ -2,6 +2,7 @@
 
 use App\Modules\Leads\Http\Controllers\LeadController;
 use App\Modules\Leads\Http\Controllers\LeadPipelineController;
+use App\Modules\Leads\Http\Controllers\PipelineSettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'client-app'])->prefix('app/leads')->name('client.leads.')->group(function () {
@@ -19,7 +20,18 @@ Route::middleware(['web', 'client-app'])->prefix('app/leads')->name('client.lead
         Route::put('/stages/{stage}', [LeadPipelineController::class, 'updateStage'])->name('stages.update');
         Route::delete('/stages/{stage}', [LeadPipelineController::class, 'destroyStage'])->name('stages.destroy');
         Route::put('/{lead}/move', [LeadPipelineController::class, 'move'])->name('move');
+        Route::put('/{lead}/deal', [LeadPipelineController::class, 'updateDeal'])->name('deal.update');
         Route::post('/{lead}/activities', [LeadPipelineController::class, 'storeActivity'])->name('activities.store');
+    });
+
+    // Pipeline settings and multiple pipelines management
+    Route::prefix('pipelines')->name('pipelines.')->group(function () {
+        Route::get('/', [PipelineSettingsController::class, 'index'])->name('index');
+        Route::post('/', [PipelineSettingsController::class, 'store'])->name('store')->middleware('feature:multi_pipeline');
+        Route::put('/{pipeline}', [PipelineSettingsController::class, 'update'])->name('update');
+        Route::delete('/{pipeline}', [PipelineSettingsController::class, 'destroy'])->name('destroy');
+        Route::post('/reasons', [PipelineSettingsController::class, 'storeReason'])->name('reasons.store');
+        Route::delete('/reasons/{reason}', [PipelineSettingsController::class, 'destroyReason'])->name('reasons.destroy');
     });
 
     Route::delete('/{lead}', [LeadController::class, 'destroy'])->name('destroy');

@@ -1,8 +1,9 @@
 import Modal from '@/Components/ui/Modal';
 import Button from '@/Components/ui/Button';
-import { Phone, Globe, MapPin, Star, History, BarChart3 } from 'lucide-react';
+import { Phone, Globe, MapPin, Star, History, BarChart3, DollarSign, CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { router } from '@inertiajs/react';
 import ScoreBadge from './ScoreBadge';
 import FollowUpBadge from './FollowUpBadge';
 import ActivityTimeline from './ActivityTimeline';
@@ -11,7 +12,7 @@ import LogActivityForm from './LogActivityForm';
 /**
  * Lead detail: the follow-up history first, because "what happened with this
  * lead" is the question people open the card to answer. The score breakdown
- * lives behind a tab rather than competing with it.
+ * and deal economics live behind tabs.
  */
 export default function LeadDetailModal({ detail, stages, activityTypes, callOutcomes, loading, onClose }) {
     const { t } = useTranslation();
@@ -22,6 +23,7 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
 
     const TABS = [
         { key: 'history', label: t('leads.tab_history'), Icon: History },
+        { key: 'deal', label: t('leads.tab_deal') || 'Deal & Economics', Icon: DollarSign },
         { key: 'score', label: t('leads.tab_score'), Icon: BarChart3 },
     ];
 
@@ -106,6 +108,8 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
                                 />
                                 <ActivityTimeline activities={detail.activities} />
                             </div>
+                        ) : tab === 'deal' ? (
+                            <DealEditor lead={lead} stageHistory={detail.stage_history ?? []} />
                         ) : (
                             <ScoreBreakdown breakdown={lead.score_breakdown ?? []} />
                         )}
@@ -117,6 +121,150 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
                 </div>
             ) : null}
         </Modal>
+    );
+}
+
+function DealEditor({ lead, stageHistory }) {
+    const { t } = useTranslation();
+    const [dealValue, setDealValue] = useState(lead.deal_value ?? '');
+    const [currency, setCurrency] = useState(lead.currency ?? 'USD');
+    const [probability, setProbability] = useState(lead.probability ?? '');
+    const [expectedCloseDate, setExpectedCloseDate] = useState(lead.expected_close_date ?? '');
+    const [status, setStatus] = useState(lead.status ?? 'new');
+    const [saving, setSaving] = useState(false);
+
+    const handleSave = (e) => {
+        e.preventDefault();
+        setSaving(true);
+        router.put(
+            route('client.leads.pipeline.deal.update', lead.id),
+            {
+                deal_value: dealValue ? Number(dealValue) : null,
+                currency: currency || null,
+                probability: probability !== '' ? Number(probability) : null,
+                expected_close_date: expectedCloseDate || null,
+                status,
+            },
+            {
+                preserveScroll: true,
+                onFinish: () => setSaving(false),
+            }
+        );
+    };
+
+    return (
+        <div className="space-y-6">
+            <form onSubmit={handleSave} className="space-y-4 rounded-xl border border-neutral-100 bg-neutral-50/50 p-4 dark:border-neutral-800 dark:bg-neutral-800/20">
+                <h3 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+                    {t('leads.deal_economics_title') || 'Deal Economics & Status'}
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-300">
+                            {t('leads.deal_value') || 'Deal Value'}
+                        </label>
+                        <div className="mt-1 flex rounded-soft shadow-sm">
+                            <span className="inline-flex items-center rounded-l-soft border border-r-0 border-soft bg-neutral-100 px-3 text-sm text-neutral-500 dark:bg-neutral-800">
+                                $
+                            </span>
+                            <input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                value={dealValue}
+                                onChange={(e) => setDealValue(e.target.value)}
+                                placeholder="0.00"
+                                className="block w-full min-w-0 flex-1 rounded-none rounded-r-soft border-soft bg-white px-3 py-1.5 text-sm dark:bg-neutral-800 dark:text-neutral-100"
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-300">
+                            {t('leads.win_probability') || 'Win Probability (%)'}
+                        </label>
+                        <input
+                            type="number"
+                            min="0"
+                            max="100"
+                            value={probability}
+                            onChange={(e) => setProbability(e.target.value)}
+                            placeholder="e.g. 50"
+                            className="mt-1 block w-full rounded-soft border-soft bg-white px-3 py-1.5 text-sm dark:bg-neutral-800 dark:text-neutral-100"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-300">
+                            {t('leads.expected_close_date') || 'Expected Close Date'}
+                        </label>
+                        <input
+                            type="date"
+                            value={expectedCloseDate}
+                            onChange={(e) => setExpectedCloseDate(e.target.value)}
+                            className="mt-1 block w-full rounded-soft border-soft bg-white px-3 py-1.5 text-sm dark:bg-neutral-800 dark:text-neutral-100"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-300">
+                            {t('leads.status') || 'Lifecycle Status'}
+                        </label>
+                        <select
+                            value={status}
+                            onChange={(e) => setStatus(e.target.value)}
+                            className="mt-1 block w-full rounded-soft border-soft bg-white px-3 py-1.5 text-sm dark:bg-neutral-800 dark:text-neutral-100"
+                        >
+                            <option value="new">New</option>
+                            <option value="contacted">Contacted</option>
+                            <option value="qualified">Qualified</option>
+                            <option value="converted">Converted (Won)</option>
+                            <option value="lost">Lost</option>
+                        </select>
+                    </div>
+                </div>
+
+                {lead.close_reason && (
+                    <div className="rounded-lg bg-amber-50 p-2.5 text-xs text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
+                        <strong>{t('leads.outcome_reason') || 'Close Reason'}:</strong> {lead.close_reason.name} ({lead.close_reason.type})
+                    </div>
+                )}
+
+                <div className="flex justify-end pt-2">
+                    <Button type="submit" size="sm" disabled={saving}>
+                        {saving ? (t('common.saving') || 'Saving...') : (t('common.save') || 'Save Changes')}
+                    </Button>
+                </div>
+            </form>
+
+            {/* Stage Transition History */}
+            <div>
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                    {t('leads.stage_history_title') || 'Stage Movement History'}
+                </h4>
+
+                {stageHistory.length === 0 ? (
+                    <p className="mt-2 text-xs text-neutral-400">{t('leads.no_stage_history') || 'No stage movement recorded yet.'}</p>
+                ) : (
+                    <ul className="mt-2 space-y-2 border-l-2 border-neutral-100 pl-3 dark:border-neutral-800">
+                        {stageHistory.map((h) => (
+                            <li key={h.id} className="text-xs text-neutral-600 dark:text-neutral-300">
+                                <span className="font-medium text-neutral-900 dark:text-neutral-100">
+                                    {h.from_stage ? `${h.from_stage} → ` : ''}{h.to_stage}
+                                </span>
+                                {h.user && <span className="text-neutral-400"> by {h.user}</span>}
+                                {h.changed_at && (
+                                    <span className="block text-[11px] text-neutral-400 mt-0.5">
+                                        {new Date(h.changed_at).toLocaleString()}
+                                    </span>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+        </div>
     );
 }
 

@@ -6,7 +6,9 @@ use App\Events\LeadQualified;
 use App\Events\LeadStageChanged;
 use App\Modules\Leads\Contracts\LeadScorer;
 use App\Modules\Leads\Models\Lead;
+use App\Modules\Leads\Models\LeadPipeline;
 use App\Modules\Leads\Models\LeadPipelineStage;
+use App\Modules\Leads\Models\LeadStageHistory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -18,73 +20,135 @@ class PipelineManager
     ) {}
 
     /**
-     * Stages for a workspace, seeding the defaults on first use so the board is
-     * never empty and no tenant has to build a pipeline before seeing one.
+     * Get or create default pipeline for a workspace.
+     */
+    public function defaultPipelineFor(int $workspaceId): LeadPipeline
+    {
+        $pipeline = LeadPipeline::where('workspace_id', $workspaceId)
+            ->where('is_default', true)
+            ->first();
+
+        if (! $pipeline) {
+            $pipeline = LeadPipeline::where('workspace_id', $workspaceId)
+                ->orderBy('sort_order')
+                ->first();
+        }
+
+        if (! $pipeline) {
+            $pipeline = LeadPipeline::create([
+                'workspace_id' => $workspaceId,
+                'name' => 'Sales Pipeline',
+                'is_default' => true,
+                'sort_order' => 0,
+            ]);
+        }
+
+        return $pipeline;
+    }
+
+    /**
+     * All pipelines for a workspace.
+     *
+     * @return Collection<int, LeadPipeline>
+     */
+    public function pipelinesFor(int $workspaceId): Collection
+    {
+        $pipelines = LeadPipeline::where('workspace_id', $workspaceId)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get();
+
+        if ($pipelines->isEmpty()) {
+            $default = $this->defaultPipelineFor($workspaceId);
+            $pipelines = new Collection([$default]);
+        }
+
+        return $pipelines;
+    }
+
+    /**
+     * Stages for a workspace and pipeline, seeding defaults on first use.
      *
      * @return Collection<int, LeadPipelineStage>
      */
-    public function stagesFor(int $workspaceId): Collection
+    public function stagesFor(int $workspaceId, ?int $pipelineId = null): Collection
     {
+        $pipeline = $pipelineId
+            ? LeadPipeline::where('workspace_id', $workspaceId)->find($pipelineId)
+            : $this->defaultPipelineFor($workspaceId);
+
+        if (! $pipeline) {
+            $pipeline = $this->defaultPipelineFor($workspaceId);
+        }
+
         $stages = LeadPipelineStage::where('workspace_id', $workspaceId)
-            ->orderBy('position')->orderBy('id')->get();
+            ->where('pipeline_id', $pipeline->id)
+            ->orderBy('position')
+            ->orderBy('id')
+            ->get();
 
         if ($stages->isEmpty()) {
             foreach (LeadPipelineStage::DEFAULTS as $i => $default) {
-                LeadPipelineStage::create($default + ['workspace_id' => $workspaceId, 'position' => $i]);
+                LeadPipelineStage::create($default + [
+                    'workspace_id' => $workspaceId,
+                    'pipeline_id' => $pipeline->id,
+                    'position' => $i,
+                ]);
             }
 
             $stages = LeadPipelineStage::where('workspace_id', $workspaceId)
-                ->orderBy('position')->orderBy('id')->get();
+                ->where('pipeline_id', $pipeline->id)
+                ->orderBy('position')
+                ->orderBy('id')
+                ->get();
         }
 
-        $this->adoptUnstagedLeads($workspaceId, $stages->first());
+        $this->adoptUnstagedLeads($workspaceId, $pipeline, $stages->first());
 
         return $stages;
     }
 
-    /**
-     * Leads scraped before the pipeline existed have no stage_id. Give them the
-     * first stage for real, rather than letting the board merely draw them in
-     * column one — otherwise the column count disagrees with the database, and
-     * reordering the stages would silently relocate every one of them.
-     *
-     * board_position stays 0: scopeBoardOrdered falls back to score, which is the
-     * order they should appear in anyway.
-     */
-    private function adoptUnstagedLeads(int $workspaceId, ?LeadPipelineStage $first): void
+    private function adoptUnstagedLeads(int $workspaceId, LeadPipeline $pipeline, ?LeadPipelineStage $first): void
     {
         if (! $first) {
             return;
         }
 
+        // Adopt any leads missing pipeline_id into the default pipeline
         Lead::where('workspace_id', $workspaceId)
+            ->whereNull('pipeline_id')
+            ->update(['pipeline_id' => $pipeline->id]);
+
+        Lead::where('workspace_id', $workspaceId)
+            ->where('pipeline_id', $pipeline->id)
             ->whereNull('stage_id')
-            ->update(['stage_id' => $first->id, 'stage_changed_at' => now()]);
+            ->update([
+                'stage_id' => $first->id,
+                'stage_changed_at' => now(),
+            ]);
     }
 
-    public function firstStage(int $workspaceId): ?LeadPipelineStage
+    public function firstStage(int $workspaceId, ?int $pipelineId = null): ?LeadPipelineStage
     {
-        return $this->stagesFor($workspaceId)->first();
+        return $this->stagesFor($workspaceId, $pipelineId)->first();
     }
 
     /**
      * Move a lead to a stage and slot it at $position within that column.
-     *
-     * Positions are only ever compared, never required to be gapless, so the two
-     * statements below are the whole job — nudge everything at or after the target
-     * index down, then drop the lead in. An earlier version also renumbered the
-     * column to 0..n-1, which cost one UPDATE per card in it (56 per drag here,
-     * unbounded as a tenant grows) and bought nothing.
-     *
-     * Fires LeadStageChanged only on an actual stage change — reordering within a
-     * column is not a pipeline event.
+     * Records stage history, updates won/lost states, close reasons and probabilities.
      */
-    public function moveLead(Lead $lead, LeadPipelineStage $stage, int $position): Lead
-    {
-        $from = $lead->stage_id ? $lead->stage->name ?? null : null;
+    public function moveLead(
+        Lead $lead,
+        LeadPipelineStage $stage,
+        int $position,
+        ?int $userId = null,
+        ?int $closeReasonId = null
+    ): Lead {
+        $fromStageId = $lead->stage_id;
+        $from = $lead->stage_id ? ($lead->stage->name ?? null) : null;
         $changedStage = (int) $lead->stage_id !== (int) $stage->id;
 
-        DB::transaction(function () use ($lead, $stage, $position, $changedStage) {
+        DB::transaction(function () use ($lead, $stage, $position, $changedStage, $fromStageId, $userId, $closeReasonId) {
             // Open a gap at the target index in the destination column.
             Lead::where('workspace_id', $lead->workspace_id)
                 ->where('stage_id', $stage->id)
@@ -94,9 +158,47 @@ class PipelineManager
 
             $lead->stage_id = $stage->id;
             $lead->board_position = $position;
+            if ($stage->pipeline_id) {
+                $lead->pipeline_id = $stage->pipeline_id;
+            }
+
             if ($changedStage) {
                 $lead->stage_changed_at = now();
+
+                // Record stage transition history
+                LeadStageHistory::create([
+                    'lead_id' => $lead->id,
+                    'from_stage_id' => $fromStageId,
+                    'to_stage_id' => $stage->id,
+                    'user_id' => $userId,
+                    'changed_at' => now(),
+                ]);
+
+                if ($stage->is_won) {
+                    $lead->won_at = now();
+                    $lead->lost_at = null;
+                    $lead->status = 'converted';
+                    $lead->probability = 100;
+                    if ($closeReasonId) {
+                        $lead->close_reason_id = $closeReasonId;
+                    }
+                } elseif ($stage->is_lost) {
+                    $lead->lost_at = now();
+                    $lead->won_at = null;
+                    $lead->status = 'lost';
+                    $lead->probability = 0;
+                    if ($closeReasonId) {
+                        $lead->close_reason_id = $closeReasonId;
+                    }
+                } else {
+                    $lead->won_at = null;
+                    $lead->lost_at = null;
+                    if ($stage->default_probability !== null) {
+                        $lead->probability = $stage->default_probability;
+                    }
+                }
             }
+
             $lead->save();
         });
 
@@ -118,8 +220,7 @@ class PipelineManager
     }
 
     /**
-     * Rescore a lead and persist the result. Returns true when the lead newly
-     * became hot, which is what LeadQualified reports.
+     * Rescore a lead and persist the result.
      */
     public function rescore(Lead $lead): bool
     {
@@ -150,7 +251,6 @@ class PipelineManager
         return $becameHot;
     }
 
-    /** @return int number of leads rescored */
     public function rescoreWorkspace(int $workspaceId): int
     {
         $count = 0;
@@ -168,22 +268,11 @@ class PipelineManager
     }
 
     /**
-     * Delete a stage, moving any leads it holds to $fallback so a tenant cannot
-     * lose leads by tidying their board.
+     * Delete a stage, moving any leads it holds to $fallback.
      */
     public function deleteStage(LeadPipelineStage $stage, LeadPipelineStage $fallback): void
     {
         DB::transaction(function () use ($stage, $fallback) {
-            // Both columns number from 0, so a plain reassign would interleave the
-            // two sets. Shifting the arrivals past the fallback's last card keeps
-            // each group's own order and appends them — in one statement, whatever
-            // the column size.
-            //
-            // lockForUpdate so two stages deleted concurrently into the same
-            // fallback can't both read the same max and compute the same offset
-            // (which would overlap their positions). Harmless if it does — order
-            // is the only thing at stake — but the lock is free inside this
-            // transaction.
             $offset = (int) Lead::where('workspace_id', $fallback->workspace_id)
                 ->where('stage_id', $fallback->id)
                 ->lockForUpdate()
@@ -210,8 +299,14 @@ class PipelineManager
         });
     }
 
-    public function nextStagePosition(int $workspaceId): int
+    public function nextStagePosition(int $workspaceId, ?int $pipelineId = null): int
     {
-        return (int) LeadPipelineStage::where('workspace_id', $workspaceId)->max('position') + 1;
+        $query = LeadPipelineStage::where('workspace_id', $workspaceId);
+
+        if ($pipelineId) {
+            $query->where('pipeline_id', $pipelineId);
+        }
+
+        return (int) $query->max('position') + 1;
     }
 }

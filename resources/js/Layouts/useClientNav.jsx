@@ -5,7 +5,7 @@ import {
     LayoutDashboard, CreditCard, Package, FileText, Users, Settings,
     Layers, Webhook, Key, BookOpen, Image, Radio, Inbox, Bot, Database,
     Zap, Share2, MapPin, Tag, LifeBuoy, ExternalLink, Mail, MessageSquare,
-    ShoppingBag, KanbanSquare,
+    ShoppingBag, KanbanSquare, SlidersHorizontal,
 } from 'lucide-react';
 
 const iconClass = 'h-4 w-4';
@@ -112,6 +112,7 @@ export default function useClientNav() {
     const leadsItems = [
         { label: t('nav.lead_scraper'),  href: safeRoute('client.leads.index'),          icon: <MapPin className={iconClass} />,     activePattern: 'client.leads.index' },
         { label: t('nav.lead_pipeline'), href: safeRoute('client.leads.pipeline.index'), icon: <KanbanSquare className={iconClass} />, activePattern: 'client.leads.pipeline.*' },
+        { label: t('nav.pipelines') || 'Pipelines', href: safeRoute('client.leads.pipelines.index'), icon: <SlidersHorizontal className={iconClass} />, activePattern: 'client.leads.pipelines.*' },
     ];
 
     const automationItems = [

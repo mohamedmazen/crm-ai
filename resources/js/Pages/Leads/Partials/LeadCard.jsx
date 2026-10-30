@@ -1,6 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Phone, Globe, Star, UserCheck, GripVertical } from 'lucide-react';
+import { Phone, Globe, Star, UserCheck, GripVertical, DollarSign } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import ScoreBadge from './ScoreBadge';
 import FollowUpBadge from './FollowUpBadge';
@@ -48,6 +48,19 @@ export function LeadCardView({ lead, onOpen, dragging = false, overlay = false, 
                     )}
                 </div>
             </div>
+
+            {lead.deal_value > 0 && (
+                <div className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                    <span>
+                        {lead.currency || '$'}{Number(lead.deal_value).toLocaleString()}
+                    </span>
+                    {lead.probability !== null && lead.probability !== undefined && (
+                        <span className="text-[10px] font-normal text-neutral-400">
+                            ({lead.probability}%)
+                        </span>
+                    )}
+                </div>
+            )}
 
             <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-neutral-500 dark:text-neutral-400">
                 {lead.phone && (

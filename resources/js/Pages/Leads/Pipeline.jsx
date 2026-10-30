@@ -46,7 +46,22 @@ function collisionDetectionStrategy(args) {
     return intersections.length > 0 ? intersections : closestCorners(args);
 }
 
-export default function Pipeline({ stages, colors, filters, scoring, leadDetail, activityTypes, callOutcomes, boardTotal, hotTotal }) {
+export default function Pipeline({
+    stages,
+    colors,
+    filters,
+    scoring,
+    leadDetail,
+    activityTypes,
+    callOutcomes,
+    boardTotal,
+    hotTotal,
+    pipelines = [],
+    activePipelineId,
+    boardDealValue = 0,
+    boardWeightedValue = 0,
+    closeReasons = [],
+}) {
     const { t } = useTranslation();
     const { props } = usePage();
     const flash = props.flash ?? {};
@@ -58,6 +73,8 @@ export default function Pipeline({ stages, colors, filters, scoring, leadDetail,
     const [showScoring, setShowScoring] = useState(false);
     const [search, setSearch] = useState(filters.search ?? '');
     const [loadingDetail, setLoadingDetail] = useState(false);
+    const [pendingCloseMove, setPendingCloseMove] = useState(null);
+    const [selectedCloseReasonId, setSelectedCloseReasonId] = useState('');
 
     // Re-sync when the server sends a new board (filter, reload, rejected move).
     // Adjusted during render rather than in an effect so the stale board is never
@@ -139,20 +156,28 @@ export default function Pipeline({ stages, colors, filters, scoring, leadDetail,
                 : s)));
         }
 
+        if ((stage.is_won || stage.is_lost) && closeReasons.some((r) => r.type === (stage.is_won ? 'won' : 'lost'))) {
+            setPendingCloseMove({ leadId: active.id, stage, position });
+            return;
+        }
+
+        executeMove(active.id, stage.id, position);
+    };
+
+    const executeMove = (leadId, stageId, position, closeReasonId = null) => {
         router.put(
-            route('client.leads.pipeline.move', active.id),
-            { stage_id: stage.id, position },
+            route('client.leads.pipeline.move', leadId),
+            { stage_id: stageId, position, close_reason_id: closeReasonId || undefined },
             {
                 preserveScroll: true,
                 preserveState: true,
-                // The server is the authority on ordering; a rejected move must not
-                // leave the optimistic position on screen.
                 onError: () => router.reload({ only: ['stages'] }),
             },
         );
     };
 
     const query = (overrides = {}) => ({
+        pipeline_id: activePipelineId || undefined,
         band: filters.band || undefined,
         search: search || undefined,
         due: filters.due ? 1 : undefined,
@@ -200,15 +225,54 @@ export default function Pipeline({ stages, colors, filters, scoring, leadDetail,
             <div className="space-y-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                        <h1 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-                            {t('leads.pipeline_title')}
-                        </h1>
-                        <p className="mt-0.5 text-sm text-neutral-500 dark:text-neutral-400">
-                            {t('leads.pipeline_summary', { total: totals.all, hot: totals.hot })}
-                        </p>
+                        <div className="flex items-center gap-3">
+                            <h1 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+                                {t('leads.pipeline_title')}
+                            </h1>
+
+                            {pipelines.length > 0 && (
+                                <select
+                                    value={activePipelineId}
+                                    onChange={(e) => applyFilter({ pipeline_id: e.target.value })}
+                                    className="rounded-soft border-soft bg-white py-1 px-3 text-sm font-medium shadow-sm dark:bg-neutral-900 dark:text-neutral-100 focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+                                >
+                                    {pipelines.map((p) => (
+                                        <option key={p.id} value={p.id}>
+                                            {p.name} {p.is_default ? `(${t('common.default') || 'Default'})` : ''}
+                                        </option>
+                                    ))}
+                                </select>
+                            )}
+                        </div>
+
+                        <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-neutral-500 dark:text-neutral-400">
+                            <span>{t('leads.pipeline_summary', { total: totals.all, hot: totals.hot })}</span>
+                            {(boardDealValue > 0 || boardWeightedValue > 0) && (
+                                <>
+                                    <span>•</span>
+                                    <span>
+                                        {t('leads.total_pipeline_value') || 'Pipeline Value'}:{' '}
+                                        <strong className="text-emerald-600 dark:text-emerald-400 font-semibold">
+                                            ${Number(boardDealValue).toLocaleString()}
+                                        </strong>
+                                    </span>
+                                    <span>•</span>
+                                    <span>
+                                        {t('leads.weighted_value') || 'Weighted'}:{' '}
+                                        <strong className="text-brand-600 dark:text-brand-400 font-semibold">
+                                            ${Number(boardWeightedValue).toLocaleString()}
+                                        </strong>
+                                    </span>
+                                </>
+                            )}
+                        </div>
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2">
+                        <Button variant="secondary" onClick={() => router.visit(route('client.leads.pipelines.index'))}>
+                            <SlidersHorizontal className="mr-1.5 h-4 w-4" />
+                            {t('leads.manage_pipelines') || 'Pipelines'}
+                        </Button>
                         <Button variant="secondary" onClick={() => router.visit(route('client.leads.index'))}>
                             <LayoutGrid className="mr-1.5 h-4 w-4" />
                             {t('leads.view_table')}
@@ -341,6 +405,66 @@ export default function Pipeline({ stages, colors, filters, scoring, leadDetail,
 
             {showScoring && (
                 <ScoringModal show={showScoring} scoring={scoring} onClose={() => setShowScoring(false)} />
+            )}
+
+            {pendingCloseMove && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+                    <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
+                        <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+                            {pendingCloseMove.stage.is_won
+                                ? (t('leads.reason_won_title') || 'Reason for Won Deal')
+                                : (t('leads.reason_lost_title') || 'Reason for Lost Deal')}
+                        </h3>
+                        <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                            {t('leads.reason_subtitle') || 'Select the main reason for this outcome (optional):'}
+                        </p>
+
+                        <div className="mt-4">
+                            <select
+                                value={selectedCloseReasonId}
+                                onChange={(e) => setSelectedCloseReasonId(e.target.value)}
+                                className="w-full rounded-soft border-soft bg-white py-2 px-3 text-sm dark:bg-neutral-800 dark:text-neutral-100"
+                            >
+                                <option value="">{t('common.select_reason') || '-- Select reason --'}</option>
+                                {closeReasons
+                                    .filter((r) => r.type === (pendingCloseMove.stage.is_won ? 'won' : 'lost'))
+                                    .map((r) => (
+                                        <option key={r.id} value={r.id}>
+                                            {r.name}
+                                        </option>
+                                    ))}
+                            </select>
+                        </div>
+
+                        <div className="mt-6 flex justify-end gap-2">
+                            <Button
+                                variant="secondary"
+                                onClick={() => {
+                                    // Move anyway without reason
+                                    executeMove(pendingCloseMove.leadId, pendingCloseMove.stage.id, pendingCloseMove.position);
+                                    setPendingCloseMove(null);
+                                    setSelectedCloseReasonId('');
+                                }}
+                            >
+                                {t('common.skip') || 'Skip'}
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                    executeMove(
+                                        pendingCloseMove.leadId,
+                                        pendingCloseMove.stage.id,
+                                        pendingCloseMove.position,
+                                        selectedCloseReasonId ? Number(selectedCloseReasonId) : null
+                                    );
+                                    setPendingCloseMove(null);
+                                    setSelectedCloseReasonId('');
+                                }}
+                            >
+                                {t('common.confirm') || 'Confirm'}
+                            </Button>
+                        </div>
+                    </div>
+                </div>
             )}
         </ClientLayout>
     );
