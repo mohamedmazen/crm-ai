@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Leads\Http\Controllers\CompanyController;
+use App\Modules\Leads\Http\Controllers\DuplicateController;
 use App\Modules\Leads\Http\Controllers\LeadBulkActionController;
 use App\Modules\Leads\Http\Controllers\LeadController;
 use App\Modules\Leads\Http\Controllers\LeadExportController;
@@ -68,6 +69,14 @@ Route::middleware(['web', 'client-app'])->prefix('app/leads')->name('client.lead
     // Import and Export
     Route::get('/export', [LeadExportController::class, 'export'])->name('export');
     Route::post('/import', [LeadImportController::class, 'import'])->name('import');
+
+    // Duplicates and Deduplication
+    Route::prefix('duplicates')->name('duplicates.')->group(function () {
+        Route::get('/', [DuplicateController::class, 'index'])->name('index');
+        Route::post('/scan', [DuplicateController::class, 'scan'])->name('scan');
+        Route::post('/{group}/merge', [DuplicateController::class, 'merge'])->name('merge');
+        Route::post('/{group}/dismiss', [DuplicateController::class, 'dismiss'])->name('dismiss');
+    });
 
     Route::delete('/{lead}', [LeadController::class, 'destroy'])->name('destroy');
 });
