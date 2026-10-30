@@ -3,6 +3,7 @@
 namespace App\Modules\Leads\Models;
 
 use App\Models\User;
+use App\Modules\Sales\Models\LeadSource;
 use App\Modules\Shared\Models\Contact;
 use App\Support\Concerns\MasksDemoData;
 use Database\Factories\LeadFactory;
@@ -51,6 +52,7 @@ class Lead extends Model
         'assigned_user_id', 'assigned_at',
         'score', 'score_band', 'score_breakdown', 'scored_at',
         'next_follow_up_at', 'last_activity_at',
+        'source', 'lead_source_id', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'referrer', 'landing_page',
     ];
 
     protected function casts(): array
@@ -132,6 +134,11 @@ class Lead extends Model
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class, 'company_id');
+    }
+
+    public function leadSource(): BelongsTo
+    {
+        return $this->belongsTo(LeadSource::class, 'lead_source_id');
     }
 
     /**

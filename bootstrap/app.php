@@ -161,6 +161,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'webhooks/sms/*',
             'webhooks/automation/*',
             'webhooks/ecommerce/*',
+            'webhooks/lead-source/*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

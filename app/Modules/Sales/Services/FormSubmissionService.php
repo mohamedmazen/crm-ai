@@ -11,6 +11,7 @@ use App\Modules\Leads\Services\PipelineManager;
 use App\Modules\Sales\Models\Form;
 use App\Modules\Sales\Models\FormField;
 use App\Modules\Sales\Models\FormSubmission;
+use App\Modules\Sales\Models\LeadSource;
 use App\Modules\Shared\Services\CustomFieldService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -101,6 +102,23 @@ class FormSubmissionService
             $leadData['pipeline_id'] = $pipelineId;
             $leadData['stage_id'] = $stageId;
 
+            // Attribute Lead Source and UTM parameters
+            $formSource = LeadSource::firstOrCreate(
+                ['workspace_id' => $form->workspace_id, 'type' => LeadSource::TYPE_FORM],
+                ['name' => 'Web Forms', 'status' => LeadSource::STATUS_ACTIVE]
+            );
+            $formSource->update(['last_lead_at' => now()]);
+
+            $leadData['source'] = 'Form: ' . $form->name;
+            $leadData['lead_source_id'] = $formSource->id;
+            $leadData['utm_source'] = $meta['utm_source'] ?? null;
+            $leadData['utm_medium'] = $meta['utm_medium'] ?? null;
+            $leadData['utm_campaign'] = $meta['utm_campaign'] ?? null;
+            $leadData['utm_term'] = $meta['utm_term'] ?? null;
+            $leadData['utm_content'] = $meta['utm_content'] ?? null;
+            $leadData['referrer'] = $meta['referrer'] ?? null;
+            $leadData['landing_page'] = $meta['landing_page'] ?? null;
+
             // 4. Create the Lead
             $lead = Lead::create($leadData);
 
@@ -173,6 +191,7 @@ class FormSubmissionService
 
             return [
                 'lead' => $lead,
+                'lead_id' => $lead->id,
                 'submission' => $submission,
                 'thank_you_type' => $form->thank_you_type,
                 'thank_you_value' => $form->thank_you_value ?: __('Thank you for contacting us! We have received your details.'),

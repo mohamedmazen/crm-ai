@@ -17,6 +17,7 @@ use App\Modules\Broadcasting\Http\Controllers\SmsStatusWebhookController;
 use App\Modules\Ecommerce\Http\Controllers\EcommerceOAuthController;
 use App\Modules\Ecommerce\Http\Controllers\EcommerceWebhookController;
 use App\Modules\Inbox\Http\Controllers\MetaWebhookController;
+use App\Modules\Sales\Http\Controllers\LeadWebhookController;
 use App\Modules\Whatsapp\Http\Controllers\WhatsappWebhookController;
 use Illuminate\Support\Facades\Route;
 
@@ -47,6 +48,10 @@ Route::middleware('throttle:webhooks')->group(function () {
     // ─── Automation inbound webhook trigger ─────────────────────────────────────
     Route::post('webhooks/automation/{trigger_token}', [AutomationWebhookController::class, 'receive'])
         ->name('webhooks.automation.receive');
+
+    // ─── Sales Inbound Lead Sources Webhook ──────────────────────────────────
+    Route::post('webhooks/lead-source/{token}', [LeadWebhookController::class, 'receive'])
+        ->name('webhooks.lead_source.receive');
 
     // ─── Ecommerce (Shopify / WooCommerce) per-store webhooks ────────────────────
     Route::post('webhooks/ecommerce/shopify/{store}', [EcommerceWebhookController::class, 'shopify'])

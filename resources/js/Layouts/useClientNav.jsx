@@ -112,6 +112,7 @@ export default function useClientNav() {
 
     const captureItems = [
         { label: t('nav.forms') || 'Forms', href: safeRoute('client.sales.forms.index'), icon: <FileText className={iconClass} />, activePattern: 'client.sales.forms.*', feature: 'forms' },
+        { label: t('nav.lead_sources') || 'Lead Sources', href: safeRoute('client.sales.lead-sources.index'), icon: <Radio className={iconClass} />, activePattern: 'client.sales.lead-sources.*', feature: 'lead_sources' },
     ];
 
     const leadsItems = [
