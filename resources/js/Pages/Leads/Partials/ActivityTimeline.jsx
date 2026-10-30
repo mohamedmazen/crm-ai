@@ -1,6 +1,6 @@
 import {
     Phone, StickyNote, Mail, MessageCircle, Users,
-    ArrowRight, Flame, UserCheck, Sparkles, Clock,
+    ArrowRight, Flame, UserCheck, Sparkles, Clock, UserPlus,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -15,12 +15,14 @@ const ICONS = {
     pushed_to_contacts: UserCheck,
     created: Sparkles,
     rescored: Sparkles,
+    assigned: UserPlus,
 };
 
 const TONES = {
     qualified: 'bg-coral-100 text-coral-700 dark:bg-coral-950/50 dark:text-coral-300',
     stage_changed: 'bg-brand-100 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300',
     pushed_to_contacts: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
+    assigned: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
 };
 
 /** "3 minutes ago" without pulling in a date library. */
@@ -73,6 +75,8 @@ export default function ActivityTimeline({ activities }) {
                 return t('leads.activity_pushed_to_contacts');
             case 'created':
                 return t('leads.activity_created');
+            case 'assigned':
+                return a.body || t('leads.activity_assigned') || 'Assignment updated';
             default:
                 return t(`leads.activity_${a.type}`);
         }

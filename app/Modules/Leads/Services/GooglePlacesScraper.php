@@ -38,6 +38,7 @@ class GooglePlacesScraper
         private readonly CredentialResolver $credentials,
         private readonly PipelineManager $pipeline,
         private readonly ActivityRecorder $activity,
+        private readonly LeadAssignmentService $assignment,
     ) {}
 
     public function run(LeadScrapeJob $job): void
@@ -226,12 +227,16 @@ class GooglePlacesScraper
         if ($lead->wasRecentlyCreated) {
             if ($stage) {
                 $lead->update([
+                    'pipeline_id' => $stage->pipeline_id,
                     'stage_id' => $stage->id,
                     'stage_changed_at' => now(),
                     'board_position' => (int) Lead::where('workspace_id', $workspaceId)
                         ->where('stage_id', $stage->id)->max('board_position') + 1,
                 ]);
             }
+
+            // Attempt auto-assignment if round-robin or load-balanced is configured
+            $this->assignment->autoAssign($lead);
 
             // Opens the lead's history with how it got here.
             $this->activity->created($lead, 'google_places');

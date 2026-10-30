@@ -61,6 +61,7 @@ export default function Pipeline({
     boardDealValue = 0,
     boardWeightedValue = 0,
     closeReasons = [],
+    teamMembers = [],
 }) {
     const { t } = useTranslation();
     const { props } = usePage();
@@ -358,6 +359,27 @@ export default function Pipeline({
                             <AlarmClock className="h-3 w-3" />
                             {t('leads.filter_due')}
                         </button>
+
+                        <span className="mx-1 h-4 w-px bg-neutral-200 dark:bg-neutral-700" aria-hidden="true" />
+
+                        <select
+                            value={filters.assigned ?? ''}
+                            onChange={(e) => applyFilter({ assigned: e.target.value || undefined })}
+                            className="rounded-soft border-soft bg-white py-1 px-2.5 text-xs font-medium text-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+                        >
+                            <option value="">{t('leads.all_assignees') || 'All Assignees'}</option>
+                            <option value="me">{t('leads.my_leads') || 'My Leads'}</option>
+                            <option value="unassigned">{t('leads.unassigned') || 'Unassigned'}</option>
+                            {teamMembers.length > 0 && (
+                                <optgroup label={t('leads.team_members') || 'Team Members'}>
+                                    {teamMembers.map((m) => (
+                                        <option key={m.id} value={m.id}>
+                                            {m.name}
+                                        </option>
+                                    ))}
+                                </optgroup>
+                            )}
+                        </select>
                     </div>
                 </div>
 
@@ -392,6 +414,7 @@ export default function Pipeline({
                 activityTypes={activityTypes}
                 callOutcomes={callOutcomes}
                 loading={loadingDetail}
+                teamMembers={teamMembers}
                 onClose={closeLead}
             />
 

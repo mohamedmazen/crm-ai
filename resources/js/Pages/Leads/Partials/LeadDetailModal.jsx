@@ -1,6 +1,6 @@
 import Modal from '@/Components/ui/Modal';
 import Button from '@/Components/ui/Button';
-import { Phone, Globe, MapPin, Star, History, BarChart3, DollarSign, CheckCircle2 } from 'lucide-react';
+import { Phone, Globe, MapPin, Star, History, BarChart3, DollarSign, CheckCircle2, User } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { router } from '@inertiajs/react';
@@ -14,12 +14,24 @@ import LogActivityForm from './LogActivityForm';
  * lead" is the question people open the card to answer. The score breakdown
  * and deal economics live behind tabs.
  */
-export default function LeadDetailModal({ detail, stages, activityTypes, callOutcomes, loading, onClose }) {
+export default function LeadDetailModal({ detail, stages, activityTypes, callOutcomes, loading, teamMembers = [], onClose }) {
     const { t } = useTranslation();
     const [tab, setTab] = useState('history');
 
     const lead = detail?.lead;
     const open = !!lead || loading;
+
+    const handleAssign = (userId) => {
+        if (!lead) return;
+        router.put(
+            route('client.leads.pipeline.assign', lead.id),
+            { user_id: userId ? Number(userId) : null },
+            {
+                preserveScroll: true,
+                preserveState: true,
+            }
+        );
+    };
 
     const TABS = [
         { key: 'history', label: t('leads.tab_history'), Icon: History },
@@ -72,6 +84,30 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
                                 <span className="inline-flex items-center gap-1.5">
                                     <MapPin className="h-3.5 w-3.5 text-neutral-400" aria-hidden="true" />
                                     {lead.address}
+                                </span>
+                            )}
+                        </div>
+
+                        <div className="mt-3 flex items-center gap-2">
+                            <User className="h-3.5 w-3.5 text-neutral-400" />
+                            <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                                {t('leads.assigned_to') || 'Assigned to'}:
+                            </span>
+                            <select
+                                value={lead.assigned_user_id ?? ''}
+                                onChange={(e) => handleAssign(e.target.value)}
+                                className="rounded-soft border-soft bg-white py-1 px-2.5 text-xs font-medium text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+                            >
+                                <option value="">{t('leads.unassigned') || 'Unassigned'}</option>
+                                {teamMembers.map((u) => (
+                                    <option key={u.id} value={u.id}>
+                                        {u.name}
+                                    </option>
+                                ))}
+                            </select>
+                            {lead.assigned_at && (
+                                <span className="text-[11px] text-neutral-400">
+                                    ({new Date(lead.assigned_at).toLocaleDateString()})
                                 </span>
                             )}
                         </div>

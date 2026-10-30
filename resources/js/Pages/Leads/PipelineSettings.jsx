@@ -45,6 +45,14 @@ export default function PipelineSettings({ pipelines, closeReasons }) {
         router.delete(route('client.leads.pipelines.destroy', pipeline.id));
     };
 
+    const handleUpdateAssignmentMode = (pipeline, mode) => {
+        router.put(
+            route('client.leads.pipelines.update', pipeline.id),
+            { assignment_mode: mode },
+            { preserveScroll: true }
+        );
+    };
+
     const handleCreateReason = (e) => {
         e.preventDefault();
         if (!newReasonName.trim()) return;
@@ -129,6 +137,20 @@ export default function PipelineSettings({ pipelines, closeReasons }) {
                                     <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
                                         {pipeline.stages_count} {t('leads.stages') || 'stages'} • {pipeline.leads_count} {t('leads.leads_count') || 'leads'}
                                     </p>
+                                    <div className="mt-2 flex items-center gap-2">
+                                        <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                                            {t('leads.routing_mode') || 'Lead Routing'}:
+                                        </span>
+                                        <select
+                                            value={pipeline.assignment_mode || 'manual'}
+                                            onChange={(e) => handleUpdateAssignmentMode(pipeline, e.target.value)}
+                                            className="rounded-soft border-soft bg-white py-0.5 px-2 text-xs font-medium dark:bg-neutral-800 dark:text-neutral-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+                                        >
+                                            <option value="manual">{t('leads.mode_manual') || 'Manual'}</option>
+                                            <option value="round_robin">{t('leads.mode_round_robin') || 'Round-Robin'}</option>
+                                            <option value="load_balanced">{t('leads.mode_load_balanced') || 'Load-Balanced'}</option>
+                                        </select>
+                                    </div>
                                 </div>
 
                                 <div className="flex items-center gap-2">

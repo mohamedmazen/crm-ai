@@ -1,6 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Phone, Globe, Star, UserCheck, GripVertical, DollarSign } from 'lucide-react';
+import { Phone, Globe, Star, UserCheck, GripVertical, DollarSign, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import ScoreBadge from './ScoreBadge';
 import FollowUpBadge from './FollowUpBadge';
@@ -84,9 +84,21 @@ export function LeadCardView({ lead, onOpen, dragging = false, overlay = false, 
                 )}
             </div>
 
-            {lead.next_follow_up_at && (
-                <div className="mt-2">
-                    <FollowUpBadge date={lead.next_follow_up_at} />
+            {(lead.next_follow_up_at || lead.assigned_user) && (
+                <div className="mt-2 flex items-center justify-between gap-2">
+                    {lead.next_follow_up_at ? (
+                        <FollowUpBadge date={lead.next_follow_up_at} />
+                    ) : <span />}
+
+                    {lead.assigned_user && (
+                        <span
+                            className="inline-flex items-center gap-1 rounded bg-neutral-100 px-1.5 py-0.5 text-[11px] font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
+                            title={t('leads.assigned_to_user', { name: lead.assigned_user.name }) || `Assigned to ${lead.assigned_user.name}`}
+                        >
+                            <User className="h-3 w-3 text-neutral-400" />
+                            <span className="max-w-[90px] truncate">{lead.assigned_user.name}</span>
+                        </span>
+                    )}
                 </div>
             )}
         </div>

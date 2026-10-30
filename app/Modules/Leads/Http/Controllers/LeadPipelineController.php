@@ -3,6 +3,7 @@
 namespace App\Modules\Leads\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Modules\Leads\Jobs\RescoreWorkspaceLeadsJob;
 use App\Modules\Leads\Models\Lead;
 use App\Modules\Leads\Models\LeadActivity;
@@ -11,12 +12,14 @@ use App\Modules\Leads\Models\LeadPipeline;
 use App\Modules\Leads\Models\LeadPipelineStage;
 use App\Modules\Leads\Models\LeadScoringConfig;
 use App\Modules\Leads\Services\ActivityRecorder;
+use App\Modules\Leads\Services\LeadAssignmentService;
 use App\Modules\Leads\Services\PipelineManager;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -33,6 +36,7 @@ class LeadPipelineController extends Controller
     public function __construct(
         private readonly PipelineManager $pipeline,
         private readonly ActivityRecorder $activity,
+        private readonly LeadAssignmentService $assignment,
     ) {}
 
     /** Board query with the tenant's filters applied. */
@@ -45,6 +49,16 @@ class LeadPipelineController extends Controller
                 $q->where('pipeline_id', $pipelineId)
                     ->orWhereNull('pipeline_id');
             });
+        }
+
+        if (! empty($filters['assigned'])) {
+            if ($filters['assigned'] === 'me') {
+                $query->where('assigned_user_id', Auth::id());
+            } elseif ($filters['assigned'] === 'unassigned') {
+                $query->whereNull('assigned_user_id');
+            } elseif (is_numeric($filters['assigned'])) {
+                $query->where('assigned_user_id', (int) $filters['assigned']);
+            }
         }
 
         if (! empty($filters['band'])) {
@@ -100,6 +114,7 @@ class LeadPipelineController extends Controller
             'due' => ['nullable', 'boolean'],
             'lead' => ['nullable', 'integer'],
             'pipeline_id' => ['nullable', 'integer'],
+            'assigned' => ['nullable', 'string', 'max:32'],
         ]);
 
         $matching = fn () => $this->filtered($wid, $filters, $activePipeline->id);
@@ -146,11 +161,16 @@ class LeadPipelineController extends Controller
                 'weightedValue' => (float) ($totals[$s->id]->weighted_value ?? 0),
                 'leads' => $matching()
                     ->where('stage_id', $s->id)
-                    ->with('contact:id,lead_id')
+                    ->with(['contact:id,lead_id', 'assignedUser:id,name'])
                     ->boardOrdered()
                     ->limit(self::CARDS_PER_COLUMN)
                     ->get(),
             ]),
+            'teamMembers' => $this->assignment->eligibleUsersFor($wid)->map(fn (User $u) => [
+                'id' => $u->id,
+                'name' => $u->name,
+                'email' => $u->email,
+            ])->values(),
             'perColumn' => self::CARDS_PER_COLUMN,
             'boardTotal' => $boardTotal,
             'hotTotal' => $hotTotal,
@@ -176,6 +196,7 @@ class LeadPipelineController extends Controller
                 'contact:id,lead_id',
                 'closeReason:id,name,type',
                 'pipeline:id,name',
+                'assignedUser:id,name,email',
                 'activities.user:id,name',
                 'stageHistory.fromStage:id,name',
                 'stageHistory.toStage:id,name',
@@ -193,10 +214,11 @@ class LeadPipelineController extends Controller
                 'rating', 'review_count', 'score', 'score_band', 'score_breakdown',
                 'stage_id', 'pipeline_id', 'status', 'deal_value', 'currency',
                 'probability', 'expected_close_date', 'won_at', 'lost_at',
-                'close_reason_id', 'next_follow_up_at', 'last_activity_at',
+                'close_reason_id', 'assigned_user_id', 'assigned_at', 'next_follow_up_at', 'last_activity_at',
             ]) + [
                 'contact' => $lead->contact ? ['id' => $lead->contact->id] : null,
                 'pipeline' => $lead->pipeline ? ['id' => $lead->pipeline->id, 'name' => $lead->pipeline->name] : null,
+                'assigned_user' => $lead->assignedUser ? ['id' => $lead->assignedUser->id, 'name' => $lead->assignedUser->name, 'email' => $lead->assignedUser->email] : null,
                 'close_reason' => $lead->closeReason ? ['id' => $lead->closeReason->id, 'name' => $lead->closeReason->name, 'type' => $lead->closeReason->type] : null,
             ],
             'activities' => $lead->activities->map(fn (LeadActivity $a) => Arr::only($a->toArray(), [
@@ -290,6 +312,32 @@ class LeadPipelineController extends Controller
         $lead->update($data);
 
         return back()->with('success', __('Deal updated.'));
+    }
+
+    public function assign(Request $request, Lead $lead): RedirectResponse
+    {
+        $wid = $this->workspaceId($request);
+        abort_unless((int) $lead->workspace_id === $wid, 403);
+
+        $data = $request->validate([
+            'user_id' => ['nullable', 'integer'],
+        ]);
+
+        $user = ! empty($data['user_id']) ? User::findOrFail($data['user_id']) : null;
+
+        if ($user) {
+            $eligible = $this->assignment->eligibleUsersFor($wid);
+            if (! $eligible->contains('id', $user->id)) {
+                abort(403, 'User does not belong to this workspace or organization.');
+            }
+        }
+
+        $this->assignment->assign($lead, $user, $request->user());
+
+        return back()->with(
+            'success',
+            $user ? __('Lead assigned to :name.', ['name' => $user->name]) : __('Lead unassigned.')
+        );
     }
 
     public function storeStage(Request $request): RedirectResponse

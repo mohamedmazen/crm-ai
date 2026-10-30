@@ -3,6 +3,7 @@
 namespace App\Modules\Leads\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Leads\Models\LeadAssignmentConfig;
 use App\Modules\Leads\Models\LeadCloseReason;
 use App\Modules\Leads\Models\LeadPipeline;
 use App\Modules\Leads\Services\PipelineManager;
@@ -35,11 +36,13 @@ class PipelineSettingsController extends Controller
             ->get();
 
         return Inertia::render('Leads/PipelineSettings', [
+            'assignmentModes' => LeadAssignmentConfig::MODES,
             'pipelines' => $pipelines->map(fn (LeadPipeline $p) => [
                 'id' => $p->id,
                 'name' => $p->name,
                 'is_default' => (bool) $p->is_default,
                 'sort_order' => $p->sort_order,
+                'assignment_mode' => $p->assignmentConfig?->mode ?? LeadAssignmentConfig::MODE_MANUAL,
                 'stages_count' => $p->stages()->count(),
                 'leads_count' => $p->leads()->count(),
                 'stages' => $p->stages->map(fn ($s) => [
@@ -68,6 +71,7 @@ class PipelineSettingsController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:128'],
             'is_default' => ['boolean'],
+            'assignment_mode' => ['nullable', Rule::in(LeadAssignmentConfig::MODES)],
         ]);
 
         $sortOrder = (int) LeadPipeline::where('workspace_id', $wid)->max('sort_order') + 1;
@@ -83,6 +87,13 @@ class PipelineSettingsController extends Controller
             'sort_order' => $sortOrder,
         ]);
 
+        if (! empty($data['assignment_mode'])) {
+            LeadAssignmentConfig::create([
+                'pipeline_id' => $pipeline->id,
+                'mode' => $data['assignment_mode'],
+            ]);
+        }
+
         // Seed default stages for the new pipeline
         $this->pipelineManager->stagesFor($wid, $pipeline->id);
 
@@ -95,8 +106,9 @@ class PipelineSettingsController extends Controller
         $pipeline = LeadPipeline::where('workspace_id', $wid)->findOrFail($pipelineId);
 
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:128'],
+            'name' => ['nullable', 'string', 'max:128'],
             'is_default' => ['boolean'],
+            'assignment_mode' => ['nullable', Rule::in(LeadAssignmentConfig::MODES)],
         ]);
 
         if (! empty($data['is_default'])) {
@@ -105,7 +117,21 @@ class PipelineSettingsController extends Controller
                 ->update(['is_default' => false]);
         }
 
-        $pipeline->update($data);
+        $pipelineUpdate = array_filter([
+            'name' => $data['name'] ?? null,
+            'is_default' => $data['is_default'] ?? null,
+        ], fn ($val) => $val !== null);
+
+        if (! empty($pipelineUpdate)) {
+            $pipeline->update($pipelineUpdate);
+        }
+
+        if (array_key_exists('assignment_mode', $data)) {
+            LeadAssignmentConfig::updateOrCreate(
+                ['pipeline_id' => $pipeline->id],
+                ['mode' => $data['assignment_mode'] ?? LeadAssignmentConfig::MODE_MANUAL]
+            );
+        }
 
         return back()->with('success', __('Pipeline updated.'));
     }

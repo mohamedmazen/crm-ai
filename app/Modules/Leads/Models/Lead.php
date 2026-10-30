@@ -2,6 +2,7 @@
 
 namespace App\Modules\Leads\Models;
 
+use App\Models\User;
 use App\Modules\Shared\Models\Contact;
 use App\Support\Concerns\MasksDemoData;
 use Database\Factories\LeadFactory;
@@ -46,6 +47,7 @@ class Lead extends Model
         'lat', 'lng', 'category', 'rating', 'review_count', 'google_place_id', 'whatsapp_status',
         'pushed_to_contacts', 'stage_id', 'board_position', 'stage_changed_at',
         'status', 'deal_value', 'currency', 'probability', 'expected_close_date', 'won_at', 'lost_at', 'close_reason_id',
+        'assigned_user_id', 'assigned_at',
         'score', 'score_band', 'score_breakdown', 'scored_at',
         'next_follow_up_at', 'last_activity_at',
     ];
@@ -63,6 +65,7 @@ class Lead extends Model
             'expected_close_date' => 'date',
             'won_at' => 'datetime',
             'lost_at' => 'datetime',
+            'assigned_at' => 'datetime',
             'scored_at' => 'datetime',
             'stage_changed_at' => 'datetime',
             'next_follow_up_at' => 'datetime',
@@ -73,6 +76,11 @@ class Lead extends Model
     public function pipeline(): BelongsTo
     {
         return $this->belongsTo(LeadPipeline::class, 'pipeline_id');
+    }
+
+    public function assignedUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_user_id');
     }
 
     public function closeReason(): BelongsTo
@@ -89,6 +97,14 @@ class Lead extends Model
     public function activities(): HasMany
     {
         return $this->hasMany(LeadActivity::class)->latest('occurred_at')->latest('id');
+    }
+
+    /** Scope to leads assigned to a user, or unassigned when null. */
+    public function scopeAssignedTo(Builder $query, ?int $userId): Builder
+    {
+        return $userId !== null
+            ? $query->where('assigned_user_id', $userId)
+            : $query->whereNull('assigned_user_id');
     }
 
     /** Follow-up due now or in the past. */

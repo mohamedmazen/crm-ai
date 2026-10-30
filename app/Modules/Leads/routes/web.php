@@ -21,6 +21,7 @@ Route::middleware(['web', 'client-app'])->prefix('app/leads')->name('client.lead
         Route::delete('/stages/{stage}', [LeadPipelineController::class, 'destroyStage'])->name('stages.destroy');
         Route::put('/{lead}/move', [LeadPipelineController::class, 'move'])->name('move');
         Route::put('/{lead}/deal', [LeadPipelineController::class, 'updateDeal'])->name('deal.update');
+        Route::put('/{lead}/assign', [LeadPipelineController::class, 'assign'])->name('assign');
         Route::post('/{lead}/activities', [LeadPipelineController::class, 'storeActivity'])->name('activities.store');
     });
 

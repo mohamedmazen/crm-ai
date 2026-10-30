@@ -62,4 +62,20 @@ class ActivityRecorder
     {
         return $this->record($lead, 'pushed_to_contacts', null, ['contact_id' => $contactId]);
     }
+
+    public function assigned(Lead $lead, ?\App\Models\User $newUser, ?\App\Models\User $oldUser = null, int|false|null $actorId = false): LeadActivity
+    {
+        $meta = [
+            'to_user_id' => $newUser?->id,
+            'to_user_name' => $newUser?->name,
+            'from_user_id' => $oldUser?->id,
+            'from_user_name' => $oldUser?->name,
+        ];
+
+        $body = $newUser
+            ? ($oldUser ? "Reassigned from {$oldUser->name} to {$newUser->name}" : "Assigned to {$newUser->name}")
+            : "Unassigned";
+
+        return $this->record($lead, 'assigned', $body, $meta, $actorId);
+    }
 }

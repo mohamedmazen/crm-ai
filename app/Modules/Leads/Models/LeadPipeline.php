@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class LeadPipeline extends Model
 {
@@ -42,6 +43,11 @@ class LeadPipeline extends Model
     public function leads(): HasMany
     {
         return $this->hasMany(Lead::class, 'pipeline_id');
+    }
+
+    public function assignmentConfig(): HasOne
+    {
+        return $this->hasOne(LeadAssignmentConfig::class, 'pipeline_id');
     }
 }
 
