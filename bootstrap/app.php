@@ -162,6 +162,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'webhooks/automation/*',
             'webhooks/ecommerce/*',
             'webhooks/lead-source/*',
+            'webhooks/meta-leadgen/*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

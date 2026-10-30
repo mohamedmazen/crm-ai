@@ -18,6 +18,7 @@ use App\Modules\Ecommerce\Http\Controllers\EcommerceOAuthController;
 use App\Modules\Ecommerce\Http\Controllers\EcommerceWebhookController;
 use App\Modules\Inbox\Http\Controllers\MetaWebhookController;
 use App\Modules\Sales\Http\Controllers\LeadWebhookController;
+use App\Modules\Sales\Http\Controllers\MetaLeadAdsWebhookController;
 use App\Modules\Whatsapp\Http\Controllers\WhatsappWebhookController;
 use Illuminate\Support\Facades\Route;
 
@@ -52,6 +53,12 @@ Route::middleware('throttle:webhooks')->group(function () {
     // ─── Sales Inbound Lead Sources Webhook ──────────────────────────────────
     Route::post('webhooks/lead-source/{token}', [LeadWebhookController::class, 'receive'])
         ->name('webhooks.lead_source.receive');
+
+    // ─── Meta Lead Ads Webhook ─────────────────────────────────────────────
+    Route::get('webhooks/meta-leadgen/{token}', [MetaLeadAdsWebhookController::class, 'verify'])
+        ->name('webhooks.meta_leadgen.verify');
+    Route::post('webhooks/meta-leadgen/{token}', [MetaLeadAdsWebhookController::class, 'receive'])
+        ->name('webhooks.meta_leadgen.receive');
 
     // ─── Ecommerce (Shopify / WooCommerce) per-store webhooks ────────────────────
     Route::post('webhooks/ecommerce/shopify/{store}', [EcommerceWebhookController::class, 'shopify'])

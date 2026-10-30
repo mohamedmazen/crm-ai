@@ -292,6 +292,19 @@ class WhatsappDriver implements ChannelDriverInterface
             };
         }
 
+        // Auto-capture or link lead in Sales CRM
+        try {
+            app(\App\Modules\Sales\Services\LeadAutoCaptureService::class)->captureFromWhatsapp(
+                $workspaceId,
+                $contact,
+                $fromPhone,
+                $body,
+                $conversation->id
+            );
+        } catch (\Throwable $e) {
+            Log::warning('Failed to auto-capture WhatsApp lead', ['error' => $e->getMessage()]);
+        }
+
         $allowedTypes = ['text', 'template', 'media', 'interactive', 'reaction', 'image', 'video',
             'document', 'audio', 'location', 'contacts', 'sticker', 'order', 'poll', 'event', 'unsupported'];
 
