@@ -78,4 +78,23 @@ class ActivityRecorder
 
         return $this->record($lead, 'assigned', $body, $meta, $actorId);
     }
+
+    public function taskCreated(Lead $lead, \App\Modules\Leads\Models\LeadTask $task): LeadActivity
+    {
+        return $this->record($lead, 'task_created', "Task scheduled: {$task->title}", [
+            'task_id' => $task->id,
+            'title' => $task->title,
+            'type' => $task->type,
+            'due_at' => $task->due_at?->toIso8601String(),
+        ]);
+    }
+
+    public function taskCompleted(Lead $lead, \App\Modules\Leads\Models\LeadTask $task): LeadActivity
+    {
+        return $this->record($lead, 'task_completed', "Completed task: {$task->title}", [
+            'task_id' => $task->id,
+            'title' => $task->title,
+            'type' => $task->type,
+        ]);
+    }
 }

@@ -120,3 +120,10 @@ Schedule::command('reports:weekly-digest')
     ->name('weekly-digest-emails')
     ->withoutOverlapping()
     ->onOneServer();
+
+// Lead task reminders (every 5 minutes)
+Schedule::command('leads:process-task-reminders')
+    ->everyFiveMinutes()
+    ->name('process-lead-task-reminders')
+    ->withoutOverlapping()
+    ->onOneServer();

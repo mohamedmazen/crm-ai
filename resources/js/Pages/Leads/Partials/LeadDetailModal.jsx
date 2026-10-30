@@ -1,6 +1,6 @@
 import Modal from '@/Components/ui/Modal';
 import Button from '@/Components/ui/Button';
-import { Phone, Globe, MapPin, Star, History, BarChart3, DollarSign, CheckCircle2, User } from 'lucide-react';
+import { Phone, Globe, MapPin, Star, History, BarChart3, DollarSign, CheckCircle2, User, CheckSquare } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { router } from '@inertiajs/react';
@@ -8,6 +8,7 @@ import ScoreBadge from './ScoreBadge';
 import FollowUpBadge from './FollowUpBadge';
 import ActivityTimeline from './ActivityTimeline';
 import LogActivityForm from './LogActivityForm';
+import LeadTasksManager from './LeadTasksManager';
 
 /**
  * Lead detail: the follow-up history first, because "what happened with this
@@ -35,6 +36,11 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
 
     const TABS = [
         { key: 'history', label: t('leads.tab_history'), Icon: History },
+        {
+            key: 'tasks',
+            label: `${t('leads.tab_tasks') || 'Tasks'}${detail?.tasks?.length ? ` (${detail.tasks.length})` : ''}`,
+            Icon: CheckSquare,
+        },
         { key: 'deal', label: t('leads.tab_deal') || 'Deal & Economics', Icon: DollarSign },
         { key: 'score', label: t('leads.tab_score'), Icon: BarChart3 },
     ];
@@ -144,6 +150,8 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
                                 />
                                 <ActivityTimeline activities={detail.activities} />
                             </div>
+                        ) : tab === 'tasks' ? (
+                            <LeadTasksManager lead={lead} tasks={detail.tasks ?? []} teamMembers={teamMembers} />
                         ) : tab === 'deal' ? (
                             <DealEditor lead={lead} stageHistory={detail.stage_history ?? []} />
                         ) : (

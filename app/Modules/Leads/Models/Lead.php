@@ -93,6 +93,11 @@ class Lead extends Model
         return $this->hasMany(LeadStageHistory::class, 'lead_id')->orderByDesc('changed_at');
     }
 
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(LeadTask::class, 'lead_id')->orderBy('due_at');
+    }
+
     /** Follow-up history, newest first. */
     public function activities(): HasMany
     {

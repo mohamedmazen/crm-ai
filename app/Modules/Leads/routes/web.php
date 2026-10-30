@@ -2,7 +2,9 @@
 
 use App\Modules\Leads\Http\Controllers\LeadController;
 use App\Modules\Leads\Http\Controllers\LeadPipelineController;
+use App\Modules\Leads\Http\Controllers\LeadTaskController;
 use App\Modules\Leads\Http\Controllers\PipelineSettingsController;
+use App\Modules\Leads\Http\Controllers\TaskDashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'client-app'])->prefix('app/leads')->name('client.leads.')->group(function () {
@@ -35,5 +37,16 @@ Route::middleware(['web', 'client-app'])->prefix('app/leads')->name('client.lead
         Route::delete('/reasons/{reason}', [PipelineSettingsController::class, 'destroyReason'])->name('reasons.destroy');
     });
 
+    // Lead tasks
+    Route::post('/{lead}/tasks', [LeadTaskController::class, 'store'])->name('tasks.store');
+    Route::put('/tasks/{task}', [LeadTaskController::class, 'update'])->name('tasks.update');
+    Route::patch('/tasks/{task}/toggle', [LeadTaskController::class, 'toggle'])->name('tasks.toggle');
+    Route::delete('/tasks/{task}', [LeadTaskController::class, 'destroy'])->name('tasks.destroy');
+
     Route::delete('/{lead}', [LeadController::class, 'destroy'])->name('destroy');
+});
+
+// Tasks dashboard
+Route::middleware(['web', 'client-app'])->prefix('app/tasks')->name('client.tasks.')->group(function () {
+    Route::get('/', [TaskDashboardController::class, 'index'])->name('index');
 });

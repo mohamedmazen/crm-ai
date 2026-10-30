@@ -11,6 +11,7 @@ use App\Modules\Leads\Models\LeadCloseReason;
 use App\Modules\Leads\Models\LeadPipeline;
 use App\Modules\Leads\Models\LeadPipelineStage;
 use App\Modules\Leads\Models\LeadScoringConfig;
+use App\Modules\Leads\Models\LeadTask;
 use App\Modules\Leads\Services\ActivityRecorder;
 use App\Modules\Leads\Services\LeadAssignmentService;
 use App\Modules\Leads\Services\PipelineManager;
@@ -201,6 +202,7 @@ class LeadPipelineController extends Controller
                 'stageHistory.fromStage:id,name',
                 'stageHistory.toStage:id,name',
                 'stageHistory.user:id,name',
+                'tasks.assignedUser:id,name',
             ])
             ->find($leadId);
 
@@ -221,6 +223,18 @@ class LeadPipelineController extends Controller
                 'assigned_user' => $lead->assignedUser ? ['id' => $lead->assignedUser->id, 'name' => $lead->assignedUser->name, 'email' => $lead->assignedUser->email] : null,
                 'close_reason' => $lead->closeReason ? ['id' => $lead->closeReason->id, 'name' => $lead->closeReason->name, 'type' => $lead->closeReason->type] : null,
             ],
+            'tasks' => $lead->tasks->map(fn (LeadTask $t) => [
+                'id' => $t->id,
+                'title' => $t->title,
+                'description' => $t->description,
+                'type' => $t->type,
+                'priority' => $t->priority,
+                'due_at' => $t->due_at?->toIso8601String(),
+                'completed_at' => $t->completed_at?->toIso8601String(),
+                'is_completed' => $t->isCompleted(),
+                'is_overdue' => $t->isOverdue(),
+                'assigned_user' => $t->assignedUser ? ['id' => $t->assignedUser->id, 'name' => $t->assignedUser->name] : null,
+            ])->values(),
             'activities' => $lead->activities->map(fn (LeadActivity $a) => Arr::only($a->toArray(), [
                 'id', 'type', 'body', 'meta', 'occurred_at',
             ]) + [
