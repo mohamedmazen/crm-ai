@@ -121,7 +121,7 @@ class BookingPublicController extends Controller
         $startIso = Carbon::parse($booking->starts_at)->format('Ymd\THis\Z');
         $endIso = Carbon::parse($booking->ends_at)->format('Ymd\THis\Z');
         $title = urlencode($booking->meetingType->name ?? 'Meeting');
-        $details = urlencode('Meeting with ' . ($booking->host->name ?? 'Host') . ($booking->meet_link ? "\nJoin: " . $booking->meet_link : ''));
+        $details = urlencode('Meeting with '.($booking->host->name ?? 'Host').($booking->meet_link ? "\nJoin: ".$booking->meet_link : ''));
         $location = urlencode($booking->meet_link ?: $booking->meetingType->location_details ?: 'Online');
 
         $googleCalendarUrl = "https://calendar.google.com/calendar/render?action=TEMPLATE&text={$title}&dates={$startIso}/{$endIso}&details={$details}&location={$location}";
@@ -137,6 +137,7 @@ class BookingPublicController extends Controller
                 'guest_email' => $booking->guest_email,
                 'guest_timezone' => $booking->guest_timezone,
                 'cancel_token' => $booking->cancel_token,
+                'reschedule_token' => $booking->reschedule_token,
             ],
             'meeting_type' => [
                 'name' => $booking->meetingType->name,
@@ -148,6 +149,36 @@ class BookingPublicController extends Controller
                 'email' => $booking->host->email,
             ],
             'google_calendar_url' => $googleCalendarUrl,
+        ]);
+    }
+
+    /**
+     * Display the cancellation confirmation page reached from the guest's link.
+     */
+    public function cancelShow(string $token): Response
+    {
+        $booking = Booking::where('cancel_token', $token)
+            ->with(['meetingType', 'host:id,name,email,avatar,timezone'])
+            ->firstOrFail();
+
+        return Inertia::render('Booking/Cancel', [
+            'booking' => [
+                'uuid' => $booking->uuid,
+                'status' => $booking->status,
+                'starts_at' => $booking->starts_at->toIso8601String(),
+                'guest_name' => $booking->guest_name,
+                'guest_email' => $booking->guest_email,
+                'cancel_token' => $booking->cancel_token,
+            ],
+            'meeting_type' => [
+                'name' => $booking->meetingType->name,
+                'slug' => $booking->meetingType->slug,
+                'duration_minutes' => $booking->meetingType->duration_minutes,
+            ],
+            'host' => [
+                'name' => $booking->host->name ?? 'Meeting Host',
+                'email' => $booking->host->email ?? '',
+            ],
         ]);
     }
 
@@ -170,5 +201,74 @@ class BookingPublicController extends Controller
 
         return back()->with('success', __('Booking cancelled successfully.'));
     }
-}
 
+    /**
+     * Display the reschedule page reached from the guest's booking link.
+     */
+    public function rescheduleShow(string $token): Response
+    {
+        $booking = Booking::where('reschedule_token', $token)
+            ->where('status', Booking::STATUS_CONFIRMED)
+            ->with(['meetingType', 'host:id,name,email,avatar,timezone'])
+            ->firstOrFail();
+
+        $meetingType = $booking->meetingType;
+        $host = $booking->host;
+
+        return Inertia::render('Booking/Reschedule', [
+            'booking' => [
+                'uuid' => $booking->uuid,
+                'starts_at' => $booking->starts_at->toIso8601String(),
+                'reschedule_token' => $booking->reschedule_token,
+                'guest_name' => $booking->guest_name,
+                'guest_email' => $booking->guest_email,
+                'guest_timezone' => $booking->guest_timezone,
+            ],
+            'meeting_type' => [
+                'id' => $meetingType->id,
+                'uuid' => $meetingType->uuid,
+                'name' => $meetingType->name,
+                'slug' => $meetingType->slug,
+                'description' => $meetingType->description,
+                'duration_minutes' => $meetingType->duration_minutes,
+                'location_type' => $meetingType->location_type,
+                'location_details' => $meetingType->location_details,
+                'booking_window_days' => $meetingType->booking_window_days,
+                'min_notice_hours' => $meetingType->min_notice_hours,
+            ],
+            'host' => [
+                'name' => $host->name ?? 'Meeting Host',
+                'email' => $host->email ?? '',
+                'avatar' => $host->avatar ?? null,
+                'timezone' => $host->timezone ?? 'UTC',
+            ],
+        ]);
+    }
+
+    /**
+     * Move a confirmed booking to the slot the guest picked.
+     */
+    public function reschedule(Request $request, string $token): JsonResponse|RedirectResponse
+    {
+        $booking = Booking::where('reschedule_token', $token)
+            ->where('status', Booking::STATUS_CONFIRMED)
+            ->firstOrFail();
+
+        $validated = $request->validate([
+            'starts_at' => ['required', 'string'],
+            'guest_timezone' => ['nullable', 'string', 'max:64'],
+        ]);
+
+        $booking = $this->bookingService->rescheduleBooking($booking, $validated);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'booking_uuid' => $booking->uuid,
+                'redirect_url' => route('booking.public.confirmed', [$booking->meetingType->slug, $booking->uuid]),
+            ]);
+        }
+
+        return redirect()->route('booking.public.confirmed', [$booking->meetingType->slug, $booking->uuid]);
+    }
+}

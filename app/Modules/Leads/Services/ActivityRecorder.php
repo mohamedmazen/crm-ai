@@ -2,8 +2,10 @@
 
 namespace App\Modules\Leads\Services;
 
+use App\Models\User;
 use App\Modules\Leads\Models\Lead;
 use App\Modules\Leads\Models\LeadActivity;
+use App\Modules\Leads\Models\LeadTask;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -46,6 +48,19 @@ class ActivityRecorder
         return $this->record($lead, 'stage_changed', null, ['from' => $from, 'to' => $to]);
     }
 
+    public function pipelineChanged(Lead $lead, ?string $from, string $to): LeadActivity
+    {
+        return $this->record($lead, 'pipeline_changed', null, ['from' => $from, 'to' => $to]);
+    }
+
+    /**
+     * @param  array<string, mixed>  $changes
+     */
+    public function dealUpdated(Lead $lead, array $changes): LeadActivity
+    {
+        return $this->record($lead, 'deal_updated', null, ['changes' => $changes]);
+    }
+
     public function qualified(Lead $lead, int $score): LeadActivity
     {
         // Scoring runs in the scraper queue as well as on demand, so never assume
@@ -63,7 +78,7 @@ class ActivityRecorder
         return $this->record($lead, 'pushed_to_contacts', null, ['contact_id' => $contactId]);
     }
 
-    public function assigned(Lead $lead, ?\App\Models\User $newUser, ?\App\Models\User $oldUser = null, int|false|null $actorId = false): LeadActivity
+    public function assigned(Lead $lead, ?User $newUser, ?User $oldUser = null, int|false|null $actorId = false): LeadActivity
     {
         $meta = [
             'to_user_id' => $newUser?->id,
@@ -74,12 +89,12 @@ class ActivityRecorder
 
         $body = $newUser
             ? ($oldUser ? "Reassigned from {$oldUser->name} to {$newUser->name}" : "Assigned to {$newUser->name}")
-            : "Unassigned";
+            : 'Unassigned';
 
         return $this->record($lead, 'assigned', $body, $meta, $actorId);
     }
 
-    public function taskCreated(Lead $lead, \App\Modules\Leads\Models\LeadTask $task): LeadActivity
+    public function taskCreated(Lead $lead, LeadTask $task): LeadActivity
     {
         return $this->record($lead, 'task_created', "Task scheduled: {$task->title}", [
             'task_id' => $task->id,
@@ -89,7 +104,7 @@ class ActivityRecorder
         ]);
     }
 
-    public function taskCompleted(Lead $lead, \App\Modules\Leads\Models\LeadTask $task): LeadActivity
+    public function taskCompleted(Lead $lead, LeadTask $task): LeadActivity
     {
         return $this->record($lead, 'task_completed', "Completed task: {$task->title}", [
             'task_id' => $task->id,

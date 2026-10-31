@@ -19,6 +19,8 @@ return [
         'companies' => 'Companies',
         'custom_fields' => 'Custom fields',
         'lead_import' => 'Lead import & export',
+        'lead_sources' => 'Lead sources',
+        'duplicates' => 'Duplicate detection',
         'forms' => 'Forms',
         'form_submissions' => 'Form submissions',
         'booking' => 'Booking pages',

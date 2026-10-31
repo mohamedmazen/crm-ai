@@ -2,9 +2,11 @@
 
 namespace App\Modules\Leads\Http\Controllers;
 
+use App\Events\LeadDealValueChanged;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Modules\Leads\Jobs\RescoreWorkspaceLeadsJob;
+use App\Modules\Leads\Models\Company;
 use App\Modules\Leads\Models\Lead;
 use App\Modules\Leads\Models\LeadActivity;
 use App\Modules\Leads\Models\LeadCloseReason;
@@ -15,6 +17,7 @@ use App\Modules\Leads\Models\LeadTask;
 use App\Modules\Leads\Services\ActivityRecorder;
 use App\Modules\Leads\Services\LeadAssignmentService;
 use App\Modules\Leads\Services\PipelineManager;
+use App\Modules\Shared\Services\CustomFieldService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
@@ -256,7 +259,7 @@ class LeadPipelineController extends Controller
                 'name' => $t->name,
                 'color' => $t->color,
             ])->values(),
-            'custom_fields' => app(\App\Modules\Shared\Services\CustomFieldService::class)->fieldsWithValues($wid, 'lead', $lead->id),
+            'custom_fields' => app(CustomFieldService::class)->fieldsWithValues($wid, 'lead', $lead->id),
         ];
     }
 
@@ -321,7 +324,8 @@ class LeadPipelineController extends Controller
 
     public function updateDeal(Request $request, Lead $lead): RedirectResponse
     {
-        abort_unless((int) $lead->workspace_id === $this->workspaceId($request), 403);
+        $wid = $this->workspaceId($request);
+        abort_unless((int) $lead->workspace_id === $wid, 403);
 
         $data = $request->validate([
             'deal_value' => ['nullable', 'numeric', 'min:0'],
@@ -333,7 +337,33 @@ class LeadPipelineController extends Controller
             'company_id' => ['nullable', 'integer'],
         ]);
 
+        if (! empty($data['company_id'])) {
+            Company::where('workspace_id', $wid)->findOrFail($data['company_id']);
+        }
+
+        $oldValue = $lead->deal_value !== null ? (float) $lead->deal_value : null;
+
         $lead->update($data);
+
+        $changes = $lead->getChanges();
+        unset($changes['updated_at']);
+
+        if ($changes !== []) {
+            $this->activity->dealUpdated($lead, $changes);
+        }
+
+        $newValue = $lead->deal_value !== null ? (float) $lead->deal_value : null;
+
+        if (array_key_exists('deal_value', $data) && $oldValue !== $newValue) {
+            LeadDealValueChanged::dispatch(
+                (int) $lead->workspace_id,
+                (int) $lead->id,
+                $lead->contact?->id,
+                $oldValue,
+                $newValue,
+                $lead->currency,
+            );
+        }
 
         return back()->with('success', __('Deal updated.'));
     }
@@ -374,7 +404,7 @@ class LeadPipelineController extends Controller
         ]);
 
         if (! empty($data['company_id'])) {
-            $company = \App\Modules\Leads\Models\Company::where('workspace_id', $wid)->findOrFail($data['company_id']);
+            $company = Company::where('workspace_id', $wid)->findOrFail($data['company_id']);
             $lead->update(['company_id' => $company->id]);
         } else {
             $lead->update(['company_id' => null]);
@@ -389,7 +419,7 @@ class LeadPipelineController extends Controller
         abort_unless((int) $lead->workspace_id === $wid, 403);
 
         $values = $request->input('values', []);
-        app(\App\Modules\Shared\Services\CustomFieldService::class)->syncValues($wid, 'lead', $lead->id, $values);
+        app(CustomFieldService::class)->syncValues($wid, 'lead', $lead->id, $values);
 
         return back()->with('success', __('Custom fields updated.'));
     }

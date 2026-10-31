@@ -128,7 +128,7 @@ export default function BookingIndex({
     };
 
     const handleCancelBooking = (booking) => {
-        const reason = prompt(t('booking.cancel_reason', 'Reason for cancellation (optional):'), 'Schedule conflict');
+        const reason = window.prompt(t('booking.cancel_reason', 'Reason for cancellation (optional):'), 'Schedule conflict');
         if (reason === null) return;
         router.post(route('client.sales.booking.bookings.cancel', booking.id), { reason });
     };

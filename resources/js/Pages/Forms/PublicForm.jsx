@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Head } from '@inertiajs/react';
 import { CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
@@ -7,6 +7,8 @@ export default function PublicForm({ form, fields = [] }) {
     const primaryColor = settings.primary_color || '#6366f1';
     const buttonText = settings.button_text || 'Submit';
     const showTitle = settings.show_title ?? true;
+    const spamProtection = form.spam_protection || 'none';
+    const spamSiteKey = form.spam_site_key;
 
     const [formData, setFormData] = useState({});
     const [utmParams, setUtmParams] = useState({});
@@ -15,6 +17,9 @@ export default function PublicForm({ form, fields = [] }) {
     const [errorMessage, setErrorMessage] = useState('');
     const [fieldErrors, setFieldErrors] = useState({});
     const [successMessage, setSuccessMessage] = useState('');
+    const [spamToken, setSpamToken] = useState('');
+    const spamContainerRef = useRef(null);
+    const spamWidgetIdRef = useRef(null);
 
     useEffect(() => {
         // Extract UTM parameters from URL query string
@@ -29,6 +34,85 @@ export default function PublicForm({ form, fields = [] }) {
         }
     }, []);
 
+    const spamScriptSrc = spamProtection === 'turnstile'
+        ? 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+        : spamProtection === 'recaptcha'
+            ? 'https://www.google.com/recaptcha/api.js?render=explicit'
+            : null;
+
+    useEffect(() => {
+        if (!spamScriptSrc || !spamSiteKey || !spamContainerRef.current) {
+            return;
+        }
+
+        let cancelled = false;
+
+        const renderWidget = () => {
+            if (cancelled || !spamContainerRef.current || spamWidgetIdRef.current !== null) {
+                return;
+            }
+
+            if (spamProtection === 'turnstile' && window.turnstile) {
+                spamWidgetIdRef.current = window.turnstile.render(spamContainerRef.current, {
+                    sitekey: spamSiteKey,
+                    callback: (token) => setSpamToken(token),
+                    'expired-callback': () => setSpamToken(''),
+                    'error-callback': () => setSpamToken(''),
+                });
+            } else if (spamProtection === 'recaptcha' && window.grecaptcha) {
+                spamWidgetIdRef.current = window.grecaptcha.render(spamContainerRef.current, {
+                    sitekey: spamSiteKey,
+                    callback: (token) => setSpamToken(token),
+                    'expired-callback': () => setSpamToken(''),
+                });
+            }
+        };
+
+        const scriptId = `spam-${spamProtection}-script`;
+        const existing = document.getElementById(scriptId);
+
+        if (existing) {
+            if (spamProtection === 'turnstile' ? window.turnstile : window.grecaptcha) {
+                renderWidget();
+            } else {
+                existing.addEventListener('load', renderWidget);
+            }
+
+            return () => {
+                cancelled = true;
+            };
+        }
+
+        const script = document.createElement('script');
+        script.id = scriptId;
+        script.src = spamScriptSrc;
+        script.async = true;
+        script.defer = true;
+        script.onload = renderWidget;
+        document.body.appendChild(script);
+
+        return () => {
+            cancelled = true;
+        };
+    }, [spamProtection, spamSiteKey, spamScriptSrc]);
+
+    // CAPTCHA tokens are single use, so an error means the visitor needs a
+    // fresh one before they can retry.
+    const resetSpam = () => {
+        setSpamToken('');
+
+        const widgetId = spamWidgetIdRef.current;
+        if (widgetId === null) {
+            return;
+        }
+
+        if (spamProtection === 'turnstile' && window.turnstile) {
+            window.turnstile.reset(widgetId);
+        } else if (spamProtection === 'recaptcha' && window.grecaptcha) {
+            window.grecaptcha.reset(widgetId);
+        }
+    };
+
     const handleChange = (key, value) => {
         setFormData((prev) => ({ ...prev, [key]: value }));
         if (fieldErrors[key]) {
@@ -42,15 +126,27 @@ export default function PublicForm({ form, fields = [] }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setSubmitting(true);
         setErrorMessage('');
         setFieldErrors({});
+
+        if (spamProtection !== 'none' && !spamToken) {
+            setErrorMessage('Please complete the spam verification and try again.');
+            return;
+        }
+
+        setSubmitting(true);
 
         try {
             const payload = {
                 ...formData,
                 ...utmParams,
             };
+
+            if (spamProtection === 'turnstile') {
+                payload['cf-turnstile-response'] = spamToken;
+            } else if (spamProtection === 'recaptcha') {
+                payload['g-recaptcha-response'] = spamToken;
+            }
 
             const response = await fetch(route('forms.public.submit', form.slug), {
                 method: 'POST',
@@ -70,6 +166,7 @@ export default function PublicForm({ form, fields = [] }) {
                 } else {
                     setErrorMessage(data.message || 'Something went wrong. Please check your inputs.');
                 }
+                resetSpam();
                 setSubmitting(false);
                 return;
             }
@@ -83,6 +180,7 @@ export default function PublicForm({ form, fields = [] }) {
             setSubmitted(true);
         } catch (err) {
             setErrorMessage('Network error. Please try again.');
+            resetSpam();
         } finally {
             setSubmitting(false);
         }
@@ -181,6 +279,12 @@ export default function PublicForm({ form, fields = [] }) {
                                 </div>
                             ))}
                         </div>
+
+                        {spamProtection !== 'none' && spamSiteKey && (
+                            <div className="pt-1">
+                                <div ref={spamContainerRef} />
+                            </div>
+                        )}
 
                         <div className="pt-3">
                             <button

@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Leads;
 
+use App\Models\Plan;
 use App\Models\User;
 use App\Modules\Leads\Models\Lead;
-use App\Modules\Leads\Models\LeadPipelineStage;
 use App\Modules\Leads\Models\LeadTag;
 use App\Modules\Leads\Services\PipelineManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -19,6 +19,10 @@ class LeadBulkActionsAndImportExportTest extends TestCase
     private function actor(): array
     {
         ['user' => $user, 'client' => $client, 'workspace' => $workspace] = $this->createWorkspaceContext();
+
+        $this->attachPlanToClient($client, Plan::factory()->create([
+            'feature_flags' => ['lead_import' => true],
+        ]));
 
         return [$user, $workspace, $client];
     }
@@ -257,5 +261,15 @@ class LeadBulkActionsAndImportExportTest extends TestCase
 
         $this->assertEquals(1, Lead::where('workspace_id', $workspace->id)->where('phone', '+1800999888')->count());
     }
-}
 
+    #[Test]
+    public function import_and_export_routes_are_feature_gated(): void
+    {
+        ['user' => $user] = $this->createWorkspaceContext();
+
+        $this->actingAs($user)
+            ->get(route('client.leads.export'))
+            ->assertRedirect(route('client.pricing'))
+            ->assertSessionHas('upgrade_required', true);
+    }
+}

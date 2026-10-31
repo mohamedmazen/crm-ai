@@ -5,7 +5,7 @@ import {
     LayoutDashboard, CreditCard, Package, FileText, Users, Settings,
     Layers, Webhook, Key, BookOpen, Image, Radio, Inbox, Bot, Database,
     Zap, Share2, MapPin, Tag, LifeBuoy, ExternalLink, Mail, MessageSquare,
-    ShoppingBag, KanbanSquare, SlidersHorizontal, CheckSquare, Building2, Copy,
+    ShoppingBag, KanbanSquare, SlidersHorizontal, CheckSquare, Building2, Copy, Calendar,
 } from 'lucide-react';
 
 const iconClass = 'h-4 w-4';
@@ -117,12 +117,12 @@ export default function useClientNav() {
     ];
 
     const leadsItems = [
-        { label: t('nav.tasks') || 'Tasks', href: safeRoute('client.tasks.index'), icon: <CheckSquare className={iconClass} />, activePattern: 'client.tasks.*' },
+        { label: t('nav.tasks') || 'Tasks', href: safeRoute('client.tasks.index'), icon: <CheckSquare className={iconClass} />, activePattern: 'client.tasks.*', feature: 'tasks' },
         { label: t('nav.companies') || 'Companies', href: safeRoute('client.leads.companies.index'), icon: <Building2 className={iconClass} />, activePattern: 'client.leads.companies.*', feature: 'companies' },
         { label: t('nav.lead_scraper'),  href: safeRoute('client.leads.index'),          icon: <MapPin className={iconClass} />,     activePattern: 'client.leads.index' },
         { label: t('nav.lead_pipeline'), href: safeRoute('client.leads.pipeline.index'), icon: <KanbanSquare className={iconClass} />, activePattern: 'client.leads.pipeline.*' },
-        { label: t('nav.pipelines') || 'Pipelines', href: safeRoute('client.leads.pipelines.index'), icon: <SlidersHorizontal className={iconClass} />, activePattern: 'client.leads.pipelines.*' },
-        { label: t('nav.duplicates') || 'Duplicates', href: safeRoute('client.leads.duplicates.index'), icon: <Copy className={iconClass} />, activePattern: 'client.leads.duplicates.*' },
+        { label: t('nav.pipelines') || 'Pipelines', href: safeRoute('client.leads.pipelines.index'), icon: <SlidersHorizontal className={iconClass} />, activePattern: 'client.leads.pipelines.*', feature: 'multi_pipeline' },
+        { label: t('nav.duplicates') || 'Duplicates', href: safeRoute('client.leads.duplicates.index'), icon: <Copy className={iconClass} />, activePattern: 'client.leads.duplicates.*', feature: 'duplicates' },
     ];
 
     const automationItems = [

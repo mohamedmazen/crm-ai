@@ -6,6 +6,9 @@ use App\Events\AutomationWebhookReceived;
 use App\Events\CampaignCompleted;
 use App\Events\CommerceEventReceived;
 use App\Events\ContactCreated;
+use App\Events\FormSubmitted;
+use App\Events\LeadDealValueChanged;
+use App\Events\LeadPipelineChanged;
 use App\Events\LeadQualified;
 use App\Events\LeadStageChanged;
 use App\Events\MessageReceived;
@@ -90,6 +93,33 @@ class AutomationTriggerListener
         if ($event->isLost) {
             $this->fire('lead.lost', $event->workspaceId, $event->contactId, $event->context());
         }
+    }
+
+    public function handleLeadPipelineChanged(LeadPipelineChanged $event): void
+    {
+        if (! $event->contactId) {
+            return;
+        }
+
+        $this->fire('lead.pipeline_changed', $event->workspaceId, $event->contactId, $event->context());
+    }
+
+    public function handleLeadDealValueChanged(LeadDealValueChanged $event): void
+    {
+        if (! $event->contactId) {
+            return;
+        }
+
+        $this->fire('lead.deal_value_changed', $event->workspaceId, $event->contactId, $event->context());
+    }
+
+    public function handleFormSubmitted(FormSubmitted $event): void
+    {
+        if (! $event->contactId) {
+            return;
+        }
+
+        $this->fire('form.submitted', $event->workspaceId, $event->contactId, $event->context());
     }
 
     public function handleLeadQualified(LeadQualified $event): void

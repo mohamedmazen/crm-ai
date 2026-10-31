@@ -1,7 +1,7 @@
 import { Head } from '@inertiajs/react';
 import {
-    CheckCircle2, Calendar as CalendarIcon, Clock, Video, User,
-    ExternalLink, ArrowLeft,
+    CheckCircle2, Calendar as CalendarIcon, Video, User,
+    CalendarClock, XCircle,
 } from 'lucide-react';
 
 export default function BookingConfirmed({
@@ -31,7 +31,7 @@ export default function BookingConfirmed({
 
                 <div className="space-y-1">
                     <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-                        You're Scheduled!
+                        You&apos;re Scheduled!
                     </h1>
                     <p className="text-xs text-zinc-500 dark:text-zinc-400">
                         A calendar invitation has been registered for your meeting.
@@ -83,8 +83,28 @@ export default function BookingConfirmed({
                         Add to Google Calendar
                     </a>
 
+                    {booking.reschedule_token && (
+                        <a
+                            href={`/b/reschedule/${booking.reschedule_token}`}
+                            className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 hover:border-indigo-500 text-zinc-700 dark:text-zinc-200 font-medium text-sm rounded-xl transition-colors"
+                        >
+                            <CalendarClock className="h-4 w-4" />
+                            Reschedule
+                        </a>
+                    )}
+
+                    {booking.cancel_token && booking.status !== 'cancelled' && (
+                        <a
+                            href={`/b/cancel/${booking.cancel_token}`}
+                            className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 hover:border-rose-500 hover:text-rose-600 dark:hover:text-rose-400 text-zinc-700 dark:text-zinc-200 font-medium text-sm rounded-xl transition-colors"
+                        >
+                            <XCircle className="h-4 w-4" />
+                            Cancel
+                        </a>
+                    )}
+
                     <p className="text-xs text-zinc-400">
-                        Need to make changes? Check your confirmation email for cancellation options.
+                        A confirmation email with these options has been sent to you.
                     </p>
                 </div>
             </div>

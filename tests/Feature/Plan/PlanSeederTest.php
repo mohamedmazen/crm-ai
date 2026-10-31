@@ -26,6 +26,7 @@ class PlanSeederTest extends TestCase
         $this->assertFalse($starter->hasFeature('tasks'));
         $this->assertFalse($starter->hasFeature('companies'));
         $this->assertFalse($starter->hasFeature('lead_import'));
+        $this->assertFalse($starter->hasFeature('duplicates'));
         $this->assertFalse($starter->hasFeature('booking'));
         $this->assertFalse($starter->hasFeature('sales_reports'));
         $this->assertFalse($starter->hasFeature('quotes'));
@@ -47,7 +48,7 @@ class PlanSeederTest extends TestCase
     {
         $pro = Plan::where('slug', 'pro')->firstOrFail();
 
-        foreach (['multi_pipeline', 'tasks', 'companies', 'lead_import', 'booking', 'sales_reports', 'quotes', 'api_access'] as $feature) {
+        foreach (['multi_pipeline', 'tasks', 'companies', 'lead_import', 'duplicates', 'booking', 'sales_reports', 'quotes', 'api_access'] as $feature) {
             $this->assertTrue($pro->hasFeature($feature), "Pro should include {$feature}.");
         }
 

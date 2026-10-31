@@ -198,6 +198,7 @@ class FormController extends Controller
             'auto_tags' => ['nullable', 'array'],
             'thank_you_type' => ['required', Rule::in(['message', 'redirect'])],
             'thank_you_value' => ['nullable', 'string'],
+            'spam_protection' => ['nullable', Rule::in(['none', 'turnstile', 'recaptcha'])],
             'settings' => ['nullable', 'array'],
             'fields' => ['required', 'array', 'min:1'],
             'fields.*.id' => ['nullable', 'integer'],
@@ -222,6 +223,7 @@ class FormController extends Controller
             'auto_tags' => $data['auto_tags'] ?? [],
             'thank_you_type' => $data['thank_you_type'],
             'thank_you_value' => $data['thank_you_value'],
+            'spam_protection' => $data['spam_protection'] ?? $form->spam_protection,
             'settings' => $data['settings'] ?? $form->settings,
         ]);
 
@@ -305,4 +307,3 @@ class FormController extends Controller
         return redirect()->route('client.sales.forms.index')->with('success', __('Form deleted successfully.'));
     }
 }
-

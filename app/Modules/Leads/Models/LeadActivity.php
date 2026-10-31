@@ -29,7 +29,7 @@ class LeadActivity extends Model
     public const MANUAL_TYPES = ['note', 'call', 'whatsapp', 'email', 'meeting'];
 
     /** Things the app records on its own. A user may never post these. */
-    public const SYSTEM_TYPES = ['created', 'stage_changed', 'qualified', 'pushed_to_contacts', 'rescored'];
+    public const SYSTEM_TYPES = ['created', 'stage_changed', 'pipeline_changed', 'deal_updated', 'qualified', 'pushed_to_contacts', 'rescored'];
 
     /**
      * Outcomes offered when logging a call — kept here rather than free text so the

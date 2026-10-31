@@ -89,4 +89,23 @@ return [
         'webhook_secret' => env('CLICKSEND_WEBHOOK_SECRET'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Form Spam Protection
+    |--------------------------------------------------------------------------
+    |
+    | Per-form CAPTCHA providers. The site key is exposed to the public form so
+    | the browser can render the widget; the secret is only used server-side to
+    | verify the token the widget returns.
+    */
+    'turnstile' => [
+        'site_key' => env('TURNSTILE_SITE_KEY'),
+        'secret' => env('TURNSTILE_SECRET_KEY'),
+    ],
+
+    'recaptcha' => [
+        'site_key' => env('RECAPTCHA_SITE_KEY'),
+        'secret' => env('RECAPTCHA_SECRET_KEY'),
+    ],
+
 ];

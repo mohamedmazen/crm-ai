@@ -35,7 +35,23 @@
         "deleting": "Deleting…",
         "dismiss": "Dismiss",
         "view": "View",
-        "settings": "Settings"
+        "settings": "Settings",
+        "delete_confirm": "Delete Confirm",
+        "description": "Description",
+        "required": "Required",
+        "date": "Date",
+        "status": "Status",
+        "used": "Used",
+        "clear": "Clear",
+        "total": "Total",
+        "default": "Default",
+        "uploading": "Uploading",
+        "showing_results": "Showing Results",
+        "select": "Select",
+        "no_results": "No Results",
+        "select_reason": "Select Reason",
+        "skip": "Skip",
+        "confirm": "Confirm"
     },
     "nav": {
         "home": "Home",
@@ -123,7 +139,9 @@
         "group_support": "Support",
         "group_billing": "Billing",
         "group_developer": "Developer",
-        "lead_pipeline": "Pipeline"
+        "lead_pipeline": "Pipeline",
+        "tasks": "Tasks",
+        "pipelines": "Pipelines"
     },
     "welcome": {
         "title": "Build websites with AI.",
@@ -183,13 +201,8 @@
     "client": {
         "profile": {
             "edit": "Edit",
-            "2fa": {
-                "enable": "Enable",
-                "disable": "Disable"
-            },
-            "sessions": {
-                "destroy": "Destroy"
-            },
+            "2fa": "2Fa",
+            "sessions": "Sessions",
             "update": "Update",
             "destroy": "Destroy"
         },
@@ -353,10 +366,7 @@
             "index": "Index",
             "store": "Store",
             "destroy": "Destroy",
-            "contacts": {
-                "attach": "Attach",
-                "detach": "Detach"
-            }
+            "contacts": "Contacts"
         },
         "whatsapp": {
             "templates": {
@@ -379,7 +389,7 @@
                 "edit": "Edit"
             },
             "setup": {
-                "manual": "Manual"
+                "destroy": "Destroy"
             }
         },
         "broadcasts": {
@@ -411,13 +421,7 @@
             "start": "Start",
             "templates": "Templates",
             "assign": "Assign",
-            "setup": {
-                "destroy": "Destroy",
-                "resubscribe": "Resubscribe",
-                "manual": {
-                    "instagram": "Instagram"
-                }
-            },
+            "setup": "Setup",
             "activities": {
                 "index": "Index"
             }
@@ -476,7 +480,48 @@
                     "destroy": "Destroy"
                 },
                 "move": "Move",
-                "rescore": "Rescore"
+                "rescore": "Rescore",
+                "assign": "Assign",
+                "deal": {
+                    "update": "Update"
+                }
+            },
+            "companies": {
+                "index": "Index",
+                "update": "Update",
+                "store": "Store",
+                "destroy": "Destroy",
+                "show": "Show",
+                "search": "Search"
+            },
+            "pipelines": {
+                "index": "Index",
+                "store": "Store",
+                "destroy": "Destroy",
+                "update": "Update",
+                "reasons": {
+                    "store": "Store",
+                    "destroy": "Destroy"
+                }
+            },
+            "duplicates": {
+                "index": "Index",
+                "scan": "Scan",
+                "dismiss": "Dismiss",
+                "merge": "Merge"
+            },
+            "bulk": {
+                "assign": "Assign",
+                "stage": "Stage",
+                "tags": "Tags",
+                "destroy": "Destroy"
+            },
+            "import": "Import",
+            "export": "Export",
+            "tasks": {
+                "store": "Store",
+                "toggle": "Toggle",
+                "destroy": "Destroy"
             }
         },
         "automations": {
@@ -587,7 +632,11 @@
                 "connect": "Connect"
             }
         },
-        "workspaces": "Workspaces",
+        "workspaces": {
+            "switch": "Switch",
+            "index": "Index",
+            "store": "Store"
+        },
         "settings": {
             "update": "Update",
             "notifications": "Notifications",
@@ -603,6 +652,32 @@
             "destroy": "Destroy",
             "invoice": "Invoice",
             "show": "Show"
+        },
+        "sales": {
+            "forms": {
+                "index": "Index",
+                "builder": {
+                    "update": "Update"
+                },
+                "store": "Store",
+                "destroy": "Destroy",
+                "analytics": "Analytics"
+            },
+            "booking": {
+                "index": "Index",
+                "store": "Store",
+                "update": "Update",
+                "destroy": "Destroy",
+                "availability": {
+                    "update": "Update"
+                },
+                "bookings": {
+                    "cancel": "Cancel"
+                }
+            }
+        },
+        "tasks": {
+            "index": "Index"
         }
     },
     "pagination": {
@@ -846,7 +921,11 @@
         "tax_rates": "Tax Rates",
         "landing_page": "Site Content",
         "cms_pages": "CMS Pages",
-        "license": "License",
+        "license": {
+            "index": "Index",
+            "deactivate": "Deactivate",
+            "activate": "Activate"
+        },
         "cron_setup": "Cron Setup",
         "support": {
             "index": "Index",
@@ -963,38 +1042,40 @@
         "secret_key_hint": "Server-side secret key — keep this private",
         "stripe_webhook_hint": "Webhook signing secret (whsec_…) from the Stripe dashboard",
         "webhook_hint": "Webhook secret used to verify incoming gateway events",
-        "clients": "Clients",
-        "subscriptions": {
+        "clients": {
             "index": "Index",
+            "users": {
+                "index": "Index",
+                "store": "Store",
+                "update": "Update",
+                "destroy": "Destroy"
+            },
+            "impersonate": "Impersonate",
+            "destroy": "Destroy",
+            "export": "Export",
             "store": "Store",
-            "export": "Export"
+            "update": "Update"
         },
-        "payments": "Payments",
-        "plans": "Plans",
-        "currencies": {
+        "subscriptions": "Subscriptions",
+        "payments": {
+            "index": "Index"
+        },
+        "plans": {
             "index": "Index",
             "update": "Update",
+            "duplicate": "Duplicate",
+            "destroy": "Destroy",
+            "reorder": "Reorder",
             "store": "Store"
         },
-        "admins": "Admins",
-        "settings": {
+        "currencies": "Currencies",
+        "admins": {
             "index": "Index",
-            "general": {
-                "update": "Update"
-            },
-            "logo": {
-                "upload": "Upload",
-                "delete": "Delete"
-            },
-            "favicon": {
-                "upload": "Upload",
-                "delete": "Delete"
-            },
-            "update": "Update",
-            "firebase": {
-                "update": "Update"
-            }
+            "destroy": "Destroy",
+            "store": "Store",
+            "update": "Update"
         },
+        "settings": "Settings",
         "ai": {
             "index": "Index"
         },
@@ -1255,7 +1336,8 @@
         "ai_credits": "AI credits",
         "websites_limit": "Websites limit",
         "users_limit": "Users limit",
-        "storage_limit": "Storage limit (MB)"
+        "storage_limit": "Storage limit (MB)",
+        "pro_feature": "Pro Feature"
     },
     "smtp": {
         "gmail": {
@@ -2618,6 +2700,7 @@
         "notif_new_message": "New message",
         "notif_mention": "@ You were mentioned",
         "notif_conversation_assigned": "Conversation assigned",
+        "notif_lead_assigned": "Lead assigned",
         "notif_campaign_completed": "Campaign completed",
         "notif_automation_failed": "Automation failed",
         "notif_billing_failed": "Payment failed",
@@ -3999,6 +4082,11 @@
         "after_submission": "After Successful Submission",
         "show_message": "Show Success Message",
         "redirect_url": "Redirect to External URL",
+        "spam_protection": "Spam Protection",
+        "spam_none": "None",
+        "spam_turnstile": "Cloudflare Turnstile",
+        "spam_recaptcha": "Google reCAPTCHA",
+        "spam_protection_hint": "CAPTCHA provider keys are configured on the server.",
         "primary_color": "Primary Color",
         "button_text": "Submit Button Text",
         "show_header": "Show Title & Description in Form",
@@ -4008,17 +4096,21 @@
         "utm_sources": "Traffic Sources (UTM)",
         "recent_submissions": "Recent Submissions",
         "no_submissions_yet": "No submissions received for this form yet.",
-        "traffic_source": "Source / Campaign",
+        "traffic_source": "Source \/ Campaign",
         "ip_address": "IP Address",
         "payload": "Data",
         "view_data": "View Responses",
-        "submission_data": "Submission Data"
+        "submission_data": "Submission Data",
+        "preview": "Preview",
+        "public": {
+            "submit": "Submit"
+        }
     },
     "lead_sources": {
         "title": "Lead Sources & Attribution",
         "subtitle": "Connect and monitor all inbound lead channels (Webhooks, Forms, WhatsApp, Ads) with full marketing UTM tracking.",
         "tracker_title": "Website Auto-Tracker Script (UTM Attribution)",
-        "tracker_subtitle": "Place this single snippet before the closing </body> tag on your website or landing pages to persist UTM parameters for 30 days and auto-attribute every new lead.",
+        "tracker_subtitle": "Place this single snippet before the closing <\/body> tag on your website or landing pages to persist UTM parameters for 30 days and auto-attribute every new lead.",
         "copy_tracker": "Copy Tracker Snippet",
         "copied": "Copied to clipboard",
         "total_sources": "Total Channels",
@@ -4055,7 +4147,8 @@
         "updated_success": "Lead source updated successfully.",
         "token_regenerated": "Webhook token regenerated successfully.",
         "deleted_success": "Lead source deleted successfully.",
-        "limit_reached": "You have reached your plan limit for lead sources ({{limit}})."
+        "limit_reached": "You have reached your plan limit for lead sources ({{limit}}).",
+        "status_error": "Status Error"
     },
     "booking": {
         "title": "Booking Pages & Scheduling",
@@ -4067,7 +4160,7 @@
         "meeting_name": "Meeting Name",
         "duration": "Duration",
         "duration_minutes": "Duration (minutes)",
-        "location": "Location / Platform",
+        "location": "Location \/ Platform",
         "host": "Host",
         "upcoming_count": "Upcoming",
         "total_count": "Total Bookings",
@@ -4109,7 +4202,9 @@
         "updated_success": "Meeting type updated successfully.",
         "deleted_success": "Meeting type deleted successfully.",
         "availability_updated": "Working hours updated successfully.",
-        "booking_cancelled_success": "Appointment cancelled successfully."
+        "booking_cancelled_success": "Appointment cancelled successfully.",
+        "no_bookings": "No Bookings",
+        "availability_subtitle": "Availability Subtitle"
     },
     "duplicates": {
         "title": "Duplicate Leads",
@@ -4161,7 +4256,7 @@
         "select_size": "Select size...",
         "phone": "Phone Number",
         "owner": "Account Owner",
-        "address": "Address / Location",
+        "address": "Address \/ Location",
         "back_to_companies": "Back to Companies",
         "kpi_leads": "Total Leads",
         "kpi_open_pipeline": "Open Pipeline",
@@ -4301,7 +4396,94 @@
         },
         "rule_${rule}": "Rule ${Rule}",
         "threshold_${band}": "Threshold ${Band}",
-        "band_${band}": "Band ${Band}"
+        "band_${band}": "Band ${Band}",
+        "unassigned": "Unassigned",
+        "th_lead": "Th Lead",
+        "th_stage": "Th Stage",
+        "th_status": "Th Status",
+        "th_deal_value": "Th Deal Value",
+        "th_assigned": "Th Assigned",
+        "phone": "Phone",
+        "email": "Email",
+        "deal_value": "Deal Value",
+        "export_csv": "Export Csv",
+        "export": "Export",
+        "import": "Import",
+        "all_pipelines": "All Pipelines",
+        "all_stages": "All Stages",
+        "all_assignees": "All Assignees",
+        "my_leads": "My Leads",
+        "all_tags": "All Tags",
+        "bulk_assign": "Bulk Assign",
+        "bulk_stage": "Bulk Stage",
+        "add_tags": "Add Tags",
+        "col_stage": "Col Stage",
+        "col_assigned": "Col Assigned",
+        "col_tags": "Col Tags",
+        "tags_comma_separated": "Tags Comma Separated",
+        "import_leads_title": "Import Leads Title",
+        "import_subtitle": "Import Subtitle",
+        "select_csv_file": "Select Csv File",
+        "target_pipeline": "Target Pipeline",
+        "apply_tags": "Apply Tags",
+        "start_import": "Start Import",
+        "confirm_bulk_delete": "Confirm Bulk Delete",
+        "activity_assigned": "Activity Assigned",
+        "assigned_to_user": "Assigned To User",
+        "assigned_to": "Assigned To",
+        "deal_economics_title": "Deal Economics Title",
+        "win_probability": "Win Probability",
+        "expected_close_date": "Expected Close Date",
+        "status": "Status",
+        "outcome_reason": "Outcome Reason",
+        "stage_history_title": "Stage History Title",
+        "no_stage_history": "No Stage History",
+        "confirm_delete_task": "Confirm Delete Task",
+        "add_task": "Add Task",
+        "task_title_placeholder": "Task Title Placeholder",
+        "task_todo": "Task Todo",
+        "task_call": "Task Call",
+        "task_whatsapp": "Task Whatsapp",
+        "task_email": "Task Email",
+        "task_meeting": "Task Meeting",
+        "priority_medium": "Priority Medium",
+        "priority_high": "Priority High",
+        "priority_low": "Priority Low",
+        "assign_to": "Assign To",
+        "create_task": "Create Task",
+        "tasks_list": "Tasks List",
+        "no_tasks_yet": "No Tasks Yet",
+        "mark_incomplete": "Mark Incomplete",
+        "mark_complete": "Mark Complete",
+        "total_pipeline_value": "Total Pipeline Value",
+        "weighted_value": "Weighted Value",
+        "manage_pipelines": "Manage Pipelines",
+        "team_members": "Team Members",
+        "reason_won_title": "Reason Won Title",
+        "reason_lost_title": "Reason Lost Title",
+        "reason_subtitle": "Reason Subtitle",
+        "confirm_delete_pipeline": "Confirm Delete Pipeline",
+        "pipeline_settings_title": "Pipeline Settings Title",
+        "pipeline_settings_subtitle": "Pipeline Settings Subtitle",
+        "pipelines": "Pipelines",
+        "stages": "Stages",
+        "leads_count": "Leads Count",
+        "routing_mode": "Routing Mode",
+        "mode_manual": "Mode Manual",
+        "mode_round_robin": "Mode Round Robin",
+        "mode_load_balanced": "Mode Load Balanced",
+        "view_board": "View Board",
+        "new_pipeline_placeholder": "New Pipeline Placeholder",
+        "set_as_default": "Set As Default",
+        "create_pipeline": "Create Pipeline",
+        "close_reasons_title": "Close Reasons Title",
+        "close_reasons_subtitle": "Close Reasons Subtitle",
+        "won_reasons": "Won Reasons",
+        "lost_reasons": "Lost Reasons",
+        "won": "Won",
+        "lost": "Lost",
+        "new_reason_placeholder": "New Reason Placeholder",
+        "add_reason": "Add Reason"
     },
     "workspaces": {
         "title": "Workspaces",
@@ -4451,7 +4633,8 @@
         "01": "01",
         "07em": "07Em",
         "08em": "08Em",
-        "1em": "1Em"
+        "1em": "1Em",
+        "00": "00"
     },
     "12": {
         "01": "01"
@@ -4533,7 +4716,62 @@
     },
     "Secure checkout": "Secure Checkout",
     "Back to pricing": "Back To Pricing",
+    "custom_fields": {
+        "title": "Title",
+        "subtitle": "Subtitle",
+        "unlimited": "Unlimited",
+        "used": "Used",
+        "add_field": "Add Field",
+        "empty_title": "Empty Title",
+        "empty_subtitle": "Empty Subtitle",
+        "add_first": "Add First",
+        "label": "Label",
+        "key": "Key",
+        "type": "Type",
+        "options": "Options",
+        "options_comma": "Options Comma",
+        "is_required": "Is Required",
+        "edit_title": "Edit Title",
+        "confirm_delete": "Confirm Delete",
+        "new_title": "New Title",
+        "none_for_lead": "None For Lead",
+        "define_hint": "Define Hint",
+        "manage_fields": "Manage Fields"
+    },
+    "contacts": {
+        "title": "Title"
+    },
     "v20": [
         "0"
-    ]
+    ],
+    "tasks": {
+        "tab_today": "Tab Today",
+        "tab_overdue": "Tab Overdue",
+        "tab_upcoming": "Tab Upcoming",
+        "tab_all_pending": "Tab All Pending",
+        "tab_completed": "Tab Completed",
+        "title": "Title",
+        "subtitle": "Subtitle",
+        "search_placeholder": "Search Placeholder",
+        "my_tasks": "My Tasks",
+        "all_assignees": "All Assignees",
+        "unassigned": "Unassigned",
+        "all_priorities": "All Priorities",
+        "all_types": "All Types",
+        "empty_title": "Empty Title",
+        "empty_subtitle": "Empty Subtitle"
+    },
+    "Your booking is confirmed": "Your Booking Is Confirmed",
+    "there": "There",
+    "meeting": "Meeting",
+    "When": "When",
+    "Join": "Join",
+    "Join the meeting": "Join The Meeting",
+    "Need to make a change?": "Need To Make A Change?",
+    "Reschedule this meeting": "Reschedule This Meeting",
+    "Cancel this meeting": "Cancel This Meeting",
+    "See you soon!": "See You Soon!",
+    "your meeting": "Your Meeting",
+    "If you need to make a change, use one of these links:": "If You Need To Make A Change, Use One Of These Links:",
+    "If you need to change it again, use one of these links:": "If You Need To Change It Again, Use One Of These Links:"
 }

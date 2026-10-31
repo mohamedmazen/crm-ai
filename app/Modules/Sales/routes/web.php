@@ -22,6 +22,12 @@ Route::middleware(['web'])->group(function () {
     Route::post('/b/{slug}', [BookingPublicController::class, 'store'])->name('booking.public.submit')->middleware('throttle:30,1');
     Route::get('/b/{slug}/confirmed/{uuid}', [BookingPublicController::class, 'confirmed'])->name('booking.public.confirmed');
     Route::post('/b/cancel/{token}', [BookingPublicController::class, 'cancel'])->name('booking.public.cancel');
+    Route::get('/b/cancel/{token}', [BookingPublicController::class, 'cancelShow'])->name('booking.public.cancel.show');
+
+    // Reschedule (reached from the guest's confirmation email). Declared with a
+    // literal prefix so it is not mistaken for a meeting-type slug.
+    Route::get('/b/reschedule/{token}', [BookingPublicController::class, 'rescheduleShow'])->name('booking.public.reschedule.show');
+    Route::post('/b/reschedule/{token}', [BookingPublicController::class, 'reschedule'])->name('booking.public.reschedule')->middleware('throttle:30,1');
 });
 
 // Client app authenticated routes

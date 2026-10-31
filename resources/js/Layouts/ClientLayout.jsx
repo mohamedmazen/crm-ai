@@ -118,6 +118,7 @@ export default function ClientLayout({ header, children, title }) {
                     new_message:          t('ui.notif_new_message'),
                     mention:              t('ui.notif_mention'),
                     conversation_assigned:t('ui.notif_conversation_assigned'),
+                    lead_assigned:        t('ui.notif_lead_assigned'),
                     campaign_completed:   t('ui.notif_campaign_completed'),
                     automation_failed:    t('ui.notif_automation_failed'),
                     billing_failed:       t('ui.notif_billing_failed'),

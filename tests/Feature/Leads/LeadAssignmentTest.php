@@ -6,10 +6,11 @@ use App\Models\User;
 use App\Modules\Leads\Models\Lead;
 use App\Modules\Leads\Models\LeadActivity;
 use App\Modules\Leads\Models\LeadAssignmentConfig;
-use App\Modules\Leads\Models\LeadPipeline;
 use App\Modules\Leads\Services\LeadAssignmentService;
 use App\Modules\Leads\Services\PipelineManager;
+use App\Notifications\LeadAssignedNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -298,5 +299,142 @@ class LeadAssignmentTest extends TestCase
             'mode' => 'round_robin',
         ]);
     }
-}
 
+    #[Test]
+    public function assigning_a_lead_notifies_the_new_assignee(): void
+    {
+        [$user, $workspace, $client] = $this->actor();
+
+        $member = User::factory()->create([
+            'client_id' => $client->id,
+            'workspace_id' => $workspace->id,
+            'status' => User::STATUS_ACTIVE,
+        ]);
+
+        $pipeline = app(PipelineManager::class)->defaultPipelineFor($workspace->id);
+        $stage = app(PipelineManager::class)->firstStage($workspace->id, $pipeline->id);
+
+        $lead = Lead::factory()->create([
+            'workspace_id' => $workspace->id,
+            'pipeline_id' => $pipeline->id,
+            'stage_id' => $stage->id,
+            'assigned_user_id' => null,
+        ]);
+
+        Notification::fake();
+
+        $this->actingAs($user)
+            ->put(route('client.leads.pipeline.assign', $lead->id), ['user_id' => $member->id])
+            ->assertRedirect();
+
+        Notification::assertSentTo(
+            $member,
+            LeadAssignedNotification::class,
+            fn (LeadAssignedNotification $notification) => $notification->lead->id === $lead->id
+                && $notification->assignedBy?->id === $user->id,
+        );
+
+        Notification::assertNotSentTo($user, LeadAssignedNotification::class);
+    }
+
+    #[Test]
+    public function assigning_a_lead_to_yourself_does_not_notify(): void
+    {
+        [$user, $workspace] = $this->actor();
+
+        $pipeline = app(PipelineManager::class)->defaultPipelineFor($workspace->id);
+        $stage = app(PipelineManager::class)->firstStage($workspace->id, $pipeline->id);
+
+        $lead = Lead::factory()->create([
+            'workspace_id' => $workspace->id,
+            'pipeline_id' => $pipeline->id,
+            'stage_id' => $stage->id,
+            'assigned_user_id' => null,
+        ]);
+
+        Notification::fake();
+
+        $this->actingAs($user)
+            ->put(route('client.leads.pipeline.assign', $lead->id), ['user_id' => $user->id])
+            ->assertRedirect();
+
+        Notification::assertNothingSent();
+    }
+
+    #[Test]
+    public function reassigning_the_same_user_does_not_notify_twice(): void
+    {
+        [$user, $workspace, $client] = $this->actor();
+
+        $member = User::factory()->create([
+            'client_id' => $client->id,
+            'workspace_id' => $workspace->id,
+            'status' => User::STATUS_ACTIVE,
+        ]);
+
+        $pipeline = app(PipelineManager::class)->defaultPipelineFor($workspace->id);
+        $stage = app(PipelineManager::class)->firstStage($workspace->id, $pipeline->id);
+
+        $lead = Lead::factory()->create([
+            'workspace_id' => $workspace->id,
+            'pipeline_id' => $pipeline->id,
+            'stage_id' => $stage->id,
+            'assigned_user_id' => null,
+        ]);
+
+        Notification::fake();
+
+        $this->actingAs($user)
+            ->put(route('client.leads.pipeline.assign', $lead->id), ['user_id' => $member->id])
+            ->assertRedirect();
+
+        $this->actingAs($user)
+            ->put(route('client.leads.pipeline.assign', $lead->id), ['user_id' => $member->id])
+            ->assertRedirect();
+
+        Notification::assertSentToTimes($member, LeadAssignedNotification::class, 1);
+    }
+
+    #[Test]
+    public function auto_assignment_notifies_the_rotated_user(): void
+    {
+        [$user1, $workspace, $client] = $this->actor();
+
+        $user2 = User::factory()->create([
+            'client_id' => $client->id,
+            'workspace_id' => $workspace->id,
+            'status' => User::STATUS_ACTIVE,
+            'name' => 'Beta User',
+        ]);
+        $user1->update(['name' => 'Alpha User']);
+
+        $pipeline = app(PipelineManager::class)->defaultPipelineFor($workspace->id);
+        $stage = app(PipelineManager::class)->firstStage($workspace->id, $pipeline->id);
+
+        LeadAssignmentConfig::create([
+            'pipeline_id' => $pipeline->id,
+            'mode' => LeadAssignmentConfig::MODE_ROUND_ROBIN,
+        ]);
+
+        $lead = Lead::factory()->create([
+            'workspace_id' => $workspace->id,
+            'pipeline_id' => $pipeline->id,
+            'stage_id' => $stage->id,
+        ]);
+
+        Notification::fake();
+
+        $assigned = app(LeadAssignmentService::class)->autoAssign($lead);
+
+        Notification::assertSentTo(
+            $assigned,
+            LeadAssignedNotification::class,
+            fn (LeadAssignedNotification $notification) => $notification->lead->id === $lead->id
+                && $notification->assignedBy === null,
+        );
+
+        // Sanity: the rotation picked the alphabetically-first eligible user.
+        $this->assertSame($user1->id, $assigned->id);
+        $this->assertNotSame($user2->id, $assigned->id);
+    }
+}

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Plan;
 use App\Models\User;
+use App\Models\Workspace;
 
 /**
  * Reads the feature gates on the plan that is actually in effect for a user.
@@ -19,6 +20,15 @@ class FeatureGate
     public static function forUser(?User $user): self
     {
         return new self($user?->effectivePlan());
+    }
+
+    /**
+     * Resolve the plan for a workspace the same way a logged-in member would:
+     * through the owning client's effective subscription.
+     */
+    public static function forWorkspace(?Workspace $workspace): self
+    {
+        return new self($workspace?->client?->effectivePlan());
     }
 
     public static function forPlan(?Plan $plan): self

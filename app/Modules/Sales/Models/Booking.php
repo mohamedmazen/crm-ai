@@ -5,6 +5,7 @@ namespace App\Modules\Sales\Models;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Modules\Leads\Models\Lead;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,8 +16,11 @@ class Booking extends Model
     use HasFactory;
 
     public const STATUS_CONFIRMED = 'confirmed';
+
     public const STATUS_CANCELLED = 'cancelled';
+
     public const STATUS_COMPLETED = 'completed';
+
     public const STATUS_NO_SHOW = 'no_show';
 
     protected $fillable = [
@@ -38,6 +42,7 @@ class Booking extends Model
         'answers',
         'cancelled_at',
         'cancel_reason',
+        'reminder_sent_at',
     ];
 
     protected function casts(): array
@@ -46,6 +51,7 @@ class Booking extends Model
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
             'cancelled_at' => 'datetime',
+            'reminder_sent_at' => 'datetime',
             'answers' => 'array',
         ];
     }
@@ -63,7 +69,7 @@ class Booking extends Model
                 $booking->reschedule_token = Str::random(40);
             }
             if (empty($booking->meet_link)) {
-                $booking->meet_link = 'https://meet.google.com/' . Str::lower(Str::random(3)) . '-' . Str::lower(Str::random(4)) . '-' . Str::lower(Str::random(3));
+                $booking->meet_link = 'https://meet.google.com/'.Str::lower(Str::random(3)).'-'.Str::lower(Str::random(4)).'-'.Str::lower(Str::random(3));
             }
         });
     }
@@ -87,5 +93,17 @@ class Booking extends Model
     {
         return $this->belongsTo(Lead::class);
     }
-}
 
+    /**
+     * Confirmed bookings that start within the given window and have not been
+     * reminded yet. Already-cancelled or past meetings are excluded so the
+     * hourly sweep never emails a guest about a meeting that is not happening.
+     */
+    public function scopeDueForReminder(Builder $query, \DateTimeInterface $until): Builder
+    {
+        return $query->where('status', self::STATUS_CONFIRMED)
+            ->whereNull('reminder_sent_at')
+            ->where('starts_at', '>', now())
+            ->where('starts_at', '<=', $until);
+    }
+}

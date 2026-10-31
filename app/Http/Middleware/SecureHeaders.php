@@ -44,12 +44,16 @@ class SecureHeaders
         // that form rather than for the whole app.
         $iyzico = $request->routeIs('checkout.iyzico.form') ? ' https://iyzipay.com https://*.iyzipay.com' : '';
 
+        // Public forms may embed Turnstile or reCAPTCHA; allow their scripts,
+        // challenge frames and verification calls only on the form page.
+        $captcha = $this->captchaSources($request);
+
         $unsafeEval = config('app.env') !== 'production' ? " 'unsafe-eval'" : '';
-        $scriptSrc = "'self' 'unsafe-inline'".$unsafeEval.$this->viteDevSources().$this->thirdPartyScriptSources().$iyzico;
-        $styleSrc = "'self' 'unsafe-inline' https://fonts.bunny.net https://fonts.googleapis.com".$this->viteDevSources().$this->thirdPartyStyleSources().$iyzico;
+        $scriptSrc = "'self' 'unsafe-inline'".$unsafeEval.$this->viteDevSources().$this->thirdPartyScriptSources().$iyzico.$captcha;
+        $styleSrc = "'self' 'unsafe-inline' https://fonts.bunny.net https://fonts.googleapis.com".$this->viteDevSources().$this->thirdPartyStyleSources().$iyzico.$captcha;
         $fontSrc = "'self' data: https://fonts.bunny.net https://fonts.gstatic.com https://fonts.googleapis.com".$iyzico;
 
-        $frameSrc = "'self'".$this->metaFrameSources().$iyzico;
+        $frameSrc = "'self'".$this->metaFrameSources().$iyzico.$captcha;
 
         $directives = array_filter([
             "default-src 'self'",
@@ -59,12 +63,32 @@ class SecureHeaders
             'style-src-elem '.$styleSrc,
             "img-src 'self' data: https: blob:",
             'font-src '.$fontSrc,
-            "connect-src 'self' ".$this->connectSources().$iyzico,
+            "connect-src 'self' ".$this->connectSources().$iyzico.$captcha,
             'frame-src '.$frameSrc,
             "frame-ancestors 'self'",
         ]);
 
         return implode('; ', $directives);
+    }
+
+    /**
+     * CSP hosts for the CAPTCHA widget, or an empty string when the page is
+     * not the public form or no provider is configured.
+     */
+    private function captchaSources(Request $request): string
+    {
+        if (! $request->routeIs('forms.public.show')) {
+            return '';
+        }
+
+        $configured = filled(config('services.turnstile.site_key'))
+            || filled(config('services.recaptcha.site_key'));
+
+        if (! $configured) {
+            return '';
+        }
+
+        return ' https://challenges.cloudflare.com https://www.google.com https://www.gstatic.com https://recaptcha.google.com';
     }
 
     /** Allow Vite dev server (different port) in development so CSP does not block scripts. */

@@ -118,6 +118,50 @@ class HandleInertiaRequests extends Middleware
         }
     }
 
+    private function broadcastingPublicConfig(): array
+    {
+        try {
+            $default = config('broadcasting.default');
+
+            if ($default === 'reverb') {
+                $key = config('broadcasting.connections.reverb.key') ?: env('REVERB_APP_KEY', '');
+                $host = config('broadcasting.connections.reverb.options.host') ?: env('REVERB_HOST', 'localhost');
+                $port = (int) (config('broadcasting.connections.reverb.options.port') ?: env('REVERB_PORT', 8080));
+                $scheme = config('broadcasting.connections.reverb.options.scheme') ?: env('REVERB_SCHEME', 'http');
+
+                return [
+                    'driver' => 'reverb',
+                    'key' => $key,
+                    'host' => $host,
+                    'port' => $port,
+                    'scheme' => $scheme,
+                    'enabled' => ! empty($key),
+                ];
+            }
+
+            if ($default === 'pusher') {
+                $pusher = $this->pusherPublicConfig();
+
+                return [
+                    'driver' => 'pusher',
+                    'key' => $pusher['key'] ?? '',
+                    'cluster' => $pusher['cluster'] ?? 'mt1',
+                    'enabled' => (bool) ($pusher['enabled'] ?? false),
+                ];
+            }
+
+            return [
+                'driver' => $default,
+                'enabled' => false,
+            ];
+        } catch (\Throwable) {
+            return [
+                'driver' => 'null',
+                'enabled' => false,
+            ];
+        }
+    }
+
     private function pusherPublicConfig(): array
     {
         try {
@@ -366,6 +410,7 @@ class HandleInertiaRequests extends Middleware
             'onboardingSummary' => $onboardingSummary,
             'landingPageEnabled' => SystemSetting::get('landing.page_enabled', '1') === '1',
             'branding' => $this->brandingShare(),
+            'broadcasting' => $this->broadcastingPublicConfig(),
             'pusher' => $this->pusherPublicConfig(),
             'onesignal' => $this->oneSignalPublicConfig(),
             'firebase' => $this->firebasePublicConfig(),

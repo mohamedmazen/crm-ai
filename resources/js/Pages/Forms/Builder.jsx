@@ -32,6 +32,7 @@ export default function FormBuilder({
     const [autoTags, setAutoTags] = useState(form.auto_tags || []);
     const [thankYouType, setThankYouType] = useState(form.thank_you_type || 'message');
     const [thankYouValue, setThankYouValue] = useState(form.thank_you_value || '');
+    const [spamProtection, setSpamProtection] = useState(form.spam_protection || 'none');
     const [primaryColor, setPrimaryColor] = useState(form.settings?.primary_color || '#6366f1');
     const [buttonText, setButtonText] = useState(form.settings?.button_text || 'Submit');
     const [showTitle, setShowTitle] = useState(form.settings?.show_title ?? true);
@@ -107,6 +108,7 @@ export default function FormBuilder({
             auto_tags: autoTags,
             thank_you_type: thankYouType,
             thank_you_value: thankYouValue,
+            spam_protection: spamProtection,
             settings: {
                 primary_color: primaryColor,
                 button_text: buttonText,
@@ -623,6 +625,25 @@ export default function FormBuilder({
                                     className="mt-1 w-full rounded-lg border-soft bg-white p-2.5 text-sm text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100"
                                 />
                             )}
+                        </div>
+
+                        {/* Spam protection */}
+                        <div className="border-t border-soft pt-4 text-xs">
+                            <label className="block font-semibold text-neutral-700 dark:text-neutral-300 mb-1">
+                                {t('forms.spam_protection') || 'Spam Protection'}
+                            </label>
+                            <select
+                                value={spamProtection}
+                                onChange={(e) => setSpamProtection(e.target.value)}
+                                className="w-full max-w-xs rounded-lg border-soft bg-white p-2.5 text-sm text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100"
+                            >
+                                <option value="none">{t('forms.spam_none') || 'None'}</option>
+                                <option value="turnstile">{t('forms.spam_turnstile') || 'Cloudflare Turnstile'}</option>
+                                <option value="recaptcha">{t('forms.spam_recaptcha') || 'Google reCAPTCHA'}</option>
+                            </select>
+                            <p className="mt-1 text-[11px] text-neutral-500 dark:text-neutral-400">
+                                {t('forms.spam_protection_hint') || 'CAPTCHA provider keys are configured on the server.'}
+                            </p>
                         </div>
 
                         {/* Styling Settings */}

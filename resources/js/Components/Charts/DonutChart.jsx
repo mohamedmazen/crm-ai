@@ -24,7 +24,7 @@ const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent
 
 export default function DonutChart({ data = [], nameKey = 'name', valueKey = 'value', height = 260, innerRadius = 60, outerRadius = 100 }) {
     return (
-        <ResponsiveContainer width="100%" height={height}>
+        <ResponsiveContainer width="100%" height={height} minWidth={0}>
             <PieChart>
                 <Pie
                     data={data}

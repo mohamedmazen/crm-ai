@@ -2,14 +2,15 @@
 
 namespace Tests\Feature\Leads;
 
+use App\Models\Plan;
 use App\Models\User;
 use App\Modules\Leads\Models\Lead;
 use App\Modules\Leads\Models\LeadActivity;
 use App\Modules\Leads\Models\LeadDuplicateGroup;
 use App\Modules\Leads\Models\LeadTag;
 use App\Modules\Leads\Models\LeadTask;
-use App\Modules\Leads\Services\DuplicateDetector;
 use App\Modules\Leads\Services\PipelineManager;
+use App\Modules\Shared\Models\Contact;
 use App\Modules\Shared\Models\CustomField;
 use App\Modules\Shared\Models\CustomFieldValue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -29,6 +30,10 @@ class LeadDuplicateAndMergeTest extends TestCase
     private function actor(): array
     {
         ['user' => $user, 'client' => $client, 'workspace' => $workspace] = $this->createWorkspaceContext();
+
+        $this->attachPlanToClient($client, Plan::factory()->create([
+            'feature_flags' => ['duplicates' => true],
+        ]));
 
         return [$user, $workspace, $client];
     }
@@ -159,6 +164,13 @@ class LeadDuplicateAndMergeTest extends TestCase
         ]);
         $secondary->tags()->attach($tagB->id);
 
+        // A contact already pushed from the secondary lead. Merging must not
+        // leave it pointing at a lead row that no longer exists.
+        $contact = Contact::factory()->create([
+            'workspace_id' => $workspace->id,
+            'lead_id' => $secondary->id,
+        ]);
+
         // Secondary has an activity, task, and custom field value
         $activity = LeadActivity::create([
             'workspace_id' => $workspace->id,
@@ -246,6 +258,12 @@ class LeadDuplicateAndMergeTest extends TestCase
         // 7. Duplicate group marked as merged
         $group->refresh();
         $this->assertSame(LeadDuplicateGroup::STATUS_MERGED, $group->status);
+
+        // 8. Contact repointed to the surviving primary lead
+        $this->assertDatabaseHas('contacts', [
+            'id' => $contact->id,
+            'lead_id' => $primary->id,
+        ]);
     }
 
     #[Test]
@@ -272,5 +290,15 @@ class LeadDuplicateAndMergeTest extends TestCase
         ]);
         $response->assertStatus(403);
     }
-}
 
+    #[Test]
+    public function duplicate_routes_are_feature_gated(): void
+    {
+        ['user' => $user] = $this->createWorkspaceContext();
+
+        $this->actingAs($user)
+            ->get(route('client.leads.duplicates.index'))
+            ->assertRedirect(route('client.pricing'))
+            ->assertSessionHas('upgrade_required', true);
+    }
+}

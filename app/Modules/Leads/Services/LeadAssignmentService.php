@@ -2,6 +2,7 @@
 
 namespace App\Modules\Leads\Services;
 
+use App\Events\LeadAssigned;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Modules\Leads\Models\Lead;
@@ -25,7 +26,7 @@ class LeadAssignmentService
         $workspace = Workspace::with('client')->find($workspaceId);
 
         if (! $workspace) {
-            return new Collection();
+            return new Collection;
         }
 
         // Return users belonging to this client or workspace who are active
@@ -62,7 +63,14 @@ class LeadAssignmentService
 
         $this->activity->assigned($lead, $user, $oldUser, $actor?->id ?? false);
 
-        return $lead->refresh();
+        $lead->refresh();
+
+        // Tell the new assignee, unless they assigned the lead to themselves.
+        if ($user !== null && $user->id !== $actor?->id) {
+            LeadAssigned::dispatch($lead, $user, $actor);
+        }
+
+        return $lead;
     }
 
     /**
@@ -142,4 +150,3 @@ class LeadAssignmentService
         return $users->sortBy(fn ($user) => (int) ($counts[$user->id] ?? 0))->first();
     }
 }
-

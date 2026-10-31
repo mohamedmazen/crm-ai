@@ -3,6 +3,7 @@
 namespace App\Modules\Leads\Models;
 
 use App\Models\User;
+use App\Modules\Leads\Services\CompanyMatcher;
 use App\Modules\Sales\Models\LeadSource;
 use App\Modules\Shared\Models\Contact;
 use App\Support\Concerns\MasksDemoData;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Auth;
 
 class Lead extends Model
 {
@@ -74,6 +76,30 @@ class Lead extends Model
             'next_follow_up_at' => 'datetime',
             'last_activity_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Every lead starts its reporting history in the stage it was captured
+     * into, so reports do not only see leads that were moved afterwards.
+     *
+     * Company matching runs on the same event regardless of whether the lead
+     * landed in a stage, since a lead can be captured before a pipeline exists.
+     */
+    protected static function booted(): void
+    {
+        static::created(function (Lead $lead) {
+            if ($lead->stage_id) {
+                LeadStageHistory::create([
+                    'lead_id' => $lead->id,
+                    'from_stage_id' => null,
+                    'to_stage_id' => $lead->stage_id,
+                    'user_id' => Auth::id(),
+                    'changed_at' => $lead->stage_changed_at ?? now(),
+                ]);
+            }
+
+            app(CompanyMatcher::class)->matchFor($lead);
+        });
     }
 
     public function pipeline(): BelongsTo

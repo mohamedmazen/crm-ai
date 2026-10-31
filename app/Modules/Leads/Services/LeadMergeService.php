@@ -8,6 +8,7 @@ use App\Modules\Leads\Models\LeadActivity;
 use App\Modules\Leads\Models\LeadDuplicateGroup;
 use App\Modules\Leads\Models\LeadStageHistory;
 use App\Modules\Leads\Models\LeadTask;
+use App\Modules\Shared\Models\Contact;
 use App\Modules\Shared\Models\CustomFieldValue;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
@@ -64,7 +65,14 @@ class LeadMergeService
                 LeadStageHistory::where('lead_id', $secondary->id)
                     ->update(['lead_id' => $primaryLead->id]);
 
-                // 4. Merge Tags
+                // 4. Repoint contacts that were linked to the secondary lead.
+                // contacts.lead_id has no foreign key, so deleting the secondary
+                // would otherwise leave contacts pointing at a row that is gone.
+                Contact::where('workspace_id', $workspaceId)
+                    ->where('lead_id', $secondary->id)
+                    ->update(['lead_id' => $primaryLead->id]);
+
+                // 5. Merge Tags
                 $tagIds = DB::table('lead_tag_pivot')
                     ->where('lead_id', $secondary->id)
                     ->pluck('tag_id')
@@ -74,7 +82,7 @@ class LeadMergeService
                     $primaryLead->tags()->syncWithoutDetaching($tagIds);
                 }
 
-                // 5. Merge Custom Field Values
+                // 6. Merge Custom Field Values
                 $existingFieldIds = CustomFieldValue::where('workspace_id', $workspaceId)
                     ->where('entity_type', 'lead')
                     ->where('entity_id', $primaryLead->id)
@@ -93,7 +101,7 @@ class LeadMergeService
                     ->where('entity_id', $secondary->id)
                     ->delete();
 
-                // 6. Fill in blanks on primary if not overridden
+                // 7. Fill in blanks on primary if not overridden
                 $fillableColumns = ['phone', 'email', 'website', 'address', 'city', 'country', 'company_id', 'deal_value'];
                 foreach ($fillableColumns as $col) {
                     if (empty($primaryLead->{$col}) && ! empty($secondary->{$col})) {
@@ -101,7 +109,7 @@ class LeadMergeService
                     }
                 }
 
-                // 7. Log merge activity
+                // 8. Log merge activity
                 LeadActivity::create([
                     'workspace_id' => $workspaceId,
                     'lead_id' => $primaryLead->id,
@@ -119,7 +127,7 @@ class LeadMergeService
                     'occurred_at' => now(),
                 ]);
 
-                // 8. Delete secondary lead
+                // 9. Delete secondary lead
                 $secondary->delete();
             }
 
@@ -137,7 +145,7 @@ class LeadMergeService
 
             $primaryLead->save();
 
-            // 9. Update duplicate group if specified
+            // 10. Update duplicate group if specified
             if ($groupId) {
                 LeadDuplicateGroup::where('workspace_id', $workspaceId)
                     ->where('id', $groupId)
@@ -148,4 +156,3 @@ class LeadMergeService
         });
     }
 }
-

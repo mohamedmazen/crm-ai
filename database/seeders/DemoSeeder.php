@@ -45,8 +45,13 @@ use App\Modules\Inbox\Models\CannedReply;
 use App\Modules\Inbox\Models\InboxLabel;
 use App\Modules\Integrations\Models\IntegrationAuditLog;
 use App\Modules\Integrations\Models\IntegrationConfig;
+use App\Modules\Leads\Models\Company;
 use App\Modules\Leads\Models\Lead;
+use App\Modules\Leads\Models\LeadPipeline;
 use App\Modules\Leads\Models\LeadScrapeJob;
+use App\Modules\Leads\Models\LeadStageHistory;
+use App\Modules\Leads\Models\LeadTask;
+use App\Modules\Leads\Services\PipelineManager;
 use App\Modules\Shared\Models\ChannelAccount;
 use App\Modules\Shared\Models\Contact;
 use App\Modules\Shared\Models\ContactTag;
@@ -116,6 +121,7 @@ class DemoSeeder extends Seeder
         $this->seedAutomations();
         $this->seedBroadcasting();
         $this->seedLeads();
+        $this->seedLeadTasks();
         $this->seedSocial();
         $this->seedEcommerce();
         $this->seedSupport();
@@ -1261,20 +1267,111 @@ class DemoSeeder extends Seeder
             }
         }
 
-        if (Lead::where('workspace_id', $this->workspaceId)->count() === 0) {
+        $pipelineManager = app(PipelineManager::class);
+        $pipelineBuckets = [];
+
+        $defaultPipeline = $pipelineManager->defaultPipelineFor($this->workspaceId);
+        $pipelineBuckets[] = [
+            'pipeline' => $defaultPipeline,
+            'stages' => $pipelineManager->stagesFor($this->workspaceId, $defaultPipeline->id),
+        ];
+
+        foreach (['Enterprise Sales' => 1, 'Partnerships' => 2] as $name => $sortOrder) {
+            $pipeline = LeadPipeline::firstOrCreate(
+                ['workspace_id' => $this->workspaceId, 'name' => $name],
+                ['is_default' => false, 'sort_order' => $sortOrder]
+            );
+
+            $pipelineBuckets[] = [
+                'pipeline' => $pipeline,
+                'stages' => $pipelineManager->stagesFor($this->workspaceId, $pipeline->id),
+            ];
+        }
+
+        $companies = $this->demoCompanies();
+
+        // Leads captured before pipelines existed still deserve one history row.
+        Lead::where('workspace_id', $this->workspaceId)
+            ->whereNotNull('stage_id')
+            ->whereDoesntHave('stageHistory')
+            ->each(function (Lead $lead) {
+                LeadStageHistory::create([
+                    'lead_id' => $lead->id,
+                    'from_stage_id' => null,
+                    'to_stage_id' => $lead->stage_id,
+                    'user_id' => null,
+                    'changed_at' => $lead->created_at ?? now(),
+                ]);
+            });
+
+        $stageCounters = Lead::where('workspace_id', $this->workspaceId)
+            ->whereNotNull('stage_id')
+            ->selectRaw('stage_id, max(board_position) as max_position')
+            ->groupBy('stage_id')
+            ->pluck('max_position', 'stage_id')
+            ->map(fn ($position) => (int) $position + 1)
+            ->all();
+
+        $existingLeads = Lead::where('workspace_id', $this->workspaceId)->count();
+
+        if ($existingLeads < 200) {
             $cities = [['Austin', 'TX', 30.2672, -97.7431], ['Dallas', 'TX', 32.7767, -96.7970], ['Houston', 'TX', 29.7604, -95.3698], ['San Diego', 'CA', 32.7157, -117.1611]];
             $categories = ['Day spa', 'Wellness center', 'Massage therapist', 'Beauty salon', 'Facial spa'];
             $prefixes = ['Serenity', 'Tranquil', 'Bliss', 'Lotus', 'Harmony', 'Pure', 'Oasis', 'Radiance', 'Calm', 'Verde', 'Aura', 'Nirvana'];
             $suffixes = ['Spa', 'Wellness', 'Retreat', 'Day Spa', 'Spa & Salon', 'Beauty Bar'];
-            for ($i = 0; $i < 56; $i++) {
+            $agents = array_values($this->agents);
+
+            for ($i = $existingLeads; $i < 200; $i++) {
+                $bucket = $pipelineBuckets[$i % count($pipelineBuckets)];
+                $pipeline = $bucket['pipeline'];
+                $stages = $bucket['stages'];
+
+                if ($stages->isEmpty()) {
+                    continue;
+                }
+
+                $roll = rand(1, 100);
+                $stage = match (true) {
+                    $roll <= 45 => $stages->get(0),
+                    $roll <= 70 => $stages->get(1) ?? $stages->get(0),
+                    $roll <= 85 => $stages->get(2) ?? $stages->get(0),
+                    $roll <= 92 => $stages->firstWhere('is_won', true) ?? $stages->get(0),
+                    default => $stages->firstWhere('is_lost', true) ?? $stages->get(0),
+                };
+
+                $position = $stageCounters[$stage->id] ?? 0;
+                $stageCounters[$stage->id] = $position + 1;
+
                 [$city, $state, $lat, $lng] = $cities[$i % count($cities)];
                 $name = Arr::random($prefixes).' '.Arr::random($suffixes);
+                $createdAt = $this->days(rand(0, 90))->setTime(rand(8, 18), rand(0, 59));
+                $status = match (true) {
+                    $stage->is_won => 'converted',
+                    $stage->is_lost => 'lost',
+                    $stage->name === 'Qualified' => 'qualified',
+                    $stage->name === 'Contacted' => 'contacted',
+                    default => 'new',
+                };
+                $assigned = $agents !== [] ? Arr::random($agents) : null;
+                $company = $companies->isNotEmpty() && rand(1, 100) <= 70 ? $companies->random() : null;
+
+                // Leads that end up without a company use a consumer mailbox so
+                // the company matcher does not auto-create a throwaway company
+                // for every one of them.
+                $email = $company
+                    ? 'info@'.Str::slug($name, '').$i.'.com'
+                    : 'lead'.Str::slug($name, '').$i.'@gmail.com';
+
                 $lead = Lead::create([
                     'workspace_id' => $this->workspaceId,
+                    'company_id' => $company?->id,
+                    'pipeline_id' => $pipeline->id,
+                    'stage_id' => $stage->id,
+                    'board_position' => $position,
                     'name' => $name,
                     'phone' => '+1'.rand(200, 989).rand(2000000, 9999999),
-                    'email' => 'info@'.Str::slug($name, '').'.com',
-                    'website' => 'https://'.Str::slug($name, '').'.com',
+                    'email' => $email,
+                    'website' => 'https://'.Str::slug($name, '').$i.'.com',
                     'address' => rand(100, 9999).' '.Arr::random(['Main St', 'Oak Ave', 'Congress Ave', 'Elm St', 'Sunset Blvd']),
                     'city' => $city,
                     'country' => 'US',
@@ -1286,9 +1383,108 @@ class DemoSeeder extends Seeder
                     'google_place_id' => 'ChIJ'.Str::random(23),
                     'whatsapp_status' => Arr::random(['unknown', 'valid', 'valid', 'invalid']),
                     'pushed_to_contacts' => $i < 4,
+                    'status' => $status,
+                    'deal_value' => rand(500, 30000),
+                    'currency' => 'USD',
+                    'probability' => $stage->default_probability ?? rand(10, 90),
+                    'expected_close_date' => $stage->isTerminal() ? null : $createdAt->copy()->addDays(rand(10, 90)),
+                    'won_at' => $stage->is_won ? $createdAt->copy()->addDays(rand(1, 10)) : null,
+                    'lost_at' => $stage->is_lost ? $createdAt->copy()->addDays(rand(1, 10)) : null,
+                    'stage_changed_at' => $createdAt,
+                    'assigned_user_id' => $assigned?->id,
+                    'assigned_at' => $assigned ? $createdAt : null,
+                    'last_activity_at' => $createdAt,
                 ]);
-                $this->bk($lead, $this->days(rand(0, 9)));
+
+                $this->bk($lead, $createdAt);
+
+                LeadStageHistory::where('lead_id', $lead->id)
+                    ->whereNull('from_stage_id')
+                    ->update(['changed_at' => $createdAt]);
             }
+        }
+    }
+
+    /** @return Collection<int,Company> */
+    private function demoCompanies(): Collection
+    {
+        $prefixes = ['Summit', 'Blue Ridge', 'Coastal', 'Ironwood'];
+        $suffixes = ['Wellness Group', 'Hospitality', 'Retail Co.', 'Medical Center', 'Properties'];
+
+        foreach ($prefixes as $prefix) {
+            foreach ($suffixes as $suffix) {
+                $name = $prefix.' '.$suffix;
+                $owner = $this->agents !== [] ? Arr::random($this->agents) : $this->admin;
+
+                Company::firstOrCreate(
+                    ['workspace_id' => $this->workspaceId, 'name' => $name],
+                    [
+                        'domain' => Str::slug($name).'.com',
+                        'industry' => Arr::random(Company::INDUSTRIES),
+                        'size' => Arr::random(array_keys(Company::SIZES)),
+                        'phone' => '+1'.rand(200, 989).rand(2000000, 9999999),
+                        'website' => 'https://'.Str::slug($name).'.com',
+                        'address' => rand(100, 9999).' '.Arr::random(['Main St', 'Oak Ave', 'Congress Ave', 'Elm St', 'Sunset Blvd']),
+                        'owner_id' => $owner->id,
+                    ]
+                );
+            }
+        }
+
+        return Company::where('workspace_id', $this->workspaceId)->orderBy('id')->get();
+    }
+
+    private function seedLeadTasks(): void
+    {
+        if (LeadTask::where('workspace_id', $this->workspaceId)->count() > 0) {
+            return;
+        }
+
+        $leads = Lead::where('workspace_id', $this->workspaceId)
+            ->inRandomOrder()
+            ->limit(50)
+            ->get();
+
+        if ($leads->isEmpty()) {
+            return;
+        }
+
+        $agents = array_values($this->agents);
+        $titles = [
+            'Confirm appointment details',
+            'Send follow-up proposal',
+            'Call to qualify the lead',
+            'Share pricing and packages',
+            'Check in after the first visit',
+        ];
+        $descriptions = [
+            'Use the saved notes from the last conversation.',
+            'Ask about preferred dates and the decision timeline.',
+            'Send the updated service menu and booking link.',
+            'Confirm who signs off on the budget.',
+        ];
+
+        foreach ($leads as $index => $lead) {
+            $dueAt = match (true) {
+                $index < 10 => Carbon::now()->subDays(rand(1, 5))->setTime(rand(9, 17), 0),
+                $index < 35 => Carbon::now()->addDays(rand(0, 7))->setTime(rand(9, 17), 0),
+                default => Carbon::now()->addDays(rand(8, 30))->setTime(rand(9, 17), 0),
+            };
+
+            $task = LeadTask::create([
+                'workspace_id' => $this->workspaceId,
+                'lead_id' => $lead->id,
+                'assigned_user_id' => $agents !== [] ? Arr::random($agents)->id : null,
+                'created_by' => $this->admin->id,
+                'title' => Arr::random($titles),
+                'description' => Arr::random($descriptions),
+                'type' => Arr::random(LeadTask::TYPES),
+                'priority' => Arr::random(LeadTask::PRIORITIES),
+                'due_at' => $dueAt,
+                'completed_at' => $index >= 35 && $index < 50 ? $dueAt->copy()->subHours(rand(1, 24)) : null,
+            ]);
+
+            $this->bk($task, $dueAt->copy()->subDays(2));
         }
     }
 

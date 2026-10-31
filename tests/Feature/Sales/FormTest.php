@@ -2,12 +2,16 @@
 
 namespace Tests\Feature\Sales;
 
+use App\Events\FormSubmitted;
 use App\Models\Plan;
 use App\Models\User;
 use App\Modules\Leads\Models\Lead;
 use App\Modules\Leads\Services\PipelineManager;
 use App\Modules\Sales\Models\Form;
+use App\Modules\Sales\Models\FormSubmission;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -21,20 +25,40 @@ class FormTest extends TestCase
         $this->withoutVite();
     }
 
-    private function actorWithPlan(mixed $formsFeature = 10): array
+    private function actorWithPlan(mixed $formsFeature = 10, mixed $submissionCap = 5000): array
     {
         ['user' => $user, 'client' => $client, 'workspace' => $workspace] = $this->createWorkspaceContext();
 
         $plan = Plan::factory()->create([
             'feature_flags' => [
                 'forms' => $formsFeature,
-                'form_submissions' => 5000,
+                'form_submissions' => $submissionCap,
             ],
         ]);
 
         $this->attachPlanToClient($client, $plan);
 
         return [$user, $workspace, $client];
+    }
+
+    /**
+     * @param  array<string, mixed>  $overrides
+     */
+    private function publishedForm($workspace, array $overrides = []): Form
+    {
+        $form = Form::create(array_merge([
+            'workspace_id' => $workspace->id,
+            'name' => 'Inbound Web Contact',
+            'status' => 'published',
+        ], $overrides));
+
+        $form->fields()->createMany([
+            ['type' => 'text', 'label' => 'Name', 'field_key' => 'name', 'required' => true, 'maps_to' => 'name', 'sort_order' => 1],
+            ['type' => 'email', 'label' => 'Email', 'field_key' => 'email', 'required' => true, 'maps_to' => 'email', 'sort_order' => 2],
+            ['type' => 'phone', 'label' => 'Phone', 'field_key' => 'phone', 'required' => false, 'maps_to' => 'phone', 'sort_order' => 3],
+        ]);
+
+        return $form;
     }
 
     #[Test]
@@ -165,9 +189,38 @@ class FormTest extends TestCase
     }
 
     #[Test]
+    public function public_form_page_exposes_spam_settings_to_the_widget(): void
+    {
+        [$user, $workspace] = $this->actorWithPlan();
+
+        config([
+            'services.turnstile.secret' => 'test-secret',
+            'services.turnstile.site_key' => 'test-site-key',
+        ]);
+
+        $form = $this->publishedForm($workspace, ['spam_protection' => 'turnstile']);
+
+        $response = $this->get(route('forms.public.show', $form->slug));
+
+        $response->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Forms/PublicForm')
+                ->where('form.spam_protection', 'turnstile')
+                ->where('form.spam_site_key', 'test-site-key'));
+
+        // The widget's script and challenge frame must survive the CSP.
+        $this->assertStringContainsString(
+            'https://challenges.cloudflare.com',
+            (string) $response->headers->get('Content-Security-Policy'),
+        );
+    }
+
+    #[Test]
     public function public_form_submission_creates_lead_and_records_submission(): void
     {
         [$user, $workspace] = $this->actorWithPlan(formsFeature: 10);
+
+        Event::fake([FormSubmitted::class]);
 
         $pipeline = app(PipelineManager::class)->defaultPipelineFor($workspace->id);
         $stage = app(PipelineManager::class)->firstStage($workspace->id, $pipeline->id);
@@ -266,6 +319,239 @@ class FormTest extends TestCase
             'lead_id' => $lead->id,
             'type' => 'note',
         ]);
+
+        // 6. Automation trigger event dispatched
+        Event::assertDispatched(FormSubmitted::class, function (FormSubmitted $event) use ($form, $lead) {
+            return $event->formId === $form->id
+                && $event->leadId === $lead->id
+                && $event->formName === 'Inbound Web Contact';
+        });
+    }
+
+    #[Test]
+    public function resubmission_reuses_the_existing_lead_and_only_fills_missing_fields(): void
+    {
+        [$user, $workspace] = $this->actorWithPlan();
+
+        $form = $this->publishedForm($workspace);
+
+        $this->postJson(route('forms.public.submit', $form->slug), [
+            'name' => 'Alice Morgan',
+            'email' => 'Alice@Example.com',
+        ])->assertOk();
+
+        $lead = Lead::where('workspace_id', $workspace->id)->sole();
+
+        $this->postJson(route('forms.public.submit', $form->slug), [
+            'name' => 'Alice Smith',
+            'email' => 'alice@example.com',
+            'phone' => '+1 555 0100',
+        ])->assertOk();
+
+        $this->assertSame(1, Lead::where('workspace_id', $workspace->id)->count());
+
+        $lead->refresh();
+        $this->assertSame('Alice Morgan', $lead->name);
+        $this->assertSame('+1 555 0100', $lead->phone);
+
+        $form->refresh();
+        $this->assertSame(2, $form->submissions_count);
+        $this->assertSame(2, $form->submissions()->count());
+    }
+
+    #[Test]
+    public function monthly_submission_cap_blocks_further_submissions(): void
+    {
+        [$user, $workspace] = $this->actorWithPlan(submissionCap: 1);
+
+        $form = $this->publishedForm($workspace);
+
+        $this->postJson(route('forms.public.submit', $form->slug), [
+            'name' => 'Alice Morgan',
+            'email' => 'alice@example.com',
+        ])->assertOk();
+
+        $response = $this->postJson(route('forms.public.submit', $form->slug), [
+            'name' => 'Bob Stone',
+            'email' => 'bob@example.com',
+        ]);
+
+        $response->assertStatus(429);
+        $response->assertJson(['success' => false]);
+        $response->assertJsonStructure(['message']);
+
+        $this->assertSame(1, Lead::where('workspace_id', $workspace->id)->count());
+        $this->assertSame(1, FormSubmission::where('form_id', $form->id)->count());
+    }
+
+    #[Test]
+    public function unlimited_submission_cap_does_not_block(): void
+    {
+        [$user, $workspace] = $this->actorWithPlan(submissionCap: null);
+
+        $form = $this->publishedForm($workspace);
+
+        $this->postJson(route('forms.public.submit', $form->slug), [
+            'name' => 'Alice Morgan',
+            'email' => 'alice@example.com',
+        ])->assertOk();
+
+        $this->postJson(route('forms.public.submit', $form->slug), [
+            'name' => 'Bob Stone',
+            'email' => 'bob@example.com',
+        ])->assertOk();
+
+        $this->assertSame(2, Lead::where('workspace_id', $workspace->id)->count());
+    }
+
+    #[Test]
+    public function form_with_spam_protection_rejects_a_missing_token(): void
+    {
+        [$user, $workspace] = $this->actorWithPlan();
+
+        config([
+            'services.turnstile.secret' => 'test-secret',
+            'services.turnstile.site_key' => 'test-site-key',
+        ]);
+
+        $form = $this->publishedForm($workspace, ['spam_protection' => 'turnstile']);
+
+        $response = $this->postJson(route('forms.public.submit', $form->slug), [
+            'name' => 'Alice Morgan',
+            'email' => 'alice@example.com',
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJson(['success' => false]);
+
+        $this->assertSame(0, Lead::where('workspace_id', $workspace->id)->count());
+    }
+
+    #[Test]
+    public function form_with_spam_protection_rejects_a_token_the_provider_disapproves(): void
+    {
+        [$user, $workspace] = $this->actorWithPlan();
+
+        config(['services.turnstile.secret' => 'test-secret']);
+
+        Http::fake([
+            'challenges.cloudflare.com/*' => Http::response(['success' => false], 200),
+        ]);
+
+        $form = $this->publishedForm($workspace, ['spam_protection' => 'turnstile']);
+
+        $response = $this->postJson(route('forms.public.submit', $form->slug), [
+            'name' => 'Alice Morgan',
+            'email' => 'alice@example.com',
+            'cf-turnstile-response' => 'bad-token',
+        ]);
+
+        $response->assertStatus(422);
+        $this->assertSame(0, Lead::where('workspace_id', $workspace->id)->count());
+    }
+
+    #[Test]
+    public function form_with_spam_protection_fails_closed_when_the_secret_is_missing(): void
+    {
+        [$user, $workspace] = $this->actorWithPlan();
+
+        config(['services.turnstile.secret' => null]);
+
+        $form = $this->publishedForm($workspace, ['spam_protection' => 'turnstile']);
+
+        $response = $this->postJson(route('forms.public.submit', $form->slug), [
+            'name' => 'Alice Morgan',
+            'email' => 'alice@example.com',
+            'cf-turnstile-response' => 'some-token',
+        ]);
+
+        $response->assertStatus(422);
+        $this->assertSame(0, Lead::where('workspace_id', $workspace->id)->count());
+    }
+
+    #[Test]
+    public function form_with_spam_protection_accepts_a_verified_token_and_keeps_it_out_of_the_payload(): void
+    {
+        [$user, $workspace] = $this->actorWithPlan();
+
+        config([
+            'services.turnstile.secret' => 'test-secret',
+            'services.turnstile.site_key' => 'test-site-key',
+        ]);
+
+        Http::fake([
+            'challenges.cloudflare.com/*' => Http::response(['success' => true], 200),
+        ]);
+
+        $form = $this->publishedForm($workspace, ['spam_protection' => 'turnstile']);
+
+        $this->postJson(route('forms.public.submit', $form->slug), [
+            'name' => 'Alice Morgan',
+            'email' => 'alice@example.com',
+            'cf-turnstile-response' => 'good-token',
+        ])->assertOk();
+
+        Http::assertSent(function ($request) {
+            return $request->url() === 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
+                && $request['secret'] === 'test-secret'
+                && $request['response'] === 'good-token';
+        });
+
+        $submission = FormSubmission::where('form_id', $form->id)->sole();
+        $this->assertArrayNotHasKey('cf-turnstile-response', $submission->payload);
+        $this->assertSame(1, Lead::where('workspace_id', $workspace->id)->count());
+    }
+
+    #[Test]
+    public function form_without_spam_protection_does_not_call_a_provider(): void
+    {
+        [$user, $workspace] = $this->actorWithPlan();
+
+        Http::preventStrayRequests();
+
+        $form = $this->publishedForm($workspace);
+
+        $this->postJson(route('forms.public.submit', $form->slug), [
+            'name' => 'Alice Morgan',
+            'email' => 'alice@example.com',
+        ])->assertOk();
+
+        Http::assertNothingSent();
+    }
+
+    #[Test]
+    public function builder_can_save_spam_protection(): void
+    {
+        [$user, $workspace] = $this->actorWithPlan();
+
+        $pipeline = app(PipelineManager::class)->defaultPipelineFor($workspace->id);
+        $stage = app(PipelineManager::class)->firstStage($workspace->id, $pipeline->id);
+
+        $form = Form::create([
+            'workspace_id' => $workspace->id,
+            'name' => 'Spam Settings Form',
+            'slug' => 'spam-settings-form',
+            'status' => 'published',
+            'pipeline_id' => $pipeline->id,
+            'target_stage_id' => $stage->id,
+        ]);
+
+        $this->actingAs($user)->put(route('client.sales.forms.builder.update', $form->id), [
+            'name' => 'Spam Settings Form',
+            'status' => 'published',
+            'pipeline_id' => $pipeline->id,
+            'target_stage_id' => $stage->id,
+            'assignment_mode' => 'none',
+            'assigned_user_id' => null,
+            'thank_you_type' => 'message',
+            'thank_you_value' => 'Thanks!',
+            'spam_protection' => 'recaptcha',
+            'fields' => [
+                ['type' => 'text', 'label' => 'Name', 'field_key' => 'name', 'required' => true, 'maps_to' => 'name'],
+            ],
+        ])->assertRedirect();
+
+        $this->assertSame('recaptcha', $form->fresh()->spam_protection);
     }
 
     #[Test]

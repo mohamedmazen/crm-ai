@@ -18,6 +18,9 @@
         </include>
     </source>
     <php>
+        <!-- The full suite renders Inertia pages that build the i18n dictionary;
+             the default 128M CLI limit is not enough to finish the run. -->
+        <ini name="memory_limit" value="512M"/>
         <env name="APP_ENV" value="testing"/>
         <env name="APP_INSTALLED" value="true"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>

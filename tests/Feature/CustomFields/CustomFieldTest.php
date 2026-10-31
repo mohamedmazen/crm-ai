@@ -21,6 +21,10 @@ class CustomFieldTest extends TestCase
     {
         ['user' => $user, 'client' => $client, 'workspace' => $workspace] = $this->createWorkspaceContext();
 
+        $this->attachPlanToClient($client, Plan::factory()->create([
+            'feature_flags' => ['custom_fields' => 20],
+        ]));
+
         return [$user, $workspace, $client];
     }
 
@@ -279,5 +283,15 @@ class CustomFieldTest extends TestCase
             'label' => 'Confidential Field',
         ]);
     }
-}
 
+    #[Test]
+    public function custom_field_routes_are_feature_gated(): void
+    {
+        ['user' => $user] = $this->createWorkspaceContext();
+
+        $this->actingAs($user)
+            ->get(route('client.custom-fields.index'))
+            ->assertRedirect(route('client.pricing'))
+            ->assertSessionHas('upgrade_required', true);
+    }
+}

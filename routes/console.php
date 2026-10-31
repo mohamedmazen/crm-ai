@@ -1,12 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\CronSetupController;
 use App\Modules\Broadcasting\Jobs\LaunchScheduledCampaignsJob;
 use App\Modules\Broadcasting\Models\UsageMeter;
 use App\Modules\Social\Jobs\DispatchScheduledPostsJob;
 use App\Modules\Social\Jobs\RefreshSocialTokensJob;
 use App\Modules\Whatsapp\Jobs\TemplateSyncJob;
 use App\Modules\Whatsapp\Models\WhatsappBusinessAccount;
-use App\Http\Controllers\Admin\CronSetupController;
 use App\Services\WebhookIdempotencyService;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -125,5 +125,29 @@ Schedule::command('reports:weekly-digest')
 Schedule::command('leads:process-task-reminders')
     ->everyFiveMinutes()
     ->name('process-lead-task-reminders')
+    ->withoutOverlapping()
+    ->onOneServer();
+
+// Poll IMAP lead sources (every 5 minutes). The command only imports messages
+// it has not processed before, so a missed tick is caught up on the next run.
+Schedule::command('leads:fetch-imap')
+    ->everyFiveMinutes()
+    ->name('fetch-imap-leads')
+    ->withoutOverlapping()
+    ->onOneServer();
+
+// Scan every eligible workspace for duplicate leads (daily). Detection is
+// queued per workspace so a large tenant cannot stall the scheduler.
+Schedule::command('leads:detect-duplicates')
+    ->dailyAt('02:00')
+    ->name('detect-duplicate-leads')
+    ->withoutOverlapping()
+    ->onOneServer();
+
+// Booking reminders (hourly). The 24h look-ahead is deduped by
+// bookings.reminder_sent_at so a guest is reminded exactly once.
+Schedule::command('bookings:send-reminders --hours=24')
+    ->hourly()
+    ->name('send-booking-reminders')
     ->withoutOverlapping()
     ->onOneServer();

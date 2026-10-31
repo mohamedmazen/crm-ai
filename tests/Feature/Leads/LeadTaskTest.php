@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Leads;
 
+use App\Models\Plan;
 use App\Models\User;
 use App\Modules\Leads\Jobs\SendTaskReminderJob;
 use App\Modules\Leads\Models\Lead;
@@ -19,6 +20,10 @@ class LeadTaskTest extends TestCase
     private function actor(): array
     {
         ['user' => $user, 'client' => $client, 'workspace' => $workspace] = $this->createWorkspaceContext();
+
+        $this->attachPlanToClient($client, Plan::factory()->create([
+            'feature_flags' => ['tasks' => true],
+        ]));
 
         return [$user, $workspace, $client];
     }
@@ -307,5 +312,15 @@ class LeadTaskTest extends TestCase
             return $job->task->id === $task->id;
         });
     }
-}
 
+    #[Test]
+    public function task_routes_are_feature_gated(): void
+    {
+        ['user' => $user] = $this->createWorkspaceContext();
+
+        $this->actingAs($user)
+            ->get(route('client.tasks.index'))
+            ->assertRedirect(route('client.pricing'))
+            ->assertSessionHas('upgrade_required', true);
+    }
+}

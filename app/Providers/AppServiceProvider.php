@@ -8,6 +8,10 @@ use App\Events\CampaignCompleted;
 use App\Events\CommerceEventReceived;
 use App\Events\ContactCreated;
 use App\Events\ConversationAssigned;
+use App\Events\FormSubmitted;
+use App\Events\LeadAssigned;
+use App\Events\LeadDealValueChanged;
+use App\Events\LeadPipelineChanged;
 use App\Events\LeadQualified;
 use App\Events\LeadStageChanged;
 use App\Events\MessageReceived;
@@ -24,6 +28,7 @@ use App\Listeners\LogSuccessfulLogin;
 use App\Listeners\SendAutomationFailedNotification;
 use App\Listeners\SendCampaignCompletedNotification;
 use App\Listeners\SendConversationAssignedNotification;
+use App\Listeners\SendLeadAssignedNotification;
 use App\Listeners\SendNewMessageNotification;
 use App\Listeners\SendPlanChangedNotification;
 use App\Listeners\SendSubscriptionCancelledNotification;
@@ -81,6 +86,9 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(AutomationWebhookReceived::class, [AutomationTriggerListener::class, 'handleAutomationWebhookReceived']);
         Event::listen(CommerceEventReceived::class, [AutomationTriggerListener::class, 'handleCommerceEvent']);
         Event::listen(LeadStageChanged::class, [AutomationTriggerListener::class, 'handleLeadStageChanged']);
+        Event::listen(LeadPipelineChanged::class, [AutomationTriggerListener::class, 'handleLeadPipelineChanged']);
+        Event::listen(LeadDealValueChanged::class, [AutomationTriggerListener::class, 'handleLeadDealValueChanged']);
+        Event::listen(FormSubmitted::class, [AutomationTriggerListener::class, 'handleFormSubmitted']);
         Event::listen(LeadQualified::class, [AutomationTriggerListener::class, 'handleLeadQualified']);
 
         // ── Outbound webhook event delivery ─────────────────────────────────
@@ -93,6 +101,7 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(CampaignCompleted::class, SendCampaignCompletedNotification::class);
         Event::listen(AutomationFailed::class, SendAutomationFailedNotification::class);
         Event::listen(ConversationAssigned::class, SendConversationAssignedNotification::class);
+        Event::listen(LeadAssigned::class, SendLeadAssignedNotification::class);
 
         // ── Subscription & billing notifications ────────────────────────────
         Event::listen(SubscriptionStarted::class, SendSubscriptionStartedNotification::class);

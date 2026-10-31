@@ -34,23 +34,29 @@ Route::middleware(['web', 'client-app'])->prefix('app/leads')->name('client.lead
 
     // Pipeline settings and multiple pipelines management
     Route::prefix('pipelines')->name('pipelines.')->group(function () {
-        Route::get('/', [PipelineSettingsController::class, 'index'])->name('index');
+        Route::get('/', [PipelineSettingsController::class, 'index'])->name('index')->middleware('feature:multi_pipeline');
         Route::post('/', [PipelineSettingsController::class, 'store'])->name('store')->middleware('feature:multi_pipeline');
         Route::put('/{pipeline}', [PipelineSettingsController::class, 'update'])->name('update');
-        Route::delete('/{pipeline}', [PipelineSettingsController::class, 'destroy'])->name('destroy');
+        Route::delete('/{pipeline}', [PipelineSettingsController::class, 'destroy'])->name('destroy')->middleware('feature:multi_pipeline');
         Route::post('/reasons', [PipelineSettingsController::class, 'storeReason'])->name('reasons.store');
         Route::delete('/reasons/{reason}', [PipelineSettingsController::class, 'destroyReason'])->name('reasons.destroy');
     });
 
     // Lead tasks
-    Route::post('/{lead}/tasks', [LeadTaskController::class, 'store'])->name('tasks.store');
-    Route::put('/tasks/{task}', [LeadTaskController::class, 'update'])->name('tasks.update');
-    Route::patch('/tasks/{task}/toggle', [LeadTaskController::class, 'toggle'])->name('tasks.toggle');
-    Route::delete('/tasks/{task}', [LeadTaskController::class, 'destroy'])->name('tasks.destroy');
+    Route::middleware('feature:tasks')->group(function () {
+        Route::post('/{lead}/tasks', [LeadTaskController::class, 'store'])->name('tasks.store');
+        Route::put('/tasks/{task}', [LeadTaskController::class, 'update'])->name('tasks.update');
+        Route::patch('/tasks/{task}/toggle', [LeadTaskController::class, 'toggle'])->name('tasks.toggle');
+        Route::delete('/tasks/{task}', [LeadTaskController::class, 'destroy'])->name('tasks.destroy');
+    });
 
     // Lead custom fields
-    Route::put('/{lead}/custom-fields', [LeadPipelineController::class, 'updateCustomFields'])->name('custom-fields.update');
-    Route::put('/{lead}/assign-company', [LeadPipelineController::class, 'assignCompany'])->name('assign-company');
+    Route::put('/{lead}/custom-fields', [LeadPipelineController::class, 'updateCustomFields'])
+        ->name('custom-fields.update')
+        ->middleware('feature:custom_fields');
+    Route::put('/{lead}/assign-company', [LeadPipelineController::class, 'assignCompany'])
+        ->name('assign-company')
+        ->middleware('feature:companies');
 
     // Companies (Feature: companies)
     Route::middleware('feature:companies')->group(function () {
@@ -67,11 +73,13 @@ Route::middleware(['web', 'client-app'])->prefix('app/leads')->name('client.lead
     Route::post('/bulk-delete', [LeadBulkActionController::class, 'destroy'])->name('bulk.destroy');
 
     // Import and Export
-    Route::get('/export', [LeadExportController::class, 'export'])->name('export');
-    Route::post('/import', [LeadImportController::class, 'import'])->name('import');
+    Route::middleware('feature:lead_import')->group(function () {
+        Route::get('/export', [LeadExportController::class, 'export'])->name('export');
+        Route::post('/import', [LeadImportController::class, 'import'])->name('import');
+    });
 
     // Duplicates and Deduplication
-    Route::prefix('duplicates')->name('duplicates.')->group(function () {
+    Route::prefix('duplicates')->name('duplicates.')->middleware('feature:duplicates')->group(function () {
         Route::get('/', [DuplicateController::class, 'index'])->name('index');
         Route::post('/scan', [DuplicateController::class, 'scan'])->name('scan');
         Route::post('/{group}/merge', [DuplicateController::class, 'merge'])->name('merge');
@@ -83,5 +91,5 @@ Route::middleware(['web', 'client-app'])->prefix('app/leads')->name('client.lead
 
 // Tasks dashboard
 Route::middleware(['web', 'client-app'])->prefix('app/tasks')->name('client.tasks.')->group(function () {
-    Route::get('/', [TaskDashboardController::class, 'index'])->name('index');
+    Route::get('/', [TaskDashboardController::class, 'index'])->name('index')->middleware('feature:tasks');
 });

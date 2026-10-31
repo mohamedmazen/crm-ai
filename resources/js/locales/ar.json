@@ -29,7 +29,23 @@
         "saving": "جارٍ الحفظ…",
         "creating": "جارٍ الإنشاء…",
         "deleting": "جارٍ الحذف…",
-        "settings": "Settings"
+        "settings": "Settings",
+        "delete_confirm": "Delete Confirm",
+        "description": "Description",
+        "required": "Required",
+        "date": "Date",
+        "status": "Status",
+        "used": "Used",
+        "clear": "Clear",
+        "total": "Total",
+        "default": "Default",
+        "uploading": "Uploading",
+        "showing_results": "Showing Results",
+        "select": "Select",
+        "no_results": "No Results",
+        "select_reason": "Select Reason",
+        "skip": "Skip",
+        "confirm": "Confirm"
     },
     "nav": {
         "home": "الرئيسية",
@@ -117,7 +133,9 @@
         "group_developer": "المطوّر",
         "integrations": "Integrations",
         "about": "About",
-        "lead_pipeline": "مسار العملاء المحتملين"
+        "lead_pipeline": "مسار العملاء المحتملين",
+        "tasks": "Tasks",
+        "pipelines": "Pipelines"
     },
     "welcome": {
         "title": "ابنِ مواقع بالذكاء الاصطناعي.",
@@ -177,8 +195,13 @@
     "client": {
         "profile": {
             "edit": "تعديل",
-            "2fa": "2Fa",
-            "sessions": "Sessions",
+            "2fa": {
+                "enable": "Enable",
+                "disable": "Disable"
+            },
+            "sessions": {
+                "destroy": "Destroy"
+            },
             "update": "Update",
             "destroy": "Destroy"
         },
@@ -342,7 +365,10 @@
             "index": "القائمة",
             "store": "حفظ",
             "destroy": "حذف",
-            "contacts": "Contacts"
+            "contacts": {
+                "attach": "Attach",
+                "detach": "Detach"
+            }
         },
         "whatsapp": {
             "templates": {
@@ -364,10 +390,7 @@
                 "create": "إنشاء",
                 "edit": "تعديل"
             },
-            "setup": {
-                "destroy": "Destroy",
-                "manual": "Manual"
-            }
+            "setup": "Setup"
         },
         "broadcasts": {
             "campaigns": {
@@ -399,10 +422,7 @@
             "templates": "القوالب",
             "assign": "تعيين",
             "setup": {
-                "resubscribe": "Resubscribe",
-                "manual": {
-                    "instagram": "Instagram"
-                }
+                "destroy": "Destroy"
             },
             "activities": {
                 "index": "Index"
@@ -462,7 +482,48 @@
                     "destroy": "Destroy"
                 },
                 "move": "Move",
-                "rescore": "Rescore"
+                "rescore": "Rescore",
+                "assign": "Assign",
+                "deal": {
+                    "update": "Update"
+                }
+            },
+            "companies": {
+                "index": "Index",
+                "update": "Update",
+                "store": "Store",
+                "destroy": "Destroy",
+                "show": "Show",
+                "search": "Search"
+            },
+            "pipelines": {
+                "index": "Index",
+                "store": "Store",
+                "destroy": "Destroy",
+                "update": "Update",
+                "reasons": {
+                    "store": "Store",
+                    "destroy": "Destroy"
+                }
+            },
+            "duplicates": {
+                "index": "Index",
+                "scan": "Scan",
+                "dismiss": "Dismiss",
+                "merge": "Merge"
+            },
+            "bulk": {
+                "assign": "Assign",
+                "stage": "Stage",
+                "tags": "Tags",
+                "destroy": "Destroy"
+            },
+            "import": "Import",
+            "export": "Export",
+            "tasks": {
+                "store": "Store",
+                "toggle": "Toggle",
+                "destroy": "Destroy"
             }
         },
         "automations": {
@@ -549,11 +610,7 @@
                 "connect": "اتصال"
             }
         },
-        "workspaces": {
-            "switch": "Switch",
-            "index": "Index",
-            "store": "Store"
-        },
+        "workspaces": "Workspaces",
         "settings": {
             "update": "تحديث",
             "notifications": "الإشعارات",
@@ -593,7 +650,33 @@
         "no_campaigns": "No campaigns yet",
         "agent_leaderboard": "Agent leaderboard",
         "handled": "handled",
-        "no_agents": "No assigned conversations yet"
+        "no_agents": "No assigned conversations yet",
+        "sales": {
+            "forms": {
+                "index": "Index",
+                "builder": {
+                    "update": "Update"
+                },
+                "store": "Store",
+                "destroy": "Destroy",
+                "analytics": "Analytics"
+            },
+            "booking": {
+                "index": "Index",
+                "store": "Store",
+                "update": "Update",
+                "destroy": "Destroy",
+                "availability": {
+                    "update": "Update"
+                },
+                "bookings": {
+                    "cancel": "Cancel"
+                }
+            }
+        },
+        "tasks": {
+            "index": "Index"
+        }
     },
     "pagination": {
         "label": "ترقيم الصفحات",
@@ -919,40 +1002,38 @@
         "secret_key_hint": "المفتاح السري للخادم — حافظ على سريته",
         "stripe_webhook_hint": "سر توقيع Webhook‏ (whsec_…) من لوحة تحكم Stripe",
         "webhook_hint": "سر Webhook المستخدم للتحقق من أحداث بوابة الدفع الواردة",
-        "clients": {
+        "clients": "Clients",
+        "subscriptions": {
             "index": "Index",
-            "users": {
-                "index": "Index",
-                "store": "Store",
-                "update": "Update",
-                "destroy": "Destroy"
-            },
-            "impersonate": "Impersonate",
-            "destroy": "Destroy",
-            "export": "Export",
             "store": "Store",
-            "update": "Update"
+            "export": "Export"
         },
-        "subscriptions": "Subscriptions",
-        "payments": {
-            "index": "Index"
-        },
-        "plans": {
+        "payments": "Payments",
+        "plans": "Plans",
+        "currencies": {
             "index": "Index",
             "update": "Update",
-            "duplicate": "Duplicate",
-            "destroy": "Destroy",
-            "reorder": "Reorder",
             "store": "Store"
         },
-        "currencies": "Currencies",
-        "admins": {
+        "admins": "Admins",
+        "settings": {
             "index": "Index",
-            "destroy": "Destroy",
-            "store": "Store",
-            "update": "Update"
+            "general": {
+                "update": "Update"
+            },
+            "logo": {
+                "upload": "Upload",
+                "delete": "Delete"
+            },
+            "favicon": {
+                "upload": "Upload",
+                "delete": "Delete"
+            },
+            "update": "Update",
+            "firebase": {
+                "update": "Update"
+            }
         },
-        "settings": "Settings",
         "ai": {
             "index": "الفهرس"
         },
@@ -1036,7 +1117,11 @@
         "recent_payments": "Recent payments",
         "amount": "Amount",
         "last_n_days": "Last {{n}} days",
-        "license": "License",
+        "license": {
+            "index": "Index",
+            "deactivate": "Deactivate",
+            "activate": "Activate"
+        },
         "add_currency": "Add Currency",
         "currency_inherit": "Platform default",
         "exchange_rate_hint": "Exchange rate is how much one unit of the currency is worth in USD — EUR is 1.087, INR is about 0.012. The currency with rate 1 is the reference. Setting a currency as Default makes it the platform-wide currency for anyone who has not picked their own."
@@ -1247,7 +1332,8 @@
         "ai_credits": "رصيد الذكاء الاصطناعي",
         "websites_limit": "حد المواقع",
         "users_limit": "حد المستخدمين",
-        "storage_limit": "حد التخزين (MB)"
+        "storage_limit": "حد التخزين (MB)",
+        "pro_feature": "Pro Feature"
     },
     "smtp": {
         "gmail": {
@@ -2537,6 +2623,7 @@
         "notif_new_message": "رسالة جديدة",
         "notif_mention": "@ تمت الإشارة إليك",
         "notif_conversation_assigned": "تم تعيين محادثة",
+        "notif_lead_assigned": "تم تعيين عميل محتمل",
         "notif_campaign_completed": "اكتملت الحملة",
         "notif_automation_failed": "فشلت الأتمتة",
         "notif_billing_failed": "فشل الدفع",
@@ -3592,17 +3679,26 @@
         "utm_sources": "مصادر الزيارات التسويقية (UTM)",
         "recent_submissions": "سجل التقديمات",
         "no_submissions_yet": "لم تصل أية تقديمات عبر هذا النموذج بعد.",
-        "traffic_source": "المصدر / الحملة",
+        "traffic_source": "المصدر \/ الحملة",
         "ip_address": "عنوان IP",
         "payload": "البيانات",
         "view_data": "عرض الإجابات",
-        "submission_data": "بيانات التقديم"
+        "submission_data": "بيانات التقديم",
+        "preview": "Preview",
+        "spam_protection": "Spam Protection",
+        "spam_none": "None",
+        "spam_turnstile": "Cloudflare Turnstile",
+        "spam_recaptcha": "Google reCAPTCHA",
+        "spam_protection_hint": "CAPTCHA provider keys are configured on the server.",
+        "public": {
+            "submit": "Submit"
+        }
     },
     "lead_sources": {
         "title": "مصادر العملاء والـ Attribution",
         "subtitle": "ربط وتتبع جميع قنوات تدفق العملاء المحتملين (Webhooks، نماذج، واتساب، إعلانات) مع تتبع حملات الـ UTM التسويقية.",
         "tracker_title": "كود التتبع التلقائي لموقعك (UTM Tracker)",
-        "tracker_subtitle": "ضع هذا السطر قبل إغلاق الوسم </body> في موقعك أو صفحات الهبوط لحفظ بيانات UTM تلقائياً لمدة 30 يوماً وربطها مع كل عميل محتمل.",
+        "tracker_subtitle": "ضع هذا السطر قبل إغلاق الوسم <\/body> في موقعك أو صفحات الهبوط لحفظ بيانات UTM تلقائياً لمدة 30 يوماً وربطها مع كل عميل محتمل.",
         "copy_tracker": "نسخ كود التتبع",
         "copied": "تم النسخ بنجاح",
         "total_sources": "إجمالي القنوات",
@@ -3639,7 +3735,8 @@
         "updated_success": "تم تحديث مصدر العملاء بنجاح.",
         "token_regenerated": "تم تجديد مفتاح التوكن بنجاح.",
         "deleted_success": "تم حذف مصدر العملاء بنجاح.",
-        "limit_reached": "لقد وصلت إلى الحد الأقصى للمصادر المتاحة في باقتك ({{limit}})."
+        "limit_reached": "لقد وصلت إلى الحد الأقصى للمصادر المتاحة في باقتك ({{limit}}).",
+        "status_error": "Status Error"
     },
     "booking": {
         "title": "صفحات الحجز والمواعيد",
@@ -3651,7 +3748,7 @@
         "meeting_name": "اسم الاجتماع",
         "duration": "المدة",
         "duration_minutes": "المدة بالدقائق",
-        "location": "الموقع / طريقة اللقاء",
+        "location": "الموقع \/ طريقة اللقاء",
         "host": "المسؤول (Host)",
         "upcoming_count": "مواعيد قادمة",
         "total_count": "إجمالي المواعيد",
@@ -3670,7 +3767,7 @@
         "cancelled": "ملغي",
         "completed": "مكتمل",
         "no_show": "لم يحضر",
-        "attendee": "العميل / الحاضر",
+        "attendee": "العميل \/ الحاضر",
         "time": "الموعد والتوقيت",
         "meet_link": "رابط الاجتماع",
         "cancel_booking": "إلغاء الموعد",
@@ -3693,7 +3790,9 @@
         "updated_success": "تم تحديث نوع الاجتماع بنجاح.",
         "deleted_success": "تم حذف نوع الاجتماع بنجاح.",
         "availability_updated": "تم تحديث ساعات العمل بنجاح.",
-        "booking_cancelled_success": "تم إلغاء الموعد بنجاح."
+        "booking_cancelled_success": "تم إلغاء الموعد بنجاح.",
+        "no_bookings": "No Bookings",
+        "availability_subtitle": "Availability Subtitle"
     },
     "duplicates": {
         "title": "كشف التكرار والدمج",
@@ -3739,7 +3838,7 @@
         "name": "اسم الشركة",
         "website": "الموقع الإلكتروني",
         "domain": "نطاق الشركة",
-        "industry": "مجال العمل / القطاع",
+        "industry": "مجال العمل \/ القطاع",
         "select_industry": "اختر القطاع...",
         "size": "حجم الشركة",
         "select_size": "اختر الحجم...",
@@ -3897,7 +3996,94 @@
         },
         "rule_${rule}": "Rule ${Rule}",
         "threshold_${band}": "Threshold ${Band}",
-        "band_${band}": "Band ${Band}"
+        "band_${band}": "Band ${Band}",
+        "unassigned": "Unassigned",
+        "th_lead": "Th Lead",
+        "th_stage": "Th Stage",
+        "th_status": "Th Status",
+        "th_deal_value": "Th Deal Value",
+        "th_assigned": "Th Assigned",
+        "phone": "Phone",
+        "email": "Email",
+        "deal_value": "Deal Value",
+        "export_csv": "Export Csv",
+        "export": "Export",
+        "import": "Import",
+        "all_pipelines": "All Pipelines",
+        "all_stages": "All Stages",
+        "all_assignees": "All Assignees",
+        "my_leads": "My Leads",
+        "all_tags": "All Tags",
+        "bulk_assign": "Bulk Assign",
+        "bulk_stage": "Bulk Stage",
+        "add_tags": "Add Tags",
+        "col_stage": "Col Stage",
+        "col_assigned": "Col Assigned",
+        "col_tags": "Col Tags",
+        "tags_comma_separated": "Tags Comma Separated",
+        "import_leads_title": "Import Leads Title",
+        "import_subtitle": "Import Subtitle",
+        "select_csv_file": "Select Csv File",
+        "target_pipeline": "Target Pipeline",
+        "apply_tags": "Apply Tags",
+        "start_import": "Start Import",
+        "confirm_bulk_delete": "Confirm Bulk Delete",
+        "activity_assigned": "Activity Assigned",
+        "assigned_to_user": "Assigned To User",
+        "assigned_to": "Assigned To",
+        "deal_economics_title": "Deal Economics Title",
+        "win_probability": "Win Probability",
+        "expected_close_date": "Expected Close Date",
+        "status": "Status",
+        "outcome_reason": "Outcome Reason",
+        "stage_history_title": "Stage History Title",
+        "no_stage_history": "No Stage History",
+        "confirm_delete_task": "Confirm Delete Task",
+        "add_task": "Add Task",
+        "task_title_placeholder": "Task Title Placeholder",
+        "task_todo": "Task Todo",
+        "task_call": "Task Call",
+        "task_whatsapp": "Task Whatsapp",
+        "task_email": "Task Email",
+        "task_meeting": "Task Meeting",
+        "priority_medium": "Priority Medium",
+        "priority_high": "Priority High",
+        "priority_low": "Priority Low",
+        "assign_to": "Assign To",
+        "create_task": "Create Task",
+        "tasks_list": "Tasks List",
+        "no_tasks_yet": "No Tasks Yet",
+        "mark_incomplete": "Mark Incomplete",
+        "mark_complete": "Mark Complete",
+        "total_pipeline_value": "Total Pipeline Value",
+        "weighted_value": "Weighted Value",
+        "manage_pipelines": "Manage Pipelines",
+        "team_members": "Team Members",
+        "reason_won_title": "Reason Won Title",
+        "reason_lost_title": "Reason Lost Title",
+        "reason_subtitle": "Reason Subtitle",
+        "confirm_delete_pipeline": "Confirm Delete Pipeline",
+        "pipeline_settings_title": "Pipeline Settings Title",
+        "pipeline_settings_subtitle": "Pipeline Settings Subtitle",
+        "pipelines": "Pipelines",
+        "stages": "Stages",
+        "leads_count": "Leads Count",
+        "routing_mode": "Routing Mode",
+        "mode_manual": "Mode Manual",
+        "mode_round_robin": "Mode Round Robin",
+        "mode_load_balanced": "Mode Load Balanced",
+        "view_board": "View Board",
+        "new_pipeline_placeholder": "New Pipeline Placeholder",
+        "set_as_default": "Set As Default",
+        "create_pipeline": "Create Pipeline",
+        "close_reasons_title": "Close Reasons Title",
+        "close_reasons_subtitle": "Close Reasons Subtitle",
+        "won_reasons": "Won Reasons",
+        "lost_reasons": "Lost Reasons",
+        "won": "Won",
+        "lost": "Lost",
+        "new_reason_placeholder": "New Reason Placeholder",
+        "add_reason": "Add Reason"
     },
     "automation": {
         "title": "الأتمتة",
@@ -4443,7 +4629,8 @@
         "01": "01",
         "07em": "07Em",
         "08em": "08Em",
-        "1em": "1Em"
+        "1em": "1Em",
+        "00": "00"
     },
     "12": {
         "01": "01"
@@ -4513,7 +4700,62 @@
     },
     "Secure checkout": "Secure Checkout",
     "Back to pricing": "Back To Pricing",
+    "custom_fields": {
+        "title": "Title",
+        "subtitle": "Subtitle",
+        "unlimited": "Unlimited",
+        "used": "Used",
+        "add_field": "Add Field",
+        "empty_title": "Empty Title",
+        "empty_subtitle": "Empty Subtitle",
+        "add_first": "Add First",
+        "label": "Label",
+        "key": "Key",
+        "type": "Type",
+        "options": "Options",
+        "options_comma": "Options Comma",
+        "is_required": "Is Required",
+        "edit_title": "Edit Title",
+        "confirm_delete": "Confirm Delete",
+        "new_title": "New Title",
+        "none_for_lead": "None For Lead",
+        "define_hint": "Define Hint",
+        "manage_fields": "Manage Fields"
+    },
+    "contacts": {
+        "title": "Title"
+    },
     "v20": [
         "0"
-    ]
+    ],
+    "tasks": {
+        "tab_today": "Tab Today",
+        "tab_overdue": "Tab Overdue",
+        "tab_upcoming": "Tab Upcoming",
+        "tab_all_pending": "Tab All Pending",
+        "tab_completed": "Tab Completed",
+        "title": "Title",
+        "subtitle": "Subtitle",
+        "search_placeholder": "Search Placeholder",
+        "my_tasks": "My Tasks",
+        "all_assignees": "All Assignees",
+        "unassigned": "Unassigned",
+        "all_priorities": "All Priorities",
+        "all_types": "All Types",
+        "empty_title": "Empty Title",
+        "empty_subtitle": "Empty Subtitle"
+    },
+    "Your booking is confirmed": "Your Booking Is Confirmed",
+    "there": "There",
+    "meeting": "Meeting",
+    "When": "When",
+    "Join": "Join",
+    "Join the meeting": "Join The Meeting",
+    "Need to make a change?": "Need To Make A Change?",
+    "Reschedule this meeting": "Reschedule This Meeting",
+    "Cancel this meeting": "Cancel This Meeting",
+    "See you soon!": "See You Soon!",
+    "your meeting": "Your Meeting",
+    "If you need to make a change, use one of these links:": "If You Need To Make A Change, Use One Of These Links:",
+    "If you need to change it again, use one of these links:": "If You Need To Change It Again, Use One Of These Links:"
 }

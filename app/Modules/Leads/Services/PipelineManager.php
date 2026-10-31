@@ -2,6 +2,7 @@
 
 namespace App\Modules\Leads\Services;
 
+use App\Events\LeadPipelineChanged;
 use App\Events\LeadQualified;
 use App\Events\LeadStageChanged;
 use App\Modules\Leads\Contracts\LeadScorer;
@@ -145,8 +146,10 @@ class PipelineManager
         ?int $closeReasonId = null
     ): Lead {
         $fromStageId = $lead->stage_id;
+        $fromPipelineId = $lead->pipeline_id;
         $from = $lead->stage_id ? ($lead->stage->name ?? null) : null;
         $changedStage = (int) $lead->stage_id !== (int) $stage->id;
+        $changedPipeline = $stage->pipeline_id && (int) $fromPipelineId !== (int) $stage->pipeline_id;
 
         DB::transaction(function () use ($lead, $stage, $position, $changedStage, $fromStageId, $userId, $closeReasonId) {
             // Open a gap at the target index in the destination column.
@@ -201,6 +204,21 @@ class PipelineManager
 
             $lead->save();
         });
+
+        if ($changedPipeline) {
+            $fromPipelineName = $fromPipelineId ? LeadPipeline::find($fromPipelineId)?->name : null;
+            $toPipelineName = $stage->pipeline?->name ?? LeadPipeline::find($stage->pipeline_id)?->name ?? '';
+
+            $this->activity->pipelineChanged($lead, $fromPipelineName, $toPipelineName);
+
+            LeadPipelineChanged::dispatch(
+                (int) $lead->workspace_id,
+                (int) $lead->id,
+                $lead->contact?->id,
+                $fromPipelineName,
+                $toPipelineName,
+            );
+        }
 
         if ($changedStage) {
             $this->activity->stageChanged($lead, $from, $stage->name);

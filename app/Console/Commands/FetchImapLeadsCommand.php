@@ -41,6 +41,7 @@ class FetchImapLeadsCommand extends Command
 
             if (! $host || ! $username || ! $password) {
                 $this->warn("Skipping source #{$source->id} ({$source->name}): incomplete credentials.");
+
                 continue;
             }
 
@@ -55,6 +56,7 @@ class FetchImapLeadsCommand extends Command
                     $error = imap_last_error();
                     $source->update(['last_error' => $error]);
                     $this->error("Failed to connect to IMAP for {$source->name}: {$error}");
+
                     continue;
                 }
 
@@ -64,21 +66,38 @@ class FetchImapLeadsCommand extends Command
                 if ($emails) {
                     foreach ($emails as $emailNumber) {
                         $header = imap_headerinfo($inbox, $emailNumber);
+
+                        // A message without a parseable sender cannot become a
+                        // lead; skip it rather than writing a "null@null" lead.
+                        if (! $header || empty($header->from[0]->mailbox) || empty($header->from[0]->host)) {
+                            $this->warn("Skipping message #{$emailNumber} on {$source->name}: no sender address.");
+
+                            continue;
+                        }
+
                         $body = imap_body($inbox, $emailNumber);
 
-                        $fromEmail = $header->from[0]->mailbox . '@' . $header->from[0]->host;
+                        $fromEmail = $header->from[0]->mailbox.'@'.$header->from[0]->host;
                         $fromName = $header->from[0]->personal ?? '';
                         $subject = $header->subject ?? 'New Inquiry';
 
-                        $parser->ingest($source->workspace_id, [
-                            'body' => $body,
-                            'subject' => $subject,
-                            'from_email' => $fromEmail,
-                            'from_name' => $fromName,
-                            'message_id' => $header->message_id ?? null,
-                        ], $source);
+                        try {
+                            $parser->ingest($source->workspace_id, [
+                                'body' => $body,
+                                'subject' => $subject,
+                                'from_email' => $fromEmail,
+                                'from_name' => $fromName,
+                                'message_id' => $header->message_id ?? null,
+                            ], $source);
 
-                        $count++;
+                            // Mark seen only after a successful ingest so a
+                            // transient failure is retried on the next poll.
+                            imap_setflag_full($inbox, (string) $emailNumber, '\\Seen');
+                            $count++;
+                        } catch (\Throwable $e) {
+                            $source->update(['last_error' => $e->getMessage()]);
+                            $this->error("Failed to ingest message #{$emailNumber} on {$source->name}: {$e->getMessage()}");
+                        }
                     }
                 }
 
@@ -92,4 +111,3 @@ class FetchImapLeadsCommand extends Command
         return self::SUCCESS;
     }
 }
-

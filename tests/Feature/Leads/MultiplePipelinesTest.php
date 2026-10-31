@@ -2,16 +2,16 @@
 
 namespace Tests\Feature\Leads;
 
+use App\Events\LeadDealValueChanged;
+use App\Events\LeadPipelineChanged;
 use App\Models\Plan;
-use App\Models\User;
-use App\Models\Workspace;
 use App\Modules\Leads\Models\Lead;
 use App\Modules\Leads\Models\LeadCloseReason;
 use App\Modules\Leads\Models\LeadPipeline;
 use App\Modules\Leads\Models\LeadPipelineStage;
-use App\Modules\Leads\Models\LeadStageHistory;
 use App\Modules\Leads\Services\PipelineManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -233,6 +233,8 @@ class MultiplePipelinesTest extends TestCase
             'workspace_id' => $workspace->id,
         ]);
 
+        Event::fake([LeadDealValueChanged::class]);
+
         $this->actingAs($user)
             ->put(route('client.leads.pipeline.deal.update', $lead), [
                 'deal_value' => 15000.50,
@@ -249,6 +251,84 @@ class MultiplePipelinesTest extends TestCase
         $this->assertSame(75, $lead->probability);
         $this->assertSame('2026-12-31', $lead->expected_close_date->toDateString());
         $this->assertSame('qualified', $lead->status);
+
+        Event::assertDispatched(LeadDealValueChanged::class, function (LeadDealValueChanged $event) use ($lead) {
+            return $event->leadId === $lead->id
+                && abs((float) $event->toValue - 15000.50) < 0.001;
+        });
+
+        $this->assertDatabaseHas('lead_activities', [
+            'lead_id' => $lead->id,
+            'type' => 'deal_updated',
+        ]);
+    }
+
+    #[Test]
+    public function creating_a_lead_with_a_stage_records_initial_history(): void
+    {
+        [, $workspace] = $this->actor();
+
+        $stages = app(PipelineManager::class)->stagesFor($workspace->id);
+        $stage = $stages->firstWhere('name', 'New');
+
+        $lead = Lead::factory()->create([
+            'workspace_id' => $workspace->id,
+            'pipeline_id' => $stage->pipeline_id,
+            'stage_id' => $stage->id,
+        ]);
+
+        $this->assertDatabaseHas('lead_stage_history', [
+            'lead_id' => $lead->id,
+            'from_stage_id' => null,
+            'to_stage_id' => $stage->id,
+        ]);
+    }
+
+    #[Test]
+    public function moving_a_lead_to_another_pipeline_dispatches_pipeline_changed_event(): void
+    {
+        [$user, $workspace] = $this->actor();
+
+        $manager = app(PipelineManager::class);
+        $defaultPipeline = $manager->defaultPipelineFor($workspace->id);
+        $defaultStage = $manager->stagesFor($workspace->id, $defaultPipeline->id)->firstWhere('name', 'New');
+
+        $otherPipeline = LeadPipeline::create([
+            'workspace_id' => $workspace->id,
+            'name' => 'Enterprise Sales',
+            'is_default' => false,
+            'sort_order' => 1,
+        ]);
+        $otherStage = $manager->stagesFor($workspace->id, $otherPipeline->id)->firstWhere('name', 'New');
+
+        $lead = Lead::factory()->create([
+            'workspace_id' => $workspace->id,
+            'pipeline_id' => $defaultPipeline->id,
+            'stage_id' => $defaultStage->id,
+        ]);
+
+        Event::fake([LeadPipelineChanged::class]);
+
+        $manager->moveLead($lead, $otherStage, 0, $user->id);
+
+        Event::assertDispatched(LeadPipelineChanged::class, function (LeadPipelineChanged $event) use ($lead) {
+            return $event->leadId === $lead->id
+                && $event->toPipeline === 'Enterprise Sales';
+        });
+
+        $this->assertDatabaseHas('lead_activities', [
+            'lead_id' => $lead->id,
+            'type' => 'pipeline_changed',
+        ]);
+    }
+
+    #[Test]
+    public function pipeline_settings_are_feature_gated(): void
+    {
+        ['user' => $user] = $this->createWorkspaceContext();
+
+        $this->actingAs($user)
+            ->get(route('client.leads.pipelines.index'))
+            ->assertRedirect(route('client.pricing'));
     }
 }
-

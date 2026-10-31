@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\Sales;
 
+use App\Mail\BookingReminderMail;
 use App\Models\Plan;
 use App\Models\User;
 use App\Modules\Leads\Models\Lead;
+use App\Modules\Sales\Jobs\SendBookingReminderJob;
 use App\Modules\Sales\Models\AvailabilityRule;
 use App\Modules\Sales\Models\Booking;
 use App\Modules\Sales\Models\MeetingType;
@@ -12,6 +14,8 @@ use App\Modules\Sales\Services\AvailabilityService;
 use App\Modules\Sales\Services\BookingService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Validation\ValidationException;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -208,8 +212,8 @@ class BookingTest extends TestCase
             'workspace_id' => $workspace->id,
             'meeting_type_id' => $meetingType->id,
             'host_user_id' => $user->id,
-            'starts_at' => Carbon::parse($tomorrow->toDateString() . ' 10:30:00', 'UTC'),
-            'ends_at' => Carbon::parse($tomorrow->toDateString() . ' 11:00:00', 'UTC'),
+            'starts_at' => Carbon::parse($tomorrow->toDateString().' 10:30:00', 'UTC'),
+            'ends_at' => Carbon::parse($tomorrow->toDateString().' 11:00:00', 'UTC'),
             'status' => Booking::STATUS_CONFIRMED,
         ]);
 
@@ -371,5 +375,101 @@ class BookingTest extends TestCase
         $deleteResponse = $this->actingAs($user2)->delete(route('client.sales.booking.destroy', $type1->id));
         $deleteResponse->assertStatus(403);
     }
-}
 
+    #[Test]
+    public function booking_reminder_command_queues_only_upcoming_confirmed_bookings(): void
+    {
+        [$user, $workspace] = $this->actorWithPlan();
+
+        $meetingType = MeetingType::create([
+            'workspace_id' => $workspace->id,
+            'user_id' => $user->id,
+            'name' => 'Discovery Call',
+            'slug' => 'discovery-call',
+            'duration_minutes' => 30,
+            'status' => 'active',
+        ]);
+
+        $upcoming = $this->makeBooking($meetingType, $user, now()->addHours(2));
+        $tooFarAway = $this->makeBooking($meetingType, $user, now()->addHours(48));
+        $cancelled = $this->makeBooking($meetingType, $user, now()->addHours(2), Booking::STATUS_CANCELLED);
+
+        Queue::fake();
+
+        $this->artisan('bookings:send-reminders --hours=24')
+            ->expectsOutputToContain('Dispatched 1 booking reminder job(s).')
+            ->assertSuccessful();
+
+        Queue::assertPushed(SendBookingReminderJob::class, function (SendBookingReminderJob $job) use ($upcoming) {
+            return $job->booking->id === $upcoming->id;
+        });
+
+        Queue::assertNotPushed(SendBookingReminderJob::class, function (SendBookingReminderJob $job) use ($tooFarAway) {
+            return $job->booking->id === $tooFarAway->id;
+        });
+
+        Queue::assertNotPushed(SendBookingReminderJob::class, function (SendBookingReminderJob $job) use ($cancelled) {
+            return $job->booking->id === $cancelled->id;
+        });
+    }
+
+    #[Test]
+    public function booking_reminder_job_emails_the_guest_once_and_marks_the_booking(): void
+    {
+        [$user, $workspace] = $this->actorWithPlan();
+
+        $meetingType = MeetingType::create([
+            'workspace_id' => $workspace->id,
+            'user_id' => $user->id,
+            'name' => 'Discovery Call',
+            'slug' => 'discovery-call',
+            'duration_minutes' => 30,
+            'status' => 'active',
+        ]);
+
+        $booking = $this->makeBooking($meetingType, $user, now()->addHours(2));
+
+        // The blade view must render with the booking's details before the job
+        // queues it; a broken view would otherwise only surface in production.
+        $rendered = (new BookingReminderMail($booking))->render();
+        $this->assertStringContainsString('Discovery Call', $rendered);
+        $this->assertStringContainsString($booking->meet_link, $rendered);
+
+        Mail::fake();
+
+        (new SendBookingReminderJob($booking))->handle();
+
+        Mail::assertQueued(BookingReminderMail::class, function (BookingReminderMail $mail) use ($booking) {
+            return $mail->hasTo($booking->guest_email);
+        });
+
+        $booking->refresh();
+        $this->assertNotNull($booking->reminder_sent_at);
+
+        // Running again must not email the same guest twice.
+        (new SendBookingReminderJob($booking))->handle();
+
+        Mail::assertQueued(BookingReminderMail::class, 1);
+    }
+
+    private function makeBooking(
+        MeetingType $meetingType,
+        User $host,
+        \DateTimeInterface $startsAt,
+        string $status = Booking::STATUS_CONFIRMED,
+    ): Booking {
+        $starts = Carbon::parse($startsAt);
+
+        return Booking::create([
+            'workspace_id' => $meetingType->workspace_id,
+            'meeting_type_id' => $meetingType->id,
+            'host_user_id' => $host->id,
+            'starts_at' => $starts,
+            'ends_at' => $starts->copy()->addMinutes($meetingType->duration_minutes),
+            'status' => $status,
+            'guest_name' => 'Michael Corleone',
+            'guest_email' => 'michael@corleone.it',
+            'guest_timezone' => 'UTC',
+        ]);
+    }
+}

@@ -3,6 +3,7 @@
 namespace App\Modules\Sales\Services;
 
 use App\Modules\Leads\Models\Lead;
+use App\Modules\Leads\Models\LeadActivity;
 use App\Modules\Sales\Models\LeadSource;
 
 class ImapLeadParser
@@ -60,10 +61,20 @@ class ImapLeadParser
     /**
      * Ingest an email into a Lead.
      *
+     * Guarded by the RFC Message-ID: the scheduled poller may see the same
+     * message more than once (a crashed run, or a mailbox that stays UNSEEN),
+     * and re-ingesting it would create a duplicate lead every five minutes.
+     *
      * @param  array<string, mixed>  $emailData
      */
     public function ingest(int $workspaceId, array $emailData, ?LeadSource $source = null): Lead
     {
+        $messageId = $emailData['message_id'] ?? null;
+
+        if (! empty($messageId) && ($existing = $this->findLeadByMessageId($workspaceId, $messageId))) {
+            return $existing;
+        }
+
         $parsed = $this->parseEmail(
             $emailData['body'] ?? '',
             $emailData['subject'] ?? '',
@@ -71,7 +82,20 @@ class ImapLeadParser
             $emailData['from_name'] ?? ''
         );
 
+        // Carry the Message-ID through so captureFromEmail records it and the
+        // next poll recognises the message as already ingested.
+        $parsed['message_id'] = $messageId;
+
         return $this->autoCaptureService->captureFromEmail($workspaceId, $parsed, $source);
     }
-}
 
+    private function findLeadByMessageId(int $workspaceId, string $messageId): ?Lead
+    {
+        $activity = LeadActivity::where('workspace_id', $workspaceId)
+            ->where('meta->message_id', $messageId)
+            ->latest('id')
+            ->first();
+
+        return $activity?->lead;
+    }
+}
