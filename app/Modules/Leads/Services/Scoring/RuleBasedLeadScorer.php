@@ -16,6 +16,8 @@ class RuleBasedLeadScorer implements LeadScorer
     /** @var array<int, LeadScoringConfig> keyed by workspace, so scoring a page of leads is one query */
     private array $configCache = [];
 
+    public function __construct(private readonly BehavioralScorer $behavioral) {}
+
     public function score(Lead $lead): LeadScore
     {
         $config = $this->config((int) $lead->workspace_id);
@@ -48,6 +50,23 @@ class RuleBasedLeadScorer implements LeadScorer
         }
 
         $score = (int) min(100, max(0, round($score)));
+
+        // Behavioral engagement is layered on top of the rule score. A tenant
+        // with the gate off gets zero here and scores exactly as before; with
+        // events, the net can push the score up or (via decay) down, but never
+        // outside the 0-100 the board, badges and thresholds all assume.
+        $behavioral = $this->behavioral->summary($lead);
+
+        if ($behavioral['count'] > 0) {
+            $score = (int) min(100, max(0, $score + $behavioral['net']));
+
+            $breakdown[] = [
+                'rule' => 'behavioral',
+                'points' => $behavioral['net'],
+                'max' => 0,
+                'detail' => $behavioral['detail'],
+            ];
+        }
 
         return new LeadScore($score, $this->band($score, $config->effectiveThresholds()), $breakdown);
     }

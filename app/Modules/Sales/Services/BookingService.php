@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Modules\Leads\Models\Lead;
 use App\Modules\Leads\Models\LeadActivity;
 use App\Modules\Leads\Services\PipelineManager;
+use App\Modules\Leads\Services\Scoring\BehavioralScorer;
 use App\Modules\Sales\Models\Booking;
 use App\Modules\Sales\Models\MeetingType;
 use Carbon\Carbon;
@@ -19,6 +20,7 @@ class BookingService
 {
     public function __construct(
         private readonly PipelineManager $pipelineManager,
+        private readonly BehavioralScorer $behavioral,
     ) {}
 
     /**
@@ -40,7 +42,7 @@ class BookingService
         $startsAt = Carbon::parse($data['starts_at'])->utc();
         $endsAt = $startsAt->copy()->addMinutes($meetingType->duration_minutes);
 
-        return DB::transaction(function () use ($meetingType, $host, $data, $startsAt, $endsAt) {
+        $booking = DB::transaction(function () use ($meetingType, $host, $data, $startsAt, $endsAt) {
             // 1. Conflict checking (including buffer)
             $bufferedStart = $startsAt->copy()->subMinutes($meetingType->buffer_before);
             $bufferedEnd = $endsAt->copy()->addMinutes($meetingType->buffer_after);
@@ -140,6 +142,14 @@ class BookingService
 
             return $booking;
         });
+
+        // Award the behavioral score only after commit: a booking that rolls back
+        // (its slot collided at the last moment) must not have moved the lead.
+        if ($booking->lead) {
+            $this->behavioral->record($booking->lead, 'booking_created', 'Booked "'.$meetingType->name.'"');
+        }
+
+        return $booking;
     }
 
     /**

@@ -25,6 +25,7 @@ use App\Listeners\AutomationTriggerListener;
 use App\Listeners\AutoReplyListener;
 use App\Listeners\DispatchOutboundWebhookListener;
 use App\Listeners\LogSuccessfulLogin;
+use App\Listeners\RecordBehavioralScore;
 use App\Listeners\SendAutomationFailedNotification;
 use App\Listeners\SendCampaignCompletedNotification;
 use App\Listeners\SendConversationAssignedNotification;
@@ -90,6 +91,11 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(LeadDealValueChanged::class, [AutomationTriggerListener::class, 'handleLeadDealValueChanged']);
         Event::listen(FormSubmitted::class, [AutomationTriggerListener::class, 'handleFormSubmitted']);
         Event::listen(LeadQualified::class, [AutomationTriggerListener::class, 'handleLeadQualified']);
+
+        // ── Behavioral lead scoring ──────────────────────────────────────────
+        Event::listen(MessageReceived::class, [RecordBehavioralScore::class, 'handleMessageReceived']);
+        Event::listen(FormSubmitted::class, [RecordBehavioralScore::class, 'handleFormSubmitted']);
+        Event::listen(CommerceEventReceived::class, [RecordBehavioralScore::class, 'handleCommerceEvent']);
 
         // ── Outbound webhook event delivery ─────────────────────────────────
         Event::listen(ContactCreated::class, [DispatchOutboundWebhookListener::class, 'handleContactCreated']);

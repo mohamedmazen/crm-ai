@@ -140,7 +140,7 @@ class AutomationProductionReadinessTest extends TestCase
             );
         }
 
-        $this->assertCount(4, $raw[MessageReceived::class]);
+        $this->assertCount(5, $raw[MessageReceived::class]);
     }
 
     // ─── Builder-format graphs execute ────────────────────────────────────────

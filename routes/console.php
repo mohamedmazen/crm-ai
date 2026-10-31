@@ -144,6 +144,14 @@ Schedule::command('leads:detect-duplicates')
     ->withoutOverlapping()
     ->onOneServer();
 
+// Decay behavioral scores for inactive leads (nightly). Runs after duplicate
+// detection so the board a tenant opens in the morning reflects the new scores.
+Schedule::command('leads:decay-scores')
+    ->dailyAt('03:00')
+    ->name('decay-lead-scores')
+    ->withoutOverlapping()
+    ->onOneServer();
+
 // Booking reminders (hourly). The 24h look-ahead is deduped by
 // bookings.reminder_sent_at so a guest is reminded exactly once.
 Schedule::command('bookings:send-reminders --hours=24')

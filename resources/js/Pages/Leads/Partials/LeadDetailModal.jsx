@@ -399,22 +399,39 @@ function ScoreBreakdown({ breakdown }) {
         <div>
             <h3 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">{t('leads.why_this_score')}</h3>
             <ul className="mt-3 space-y-3">
-                {breakdown.map((row) => (
-                    <li key={row.rule}>
-                        <div className="flex items-center justify-between gap-2 text-xs">
-                            <span className="text-neutral-600 dark:text-neutral-300">{row.detail}</span>
-                            <span className="shrink-0 font-medium tabular-nums text-neutral-500 dark:text-neutral-400">
-                                {row.points} / {row.max}
-                            </span>
-                        </div>
-                        <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
-                            <div
-                                className="h-full rounded-full bg-brand-500 transition-all"
-                                style={{ width: `${row.max > 0 ? (row.points / row.max) * 100 : 0}%` }}
-                            />
-                        </div>
-                    </li>
-                ))}
+                {breakdown.map((row) => {
+                    // Behavioral rows are a signed net total, not a points/max
+                    // pair: the bar shows magnitude and turns red when decay
+                    // pulled the score down.
+                    const behavioral = row.rule === 'behavioral';
+                    const negative = row.points < 0;
+                    const width = behavioral
+                        ? Math.min(100, Math.abs(row.points))
+                        : Math.min(100, Math.max(0, row.max > 0 ? (row.points / row.max) * 100 : 0));
+
+                    return (
+                        <li key={row.rule}>
+                            <div className="flex items-center justify-between gap-2 text-xs">
+                                <span className="text-neutral-600 dark:text-neutral-300">{row.detail}</span>
+                                <span
+                                    className={`shrink-0 font-medium tabular-nums ${
+                                        negative ? 'text-red-600 dark:text-red-400' : 'text-neutral-500 dark:text-neutral-400'
+                                    }`}
+                                >
+                                    {behavioral
+                                        ? `${row.points >= 0 ? '+' : ''}${row.points}`
+                                        : `${row.points} / ${row.max}`}
+                                </span>
+                            </div>
+                            <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+                                <div
+                                    className={`h-full rounded-full transition-all ${negative ? 'bg-red-500' : 'bg-brand-500'}`}
+                                    style={{ width: `${width}%` }}
+                                />
+                            </div>
+                        </li>
+                    );
+                })}
             </ul>
         </div>
     );
