@@ -49,8 +49,9 @@ class SecureHeaders
         $captcha = $this->captchaSources($request);
 
         $unsafeEval = config('app.env') !== 'production' ? " 'unsafe-eval'" : '';
-        $scriptSrc = "'self' 'unsafe-inline'".$unsafeEval.$this->viteDevSources().$this->thirdPartyScriptSources().$iyzico.$captcha;
-        $styleSrc = "'self' 'unsafe-inline' https://fonts.bunny.net https://fonts.googleapis.com".$this->viteDevSources().$this->thirdPartyStyleSources().$iyzico.$captcha;
+        $vite = $this->viteDevSources($request);
+        $scriptSrc = "'self' 'unsafe-inline'".$unsafeEval.$vite.$this->thirdPartyScriptSources().$iyzico.$captcha;
+        $styleSrc = "'self' 'unsafe-inline' https://fonts.bunny.net https://fonts.googleapis.com".$vite.$this->thirdPartyStyleSources().$iyzico.$captcha;
         $fontSrc = "'self' data: https://fonts.bunny.net https://fonts.gstatic.com https://fonts.googleapis.com".$iyzico;
 
         $frameSrc = "'self'".$this->metaFrameSources().$iyzico.$captcha;
@@ -63,7 +64,7 @@ class SecureHeaders
             'style-src-elem '.$styleSrc,
             "img-src 'self' data: https: blob:",
             'font-src '.$fontSrc,
-            "connect-src 'self' ".$this->connectSources().$iyzico.$captcha,
+            "connect-src 'self'".$vite.$this->connectSources().$iyzico.$captcha,
             'frame-src '.$frameSrc,
             "frame-ancestors 'self'",
         ]);
@@ -91,15 +92,56 @@ class SecureHeaders
         return ' https://challenges.cloudflare.com https://www.google.com https://www.gstatic.com https://recaptcha.google.com';
     }
 
-    /** Allow Vite dev server (different port) in development so CSP does not block scripts. */
-    private function viteDevSources(): string
+    /**
+     * Allow the Vite dev server in development so CSP does not block its
+     * scripts/styles. The dev origin is not always localhost: Herd serves Vite
+     * from the site host over HTTPS (e.g. https://crm.test:5173), which is what
+     * Laravel writes to public/hot.
+     */
+    private function viteDevSources(Request $request): string
     {
         if (config('app.env') === 'production') {
             return '';
         }
 
-        // Vite default port 5173. Do not use http://[::1]:5173 — invalid in script-src for Chromium and triggers console noise.
-        return ' http://localhost:5173 http://127.0.0.1:5173';
+        // Vite default port 5173. Do not use http://[::1]:5173 — invalid in
+        // script-src for Chromium and triggers console noise.
+        $sources = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+
+        // Authoritative origin: whatever the Laravel Vite plugin published.
+        if (is_file($hot = public_path('hot'))) {
+            $origin = self::devServerOrigin((string) file_get_contents($hot));
+            if ($origin !== null) {
+                $sources[] = $origin;
+            }
+        }
+
+        // Fallback for a stale/missing hot file: Vite shares the app's hostname,
+        // just on its own port, so allow the request host in both schemes.
+        $host = $request->getHost();
+        if (str_contains($host, '.') || $host === 'localhost') {
+            $sources[] = 'http://'.$host.':5173';
+            $sources[] = 'https://'.$host.':5173';
+        }
+
+        return ' '.implode(' ', array_unique($sources));
+    }
+
+    /**
+     * Normalise a dev-server URL to a CSP source. IPv6 literals are dropped
+     * because Chromium rejects them in script-src.
+     */
+    public static function devServerOrigin(string $url): ?string
+    {
+        $parts = parse_url(trim($url));
+
+        if (! is_array($parts) || empty($parts['host']) || str_contains($parts['host'], ':')) {
+            return null;
+        }
+
+        $port = isset($parts['port']) ? ':'.$parts['port'] : '';
+
+        return ($parts['scheme'] ?? 'http').'://'.$parts['host'].$port;
     }
 
     /** OneSignal (when configured), Meta JS SDK, and Cloudflare Web Analytics / beacon scripts. */
@@ -152,7 +194,7 @@ class SecureHeaders
             $sources[] = 'https://connect.facebook.net';
         }
 
-        return implode(' ', array_unique($sources));
+        return $sources === [] ? '' : ' '.implode(' ', array_unique($sources));
     }
 
     /** Allow Meta Login / Embedded Signup dialogs in iframes when the Meta App is configured. */
