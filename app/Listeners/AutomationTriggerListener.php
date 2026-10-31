@@ -7,9 +7,11 @@ use App\Events\CampaignCompleted;
 use App\Events\CommerceEventReceived;
 use App\Events\ContactCreated;
 use App\Events\FormSubmitted;
+use App\Events\LeadAssigned;
 use App\Events\LeadDealValueChanged;
 use App\Events\LeadPipelineChanged;
 use App\Events\LeadQualified;
+use App\Events\LeadScoreChanged;
 use App\Events\LeadStageChanged;
 use App\Events\MessageReceived;
 use App\Modules\Automation\Jobs\ExecuteAutomationRunJob;
@@ -123,6 +125,48 @@ class AutomationTriggerListener
         }
 
         $this->fire('lead.deal_value_changed', $event->workspaceId, $event->contactId, $event->context());
+    }
+
+    public function handleLeadAssigned(LeadAssigned $event): void
+    {
+        $contactId = Contact::where('lead_id', $event->lead->id)->value('id');
+        if (! $contactId) {
+            return;
+        }
+
+        $this->fire('lead.assigned', (int) $event->lead->workspace_id, (int) $contactId, [
+            'lead_id' => (string) $event->lead->id,
+            'assigned_user_id' => (string) $event->assignedTo->id,
+            'assigned_user_name' => $event->assignedTo->name,
+        ]);
+    }
+
+    /**
+     * Fires each `lead.score_threshold` automation only when the score crosses
+     * its own threshold upward, so a lead already above the line does not
+     * re-trigger on every engagement.
+     */
+    public function handleLeadScoreChanged(LeadScoreChanged $event): void
+    {
+        if (! $event->contactId) {
+            return;
+        }
+
+        Automation::where('workspace_id', $event->workspaceId)
+            ->where('status', 'active')
+            ->where('trigger_type', 'lead.score_threshold')
+            ->get()
+            ->each(function (Automation $automation) use ($event) {
+                $threshold = (int) ($automation->trigger_config['threshold'] ?? 0);
+
+                if ($threshold <= 0) {
+                    return;
+                }
+
+                if ($event->previousScore < $threshold && $event->score >= $threshold) {
+                    $this->engine->triggerForContact($automation, (int) $event->contactId, $event->context());
+                }
+            });
     }
 
     public function handleFormSubmitted(FormSubmitted $event): void

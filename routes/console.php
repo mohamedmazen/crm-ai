@@ -152,6 +152,15 @@ Schedule::command('leads:decay-scores')
     ->withoutOverlapping()
     ->onOneServer();
 
+// Scheduled automation triggers: overdue tasks, inactive leads and a lead
+// custom date field reaching today. Each dispatch is claimed in
+// automation_trigger_dispatches, so a re-run cannot fire the same window twice.
+Schedule::command('automation:scan-time-triggers')
+    ->everyFifteenMinutes()
+    ->name('automation-scan-time-triggers')
+    ->withoutOverlapping()
+    ->onOneServer();
+
 // Booking reminders (hourly). The 24h look-ahead is deduped by
 // bookings.reminder_sent_at so a guest is reminded exactly once.
 Schedule::command('bookings:send-reminders --hours=24')

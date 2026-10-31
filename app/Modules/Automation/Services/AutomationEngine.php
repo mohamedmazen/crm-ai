@@ -3,6 +3,7 @@
 namespace App\Modules\Automation\Services;
 
 use App\Events\ConversationAssigned;
+use App\Events\LeadDealValueChanged;
 use App\Events\MessageSent;
 use App\Mail\AutomationEmail;
 use App\Models\User;
@@ -18,6 +19,10 @@ use App\Modules\Broadcasting\Models\CampaignRecipient;
 use App\Modules\Broadcasting\Services\Sms\SmsDriverManager;
 use App\Modules\Ecommerce\Models\EcommerceProduct;
 use App\Modules\Integrations\Services\Clients\GoogleClient;
+use App\Modules\Leads\Models\Lead;
+use App\Modules\Leads\Models\LeadPipelineStage;
+use App\Modules\Leads\Models\LeadTask;
+use App\Modules\Leads\Services\PipelineManager;
 use App\Modules\Shared\Models\ChannelAccount;
 use App\Modules\Shared\Models\Contact;
 use App\Modules\Shared\Models\ContactTag;
@@ -436,6 +441,9 @@ class AutomationEngine
             'update_contact' => ($data['field'] ?? '') === '' ? $skip('No field selected.') : $ok('Would set contact.'.$data['field'].' = "'.$this->snippet($render($data['value'] ?? '')).'".'),
             'assign_agent' => $ok(! empty($data['agent_name']) ? 'Would assign to '.$data['agent_name'].'.' : 'Would hand off to a human agent.'),
             'add_to_campaign' => ($data['campaign_id'] ?? '') === '' ? $skip('No campaign selected.') : $ok('Would add contact to campaign #'.$data['campaign_id'].'.'),
+            'create_task' => ($data['title'] ?? '') === '' ? $skip('No task title.') : $ok('Would create task "'.$this->snippet($render($data['title']), 30).'".'),
+            'move_to_pipeline' => empty($data['stage_id']) ? $skip('No target stage.') : $ok('Would move the lead to stage #'.$data['stage_id'].'.'),
+            'update_deal_value' => $ok('Would '.($data['mode'] ?? 'set').' the deal value to '.($data['amount'] ?? '0').'.'),
             'cta_button' => $ok('Would send CTA "'.($data['display_text'] ?? 'Open').'" → '.$this->snippet($render($data['url'] ?? ''), 40)),
             'send_location' => $ok('Would send location '.($data['latitude'] ?? '?').', '.($data['longitude'] ?? '?').'.'),
             'send_poll' => $ok('Would send a poll: "'.$this->snippet($render($data['question'] ?? '')).'"'),
@@ -493,6 +501,9 @@ class AutomationEngine
                 'run_subflow' => $this->executeRunSubflow($data, $run, $context),
                 // ── CONTACT ───────────────────────────────────────────────────
                 'assign_agent' => $this->executeAssignAgent($data, $run),
+                'create_task' => $this->executeCreateTask($data, $run, $context),
+                'move_to_pipeline' => $this->executeMoveToPipeline($data, $run, $context),
+                'update_deal_value' => $this->executeUpdateDealValue($data, $run, $context),
                 // ── ENGAGE ────────────────────────────────────────────────────
                 'cta_button' => $this->executeCtaButton($data, $run, $context),
                 'send_location' => $this->executeSendLocation($data, $run, $context),
@@ -1143,6 +1154,152 @@ class AutomationEngine
         ConversationAssigned::dispatch($conversation, $user);
 
         return ['status' => 'ok', 'message' => $user ? "Assigned to {$user->name}." : 'Handed off to a human agent.'];
+    }
+
+    // ─── CRM actions ──────────────────────────────────────────────────────────
+
+    private function executeCreateTask(array $data, AutomationRun $run, array $context): array
+    {
+        $lead = $this->resolveRunLead($run, $context);
+        if (! $lead) {
+            return ['status' => 'skipped', 'message' => 'No lead linked to this contact.'];
+        }
+
+        $contact = $run->contact_id ? Contact::find($run->contact_id) : null;
+        $render = fn (string $value): string => $contact
+            ? $this->renderTokens($value, $contact, $context)
+            : $value;
+
+        $title = trim($render((string) ($data['title'] ?? '')));
+        if ($title === '') {
+            return ['status' => 'error', 'message' => 'Task title is required.'];
+        }
+
+        $description = trim($render((string) ($data['description'] ?? '')));
+
+        $assignee = $data['assigned_user_id'] ?? null;
+        $assignee = $assignee !== null && $assignee !== '' ? (int) $assignee : $lead->assigned_user_id;
+
+        $task = LeadTask::create([
+            'workspace_id' => $lead->workspace_id,
+            'lead_id' => $lead->id,
+            'assigned_user_id' => $assignee,
+            'created_by' => null,
+            'title' => mb_substr($title, 0, 255),
+            'description' => $description !== '' ? $description : null,
+            'type' => in_array($data['type'] ?? '', LeadTask::TYPES, true) ? $data['type'] : 'todo',
+            'priority' => in_array($data['priority'] ?? '', LeadTask::PRIORITIES, true) ? $data['priority'] : 'medium',
+            'due_at' => $this->taskDueAt($data),
+        ]);
+
+        return [
+            'status' => 'ok',
+            'message' => "Created task '{$task->title}'.",
+            'output' => ['task_id' => $task->id],
+        ];
+    }
+
+    private function executeMoveToPipeline(array $data, AutomationRun $run, array $context): array
+    {
+        $lead = $this->resolveRunLead($run, $context);
+        if (! $lead) {
+            return ['status' => 'skipped', 'message' => 'No lead linked to this contact.'];
+        }
+
+        $stageId = (int) ($data['stage_id'] ?? 0);
+        $stage = $stageId > 0
+            ? LeadPipelineStage::where('workspace_id', $lead->workspace_id)->find($stageId)
+            : null;
+
+        if (! $stage) {
+            return ['status' => 'skipped', 'message' => 'Target stage not found.'];
+        }
+
+        app(PipelineManager::class)->moveLead($lead, $stage, (int) ($data['position'] ?? 0));
+
+        return [
+            'status' => 'ok',
+            'message' => "Moved lead to '{$stage->name}'.",
+            'output' => ['stage_id' => $stage->id],
+        ];
+    }
+
+    private function executeUpdateDealValue(array $data, AutomationRun $run, array $context): array
+    {
+        $lead = $this->resolveRunLead($run, $context);
+        if (! $lead) {
+            return ['status' => 'skipped', 'message' => 'No lead linked to this contact.'];
+        }
+
+        $amount = (float) ($data['amount'] ?? 0);
+        $previous = (float) $lead->deal_value;
+
+        $new = match ($data['mode'] ?? 'set') {
+            'increase' => $previous + $amount,
+            'decrease' => $previous - $amount,
+            'percent' => $previous + ($previous * ($amount / 100)),
+            default => $amount,
+        };
+
+        $new = max(0, round($new, 2));
+
+        $lead->update(['deal_value' => $new]);
+
+        LeadDealValueChanged::dispatch(
+            (int) $lead->workspace_id,
+            (int) $lead->id,
+            $lead->contact?->id,
+            $previous,
+            $new,
+            $lead->currency,
+        );
+
+        return [
+            'status' => 'ok',
+            'message' => "Deal value updated to {$new}.",
+            'output' => ['deal_value' => $new],
+        ];
+    }
+
+    /**
+     * Resolve the lead a CRM action should act on: the trigger's lead_id when the
+     * context carries one, otherwise the lead linked to the run's contact.
+     */
+    private function resolveRunLead(AutomationRun $run, array $context): ?Lead
+    {
+        $workspaceId = (int) $run->automation->workspace_id;
+        $leadId = (int) ($context['lead_id'] ?? 0);
+
+        if ($leadId > 0) {
+            $lead = Lead::where('workspace_id', $workspaceId)->find($leadId);
+            if ($lead) {
+                return $lead;
+            }
+        }
+
+        if ($run->contact_id) {
+            $linkedLeadId = Contact::whereKey($run->contact_id)->value('lead_id');
+            if ($linkedLeadId) {
+                return Lead::where('workspace_id', $workspaceId)->find($linkedLeadId);
+            }
+        }
+
+        return null;
+    }
+
+    /** Due date for create_task: an offset from now, or null when none is configured. */
+    private function taskDueAt(array $data): ?Carbon
+    {
+        $amount = (int) ($data['due_amount'] ?? 0);
+        if ($amount <= 0) {
+            return null;
+        }
+
+        return match ($data['due_unit'] ?? 'days') {
+            'minutes' => now()->addMinutes($amount),
+            'hours' => now()->addHours($amount),
+            default => now()->addDays($amount),
+        };
     }
 
     // ─── ENGAGE nodes ─────────────────────────────────────────────────────────

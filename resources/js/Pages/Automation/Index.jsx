@@ -5,7 +5,8 @@ import {
     Plus, Zap, Play, Pause, Trash2, BarChart2, Pencil, Clock,
     UserRound, Tag, MessageCircle, Megaphone, FileText, Link2,
     ShoppingBag, PackageCheck, XCircle, ShoppingCart, UserPlus,
-    Sparkles, Loader2, AlertTriangle,
+    Sparkles, Loader2, AlertTriangle, UserCheck, BarChart3,
+    CalendarClock, ClipboardList,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -29,6 +30,11 @@ const TRIGGER_META = {
     'contact.tag_added': { labelKey: 'automation.trigger_tag_added',         Icon: Tag           },
     'message.received':  { labelKey: 'automation.trigger_message_received',  Icon: MessageCircle },
     'lead.customer_replied': { labelKey: 'automation.trigger_lead_customer_replied', Icon: MessageCircle },
+    'lead.assigned':     { labelKey: 'automation.trigger_lead_assigned',     Icon: UserCheck     },
+    'lead.score_threshold': { labelKey: 'automation.trigger_lead_score_threshold', Icon: BarChart3 },
+    'lead.inactive':     { labelKey: 'automation.trigger_lead_inactive',     Icon: Clock         },
+    'lead.date_reached': { labelKey: 'automation.trigger_lead_date_reached', Icon: CalendarClock },
+    'task.overdue':      { labelKey: 'automation.trigger_task_overdue',      Icon: ClipboardList },
     'campaign.sent':     { labelKey: 'automation.trigger_campaign_sent',     Icon: Megaphone     },
     'form.submitted':    { labelKey: 'automation.trigger_form_submitted',    Icon: FileText      },
     'webhook.received':  { labelKey: 'automation.trigger_webhook_received',  Icon: Link2         },
@@ -39,6 +45,15 @@ const TRIGGER_META = {
     'customer.created':  { labelKey: 'automation.trigger_customer_created',  Icon: UserPlus      },
 };
 
+const BUSINESS_DAYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
+const TIMEZONE_SUGGESTIONS = [
+    'UTC', 'Africa/Cairo', 'Africa/Lagos', 'Africa/Nairobi', 'Europe/London', 'Europe/Paris',
+    'Europe/Berlin', 'Europe/Istanbul', 'Asia/Riyadh', 'Asia/Dubai', 'Asia/Karachi', 'Asia/Kolkata',
+    'Asia/Jakarta', 'Asia/Singapore', 'Asia/Tokyo', 'Australia/Sydney', 'America/New_York',
+    'America/Chicago', 'America/Denver', 'America/Los_Angeles', 'America/Sao_Paulo',
+];
+
 const formatDate = (iso) => {
     if (!iso) return '—';
     const d = new Date(iso);
@@ -46,7 +61,7 @@ const formatDate = (iso) => {
     return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 };
 
-export default function AutomationIndex({ automations }) {
+export default function AutomationIndex({ automations, businessHours }) {
     const { t } = useTranslation();
     const { props } = usePage();
     const flash = props.flash ?? {};
@@ -55,6 +70,45 @@ export default function AutomationIndex({ automations }) {
     const [aiPrompt, setAiPrompt] = useState('');
     const [aiLoading, setAiLoading] = useState(false);
     const [aiError, setAiError] = useState(null);
+    const [showHours, setShowHours] = useState(false);
+    const [savingHours, setSavingHours] = useState(false);
+    const [hours, setHours] = useState({
+        timezone: businessHours?.timezone ?? 'UTC',
+        schedule: businessHours?.schedule ?? {},
+    });
+
+    const openHours = () => {
+        setHours({
+            timezone: businessHours?.timezone ?? 'UTC',
+            schedule: businessHours?.schedule ?? {},
+        });
+        setShowHours(true);
+    };
+
+    const toggleDay = (day) => setHours(h => ({
+        ...h,
+        schedule: {
+            ...h.schedule,
+            [day]: h.schedule[day] ? null : { start: '09:00', end: '17:00' },
+        },
+    }));
+
+    const setDay = (day, patch) => setHours(h => ({
+        ...h,
+        schedule: {
+            ...h.schedule,
+            [day]: { start: '09:00', end: '17:00', ...(h.schedule[day] ?? {}), ...patch },
+        },
+    }));
+
+    const saveHours = () => {
+        setSavingHours(true);
+        router.put(route('client.automations.business-hours.update'), hours, {
+            preserveScroll: true,
+            onSuccess: () => setShowHours(false),
+            onFinish: () => setSavingHours(false),
+        });
+    };
 
     const { data, setData, post, processing, reset } = useForm({ name: '' });
 
@@ -104,6 +158,9 @@ export default function AutomationIndex({ automations }) {
                     </div>
                     {(
                         <div className="flex items-center gap-2">
+                            <button onClick={openHours} className="flex items-center gap-1.5 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 py-2 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition">
+                                <Clock className="h-4 w-4" /> {t('automation.business_hours')}
+                            </button>
                             <button onClick={() => { setAiError(null); setShowAi(true); }} className="ai-glow flex items-center gap-1.5 rounded-lg border border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-900/30 px-3 py-2 text-sm font-medium text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/50 transition">
                                 <Sparkles className="h-4 w-4" /> {t('automation.ai_generate')}
                             </button>
@@ -267,6 +324,79 @@ export default function AutomationIndex({ automations }) {
                                 {t('common.cancel')}
                             </button>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {showHours && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+                    <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-xl bg-white dark:bg-neutral-900 p-6 shadow-xl space-y-4">
+                        <div className="flex items-center gap-2.5">
+                            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600 dark:bg-brand-900/30"><Clock className="h-4 w-4" /></span>
+                            <div>
+                                <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{t('automation.business_hours_title')}</h3>
+                                <p className="text-xs text-neutral-500">{t('automation.business_hours_subtitle')}</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="text-xs font-medium text-neutral-500 dark:text-neutral-400">{t('automation.business_hours_timezone')}</label>
+                            <input
+                                list="automation-tz-list"
+                                value={hours.timezone}
+                                onChange={e => setHours(h => ({ ...h, timezone: e.target.value }))}
+                                className="mt-1 w-full rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-1.5 text-sm"
+                            />
+                            <datalist id="automation-tz-list">
+                                {TIMEZONE_SUGGESTIONS.map(tz => <option key={tz} value={tz} />)}
+                            </datalist>
+                        </div>
+
+                        <div className="space-y-2">
+                            {BUSINESS_DAYS.map(day => {
+                                const window = hours.schedule?.[day];
+                                return (
+                                    <div key={day} className="flex items-center gap-2">
+                                        <label className="flex w-24 items-center gap-1.5 text-xs font-medium text-neutral-600 dark:text-neutral-300">
+                                            <input type="checkbox" checked={!!window} onChange={() => toggleDay(day)} />
+                                            {t(`automation.day_${day}`)}
+                                        </label>
+                                        {window ? (
+                                            <>
+                                                <input
+                                                    type="time"
+                                                    value={window.start ?? '09:00'}
+                                                    onChange={e => setDay(day, { start: e.target.value })}
+                                                    className="rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-2 py-1 text-xs"
+                                                />
+                                                <span className="text-xs text-neutral-400">–</span>
+                                                <input
+                                                    type="time"
+                                                    value={window.end ?? '17:00'}
+                                                    onChange={e => setDay(day, { end: e.target.value })}
+                                                    className="rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-2 py-1 text-xs"
+                                                />
+                                            </>
+                                        ) : (
+                                            <span className="text-xs text-neutral-400">{t('automation.business_hours_closed')}</span>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        {props.errors?.timezone && <p className="text-xs text-red-600">{props.errors.timezone}</p>}
+                        {props.errors?.schedule && <p className="text-xs text-red-600">{props.errors.schedule}</p>}
+
+                        <div className="flex gap-2 pt-1">
+                            <button onClick={saveHours} disabled={savingHours} className="flex-1 rounded-lg bg-brand-600 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-60 transition">
+                                {savingHours ? t('automation.saving') : t('common.save')}
+                            </button>
+                            <button type="button" onClick={() => setShowHours(false)} className="rounded-lg border border-neutral-300 dark:border-neutral-600 px-4 py-2 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800 transition">
+                                {t('common.cancel')}
+                            </button>
+                        </div>
+                        <p className="text-[11px] text-neutral-400">{t('automation.business_hours_note')}</p>
                     </div>
                 </div>
             )}

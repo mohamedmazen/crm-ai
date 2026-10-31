@@ -22,6 +22,7 @@ class WorkflowGenerator
         'add_tag', 'remove_tag', 'update_contact', 'assign_agent', 'add_to_campaign', 'cta_button',
         'send_location', 'send_poll', 'run_chatbot', 'book_appointment', 'google_meet', 'whatsapp_form',
         'whatsapp_catalog', 'woocommerce_product', 'shopify_product', 'google_sheets', 'google_docs',
+        'create_task', 'move_to_pipeline', 'update_deal_value',
     ];
 
     /** Trigger types the listener understands (mirrors the builder's TRIGGER_TYPES). */
@@ -29,7 +30,7 @@ class WorkflowGenerator
         'contact.created', 'contact.tag_added', 'message.received', 'campaign.sent', 'form.submitted',
         'webhook.received', 'order.placed', 'order.fulfilled', 'order.cancelled', 'cart.abandoned', 'customer.created',
         'lead.stage_changed', 'lead.pipeline_changed', 'lead.deal_value_changed', 'lead.qualified', 'lead.won', 'lead.lost',
-        'lead.customer_replied',
+        'lead.customer_replied', 'lead.assigned', 'task.overdue', 'lead.score_threshold', 'lead.inactive', 'lead.date_reached',
     ];
 
     public function __construct(private readonly LlmGateway $llmGateway) {}

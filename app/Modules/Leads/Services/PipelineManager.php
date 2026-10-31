@@ -4,6 +4,7 @@ namespace App\Modules\Leads\Services;
 
 use App\Events\LeadPipelineChanged;
 use App\Events\LeadQualified;
+use App\Events\LeadScoreChanged;
 use App\Events\LeadStageChanged;
 use App\Modules\Leads\Contracts\LeadScorer;
 use App\Modules\Leads\Models\Lead;
@@ -243,6 +244,7 @@ class PipelineManager
     public function rescore(Lead $lead): bool
     {
         $wasHot = $lead->score_band === 'hot';
+        $previousScore = (int) $lead->score;
         $result = $this->scorer->score($lead);
 
         $lead->update([
@@ -261,6 +263,19 @@ class PipelineManager
                 (int) $lead->workspace_id,
                 (int) $lead->id,
                 $lead->contact?->id,
+                $result->score,
+                $result->band,
+            );
+        }
+
+        // Only announce a real movement: threshold automations compare the
+        // previous value against their own threshold to fire on the crossing.
+        if ($result->score !== $previousScore) {
+            LeadScoreChanged::dispatch(
+                (int) $lead->workspace_id,
+                (int) $lead->id,
+                $lead->contact?->id,
+                $previousScore,
                 $result->score,
                 $result->band,
             );

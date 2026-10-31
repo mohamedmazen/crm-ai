@@ -7,6 +7,9 @@ Route::middleware(['web', 'client-app'])->prefix('app/automations')->name('clien
     Route::get('/', [AutomationController::class, 'index'])->name('index');
     Route::post('/', [AutomationController::class, 'store'])->name('store');
     Route::post('/generate', [AutomationController::class, 'generate'])->name('generate');
+    // Must stay above /{automation}: a PUT to /business-hours would otherwise
+    // bind "business-hours" to the automation update route.
+    Route::put('/business-hours', [AutomationController::class, 'updateBusinessHours'])->name('business-hours.update');
     Route::get('/{automation}/edit', [AutomationController::class, 'edit'])->name('edit');
     Route::put('/{automation}', [AutomationController::class, 'update'])->name('update');
     Route::delete('/{automation}', [AutomationController::class, 'destroy'])->name('destroy');

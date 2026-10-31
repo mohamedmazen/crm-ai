@@ -7,11 +7,14 @@ use App\Models\User;
 use App\Modules\AI\Models\AiChatbot;
 use App\Modules\Automation\Models\Automation;
 use App\Modules\Automation\Models\AutomationRun;
+use App\Modules\Automation\Models\WorkspaceBusinessHours;
 use App\Modules\Automation\Services\AutomationEngine;
 use App\Modules\Automation\Services\WorkflowGenerator;
 use App\Modules\Broadcasting\Models\Campaign;
 use App\Modules\Ecommerce\Models\EcommerceStore;
 use App\Modules\Integrations\Models\IntegrationConfig;
+use App\Modules\Leads\Models\LeadPipeline;
+use App\Modules\Shared\Models\CustomField;
 use App\Modules\Whatsapp\Models\WhatsappTemplate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -34,7 +37,53 @@ class AutomationController extends Controller
             ->withCount('runs')
             ->latest()->get();
 
-        return Inertia::render('Automation/Index', ['automations' => $automations]);
+        return Inertia::render('Automation/Index', [
+            'automations' => $automations,
+            'businessHours' => $this->businessHoursPayload($wid),
+        ]);
+    }
+
+    /**
+     * Save the workspace's weekly opening hours. These are not enforced by the
+     * automation engine yet; Phase 4 sequences consume {@see WorkspaceBusinessHours::isOpenAt()}.
+     */
+    public function updateBusinessHours(Request $request): RedirectResponse
+    {
+        $wid = $this->workspaceId($request);
+
+        $validated = $request->validate([
+            'timezone' => ['required', 'string', 'timezone'],
+            'schedule' => ['required', 'array'],
+            'schedule.*' => ['nullable', 'array'],
+            'schedule.*.start' => ['nullable', 'date_format:H:i'],
+            'schedule.*.end' => ['nullable', 'date_format:H:i'],
+        ]);
+
+        $schedule = [];
+        foreach (WorkspaceBusinessHours::DAYS as $day) {
+            $window = $validated['schedule'][$day] ?? null;
+            $schedule[$day] = is_array($window) && ! empty($window['start']) && ! empty($window['end'])
+                ? ['start' => $window['start'], 'end' => $window['end']]
+                : null;
+        }
+
+        WorkspaceBusinessHours::updateOrCreate(
+            ['workspace_id' => $wid],
+            ['timezone' => $validated['timezone'], 'schedule' => $schedule],
+        );
+
+        return back()->with('success', 'Business hours saved.');
+    }
+
+    /** @return array{timezone: string, schedule: array<string, array{start: string, end: string}|null>} */
+    private function businessHoursPayload(int $workspaceId): array
+    {
+        $hours = WorkspaceBusinessHours::forWorkspace($workspaceId);
+
+        return [
+            'timezone' => $hours->timezone,
+            'schedule' => $hours->schedule ?: WorkspaceBusinessHours::defaultSchedule(),
+        ];
     }
 
     public function store(Request $request): RedirectResponse
@@ -95,6 +144,28 @@ class AutomationController extends Controller
                 ->orderBy('name')->get(['id', 'name'])->values(),
             'stores' => EcommerceStore::where('workspace_id', $workspaceId)
                 ->get(['id', 'platform', 'name'])->values(),
+            // Date-type lead fields power the lead.date_reached trigger; pipelines
+            // with their stages power the move_to_pipeline action.
+            'customFields' => CustomField::where('workspace_id', $workspaceId)
+                ->where('entity_type', 'lead')
+                ->where('type', 'date')
+                ->orderBy('sort_order')
+                ->orderBy('label')
+                ->get(['id', 'label', 'key'])
+                ->values(),
+            'pipelines' => LeadPipeline::where('workspace_id', $workspaceId)
+                ->orderBy('sort_order')
+                ->orderBy('id')
+                ->with(['stages' => fn ($query) => $query->orderBy('position')->orderBy('id')])
+                ->get(['id', 'name'])
+                ->map(fn (LeadPipeline $pipeline) => [
+                    'id' => $pipeline->id,
+                    'name' => $pipeline->name,
+                    'stages' => $pipeline->stages
+                        ->map(fn ($stage) => ['id' => $stage->id, 'name' => $stage->name])
+                        ->values(),
+                ])
+                ->values(),
             'integrations' => [
                 'google' => (bool) optional(IntegrationConfig::forProvider('google_workspace'))->enabled,
             ],

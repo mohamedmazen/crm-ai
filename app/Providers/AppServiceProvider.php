@@ -13,6 +13,7 @@ use App\Events\LeadAssigned;
 use App\Events\LeadDealValueChanged;
 use App\Events\LeadPipelineChanged;
 use App\Events\LeadQualified;
+use App\Events\LeadScoreChanged;
 use App\Events\LeadStageChanged;
 use App\Events\MessageReceived;
 use App\Events\PlanChanged;
@@ -91,6 +92,8 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(LeadDealValueChanged::class, [AutomationTriggerListener::class, 'handleLeadDealValueChanged']);
         Event::listen(FormSubmitted::class, [AutomationTriggerListener::class, 'handleFormSubmitted']);
         Event::listen(LeadQualified::class, [AutomationTriggerListener::class, 'handleLeadQualified']);
+        Event::listen(LeadAssigned::class, [AutomationTriggerListener::class, 'handleLeadAssigned']);
+        Event::listen(LeadScoreChanged::class, [AutomationTriggerListener::class, 'handleLeadScoreChanged']);
 
         // ── Behavioral lead scoring ──────────────────────────────────────────
         Event::listen(MessageReceived::class, [RecordBehavioralScore::class, 'handleMessageReceived']);

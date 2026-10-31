@@ -41,6 +41,11 @@ const TRIGGER_TYPES = [
     { value: 'contact.tag_added', labelKey: 'automation.trigger_tag_added',         Icon: Tag            },
     { value: 'message.received',  labelKey: 'automation.trigger_message_received',  Icon: MessageCircle  },
     { value: 'lead.customer_replied', labelKey: 'automation.trigger_lead_customer_replied', Icon: MessageCircle },
+    { value: 'lead.assigned',     labelKey: 'automation.trigger_lead_assigned',        Icon: UserCheck      },
+    { value: 'lead.score_threshold', labelKey: 'automation.trigger_lead_score_threshold', Icon: BarChart3   },
+    { value: 'lead.inactive',     labelKey: 'automation.trigger_lead_inactive',        Icon: Clock          },
+    { value: 'lead.date_reached', labelKey: 'automation.trigger_lead_date_reached',    Icon: CalendarClock  },
+    { value: 'task.overdue',      labelKey: 'automation.trigger_task_overdue',         Icon: ClipboardList  },
     { value: 'campaign.sent',     labelKey: 'automation.trigger_campaign_sent',     Icon: Megaphone      },
     { value: 'form.submitted',    labelKey: 'automation.trigger_form_submitted',    Icon: FileText       },
     { value: 'webhook.received',  labelKey: 'automation.trigger_webhook_received',  Icon: Link2          },
@@ -79,6 +84,9 @@ const NODE_DEFS = {
     update_contact:      { labelKey: 'automation.node_update_contact',      color: '#0ea5e9', bg: '#f0f9ff', icon: UserCog,           category: 'contact' },
     assign_agent:        { labelKey: 'automation.node_assign_agent',        color: '#0284c7', bg: '#f0f9ff', icon: UserCheck,         category: 'contact' },
     add_to_campaign:     { labelKey: 'automation.node_add_to_campaign',     color: '#f97316', bg: '#fff7ed', icon: Megaphone,         category: 'contact' },
+    create_task:         { labelKey: 'automation.node_create_task',         color: '#0d9488', bg: '#f0fdfa', icon: ClipboardList,     category: 'contact' },
+    move_to_pipeline:    { labelKey: 'automation.node_move_to_pipeline',    color: '#7c3aed', bg: '#faf5ff', icon: GitBranch,         category: 'contact' },
+    update_deal_value:   { labelKey: 'automation.node_update_deal_value',   color: '#059669', bg: '#ecfdf5', icon: BarChart3,         category: 'contact' },
     // ── ENGAGE ────────────────────────────────────────────────────────────
     cta_button:          { labelKey: 'automation.node_cta_button',          color: '#e11d48', bg: '#fff1f2', icon: ExternalLink,      category: 'engage' },
     send_location:       { labelKey: 'automation.node_send_location',       color: '#dc2626', bg: '#fef2f2', icon: MapPin,            category: 'engage' },
@@ -295,6 +303,9 @@ function summarizeConfig(data, t) {
         case 'send_email': return data.subject ?? '';
         case 'update_contact': return data.field ? `${data.field} = ${data.value ?? ''}` : '';
         case 'add_to_campaign': return data.campaign_id ? t('automation.campaign_ref', { id: data.campaign_id }) : '';
+        case 'create_task': return clip(data.title, 30);
+        case 'move_to_pipeline': return data.stage_name ?? (data.stage_id ? `#${data.stage_id}` : '');
+        case 'update_deal_value': return data.amount !== undefined && data.amount !== '' ? `${data.mode ?? 'set'} ${data.amount}` : '';
         case 'ai_reply':
         case 'run_chatbot': return clip(data.prompt || data.chatbot_id || '');
         case 'webhook': return data.url ? `${data.method ?? 'POST'} ${clip(data.url, 28)}` : '';
@@ -348,6 +359,9 @@ const FIELD_COMPONENTS = {
     update_contact: UpdateContactFields,
     assign_agent: AssignAgentFields,
     add_to_campaign: CampaignFields,
+    create_task: CreateTaskFields,
+    move_to_pipeline: MoveToPipelineFields,
+    update_deal_value: UpdateDealValueFields,
     cta_button: CtaButtonFields,
     send_location: LocationFields,
     send_poll: PollFields,
@@ -428,6 +442,7 @@ function Field({ label, children }) {
    trigger_type / trigger_config remain the saved source of truth. */
 function TriggerConfigPanel({ automation, onTypeChange, onConfigChange, webhookUrl, copied, onCopy, onGenerateToken, generatingToken, onClose }) {
     const { t } = useTranslation();
+    const { customFields = [] } = useResources();
     const triggerType = automation.trigger_type ?? '';
     const orderTokens = triggerType === 'cart.abandoned'
         ? ['{{context.cart_total}}', '{{context.recovery_url}}', '{{context.order_currency}}']
@@ -472,6 +487,49 @@ function TriggerConfigPanel({ automation, onTypeChange, onConfigChange, webhookU
                             onChange={e => onConfigChange({ keywords: e.target.value.split(',').map(k => k.trim()).filter(Boolean) })}
                             placeholder={t('automation.placeholder_keywords')}
                         />
+                    </Field>
+                )}
+
+                {triggerType === 'lead.score_threshold' && (
+                    <Field label={t('automation.threshold_required')}>
+                        <p style={{ fontSize: 10, color: '#94a3b8', marginBottom: 6 }}>{t('automation.threshold_hint')}</p>
+                        <input
+                            type="number"
+                            min={1}
+                            max={100}
+                            className={inputCls}
+                            value={automation.trigger_config?.threshold ?? ''}
+                            onChange={e => onConfigChange({ threshold: e.target.value === '' ? '' : Number(e.target.value) })}
+                            placeholder="80"
+                        />
+                    </Field>
+                )}
+
+                {triggerType === 'lead.inactive' && (
+                    <Field label={t('automation.inactive_days_required')}>
+                        <p style={{ fontSize: 10, color: '#94a3b8', marginBottom: 6 }}>{t('automation.inactive_days_hint')}</p>
+                        <input
+                            type="number"
+                            min={1}
+                            className={inputCls}
+                            value={automation.trigger_config?.days ?? ''}
+                            onChange={e => onConfigChange({ days: e.target.value === '' ? '' : Number(e.target.value) })}
+                            placeholder="14"
+                        />
+                    </Field>
+                )}
+
+                {triggerType === 'lead.date_reached' && (
+                    <Field label={t('automation.date_field_required')}>
+                        <p style={{ fontSize: 10, color: '#94a3b8', marginBottom: 6 }}>{t('automation.date_field_hint')}</p>
+                        <select
+                            className={selectCls}
+                            value={automation.trigger_config?.field_id ?? ''}
+                            onChange={e => onConfigChange({ field_id: e.target.value === '' ? '' : Number(e.target.value) })}
+                        >
+                            <option value="">{t('automation.select_field')}</option>
+                            {customFields.map(field => <option key={field.id} value={field.id}>{field.label}</option>)}
+                        </select>
                     </Field>
                 )}
 
@@ -930,6 +988,103 @@ function CampaignFields({ d, set }) {
                 <input type="number" className={inputCls} value={d.campaign_id ?? ''} onChange={e => set('campaign_id', e.target.value)} placeholder="123" />
             )}
         </Field>
+    );
+}
+
+function CreateTaskFields({ d, set }) {
+    const { t } = useTranslation();
+    return (
+        <>
+            <Field label={t('automation.field_task_title_required')}>
+                <input className={inputCls} value={d.title ?? ''} onChange={e => set('title', e.target.value)} placeholder={t('automation.placeholder_task_title')} />
+            </Field>
+            <Field label={t('automation.field_task_description_optional')}>
+                <textarea className={textareaCls} rows={2} value={d.description ?? ''} onChange={e => set('description', e.target.value)} placeholder={t('automation.placeholder_task_description')} />
+            </Field>
+            <div className="flex gap-2">
+                <div className="flex-1">
+                    <label className={labelCls}>{t('automation.field_task_type')}</label>
+                    <select className={selectCls} value={d.type ?? 'todo'} onChange={e => set('type', e.target.value)}>
+                        <option value="todo">{t('leads.task_todo')}</option>
+                        <option value="call">{t('leads.task_call')}</option>
+                        <option value="whatsapp">{t('leads.task_whatsapp')}</option>
+                        <option value="email">{t('leads.task_email')}</option>
+                        <option value="meeting">{t('leads.task_meeting')}</option>
+                    </select>
+                </div>
+                <div className="flex-1">
+                    <label className={labelCls}>{t('automation.field_task_priority')}</label>
+                    <select className={selectCls} value={d.priority ?? 'medium'} onChange={e => set('priority', e.target.value)}>
+                        <option value="low">{t('leads.priority_low')}</option>
+                        <option value="medium">{t('leads.priority_medium')}</option>
+                        <option value="high">{t('leads.priority_high')}</option>
+                    </select>
+                </div>
+            </div>
+            <div className="flex gap-2">
+                <div className="flex-1">
+                    <label className={labelCls}>{t('automation.field_due_after')}</label>
+                    <input type="number" min={0} className={inputCls} value={d.due_amount ?? ''} onChange={e => set('due_amount', e.target.value)} placeholder="1" />
+                </div>
+                <div className="flex-1">
+                    <label className={labelCls}>{t('automation.field_unit')}</label>
+                    <select className={selectCls} value={d.due_unit ?? 'days'} onChange={e => set('due_unit', e.target.value)}>
+                        <option value="minutes">{t('automation.unit_minutes')}</option>
+                        <option value="hours">{t('automation.unit_hours')}</option>
+                        <option value="days">{t('automation.unit_days')}</option>
+                    </select>
+                </div>
+            </div>
+        </>
+    );
+}
+
+function MoveToPipelineFields({ d, set }) {
+    const { t } = useTranslation();
+    const { pipelines = [] } = useResources();
+    const stage = pipelines.flatMap(p => p.stages ?? []).find(s => String(s.id) === String(d.stage_id));
+
+    const pick = (stageId) => {
+        const found = pipelines.flatMap(p => p.stages ?? []).find(s => String(s.id) === String(stageId));
+        set('stage_id', stageId);
+        set('stage_name', found?.name ?? '');
+    };
+
+    return (
+        <Field label={t('automation.field_target_stage_required')}>
+            {pipelines.length ? (
+                <select className={selectCls} value={d.stage_id ?? ''} onChange={e => pick(e.target.value)}>
+                    <option value="">{t('automation.select_stage')}</option>
+                    {pipelines.map(p => (
+                        <optgroup key={p.id} label={p.name}>
+                            {(p.stages ?? []).map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                        </optgroup>
+                    ))}
+                </select>
+            ) : (
+                <input type="number" className={inputCls} value={d.stage_id ?? ''} onChange={e => pick(e.target.value)} placeholder="12" />
+            )}
+            {stage && <p style={{ fontSize: 10, color: '#94a3b8', marginTop: 4 }}>{stage.name}</p>}
+        </Field>
+    );
+}
+
+function UpdateDealValueFields({ d, set }) {
+    const { t } = useTranslation();
+    return (
+        <>
+            <Field label={t('automation.field_deal_value_mode')}>
+                <select className={selectCls} value={d.mode ?? 'set'} onChange={e => set('mode', e.target.value)}>
+                    <option value="set">{t('automation.deal_mode_set')}</option>
+                    <option value="increase">{t('automation.deal_mode_increase')}</option>
+                    <option value="decrease">{t('automation.deal_mode_decrease')}</option>
+                    <option value="percent">{t('automation.deal_mode_percent')}</option>
+                </select>
+            </Field>
+            <Field label={t('automation.field_deal_value_amount_required')}>
+                <input type="number" min={0} step="0.01" className={inputCls} value={d.amount ?? ''} onChange={e => set('amount', e.target.value)} placeholder="0.00" />
+            </Field>
+        </>
     );
 }
 
