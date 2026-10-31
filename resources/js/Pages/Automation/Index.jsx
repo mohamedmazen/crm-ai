@@ -28,6 +28,7 @@ const TRIGGER_META = {
     'contact.created':   { labelKey: 'automation.trigger_contact_created',   Icon: UserRound     },
     'contact.tag_added': { labelKey: 'automation.trigger_tag_added',         Icon: Tag           },
     'message.received':  { labelKey: 'automation.trigger_message_received',  Icon: MessageCircle },
+    'lead.customer_replied': { labelKey: 'automation.trigger_lead_customer_replied', Icon: MessageCircle },
     'campaign.sent':     { labelKey: 'automation.trigger_campaign_sent',     Icon: Megaphone     },
     'form.submitted':    { labelKey: 'automation.trigger_form_submitted',    Icon: FileText      },
     'webhook.received':  { labelKey: 'automation.trigger_webhook_received',  Icon: Link2         },

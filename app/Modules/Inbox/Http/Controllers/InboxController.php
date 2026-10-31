@@ -8,6 +8,7 @@ use App\Events\TypingChanged;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Modules\Inbox\Models\InboxLabel;
+use App\Modules\Sales\Services\LeadAutoCaptureService;
 use App\Modules\Shared\Models\ChannelAccount;
 use App\Modules\Shared\Models\Contact;
 use App\Modules\Shared\Models\Conversation;
@@ -16,6 +17,7 @@ use App\Modules\Shared\Services\ChannelManager;
 use App\Modules\Whatsapp\Models\WhatsappTemplate;
 use App\Modules\Whatsapp\Services\CloudApiClient;
 use App\Notifications\ConversationHandoverNotification;
+use App\Services\FeatureGate;
 use App\Services\StorageManager;
 use App\Support\Demo;
 use Illuminate\Http\JsonResponse;
@@ -54,6 +56,8 @@ class InboxController extends Controller
             ->paginate(30)
             ->withQueryString();
 
+        $this->flagAwaitingReplies($request, $conversations->getCollection());
+
         $labels = InboxLabel::where('workspace_id', $workspaceId)->orderBy('name')->get(['id', 'name', 'color']);
         $channelAccounts = ChannelAccount::where('workspace_id', $workspaceId)
             ->where('status', 'active')
@@ -84,6 +88,8 @@ class InboxController extends Controller
             'is_whatsapp_window_open',
             $conversation->channelAccount?->channel !== 'whatsapp' || $conversation->isWhatsappWindowOpen(),
         );
+
+        $this->flagAwaitingReplies($request, [$conversation]);
 
         $workspaceId = $request->user()->current_workspace_id ?? $request->user()->workspace_id;
         $userId = $request->user()->id;
@@ -119,6 +125,8 @@ class InboxController extends Controller
             ->paginate(30)
             ->withQueryString();
 
+        $this->flagAwaitingReplies($request, $conversations->getCollection());
+
         $channelAccounts = ChannelAccount::where('workspace_id', $workspaceId)
             ->where('status', 'active')
             ->orderBy('channel')
@@ -144,6 +152,34 @@ class InboxController extends Controller
             'channelAccounts' => $channelAccounts,
             'hasEcommerceStore' => $hasEcommerceStore,
         ]);
+    }
+
+    /**
+     * One-click conversion of the conversation's contact into a CRM lead.
+     *
+     * The route is gated on `feature:sales_reports`. The capture service
+     * resolves the contact to whichever lead (existing or matching) it already
+     * belongs to, so repeated clicks never create a duplicate.
+     */
+    public function convertToLead(Request $request, Conversation $conversation): RedirectResponse
+    {
+        $this->authorise($request, $conversation);
+
+        $conversation->loadMissing('contact');
+        $contact = $conversation->contact;
+
+        if (! $contact) {
+            return back()->with('error', __('This conversation has no contact to convert.'));
+        }
+
+        $workspaceId = $request->user()->current_workspace_id ?? $request->user()->workspace_id;
+
+        $lead = app(LeadAutoCaptureService::class)
+            ->captureFromContact((int) $workspaceId, $contact, $conversation->id);
+
+        return back()
+            ->with('success', __('Lead created from conversation.'))
+            ->with('converted_lead_id', $lead->id);
     }
 
     public function reply(Request $request, Conversation $conversation): JsonResponse|RedirectResponse
@@ -690,6 +726,27 @@ class InboxController extends Controller
         }
 
         return redirect()->route('client.inbox.show', $conversation);
+    }
+
+    /**
+     * Marks conversations with when the contact's unanswered message arrived so
+     * the inbox can flag an SLA breach. Skipped entirely when the plan does not
+     * include conversation intelligence, leaving the payload untouched.
+     *
+     * @param  iterable<int, Conversation>  $conversations
+     */
+    private function flagAwaitingReplies(Request $request, iterable $conversations): void
+    {
+        if (! FeatureGate::forUser($request->user())->enabled('sales_reports')) {
+            return;
+        }
+
+        foreach ($conversations as $conversation) {
+            $conversation->setAttribute(
+                'awaiting_since',
+                $conversation->awaitingReplySince()?->toIso8601String(),
+            );
+        }
     }
 
     private function authorise(Request $request, Conversation $conversation): void

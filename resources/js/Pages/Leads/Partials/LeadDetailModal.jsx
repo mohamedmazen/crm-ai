@@ -1,15 +1,17 @@
 import Modal from '@/Components/ui/Modal';
 import Button from '@/Components/ui/Button';
-import { Phone, Globe, MapPin, Star, History, BarChart3, DollarSign, CheckCircle2, User, CheckSquare, Tag, Sliders, Building2 } from 'lucide-react';
+import { Phone, Globe, MapPin, Star, History, BarChart3, DollarSign, CheckCircle2, User, CheckSquare, Tag, Sliders, Building2, MessageSquare } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { router } from '@inertiajs/react';
+import useFeature from '@/hooks/useFeature';
 import ScoreBadge from './ScoreBadge';
 import FollowUpBadge from './FollowUpBadge';
 import ActivityTimeline from './ActivityTimeline';
 import LogActivityForm from './LogActivityForm';
 import LeadTasksManager from './LeadTasksManager';
 import LeadCustomFieldsEditor from './LeadCustomFieldsEditor';
+import LeadConversationPanel from './LeadConversationPanel';
 
 /**
  * Lead detail: the follow-up history first, because "what happened with this
@@ -19,6 +21,7 @@ import LeadCustomFieldsEditor from './LeadCustomFieldsEditor';
 export default function LeadDetailModal({ detail, stages, activityTypes, callOutcomes, loading, teamMembers = [], onClose }) {
     const { t } = useTranslation();
     const [tab, setTab] = useState('history');
+    const conversationEnabled = useFeature('sales_reports');
 
     const lead = detail?.lead;
     const open = !!lead || loading;
@@ -49,6 +52,9 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
 
     const TABS = [
         { key: 'history', label: t('leads.tab_history'), Icon: History },
+        ...(conversationEnabled
+            ? [{ key: 'conversation', label: t('leads.tab_conversation'), Icon: MessageSquare }]
+            : []),
         {
             key: 'tasks',
             label: `${t('leads.tab_tasks') || 'Tasks'}${detail?.tasks?.length ? ` (${detail.tasks.length})` : ''}`,
@@ -213,6 +219,11 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
                                 />
                                 <ActivityTimeline activities={detail.activities} />
                             </div>
+                        ) : tab === 'conversation' ? (
+                            <LeadConversationPanel
+                                conversation={detail.conversation ?? null}
+                                timeline={detail.timeline ?? []}
+                            />
                         ) : tab === 'tasks' ? (
                             <LeadTasksManager lead={lead} tasks={detail.tasks ?? []} teamMembers={teamMembers} />
                         ) : tab === 'custom_fields' ? (

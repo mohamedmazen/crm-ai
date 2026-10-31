@@ -29,6 +29,7 @@ class WorkflowGenerator
         'contact.created', 'contact.tag_added', 'message.received', 'campaign.sent', 'form.submitted',
         'webhook.received', 'order.placed', 'order.fulfilled', 'order.cancelled', 'cart.abandoned', 'customer.created',
         'lead.stage_changed', 'lead.pipeline_changed', 'lead.deal_value_changed', 'lead.qualified', 'lead.won', 'lead.lost',
+        'lead.customer_replied',
     ];
 
     public function __construct(private readonly LlmGateway $llmGateway) {}

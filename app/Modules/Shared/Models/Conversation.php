@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 class Conversation extends Model
@@ -141,6 +142,31 @@ class Conversation extends Model
     public function assignedUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_user_id');
+    }
+
+    /**
+     * When the contact's latest message landed with no reply since, or null
+     * when the ball is in the agent's court (or the thread is closed).
+     *
+     * The last message decides whose turn it is, so the SLA badge does not need
+     * a per-conversation aggregate. When the relation is already eager-loaded
+     * the list stays at a constant number of queries.
+     */
+    public function awaitingReplySince(): ?Carbon
+    {
+        if ($this->status !== 'open') {
+            return null;
+        }
+
+        $lastMessage = $this->relationLoaded('lastMessage')
+            ? $this->getRelation('lastMessage')
+            : $this->lastMessage()->first();
+
+        if (! $lastMessage || $lastMessage->direction !== 'in') {
+            return null;
+        }
+
+        return $lastMessage->sent_at ?? $this->last_inbound_at;
     }
 
     /**

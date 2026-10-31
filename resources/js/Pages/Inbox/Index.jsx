@@ -10,6 +10,7 @@ import {
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChannelBrandIcon, CHANNEL_LABELS } from '@/Components/BrandIcons';
+import SlaBadge from '@/Components/SlaBadge';
 import { formatTimeTz } from '@/Utils/datetime';
 
 const FOLDERS = [
@@ -92,6 +93,7 @@ function ConversationCard({ conv, isFlashing, isActive, userTz }) {
                         <p className={`text-xs truncate flex-1 ${conv.unread_count > 0 ? 'text-neutral-700 dark:text-neutral-300' : 'text-neutral-400 dark:text-neutral-500'}`}>
                             {lastMsg.body || '(media)'}
                         </p>
+                        <SlaBadge awaitingSince={conv.awaiting_since} />
                         {conv.unread_count > 0 && (
                             <span className="shrink-0 h-5 min-w-5 rounded-full bg-brand-600 text-white text-[10px] font-bold flex items-center justify-center px-1">
                                 {conv.unread_count > 99 ? '99+' : conv.unread_count}

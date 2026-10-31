@@ -21,6 +21,11 @@ Route::middleware(['web', 'client-app'])->prefix('app/inbox')->name('client.inbo
     Route::post('/conversations/{conversation}/share-product', [InboxController::class, 'shareProduct'])->name('share-product')->middleware('limit:whatsapp_messages_per_month,whatsapp_messages');
     Route::post('/conversations/{conversation}/assign', [InboxController::class, 'assign'])->name('assign');
     Route::post('/conversations/{conversation}/status', [InboxController::class, 'updateStatus'])->name('status');
+    // Conversation intelligence (Phase 3): turning a chat into a CRM lead is
+    // part of the paid sales-reporting suite, so it carries the same gate.
+    Route::post('/conversations/{conversation}/convert-to-lead', [InboxController::class, 'convertToLead'])
+        ->name('convert-to-lead')
+        ->middleware('feature:sales_reports');
     Route::post('/conversations/{conversation}/typing', [InboxController::class, 'typing'])->name('typing');
     Route::get('/conversations/{conversation}/activities', [ConversationActivityController::class, 'index'])->name('activities.index');
     Route::get('/conversations/{conversation}/notes', [InternalNoteController::class, 'index'])->name('notes.index');

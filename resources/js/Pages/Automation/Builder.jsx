@@ -40,6 +40,7 @@ const TRIGGER_TYPES = [
     { value: 'contact.created',   labelKey: 'automation.trigger_contact_created',   Icon: UserRound      },
     { value: 'contact.tag_added', labelKey: 'automation.trigger_tag_added',         Icon: Tag            },
     { value: 'message.received',  labelKey: 'automation.trigger_message_received',  Icon: MessageCircle  },
+    { value: 'lead.customer_replied', labelKey: 'automation.trigger_lead_customer_replied', Icon: MessageCircle },
     { value: 'campaign.sent',     labelKey: 'automation.trigger_campaign_sent',     Icon: Megaphone      },
     { value: 'form.submitted',    labelKey: 'automation.trigger_form_submitted',    Icon: FileText       },
     { value: 'webhook.received',  labelKey: 'automation.trigger_webhook_received',  Icon: Link2          },

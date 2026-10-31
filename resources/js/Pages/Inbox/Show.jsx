@@ -8,8 +8,11 @@ import {
     Paperclip, Image as ImageIcon, ChevronDown, UserCheck,
     LayoutTemplate, Plus, Loader2, Bot, Calendar, BarChart2, PhoneMissed,
     Volume2, VolumeX, ShoppingBag, History, Tag, ArrowRightLeft, UserMinus,
+    UserPlus,
 } from 'lucide-react';
 import { ChannelBrandIcon, CHANNEL_LABELS } from '@/Components/BrandIcons';
+import SlaBadge from '@/Components/SlaBadge';
+import useFeature from '@/hooks/useFeature';
 import { formatTimeTz, formatInTz } from '@/Utils/datetime';
 import { playInboundSound, getSoundPrefs, setChannelSoundEnabled, SOUND_CHANNELS } from '@/Utils/notificationSound';
 import { useState, useEffect, useRef, useCallback } from 'react';
@@ -1487,6 +1490,16 @@ export default function InboxShow({
     const [showNewModal, setShowNewModal]   = useState(false);
     const [sending, setSending]             = useState(false);
     const [sendError, setSendError]         = useState(null);
+    const [convertingLead, setConvertingLead] = useState(false);
+    const salesReportsEnabled               = useFeature('sales_reports');
+
+    const convertToLead = () => {
+        setConvertingLead(true);
+        router.post(route('client.inbox.convert-to-lead', conversation.uuid), {}, {
+            preserveScroll: true,
+            onFinish: () => setConvertingLead(false),
+        });
+    };
 
     // When Inertia navigates between conversations the page component is
     // re-used, so seed local state from the new server props on conversation
@@ -1856,6 +1869,9 @@ export default function InboxShow({
                             </p>
                         </div>
 
+                        {/* SLA: the contact has been waiting on a reply. */}
+                        <SlaBadge awaitingSince={conversation.awaiting_since} />
+
                         {/* Presence */}
                         {otherViewers.length > 0 && (
                             <div className="flex items-center gap-1 text-xs text-neutral-400 hidden xl:flex">
@@ -2194,6 +2210,28 @@ export default function InboxShow({
                         <Link href={route('client.contacts.show', conversation.contact?.uuid ?? '')} className="text-xs text-brand-600 hover:underline dark:text-brand-400">
                             {t('inbox.view_full_profile')}
                         </Link>
+
+                        {/* One-click conversion to a CRM lead (conversation intelligence). */}
+                        {salesReportsEnabled && conversation.contact && (
+                            conversation.contact.lead_id ? (
+                                <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-medium text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
+                                    <UserCheck className="h-3 w-3" aria-hidden="true" />
+                                    {t('inbox.is_lead')}
+                                </span>
+                            ) : (
+                                <button
+                                    type="button"
+                                    onClick={convertToLead}
+                                    disabled={convertingLead}
+                                    className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-2.5 py-1.5 text-xs font-medium text-white transition hover:bg-brand-700 disabled:opacity-60"
+                                >
+                                    {convertingLead
+                                        ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                                        : <UserPlus className="h-3.5 w-3.5" aria-hidden="true" />}
+                                    {t('inbox.convert_to_lead')}
+                                </button>
+                            )
+                        )}
                     </div>
 
                     {/* Conversation meta */}

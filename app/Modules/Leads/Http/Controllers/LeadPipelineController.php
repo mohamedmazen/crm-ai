@@ -17,7 +17,10 @@ use App\Modules\Leads\Models\LeadTask;
 use App\Modules\Leads\Services\ActivityRecorder;
 use App\Modules\Leads\Services\LeadAssignmentService;
 use App\Modules\Leads\Services\PipelineManager;
+use App\Modules\Leads\Services\UnifiedTimelineService;
+use App\Modules\Shared\Models\Conversation;
 use App\Modules\Shared\Services\CustomFieldService;
+use App\Services\FeatureGate;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
@@ -183,12 +186,16 @@ class LeadPipelineController extends Controller
             'scoring' => $this->scoringPayload($wid),
             'activityTypes' => LeadActivity::MANUAL_TYPES,
             'callOutcomes' => LeadActivity::OUTCOMES,
-            'leadDetail' => $this->leadDetail($wid, $request->integer('lead') ?: null),
+            'leadDetail' => $this->leadDetail(
+                $wid,
+                $request->integer('lead') ?: null,
+                FeatureGate::forUser($request->user())->enabled('sales_reports'),
+            ),
         ]);
     }
 
     /** One lead plus its follow-up history, for the detail modal. */
-    private function leadDetail(int $wid, ?int $leadId): ?array
+    private function leadDetail(int $wid, ?int $leadId, bool $withConversation = false): ?array
     {
         if (! $leadId) {
             return null;
@@ -260,6 +267,44 @@ class LeadPipelineController extends Controller
                 'color' => $t->color,
             ])->values(),
             'custom_fields' => app(CustomFieldService::class)->fieldsWithValues($wid, 'lead', $lead->id),
+            'conversation' => $withConversation ? $this->leadConversation($lead) : null,
+            'timeline' => $withConversation ? app(UnifiedTimelineService::class)->forLead($lead) : [],
+        ];
+    }
+
+    /**
+     * The lead's most recent inbox thread, or null when the contact has never
+     * written. Only included for plans with conversation intelligence.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function leadConversation(Lead $lead): ?array
+    {
+        $contactId = $lead->contact?->id;
+
+        if (! $contactId) {
+            return null;
+        }
+
+        $conversation = Conversation::where('workspace_id', $lead->workspace_id)
+            ->where('contact_id', $contactId)
+            ->with('channelAccount:id,channel')
+            ->orderByDesc('last_message_at')
+            ->orderByDesc('id')
+            ->first();
+
+        if (! $conversation) {
+            return null;
+        }
+
+        return [
+            'id' => $conversation->id,
+            'uuid' => $conversation->uuid,
+            'channel' => $conversation->channelAccount?->channel,
+            'status' => $conversation->status,
+            'unread_count' => (int) $conversation->unread_count,
+            'last_message_at' => $conversation->last_message_at?->toIso8601String(),
+            'awaiting_since' => $conversation->awaitingReplySince()?->toIso8601String(),
         ];
     }
 

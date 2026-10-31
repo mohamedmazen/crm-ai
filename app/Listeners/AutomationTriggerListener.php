@@ -16,6 +16,7 @@ use App\Modules\Automation\Jobs\ExecuteAutomationRunJob;
 use App\Modules\Automation\Models\Automation;
 use App\Modules\Automation\Models\AutomationRun;
 use App\Modules\Automation\Services\AutomationEngine;
+use App\Modules\Shared\Models\Contact;
 use Illuminate\Support\Facades\Cache;
 
 class AutomationTriggerListener
@@ -55,6 +56,17 @@ class AutomationTriggerListener
             'message_channel' => $message->channel,
             'message_body' => $messageBody,
         ], $messageBody, $resumed);
+
+        // A contact that already belongs to a lead also drives the CRM-side
+        // "customer replied" trigger, so sales follow-ups can react to a reply
+        // without the tenant re-keying the same condition on message.received.
+        if (Contact::whereKey($contactId)->whereNotNull('lead_id')->exists()) {
+            $this->fire('lead.customer_replied', $workspaceId, $contactId, [
+                'message_id' => $message->id,
+                'message_channel' => $message->channel,
+                'message_body' => $messageBody,
+            ]);
+        }
     }
 
     public function handleContactCreated(ContactCreated $event): void
