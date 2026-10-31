@@ -151,3 +151,12 @@ Schedule::command('bookings:send-reminders --hours=24')
     ->name('send-booking-reminders')
     ->withoutOverlapping()
     ->onOneServer();
+
+// Scheduled sales reports (every five minutes). The command advances each
+// schedule's next_run_at when it queues the job, so a slow worker cannot cause
+// the same report to be sent twice.
+Schedule::command('reports:process-scheduled')
+    ->everyFiveMinutes()
+    ->name('process-scheduled-reports')
+    ->withoutOverlapping()
+    ->onOneServer();
