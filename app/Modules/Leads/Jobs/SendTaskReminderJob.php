@@ -32,4 +32,3 @@ class SendTaskReminderJob implements ShouldQueue
         }
     }
 }
-

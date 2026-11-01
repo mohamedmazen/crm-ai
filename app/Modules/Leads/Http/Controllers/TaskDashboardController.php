@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Modules\Leads\Models\LeadTask;
 use App\Modules\Leads\Services\LeadAssignmentService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 

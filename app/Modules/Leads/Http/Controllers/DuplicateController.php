@@ -38,7 +38,7 @@ class DuplicateController extends Controller
                         'assignedUser:id,name',
                         'tags:id,name,color',
                     ])
-                    ->withCount(['activities', 'tasks']);
+                        ->withCount(['activities', 'tasks']);
                 },
             ])
             ->latest()
@@ -98,4 +98,3 @@ class DuplicateController extends Controller
         return back()->with('success', __('Leads merged successfully.'));
     }
 }
-

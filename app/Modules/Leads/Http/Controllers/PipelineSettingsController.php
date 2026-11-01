@@ -200,4 +200,3 @@ class PipelineSettingsController extends Controller
         return back()->with('success', __('Reason deleted.'));
     }
 }
-

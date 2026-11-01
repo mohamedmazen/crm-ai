@@ -30,6 +30,8 @@ return [
         'call_logs' => 'Call log & click-to-call',
         'api_access' => 'API access',
         'white_label' => 'White-label branding',
+        'ai_sales' => 'AI sales assistant',
+        'ai_sdr' => 'AI sales development rep',
     ],
 
 ];

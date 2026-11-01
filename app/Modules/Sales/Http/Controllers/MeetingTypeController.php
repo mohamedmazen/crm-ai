@@ -11,7 +11,6 @@ use App\Modules\Sales\Models\MeetingType;
 use App\Modules\Sales\Services\BookingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -231,4 +230,3 @@ class MeetingTypeController extends Controller
         return back()->with('success', __('booking.booking_cancelled_success'));
     }
 }
-

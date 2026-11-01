@@ -1,6 +1,6 @@
 import Modal from '@/Components/ui/Modal';
 import Button from '@/Components/ui/Button';
-import { Phone, Globe, MapPin, Star, History, BarChart3, DollarSign, CheckCircle2, User, CheckSquare, Tag, Sliders, Building2, MessageSquare, PhoneCall } from 'lucide-react';
+import { Phone, Globe, MapPin, Star, History, BarChart3, DollarSign, CheckCircle2, User, CheckSquare, Sliders, Building2, MessageSquare, PhoneCall, AlertTriangle, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { router } from '@inertiajs/react';
@@ -13,6 +13,8 @@ import LeadTasksManager from './LeadTasksManager';
 import LeadCustomFieldsEditor from './LeadCustomFieldsEditor';
 import LeadConversationPanel from './LeadConversationPanel';
 import LeadCallsPanel from './LeadCallsPanel';
+import LeadTagsEditor from './LeadTagsEditor';
+import LeadCoachPanel from './LeadCoachPanel';
 
 /**
  * Lead detail: the follow-up history first, because "what happened with this
@@ -24,6 +26,7 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
     const [tab, setTab] = useState('history');
     const conversationEnabled = useFeature('sales_reports');
     const callsEnabled = useFeature('call_logs');
+    const aiEnabled = useFeature('ai_sales');
 
     const lead = detail?.lead;
     const open = !!lead || loading;
@@ -54,6 +57,9 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
 
     const TABS = [
         { key: 'history', label: t('leads.tab_history'), Icon: History },
+        ...(aiEnabled
+            ? [{ key: 'coach', label: t('leads.tab_coach'), Icon: Sparkles }]
+            : []),
         ...(conversationEnabled
             ? [{ key: 'conversation', label: t('leads.tab_conversation'), Icon: MessageSquare }]
             : []),
@@ -182,19 +188,12 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
                             </div>
                         </div>
 
-                        {detail.tags && detail.tags.length > 0 && (
-                            <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
-                                <Tag className="h-3.5 w-3.5 text-neutral-400" />
-                                {detail.tags.map(t => (
-                                    <span
-                                        key={t.id}
-                                        className="inline-flex items-center rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium text-brand-700 dark:bg-brand-900/30 dark:text-brand-300 border border-brand-200/50 dark:border-brand-800"
-                                    >
-                                        {t.name}
-                                    </span>
-                                ))}
-                            </div>
-                        )}
+                        <LeadTagsEditor
+                            key={lead.id}
+                            leadId={lead.id}
+                            initialTags={detail.tags ?? []}
+                            aiEnabled={aiEnabled}
+                        />
 
                         <div className="mt-4 flex gap-1" role="tablist">
                             {TABS.map(({ key, label, Icon }) => (
@@ -228,6 +227,8 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
                                 />
                                 <ActivityTimeline activities={detail.activities} />
                             </div>
+                        ) : tab === 'coach' ? (
+                            <LeadCoachPanel key={lead.id} leadId={lead.id} />
                         ) : tab === 'conversation' ? (
                             <LeadConversationPanel
                                 conversation={detail.conversation ?? null}
@@ -237,10 +238,17 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
                             <LeadTasksManager lead={lead} tasks={detail.tasks ?? []} teamMembers={teamMembers} />
                         ) : tab === 'custom_fields' ? (
                             <LeadCustomFieldsEditor lead={lead} customFields={detail.custom_fields ?? []} />
+                        ) : tab === 'calls' ? (
+                            <LeadCallsPanel lead={lead} calls={detail.calls ?? []} aiEnabled={aiEnabled} />
                         ) : tab === 'deal' ? (
                             <DealEditor lead={lead} stageHistory={detail.stage_history ?? []} />
                         ) : (
-                            <ScoreBreakdown breakdown={lead.score_breakdown ?? []} />
+                            <div className="space-y-4">
+                                {aiEnabled && detail.risk && (
+                                    <RiskPanel risk={detail.risk} />
+                                )}
+                                <ScoreBreakdown breakdown={lead.score_breakdown ?? []} />
+                            </div>
                         )}
                     </div>
 
@@ -393,6 +401,48 @@ function DealEditor({ lead, stageHistory }) {
                     </ul>
                 )}
             </div>
+        </div>
+    );
+}
+
+function RiskPanel({ risk }) {
+    const { t } = useTranslation();
+
+    const tone = {
+        high: 'border-red-200 bg-red-50/60 dark:border-red-900 dark:bg-red-900/20',
+        medium: 'border-amber-200 bg-amber-50/60 dark:border-amber-900 dark:bg-amber-900/20',
+        low: 'border-neutral-200 bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-800/40',
+    }[risk.level];
+
+    return (
+        <div className={`rounded-xl border p-4 ${tone}`}>
+            <div className="flex items-start justify-between gap-3">
+                <h3 className="inline-flex items-center gap-1.5 text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+                    <AlertTriangle className="h-4 w-4 text-amber-500" aria-hidden="true" />
+                    {t('leads.risk_title')}
+                </h3>
+                <span className="shrink-0 text-xs font-medium tabular-nums text-neutral-500 dark:text-neutral-400">
+                    {risk.score}/100 · {t(`leads.risk_${risk.level}`)}
+                </span>
+            </div>
+
+            {risk.reasons.length === 0 ? (
+                <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">{t('leads.risk_none')}</p>
+            ) : (
+                <ul className="mt-2 space-y-1">
+                    {risk.reasons.map((reason) => (
+                        <li key={reason.code} className="flex items-start justify-between gap-2 text-xs text-neutral-600 dark:text-neutral-300">
+                            <span>
+                                {t(`leads.risk_reason_${reason.code}`, {
+                                    count: reason.days ?? 0,
+                                    defaultValue: reason.detail,
+                                })}
+                            </span>
+                            <span className="shrink-0 tabular-nums text-neutral-400">+{reason.points}</span>
+                        </li>
+                    ))}
+                </ul>
+            )}
         </div>
     );
 }

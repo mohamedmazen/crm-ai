@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'client-app'])->prefix('app/broadcasts')->name('client.')->group(function () {
     Route::get('/campaigns', [CampaignController::class, 'index'])->name('campaigns.index');
-    Route::post('/campaigns/generate-email', [EmailAiController::class, 'generate'])->name('campaigns.generate-email');
-    Route::post('/campaigns/improve-subject', [EmailAiController::class, 'improveSubject'])->name('campaigns.improve-subject');
+    Route::post('/campaigns/generate-email', [EmailAiController::class, 'generate'])->name('campaigns.generate-email')->middleware('limit:ai_tokens_per_month,ai_tokens');
+    Route::post('/campaigns/improve-subject', [EmailAiController::class, 'improveSubject'])->name('campaigns.improve-subject')->middleware('limit:ai_tokens_per_month,ai_tokens');
     Route::get('/campaigns/create', [CampaignController::class, 'create'])->name('campaigns.create');
     Route::post('/campaigns', [CampaignController::class, 'store'])->name('campaigns.store');
     Route::post('/campaigns/draft', [CampaignController::class, 'storeDraft'])->name('campaigns.store-draft');

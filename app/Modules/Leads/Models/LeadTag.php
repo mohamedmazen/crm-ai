@@ -30,4 +30,3 @@ class LeadTag extends Model
         return $this->belongsToMany(Lead::class, 'lead_tag_pivot', 'tag_id', 'lead_id');
     }
 }
-

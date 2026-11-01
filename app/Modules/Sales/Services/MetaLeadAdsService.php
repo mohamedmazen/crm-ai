@@ -107,4 +107,3 @@ class MetaLeadAdsService
         return $capturedLeads;
     }
 }
-

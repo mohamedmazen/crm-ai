@@ -14,7 +14,9 @@ class LeadDuplicateGroup extends Model
     use HasFactory;
 
     public const STATUS_PENDING = 'pending';
+
     public const STATUS_MERGED = 'merged';
+
     public const STATUS_DISMISSED = 'dismissed';
 
     protected $fillable = [
@@ -44,4 +46,3 @@ class LeadDuplicateGroup extends Model
         return $query->where('status', self::STATUS_PENDING);
     }
 }
-

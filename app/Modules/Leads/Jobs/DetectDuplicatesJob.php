@@ -22,4 +22,3 @@ class DetectDuplicatesJob implements ShouldQueue
         $detector->scanWorkspace($this->workspaceId);
     }
 }
-

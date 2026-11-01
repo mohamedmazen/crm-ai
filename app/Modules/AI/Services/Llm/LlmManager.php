@@ -3,6 +3,7 @@
 namespace App\Modules\AI\Services\Llm;
 
 use App\Models\Workspace;
+use App\Modules\AI\Exceptions\AiNotConfiguredException;
 use App\Modules\AI\Models\AiProviderConfig;
 use App\Modules\Integrations\Services\CredentialResolver;
 
@@ -34,7 +35,9 @@ class LlmManager
             }
         }
 
-        throw new \RuntimeException('No AI provider configured for workspace '.$workspaceId);
+        throw new AiNotConfiguredException(
+            'No AI provider configured for workspace '.$workspaceId.'. Add a key under AI → Providers.'
+        );
     }
 
     /**
@@ -57,6 +60,7 @@ class LlmManager
             if (empty($config->credentials['api_key'] ?? '')) {
                 continue;
             }
+
             return static::build($config->provider, $config->credentials ?? [], [
                 'chat' => $config->default_model_chat,
                 'embed' => $config->default_model_embed,
@@ -72,7 +76,7 @@ class LlmManager
             }
         }
 
-        throw new \RuntimeException(
+        throw new AiNotConfiguredException(
             'No embedding-capable AI provider (OpenAI or Gemini) configured for workspace '.$workspaceId.
             '. Anthropic does not support embeddings.'
         );

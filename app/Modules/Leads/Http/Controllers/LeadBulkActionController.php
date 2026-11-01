@@ -153,4 +153,3 @@ class LeadBulkActionController extends Controller
         return back()->with('success', __(':count lead(s) deleted.', ['count' => $deleted]));
     }
 }
-

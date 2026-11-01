@@ -50,4 +50,3 @@ class LeadPipeline extends Model
         return $this->hasOne(LeadAssignmentConfig::class, 'pipeline_id');
     }
 }
-

@@ -42,4 +42,3 @@ class LeadCloseReason extends Model
         return $this->hasMany(Lead::class, 'close_reason_id');
     }
 }
-

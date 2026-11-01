@@ -85,6 +85,14 @@ Schedule::command('billing:expire-trials')
     ->withoutOverlapping()
     ->onOneServer();
 
+// AI SDR: one bounded follow-up pass per workspace that switched it on. Each
+// workspace is queued separately so a slow provider cannot block the others.
+Schedule::command('ai-sdr:run')
+    ->hourly()
+    ->name('ai-sdr-run')
+    ->withoutOverlapping()
+    ->onOneServer();
+
 // Bill Tap subscriptions due for renewal (Tap has no hosted auto-renew; merchant-initiated)
 Schedule::command('billing:charge-recurring')
     ->hourly()

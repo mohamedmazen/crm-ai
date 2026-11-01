@@ -37,4 +37,3 @@ return new class extends Migration
         Schema::dropIfExists('lead_duplicate_groups');
     }
 };
-

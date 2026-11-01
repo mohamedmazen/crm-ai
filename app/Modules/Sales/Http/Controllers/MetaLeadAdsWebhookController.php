@@ -46,4 +46,3 @@ class MetaLeadAdsWebhookController extends Controller
         ]);
     }
 }
-

@@ -41,4 +41,3 @@ class FormSubmission extends Model
         return $this->belongsTo(Lead::class);
     }
 }
-

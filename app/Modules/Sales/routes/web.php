@@ -1,6 +1,8 @@
 <?php
 
+use App\Modules\Sales\Http\Controllers\AiSdrController;
 use App\Modules\Sales\Http\Controllers\BookingPublicController;
+use App\Modules\Sales\Http\Controllers\CallAiController;
 use App\Modules\Sales\Http\Controllers\CallController;
 use App\Modules\Sales\Http\Controllers\FormController;
 use App\Modules\Sales\Http\Controllers\FormEmbedController;
@@ -77,11 +79,23 @@ Route::middleware(['web', 'client-app'])->prefix('app/sales')->name('client.sale
         Route::resource('sequences', SequenceController::class)->only(['index', 'store', 'destroy']);
     });
 
+    // AI SDR: autonomous follow-ups until a human replies.
+    Route::middleware('feature:ai_sdr')->group(function () {
+        Route::get('ai-sdr', [AiSdrController::class, 'index'])->name('ai-sdr.index');
+        Route::put('ai-sdr', [AiSdrController::class, 'update'])->name('ai-sdr.update');
+        Route::post('ai-sdr/run', [AiSdrController::class, 'run'])->name('ai-sdr.run');
+    });
+
     // Call log + click-to-call
     Route::middleware('feature:call_logs')->group(function () {
         Route::post('calls/initiate', [CallController::class, 'initiate'])->name('calls.initiate');
         Route::post('calls/settings', [CallController::class, 'updateSettings'])->name('calls.settings.update');
         Route::resource('calls', CallController::class)->only(['index', 'store', 'destroy']);
+
+        // Summarising is the metered part; storing a transcript is an ordinary edit.
+        Route::post('calls/{call}/summary', [CallAiController::class, 'summarise'])
+            ->name('calls.summary')
+            ->middleware(['feature:ai_sales', 'limit:ai_tokens_per_month,ai_tokens']);
     });
 
     // Products, quotes and invoices

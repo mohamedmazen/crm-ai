@@ -2,6 +2,7 @@
 
 use App\Modules\Leads\Http\Controllers\CompanyController;
 use App\Modules\Leads\Http\Controllers\DuplicateController;
+use App\Modules\Leads\Http\Controllers\LeadAiController;
 use App\Modules\Leads\Http\Controllers\LeadBulkActionController;
 use App\Modules\Leads\Http\Controllers\LeadController;
 use App\Modules\Leads\Http\Controllers\LeadExportController;
@@ -71,6 +72,18 @@ Route::middleware(['web', 'client-app'])->prefix('app/leads')->name('client.lead
     Route::post('/bulk-stage', [LeadBulkActionController::class, 'moveStage'])->name('bulk.stage');
     Route::post('/bulk-tags', [LeadBulkActionController::class, 'tags'])->name('bulk.tags');
     Route::post('/bulk-delete', [LeadBulkActionController::class, 'destroy'])->name('bulk.destroy');
+
+    // AI assist. Suggestions are the only metered part; accepting one is an
+    // ordinary tag edit and stays available without a provider configured.
+    Route::prefix('{lead}/ai')->name('ai.')->group(function () {
+        Route::post('/tags/suggest', [LeadAiController::class, 'suggestTags'])
+            ->name('tags.suggest')
+            ->middleware(['feature:ai_sales', 'limit:ai_tokens_per_month,ai_tokens']);
+        Route::post('/tags/apply', [LeadAiController::class, 'applyTags'])->name('tags.apply');
+        Route::post('/coach', [LeadAiController::class, 'coach'])
+            ->name('coach')
+            ->middleware(['feature:ai_sales', 'limit:ai_tokens_per_month,ai_tokens']);
+    });
 
     // Import and Export
     Route::middleware('feature:lead_import')->group(function () {

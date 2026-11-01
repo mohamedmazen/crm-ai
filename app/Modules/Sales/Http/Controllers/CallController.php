@@ -8,6 +8,7 @@ use App\Modules\Sales\Exceptions\CallNotPossible;
 use App\Modules\Sales\Models\CallLog;
 use App\Modules\Sales\Models\CallProviderConfig;
 use App\Modules\Sales\Services\Calls\CallService;
+use App\Services\FeatureGate;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -37,6 +38,14 @@ class CallController extends Controller
         ]);
 
         $calls = CallLog::forWorkspace($wid)
+            ->select([
+                'id', 'workspace_id', 'lead_id', 'user_id', 'direction',
+                'from_number', 'to_number', 'duration_secs', 'status', 'recording_url',
+                'notes', 'summary', 'summary_data', 'summary_generated_at', 'provider',
+                'provider_sid', 'created_at', 'updated_at',
+            ])
+            // The transcript can be long; the list only needs to know it exists.
+            ->selectRaw('transcript IS NOT NULL as has_transcript')
             ->with([
                 'lead:id,name,phone',
                 'user:id,name',
@@ -86,6 +95,7 @@ class CallController extends Controller
             ],
             'providerFields' => CallProviderConfig::FIELDS,
             'providers' => CallProviderConfig::PROVIDERS,
+            'aiEnabled' => FeatureGate::forUser($request->user())->enabled('ai_sales'),
         ]);
     }
 
@@ -104,6 +114,7 @@ class CallController extends Controller
             'status' => $data['status'],
             'duration_secs' => (int) ($data['duration_secs'] ?? 0),
             'notes' => $data['notes'] ?? null,
+            'transcript' => $data['transcript'] ?? null,
             'from_number' => $data['from_number'] ?? null,
             'to_number' => $data['to_number'] ?? null,
         ];
@@ -232,6 +243,7 @@ class CallController extends Controller
             'from_number' => ['nullable', 'string', 'max:32'],
             'to_number' => ['nullable', 'string', 'max:32'],
             'notes' => ['nullable', 'string', 'max:2000'],
+            'transcript' => ['nullable', 'string', 'max:20000'],
         ]);
 
         return $data;

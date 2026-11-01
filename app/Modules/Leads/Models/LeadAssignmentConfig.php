@@ -41,4 +41,3 @@ class LeadAssignmentConfig extends Model
         return $this->belongsTo(User::class, 'last_assigned_user_id');
     }
 }
-

@@ -5,12 +5,30 @@ namespace App\Modules\Sales\Models;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Modules\Leads\Models\Lead;
+use App\Support\Concerns\MasksDemoData;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CallLog extends Model
 {
+    use MasksDemoData;
+
+    /**
+     * Notes, transcripts and summaries are free text spoken to or about a
+     * customer, so they carry the same PII the other masked models hide.
+     *
+     * @return array<string, string>
+     */
+    protected function demoMask(): array
+    {
+        return [
+            'notes' => 'text',
+            'transcript' => 'text',
+            'summary' => 'text',
+        ];
+    }
+
     public const DIRECTION_OUTBOUND = 'outbound';
 
     public const DIRECTION_INBOUND = 'inbound';
@@ -56,6 +74,10 @@ class CallLog extends Model
         'status',
         'recording_url',
         'notes',
+        'transcript',
+        'summary',
+        'summary_data',
+        'summary_generated_at',
         'provider',
         'provider_sid',
     ];
@@ -64,6 +86,8 @@ class CallLog extends Model
     {
         return [
             'duration_secs' => 'integer',
+            'summary_data' => 'array',
+            'summary_generated_at' => 'datetime',
         ];
     }
 
@@ -90,6 +114,12 @@ class CallLog extends Model
     public function isTerminal(): bool
     {
         return in_array($this->status, self::TERMINAL_STATUSES, true);
+    }
+
+    /** Whether a transcript has been pasted or imported for this call. */
+    public function hasTranscript(): bool
+    {
+        return filled($this->transcript);
     }
 
     /** Human duration for the call log table, e.g. 4m 12s. */

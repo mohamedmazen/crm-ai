@@ -6,8 +6,9 @@ import Button from '@/Components/ui/Button';
 import Modal from '@/Components/ui/Modal';
 import {
     Phone, PhoneCall, PhoneIncoming, PhoneOutgoing, Plus, Settings, Trash2,
-    Clock, Headphones, Search, CheckCircle2, XCircle, Loader2,
+    Clock, Headphones, Search, CheckCircle2, XCircle, Loader2, Sparkles,
 } from 'lucide-react';
+import CallSummaryPanel from './Partials/CallSummaryPanel';
 
 const statusStyles = {
     completed: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300',
@@ -39,6 +40,7 @@ export default function CallsIndex({
     provider = { connected: false, name: null, caller_id: null },
     providerFields = {},
     providers = [],
+    aiEnabled = false,
 }) {
     const { t } = useTranslation();
     const { flash, errors = {} } = usePage().props;
@@ -51,6 +53,7 @@ export default function CallsIndex({
     const [showCall, setShowCall] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
     const [deleting, setDeleting] = useState(null);
+    const [summaryCall, setSummaryCall] = useState(null);
 
     const [callLeadId, setCallLeadId] = useState(filters.lead_id || '');
     const [calling, setCalling] = useState(false);
@@ -61,6 +64,7 @@ export default function CallsIndex({
         status: 'completed',
         minutes: '',
         notes: '',
+        transcript: '',
     });
 
     const settingsForm = useForm({
@@ -120,11 +124,12 @@ export default function CallsIndex({
             status: logForm.status,
             duration_secs: Math.max(0, Math.round((Number(logForm.minutes) || 0) * 60)),
             notes: logForm.notes || null,
+            transcript: logForm.transcript || null,
         }, {
             preserveScroll: true,
             onSuccess: () => {
                 setShowLog(false);
-                setLogForm({ lead_id: filters.lead_id || '', direction: 'outbound', status: 'completed', minutes: '', notes: '' });
+                setLogForm({ lead_id: filters.lead_id || '', direction: 'outbound', status: 'completed', minutes: '', notes: '', transcript: '' });
             },
         });
     };
@@ -286,6 +291,11 @@ export default function CallsIndex({
                                                     <div className="min-w-0">
                                                         <div className="truncate font-medium text-neutral-900 dark:text-neutral-100">{call.lead.name}</div>
                                                         <div className="truncate text-[11px] text-neutral-400">{call.lead.phone}</div>
+                                                        {call.summary && (
+                                                            <p className="mt-0.5 line-clamp-2 max-w-xs text-[11px] text-neutral-500 dark:text-neutral-400">
+                                                                {call.summary}
+                                                            </p>
+                                                        )}
                                                     </div>
                                                 ) : (
                                                     <span className="text-neutral-400">—</span>
@@ -329,6 +339,18 @@ export default function CallsIndex({
                                             </td>
                                             <td className="px-5 py-4">
                                                 <div className="flex items-center justify-end gap-1">
+                                                    {aiEnabled && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setSummaryCall(call)}
+                                                            className={`rounded-lg p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 ${
+                                                                call.summary ? 'text-brand-600 dark:text-brand-400' : 'text-neutral-500'
+                                                            }`}
+                                                            title={t('calls.summary_title')}
+                                                        >
+                                                            <Sparkles className="h-4 w-4" />
+                                                        </button>
+                                                    )}
                                                     {call.lead && call.lead.phone && (
                                                         <button
                                                             type="button"
@@ -469,6 +491,19 @@ export default function CallsIndex({
                         />
                     </div>
 
+                    <div>
+                        <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+                            {t('calls.transcript')}
+                        </label>
+                        <textarea
+                            rows={3}
+                            value={logForm.transcript}
+                            onChange={(event) => setLogForm({ ...logForm, transcript: event.target.value })}
+                            placeholder={t('calls.transcript_hint')}
+                            className="mt-1 w-full rounded-lg border-soft bg-white p-2.5 text-xs dark:bg-neutral-800 dark:text-neutral-100"
+                        />
+                    </div>
+
                     <div className="flex justify-end gap-2 border-t border-soft pt-4">
                         <Button type="button" variant="secondary" onClick={() => setShowLog(false)}>
                             {t('common.cancel') || 'Cancel'}
@@ -603,6 +638,27 @@ export default function CallsIndex({
                         </Button>
                     </div>
                 </form>
+            </Modal>
+
+            {/* ── Call summary ──────────────────────────────────────── */}
+            <Modal show={Boolean(summaryCall)} onClose={() => setSummaryCall(null)} maxWidth="lg">
+                <div className="space-y-4 p-6">
+                    <div className="flex items-center justify-between border-b border-soft pb-4">
+                        <h2 className="flex items-center gap-2 text-lg font-bold text-neutral-900 dark:text-neutral-100">
+                            <Sparkles className="h-5 w-5 text-brand-600 dark:text-brand-400" />
+                            {t('calls.summary_title')}
+                        </h2>
+                        <button type="button" onClick={() => setSummaryCall(null)} className="text-neutral-400 hover:text-neutral-600">&times;</button>
+                    </div>
+
+                    {summaryCall && (
+                        <CallSummaryPanel
+                            call={summaryCall}
+                            aiEnabled={aiEnabled}
+                            onSaved={() => router.reload({ only: ['calls'] })}
+                        />
+                    )}
+                </div>
             </Modal>
 
             {/* ── Delete ────────────────────────────────────────────── */}

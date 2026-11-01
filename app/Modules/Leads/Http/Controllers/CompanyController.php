@@ -266,4 +266,3 @@ class CompanyController extends Controller
         return back()->with('success', __('Lead detached from company.'));
     }
 }
-

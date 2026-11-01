@@ -3,6 +3,7 @@
 namespace App\Modules\AI\Services;
 
 use App\Modules\AI\Models\AiKbChunk;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -53,7 +54,7 @@ class EmbeddingStore
         return ! empty(config('services.qdrant.url'));
     }
 
-    private function qdrantClient(): \Illuminate\Http\Client\PendingRequest
+    private function qdrantClient(): PendingRequest
     {
         $client = Http::baseUrl(rtrim(config('services.qdrant.url'), '/'))
             ->timeout(10)

@@ -26,10 +26,16 @@ class Sequence extends Model
 
     public const CHANNELS = [self::CHANNEL_EMAIL, self::CHANNEL_WHATSAPP];
 
+    public const SOURCE_USER = 'user';
+
+    /** The hidden sequence the AI SDR sends through; never shown in the builder. */
+    public const SOURCE_AI_SDR = 'ai_sdr';
+
     protected $fillable = [
         'uuid',
         'workspace_id',
         'name',
+        'source',
         'status',
         'stop_on_reply',
         'stop_on_won',
@@ -69,9 +75,28 @@ class Sequence extends Model
         return $this->hasMany(SequenceEnrollment::class)->latest();
     }
 
+    /**
+     * The workspace's user-built sequences. The AI SDR's system sequence is a
+     * delivery detail, not something a person manages, so it is excluded here
+     * and therefore also from the plan's sequence count.
+     */
     public function scopeForWorkspace(Builder $query, int $workspaceId): Builder
     {
-        return $query->where('workspace_id', $workspaceId);
+        return $query
+            ->where('workspace_id', $workspaceId)
+            ->where('source', self::SOURCE_USER);
+    }
+
+    public function scopeSystem(Builder $query, int $workspaceId): Builder
+    {
+        return $query
+            ->where('workspace_id', $workspaceId)
+            ->where('source', self::SOURCE_AI_SDR);
+    }
+
+    public function isSystem(): bool
+    {
+        return $this->source === self::SOURCE_AI_SDR;
     }
 
     public function scopeActive(Builder $query): Builder

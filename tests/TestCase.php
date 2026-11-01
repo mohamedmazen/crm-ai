@@ -9,7 +9,11 @@ use App\Models\Permission;
 use App\Models\Plan;
 use App\Models\Role;
 use App\Models\User;
+use App\Modules\AI\Services\Llm\LlmResponse;
+use App\Modules\AI\Services\LlmGateway;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Mockery;
+use Mockery\MockInterface;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -97,5 +101,22 @@ abstract class TestCase extends BaseTestCase
             'starts_at' => now(),
             'status' => ClientSubscription::STATUS_ACTIVE,
         ]);
+    }
+
+    /**
+     * Replace the LLM gateway with a double so AI features can be tested without
+     * reaching a provider. Returns the mock, so a test can add its own
+     * expectations (for example a different reply per feature).
+     */
+    protected function fakeLlmGateway(string $content = '{}', int $promptTokens = 100, int $completionTokens = 50): MockInterface
+    {
+        $mock = Mockery::mock(LlmGateway::class);
+        $mock->shouldReceive('chat')->andReturn(
+            new LlmResponse($content, $promptTokens, $completionTokens, 'test-model', 12)
+        );
+
+        $this->instance(LlmGateway::class, $mock);
+
+        return $mock;
     }
 }

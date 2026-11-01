@@ -4,7 +4,6 @@ namespace App\Modules\Leads\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Leads\Models\Lead;
-use App\Modules\Leads\Models\LeadPipelineStage;
 use App\Modules\Leads\Models\LeadTag;
 use App\Modules\Leads\Services\ActivityRecorder;
 use App\Modules\Leads\Services\LeadAssignmentService;
@@ -148,7 +147,7 @@ class LeadImportController extends Controller
             }
         }
 
-        return back()->with('success', __("Import complete: :created created, :updated updated, :skipped skipped.", [
+        return back()->with('success', __('Import complete: :created created, :updated updated, :skipped skipped.', [
             'created' => $created,
             'updated' => $updated,
             'skipped' => $skipped,
@@ -180,4 +179,3 @@ class LeadImportController extends Controller
         ];
     }
 }
-

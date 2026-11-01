@@ -3,12 +3,15 @@
 namespace App\Modules\Broadcasting\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\AI\Services\Llm\LlmManager;
+use App\Modules\AI\Exceptions\AiNotConfiguredException;
+use App\Modules\AI\Services\AiFeatureRunner;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class EmailAiController extends Controller
 {
+    public function __construct(private readonly AiFeatureRunner $ai) {}
+
     public function improveSubject(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -17,12 +20,6 @@ class EmailAiController extends Controller
         ]);
 
         $workspaceId = (int) ($request->user()->current_workspace_id ?? $request->user()->workspace_id);
-
-        try {
-            $llm = LlmManager::forWorkspace($workspaceId);
-        } catch (\RuntimeException $e) {
-            return response()->json(['error' => 'No AI provider configured. Set one up in AI → Providers.'], 422);
-        }
 
         $bodySnippet = '';
         if (! empty($validated['body'])) {
@@ -67,7 +64,9 @@ PROMPT;
         $userMessage = "Current subject: {$validated['subject']}{$bodySnippet}";
 
         try {
-            $response = $llm->chat(
+            $response = $this->ai->chat(
+                $workspaceId,
+                'email_copy',
                 [['role' => 'user', 'content' => $userMessage]],
                 ['system' => $systemPrompt, 'max_tokens' => 200],
             );
@@ -80,6 +79,8 @@ PROMPT;
             }
 
             return response()->json(['suggestions' => array_slice($suggestions, 0, 3)]);
+        } catch (AiNotConfiguredException) {
+            return response()->json(['error' => 'No AI provider configured. Set one up in AI → Providers.'], 422);
         } catch (\Throwable $e) {
             return response()->json(['error' => 'AI suggestion failed: '.$e->getMessage()], 500);
         }
@@ -94,12 +95,6 @@ PROMPT;
         ]);
 
         $workspaceId = (int) ($request->user()->current_workspace_id ?? $request->user()->workspace_id);
-
-        try {
-            $llm = LlmManager::forWorkspace($workspaceId);
-        } catch (\RuntimeException $e) {
-            return response()->json(['error' => 'No AI provider configured. Set one up in AI → Providers.'], 422);
-        }
 
         $tone = $validated['tone'] ?? 'professional';
         $campaignCtx = $validated['campaign_name'] ? "Campaign name: \"{$validated['campaign_name']}\"." : '';
@@ -148,7 +143,7 @@ PROMPT;
         ];
 
         try {
-            $response = $llm->chat($messages, ['system' => $systemPrompt, 'max_tokens' => 2000]);
+            $response = $this->ai->chat($workspaceId, 'email_copy', $messages, ['system' => $systemPrompt, 'max_tokens' => 2000]);
             $parsed = $this->parseEmailResponse($response->content);
 
             // If the body looks like strategy/plan content rather than an email, retry once
@@ -161,7 +156,7 @@ PROMPT;
                             .trim("{$campaignCtx} {$validated['prompt']}"),
                     ],
                 ];
-                $retryResponse = $llm->chat($retryMessages, ['system' => $systemPrompt, 'max_tokens' => 2000]);
+                $retryResponse = $this->ai->chat($workspaceId, 'email_copy', $retryMessages, ['system' => $systemPrompt, 'max_tokens' => 2000]);
                 $retryParsed = $this->parseEmailResponse($retryResponse->content);
                 if ($retryParsed && ! $this->looksLikeStrategy($retryParsed['body'])) {
                     $parsed = $retryParsed;
@@ -173,6 +168,8 @@ PROMPT;
             }
 
             return response()->json($parsed);
+        } catch (AiNotConfiguredException) {
+            return response()->json(['error' => 'No AI provider configured. Set one up in AI → Providers.'], 422);
         } catch (\Throwable $e) {
             return response()->json(['error' => 'AI generation failed: '.$e->getMessage()], 500);
         }

@@ -197,4 +197,3 @@ class LeadSourceController extends Controller
         return back()->with('success', __('lead_sources.deleted_success'));
     }
 }
-

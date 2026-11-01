@@ -4,6 +4,7 @@ namespace App\Modules\Leads\Models;
 
 use App\Models\User;
 use App\Models\Workspace;
+use Database\Factories\CompanyFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -49,9 +50,9 @@ class Company extends Model
         'owner_id',
     ];
 
-    protected static function newFactory(): \Database\Factories\CompanyFactory
+    protected static function newFactory(): CompanyFactory
     {
-        return \Database\Factories\CompanyFactory::new();
+        return CompanyFactory::new();
     }
 
     /**
@@ -106,4 +107,3 @@ class Company extends Model
         return $this->hasMany(Lead::class, 'company_id');
     }
 }
-

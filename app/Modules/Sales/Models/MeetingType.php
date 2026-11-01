@@ -15,11 +15,15 @@ class MeetingType extends Model
     use HasFactory;
 
     public const STATUS_ACTIVE = 'active';
+
     public const STATUS_INACTIVE = 'inactive';
 
     public const LOCATION_GOOGLE_MEET = 'google_meet';
+
     public const LOCATION_PHONE = 'phone';
+
     public const LOCATION_IN_PERSON = 'in_person';
+
     public const LOCATION_CUSTOM = 'custom';
 
     protected $fillable = [
@@ -70,7 +74,7 @@ class MeetingType extends Model
                 $slug = $base;
                 $counter = 1;
                 while (self::where('slug', $slug)->exists()) {
-                    $slug = $base . '-' . $counter++;
+                    $slug = $base.'-'.$counter++;
                 }
                 $meetingType->slug = $slug;
             }
@@ -79,7 +83,7 @@ class MeetingType extends Model
 
     public function getPublicUrlAttribute(): string
     {
-        return url('/b/' . $this->slug);
+        return url('/b/'.$this->slug);
     }
 
     public function workspace(): BelongsTo
@@ -97,4 +101,3 @@ class MeetingType extends Model
         return $this->hasMany(Booking::class);
     }
 }
-

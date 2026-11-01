@@ -8,7 +8,6 @@ use App\Modules\Sales\Models\AvailabilityRule;
 use App\Modules\Sales\Models\Booking;
 use App\Modules\Sales\Models\MeetingType;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 
 class AvailabilityService
 {
@@ -100,8 +99,8 @@ class AvailabilityService
         }
 
         // 5. Generate candidate time slots
-        $currentSlot = Carbon::parse($targetDate->format('Y-m-d') . ' ' . $startTimeStr, $hostTimezone);
-        $dayEnd = Carbon::parse($targetDate->format('Y-m-d') . ' ' . $endTimeStr, $hostTimezone);
+        $currentSlot = Carbon::parse($targetDate->format('Y-m-d').' '.$startTimeStr, $hostTimezone);
+        $dayEnd = Carbon::parse($targetDate->format('Y-m-d').' '.$endTimeStr, $hostTimezone);
         $duration = $meetingType->duration_minutes;
         $bufferBefore = $meetingType->buffer_before;
         $bufferAfter = $meetingType->buffer_after;
@@ -154,4 +153,3 @@ class AvailabilityService
         return $slots;
     }
 }
-

@@ -3,6 +3,7 @@ import { router } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 import Button from '@/Components/ui/Button';
 import { Headphones, PhoneIncoming, PhoneOutgoing, Plus } from 'lucide-react';
+import CallSummaryPanel from '@/Pages/Calls/Partials/CallSummaryPanel';
 
 function durationLabel(seconds) {
     const value = Math.max(0, Number(seconds) || 0);
@@ -18,7 +19,7 @@ function durationLabel(seconds) {
  * Calls are logged through the Sales call-log endpoints; the log itself lives in
  * the Call Log page, this is the lead-scoped view of the same rows.
  */
-export default function LeadCallsPanel({ lead, calls = [] }) {
+export default function LeadCallsPanel({ lead, calls = [], aiEnabled = false }) {
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
     const [saving, setSaving] = useState(false);
@@ -170,6 +171,11 @@ export default function LeadCallsPanel({ lead, calls = [] }) {
                             </span>
                             {call.notes && (
                                 <p className="w-full text-xs text-neutral-500 dark:text-neutral-400">{call.notes}</p>
+                            )}
+                            {(aiEnabled || call.summary) && (
+                                <div className="w-full pt-1">
+                                    <CallSummaryPanel call={call} aiEnabled={aiEnabled} compact />
+                                </div>
                             )}
                         </li>
                     ))}

@@ -6,7 +6,7 @@ import {
     Layers, Webhook, Key, BookOpen, Image, Radio, Inbox, Bot, Database,
     Zap, Share2, MapPin, Tag, LifeBuoy, ExternalLink, Mail, MessageSquare,
     ShoppingBag, KanbanSquare, SlidersHorizontal, CheckSquare, Building2, Copy, Calendar, BarChart3, Phone, Receipt,
-    ShieldCheck,
+    ShieldCheck, Sparkles,
 } from 'lucide-react';
 
 const iconClass = 'h-4 w-4';
@@ -103,6 +103,7 @@ export default function useClientNav() {
         { label: t('nav.chatbots'),        href: safeRoute('client.ai.chatbots.index'),        icon: <Bot className={iconClass} />,      activePattern: 'client.ai.chatbots.*' },
         { label: t('nav.knowledge_bases'), href: safeRoute('client.ai.knowledge-bases.index'), icon: <Database className={iconClass} />, activePattern: 'client.ai.knowledge-bases.*' },
         { label: t('nav.ai_providers'),    href: safeRoute('client.ai.providers.index'),        icon: <Bot className={iconClass} />,      activePattern: 'client.ai.providers.*' },
+        { label: t('nav.ai_sdr') || 'AI SDR', href: safeRoute('client.sales.ai-sdr.index'),    icon: <Sparkles className={iconClass} />, activePattern: 'client.sales.ai-sdr.*', feature: 'ai_sdr' },
     ];
 
     const socialItems = [

@@ -39,4 +39,3 @@ class LeadTaskDueNotification extends Notification implements ShouldQueue
         return new BroadcastMessage($this->toArray($notifiable));
     }
 }
-

@@ -18,11 +18,15 @@ class Form extends Model
     use HasFactory;
 
     public const STATUS_DRAFT = 'draft';
+
     public const STATUS_PUBLISHED = 'published';
+
     public const STATUS_ARCHIVED = 'archived';
 
     public const ASSIGNMENT_NONE = 'none';
+
     public const ASSIGNMENT_SPECIFIC = 'specific';
+
     public const ASSIGNMENT_ROUND_ROBIN = 'round_robin';
 
     protected $fillable = [
@@ -128,4 +132,3 @@ class Form extends Model
         );
     }
 }
-

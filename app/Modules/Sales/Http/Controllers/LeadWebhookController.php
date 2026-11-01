@@ -58,9 +58,9 @@ class LeadWebhookController extends Controller
             if ($email !== '') {
                 $name = Str::headline(Str::before($email, '@'));
             } elseif ($phone !== '') {
-                $name = 'Lead ' . $phone;
+                $name = 'Lead '.$phone;
             } else {
-                $name = 'Webhook Lead #' . rand(1000, 9999);
+                $name = 'Webhook Lead #'.rand(1000, 9999);
             }
         }
 
@@ -112,7 +112,7 @@ class LeadWebhookController extends Controller
                         'lead_id' => $lead->id,
                         'user_id' => null,
                         'type' => 'note',
-                        'body' => 'Message via webhook: ' . $message,
+                        'body' => 'Message via webhook: '.$message,
                         'meta' => [
                             'source' => 'webhook',
                             'lead_source_id' => $source->id,
@@ -141,9 +141,8 @@ class LeadWebhookController extends Controller
 
             return response()->json([
                 'success' => false,
-                'error' => 'Failed to process lead: ' . $e->getMessage(),
+                'error' => 'Failed to process lead: '.$e->getMessage(),
             ], 500);
         }
     }
 }
-

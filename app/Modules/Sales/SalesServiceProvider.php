@@ -3,6 +3,7 @@
 namespace App\Modules\Sales;
 
 use App\Modules\Sales\Console\ProcessSequenceStepsCommand;
+use App\Modules\Sales\Console\RunAiSdrCommand;
 use Illuminate\Support\ServiceProvider;
 
 class SalesServiceProvider extends ServiceProvider
@@ -15,6 +16,7 @@ class SalesServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 ProcessSequenceStepsCommand::class,
+                RunAiSdrCommand::class,
             ]);
         }
     }

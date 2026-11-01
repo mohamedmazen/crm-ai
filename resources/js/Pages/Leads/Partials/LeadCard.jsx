@@ -1,6 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Phone, Globe, Star, UserCheck, GripVertical, DollarSign, User } from 'lucide-react';
+import { Phone, Globe, Star, UserCheck, GripVertical, DollarSign, User, AlertTriangle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import ScoreBadge from './ScoreBadge';
 import FollowUpBadge from './FollowUpBadge';
@@ -75,6 +75,25 @@ export function LeadCardView({ lead, onOpen, dragging = false, overlay = false, 
                     {lead.tags.length > 3 && (
                         <span className="text-[10px] text-neutral-400">+{lead.tags.length - 3}</span>
                     )}
+                </div>
+            )}
+
+            {lead.risk && lead.risk.level !== 'none' && (
+                <div className="mt-1.5">
+                    <span
+                        title={lead.risk.headline}
+                        className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-semibold ${
+                            lead.risk.level === 'high'
+                                ? 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300'
+                                : lead.risk.level === 'medium'
+                                    ? 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
+                                    : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300'
+                        }`}
+                    >
+                        <AlertTriangle className="h-3 w-3" aria-hidden="true" />
+                        {t('leads.risk_badge')}
+                        <span className="font-normal opacity-70">{lead.risk.score}</span>
+                    </span>
                 </div>
             )}
 

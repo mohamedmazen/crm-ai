@@ -17,6 +17,7 @@ use App\Modules\Leads\Models\LeadTask;
 use App\Modules\Leads\Services\ActivityRecorder;
 use App\Modules\Leads\Services\LeadAssignmentService;
 use App\Modules\Leads\Services\PipelineManager;
+use App\Modules\Leads\Services\Risk\AtRiskDetector;
 use App\Modules\Leads\Services\UnifiedTimelineService;
 use App\Modules\Sales\Models\CallLog;
 use App\Modules\Shared\Models\Conversation;
@@ -45,6 +46,7 @@ class LeadPipelineController extends Controller
         private readonly PipelineManager $pipeline,
         private readonly ActivityRecorder $activity,
         private readonly LeadAssignmentService $assignment,
+        private readonly AtRiskDetector $risk,
     ) {}
 
     /** Board query with the tenant's filters applied. */
@@ -142,6 +144,43 @@ class LeadPipelineController extends Controller
             ->orderBy('sort_order')
             ->get();
 
+        $features = FeatureGate::forUser($request->user());
+        $withAiSales = $features->enabled('ai_sales');
+
+        $columns = $stages->map(function ($stage) use ($matching, $totals) {
+            return [
+                'id' => $stage->id,
+                'name' => $stage->name,
+                'color' => $stage->color,
+                'position' => $stage->position,
+                'is_won' => (bool) $stage->is_won,
+                'is_lost' => (bool) $stage->is_lost,
+                'default_probability' => $stage->default_probability,
+                'total' => (int) ($totals[$stage->id]->aggregate ?? 0),
+                'totalValue' => (float) ($totals[$stage->id]->total_value ?? 0),
+                'weightedValue' => (float) ($totals[$stage->id]->weighted_value ?? 0),
+                'leads' => $matching()
+                    ->where('stage_id', $stage->id)
+                    ->with(['contact:id,lead_id', 'assignedUser:id,name', 'tags:id,name,color'])
+                    ->boardOrdered()
+                    ->limit(self::CARDS_PER_COLUMN)
+                    ->get(),
+            ];
+        })->values();
+
+        if ($withAiSales) {
+            // Two queries per column for the whole visible board, not two per card.
+            $columns = $columns->map(function (array $column) {
+                $risks = $this->risk->analyzeMany($column['leads'], $column['is_won'] || $column['is_lost']);
+
+                $column['leads'] = $column['leads']
+                    ->map(fn (Lead $lead) => $lead->toArray() + ['risk' => $risks[(int) $lead->id]->toArray()])
+                    ->values();
+
+                return $column;
+            });
+        }
+
         return Inertia::render('Leads/Pipeline', [
             'pipelines' => $pipelines->map(fn (LeadPipeline $p) => [
                 'id' => $p->id,
@@ -156,24 +195,7 @@ class LeadPipelineController extends Controller
                 'type' => $r->type,
                 'name' => $r->name,
             ]),
-            'stages' => $stages->map(fn ($s) => [
-                'id' => $s->id,
-                'name' => $s->name,
-                'color' => $s->color,
-                'position' => $s->position,
-                'is_won' => (bool) $s->is_won,
-                'is_lost' => (bool) $s->is_lost,
-                'default_probability' => $s->default_probability,
-                'total' => (int) ($totals[$s->id]->aggregate ?? 0),
-                'totalValue' => (float) ($totals[$s->id]->total_value ?? 0),
-                'weightedValue' => (float) ($totals[$s->id]->weighted_value ?? 0),
-                'leads' => $matching()
-                    ->where('stage_id', $s->id)
-                    ->with(['contact:id,lead_id', 'assignedUser:id,name', 'tags:id,name,color'])
-                    ->boardOrdered()
-                    ->limit(self::CARDS_PER_COLUMN)
-                    ->get(),
-            ]),
+            'stages' => $columns,
             'teamMembers' => $this->assignment->eligibleUsersFor($wid)->map(fn (User $u) => [
                 'id' => $u->id,
                 'name' => $u->name,
@@ -190,22 +212,28 @@ class LeadPipelineController extends Controller
             'leadDetail' => $this->leadDetail(
                 $wid,
                 $request->integer('lead') ?: null,
-                FeatureGate::forUser($request->user())->enabled('sales_reports'),
-                FeatureGate::forUser($request->user())->enabled('call_logs'),
+                $features->enabled('sales_reports'),
+                $features->enabled('call_logs'),
+                $withAiSales,
             ),
         ]);
     }
 
     /** One lead plus its follow-up history, for the detail modal. */
-    private function leadDetail(int $wid, ?int $leadId, bool $withConversation = false, bool $withCalls = false): ?array
-    {
+    private function leadDetail(
+        int $wid,
+        ?int $leadId,
+        bool $withConversation = false,
+        bool $withCalls = false,
+        bool $withRisk = false,
+    ): ?array {
         if (! $leadId) {
             return null;
         }
 
         $lead = Lead::where('workspace_id', $wid)
             ->with([
-                'stage:id,name',
+                'stage:id,name,is_won,is_lost',
                 'company:id,name,domain,website',
                 'contact:id,lead_id',
                 'closeReason:id,name,type',
@@ -269,6 +297,7 @@ class LeadPipelineController extends Controller
                 'color' => $t->color,
             ])->values(),
             'custom_fields' => app(CustomFieldService::class)->fieldsWithValues($wid, 'lead', $lead->id),
+            'risk' => $withRisk ? $this->risk->analyzeOne($lead)->toArray() : null,
             'calls' => $withCalls ? $this->leadCalls($lead) : [],
             'conversation' => $withConversation ? $this->leadConversation($lead) : null,
             'timeline' => $withConversation ? app(UnifiedTimelineService::class)->forLead($lead) : [],
@@ -298,6 +327,10 @@ class LeadPipelineController extends Controller
                 'duration_secs' => (int) $call->duration_secs,
                 'recording_url' => $call->recording_url,
                 'notes' => $call->notes,
+                'summary' => $call->summary,
+                'summary_data' => $call->summary_data,
+                'summary_generated_at' => $call->summary_generated_at?->toIso8601String(),
+                'has_transcript' => $call->hasTranscript(),
                 'user' => $call->user ? ['id' => $call->user->id, 'name' => $call->user->name] : null,
                 'created_at' => $call->created_at?->toIso8601String(),
             ])
