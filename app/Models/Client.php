@@ -27,6 +27,7 @@ class Client extends Model
         'primary_color',
         'tagline',
         'custom_domain',
+        'subdomain',
         'support_email',
     ];
 

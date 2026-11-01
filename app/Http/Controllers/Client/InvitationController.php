@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Invitation;
+use App\Models\User;
 use App\Services\Mail\MailService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class InvitationController extends Controller
 {
@@ -26,7 +28,7 @@ class InvitationController extends Controller
 
         $request->validate([
             'email' => ['required', 'email', 'max:255'],
-            'client_role' => ['required', 'in:administrator,staff'],
+            'client_role' => ['required', Rule::in(User::CLIENT_ROLES)],
         ]);
 
         // Check if there's already a pending invite

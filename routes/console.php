@@ -185,3 +185,11 @@ Schedule::command('sequences:process')
     ->name('process-sequence-steps')
     ->withoutOverlapping()
     ->onOneServer();
+
+// GDPR: dispatch erasure requests whose 30-day grace period has elapsed and
+// delete export archives past their retention window.
+Schedule::command('gdpr:process')
+    ->dailyAt('04:00')
+    ->name('gdpr-process')
+    ->withoutOverlapping()
+    ->onOneServer();

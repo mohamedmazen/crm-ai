@@ -3,7 +3,7 @@ import AdminLayout from '@/Layouts/AdminLayout';
 import { Button, Card, Tabs } from '@/Components/ui';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
-import { Upload, X, Image, Globe, Palette, Settings2, Code2, Flame } from 'lucide-react';
+import { Upload, X, Image, Globe, Palette, ShieldCheck, Settings2, Code2, Flame } from 'lucide-react';
 
 // ─── Appearance controls ──────────────────────────────────────────────────────
 
@@ -93,6 +93,8 @@ function GeneralTab({ general, fonts, flash }) {
         primary_color:   general?.primary_color   ?? '#467235',
         secondary_color: general?.secondary_color ?? '#283f24',
         font_family:     general?.font_family     ?? 'space-grotesk',
+        security_ip_allowlist_enabled: general?.security_ip_allowlist_enabled ?? '0',
+        security_ip_allowlist:         general?.security_ip_allowlist ?? '',
     });
 
     const fontEntries = Object.entries(fonts ?? {});
@@ -215,6 +217,42 @@ function GeneralTab({ general, fonts, flash }) {
                             fontSlug={data.font_family}
                             fontName={fonts?.[data.font_family]}
                         />
+
+                        <div className="flex items-center gap-3 pb-4 pt-2 border-b border-neutral-100 dark:border-neutral-800">
+                            <ShieldCheck className="h-5 w-5 text-brand-500" />
+                            <div>
+                                <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">{t('settings.security') || 'Security'}</h3>
+                                <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                                    {t('settings.ip_allowlist_desc') || 'Restrict the super-admin panel to trusted IP addresses or CIDR ranges.'}
+                                </p>
+                            </div>
+                        </div>
+
+                        <label className="flex items-center gap-3 text-sm text-neutral-700 dark:text-neutral-300">
+                            <input
+                                type="checkbox"
+                                checked={data.security_ip_allowlist_enabled === '1'}
+                                onChange={(e) => setData('security_ip_allowlist_enabled', e.target.checked ? '1' : '0')}
+                                className="h-4 w-4 rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
+                            />
+                            {t('settings.ip_allowlist_enabled') || 'Enable IP allowlist for the admin panel'}
+                        </label>
+
+                        <div className="space-y-1 sm:max-w-xl">
+                            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                                {t('settings.ip_allowlist') || 'Allowed IPs / CIDR ranges'}
+                            </label>
+                            <textarea
+                                rows={3}
+                                value={data.security_ip_allowlist}
+                                onChange={(e) => setData('security_ip_allowlist', e.target.value)}
+                                placeholder="203.0.113.4&#10;10.0.0.0/8"
+                                className="w-full rounded-soft border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                            />
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                                {t('settings.ip_allowlist_hint') || 'One entry per line or comma separated. An empty list leaves the panel open. Make sure your own IP is included before enabling.'}
+                            </p>
+                        </div>
 
                         <div className="flex justify-end pt-2">
                             <Button type="submit" variant="primary" disabled={processing}>

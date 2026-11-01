@@ -562,7 +562,7 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {} })
                                                         <div className="text-neutral-500 dark:text-neutral-400">{u.email}</div>
                                                     </td>
                                                     <td className="py-3 pr-4">
-                                                        <Badge variant="default" className="text-xs">{u.client_role === CLIENT_ROLE_ADMIN ? t('admin.administrator') : t('admin.staff')}</Badge>
+                                                        <Badge variant="default" className="text-xs">{u.client_role === CLIENT_ROLE_ADMIN ? t('admin.administrator') : u.client_role === 'viewer' ? (t('admin.viewer') || 'Viewer') : t('admin.staff')}</Badge>
                                                     </td>
                                                     <td className="py-3 pr-4">
                                                         <Badge variant={u.status === STATUS_ACTIVE ? 'success' : 'default'}>{u.status === STATUS_ACTIVE ? t('common.active') : t('common.inactive')}</Badge>
@@ -613,6 +613,7 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {} })
                             <select value={addUserForm.data.client_role} onChange={(e) => addUserForm.setData('client_role', e.target.value)} className="w-full rounded-soft border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm">
                                 <option value="administrator">{t('admin.client_administrator')}</option>
                                 <option value="staff">{t('admin.client_staff')}</option>
+                                <option value="viewer">{t('admin.viewer') || 'Viewer (read-only)'}</option>
                             </select>
                         </div>
                         <div>
@@ -660,6 +661,7 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {} })
                                 <select value={editUserForm.data.client_role} onChange={(e) => editUserForm.setData('client_role', e.target.value)} className="w-full rounded-soft border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm">
                                     <option value="administrator">{t('admin.client_administrator')}</option>
                                     <option value="staff">{t('admin.client_staff')}</option>
+                                    <option value="viewer">{t('admin.viewer') || 'Viewer (read-only)'}</option>
                                 </select>
                             </div>
                             <div>

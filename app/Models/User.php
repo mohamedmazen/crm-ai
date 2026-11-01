@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Services\ClientWorkspaceService;
 use App\Services\Mail\MailService;
+use App\Services\StorageManager;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -38,6 +39,15 @@ class User extends Authenticatable implements MustVerifyEmail
     public const CLIENT_ROLE_ADMINISTRATOR = 'administrator';
 
     public const CLIENT_ROLE_STAFF = 'staff';
+
+    /** Read-only team member: can browse data but cannot create or change it. */
+    public const CLIENT_ROLE_VIEWER = 'viewer';
+
+    public const CLIENT_ROLES = [
+        self::CLIENT_ROLE_ADMINISTRATOR,
+        self::CLIENT_ROLE_STAFF,
+        self::CLIENT_ROLE_VIEWER,
+    ];
 
     public const STATUS_ACTIVE = 'active';
 
@@ -86,7 +96,7 @@ class User extends Authenticatable implements MustVerifyEmail
             return $this->avatar;
         }
 
-        return app(\App\Services\StorageManager::class)->disk()->url($this->avatar);
+        return app(StorageManager::class)->disk()->url($this->avatar);
     }
 
     protected function casts(): array
@@ -245,6 +255,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isClientAdministrator(): bool
     {
         return $this->client_role === self::CLIENT_ROLE_ADMINISTRATOR;
+    }
+
+    public function isClientViewer(): bool
+    {
+        return $this->client_role === self::CLIENT_ROLE_VIEWER;
     }
 
     // -------------------------------------------------------------------------

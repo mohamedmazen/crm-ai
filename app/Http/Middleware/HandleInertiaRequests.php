@@ -81,6 +81,8 @@ class HandleInertiaRequests extends Middleware
                 'onboardingSummary' => null,
                 'plan' => null,
                 'plan_features' => [],
+                'cookie_consent_enabled' => true,
+                'tenant' => null,
             ];
         }
 
@@ -192,7 +194,7 @@ class HandleInertiaRequests extends Middleware
             $logoPath = SystemSetting::get('app_logo_path');
             $faviconPath = SystemSetting::get('app_favicon_path');
 
-            return [
+            $branding = [
                 'app_name' => SystemSetting::get('app_name') ?: config('saas.app_name', config('app.name')),
                 'app_tagline' => SystemSetting::get('app_tagline') ?: config('saas.tagline'),
                 'support_email' => SystemSetting::get('support_email') ?: config('saas.support_email'),
@@ -203,6 +205,10 @@ class HandleInertiaRequests extends Middleware
                 'logo_url' => $logoPath ? $this->assetUrl($logoPath, SystemSetting::get('app_logo_disk', 'public')) : null,
                 'favicon_url' => $faviconPath ? $this->assetUrl($faviconPath, SystemSetting::get('app_favicon_disk', 'public')) : null,
             ];
+
+            $this->applyTenantBranding($branding);
+
+            return $branding;
         } catch (\Throwable) {
             return [
                 'app_name' => config('saas.app_name', config('app.name')),
@@ -215,6 +221,34 @@ class HandleInertiaRequests extends Middleware
                 'logo_url' => null,
                 'favicon_url' => null,
             ];
+        }
+    }
+
+    /**
+     * Overlay the resolved workspace's branding on the platform defaults, so a
+     * tenant visiting their own domain sees their name and colours.
+     *
+     * @param  array<string, mixed>  $branding
+     */
+    private function applyTenantBranding(array &$branding): void
+    {
+        $tenant = ResolveTenantDomain::tenant(request());
+
+        if (! $tenant) {
+            return;
+        }
+
+        $branding['app_name'] = $tenant->name ?: $branding['app_name'];
+        $branding['app_tagline'] = $tenant->tagline ?: $branding['app_tagline'];
+        $branding['support_email'] = $tenant->support_email ?: $branding['support_email'];
+        $branding['primary_color'] = $tenant->primary_color ?: $branding['primary_color'];
+
+        if ($tenant->logo_path) {
+            try {
+                $branding['logo_url'] = $this->assetUrl($tenant->logo_path, $tenant->logo_disk ?: 'public');
+            } catch (\Throwable) {
+                // Keep the platform logo when the tenant's file is unreachable.
+            }
         }
     }
 
@@ -409,6 +443,13 @@ class HandleInertiaRequests extends Middleware
             'app_version' => env('APP_VERSION', '1.0.0'),
             'onboardingSummary' => $onboardingSummary,
             'landingPageEnabled' => SystemSetting::get('landing.page_enabled', '1') === '1',
+            'cookie_consent_enabled' => SystemSetting::get('privacy.cookie_consent_enabled', '1') === '1',
+            'tenant' => ($tenant = ResolveTenantDomain::tenant($request)) ? [
+                'id' => $tenant->id,
+                'name' => $tenant->name,
+                'subdomain' => $tenant->subdomain,
+                'custom_domain' => $tenant->custom_domain,
+            ] : null,
             'branding' => $this->brandingShare(),
             'broadcasting' => $this->broadcastingPublicConfig(),
             'pusher' => $this->pusherPublicConfig(),

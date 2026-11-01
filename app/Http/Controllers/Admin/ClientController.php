@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\ClientSubscription;
 use App\Models\Plan;
 use App\Models\User;
+use App\Rules\NotBreachedPassword;
 use App\Services\AuditLogService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -152,8 +153,8 @@ class ClientController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'client_role' => ['required', 'string', 'in:administrator,staff'],
+            'password' => ['required', 'string', 'min:8', 'confirmed', new NotBreachedPassword],
+            'client_role' => ['required', 'string', Rule::in(User::CLIENT_ROLES)],
             'status' => ['required', 'string', 'in:active,inactive'],
         ]);
 
@@ -195,8 +196,8 @@ class ClientController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
-            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
-            'client_role' => ['required', 'string', 'in:administrator,staff'],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed', new NotBreachedPassword],
+            'client_role' => ['required', 'string', Rule::in(User::CLIENT_ROLES)],
             'status' => ['required', 'string', 'in:active,inactive'],
         ]);
 

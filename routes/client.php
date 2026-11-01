@@ -13,6 +13,7 @@ use App\Http\Controllers\Client\NotificationController;
 use App\Http\Controllers\Client\OnboardingController;
 use App\Http\Controllers\Client\SearchController;
 use App\Http\Controllers\Client\Settings\DataExportController;
+use App\Http\Controllers\Client\Settings\GdprController;
 use App\Http\Controllers\Client\SettingsController as ClientSettingsController;
 use App\Http\Controllers\Client\SubscriptionController as ClientSubscriptionController;
 use App\Http\Controllers\Client\SupportTicketController;
@@ -58,6 +59,13 @@ Route::middleware(['verified'])->group(function () {
     Route::get('/settings/notifications', [ClientSettingsController::class, 'notifications'])->name('settings.notifications');
     Route::get('/settings/data-export', [DataExportController::class, 'index'])->name('settings.data-export');
     Route::post('/settings/data-export', [DataExportController::class, 'store'])->name('settings.data-export.store');
+
+    // Privacy & GDPR (client administrators only)
+    Route::get('/settings/gdpr', [GdprController::class, 'index'])->name('settings.gdpr');
+    Route::post('/settings/gdpr/erasure', [GdprController::class, 'storeErasure'])->name('settings.gdpr.erasure.store');
+    Route::delete('/settings/gdpr/erasure/{erasureRequest}', [GdprController::class, 'cancelErasure'])->name('settings.gdpr.erasure.cancel');
+    Route::get('/settings/gdpr/dpa', [GdprController::class, 'downloadDpa'])->name('settings.gdpr.dpa');
+    Route::put('/settings/gdpr/retention', [GdprController::class, 'updateRetention'])->name('settings.gdpr.retention');
 
     // Workspaces (switcher)
     Route::get('/workspaces', [WorkspaceController::class, 'index'])->name('workspaces.index');

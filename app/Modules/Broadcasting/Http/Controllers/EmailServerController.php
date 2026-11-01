@@ -4,6 +4,7 @@ namespace App\Modules\Broadcasting\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Broadcasting\Models\WorkspaceSmtpConfig;
+use App\Modules\Broadcasting\Services\DomainVerifier;
 use App\Services\Mail\MailService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -14,7 +15,8 @@ use Inertia\Response;
 class EmailServerController extends Controller
 {
     public function __construct(
-        protected MailService $mailService
+        protected MailService $mailService,
+        protected DomainVerifier $domainVerifier,
     ) {}
 
     public function index(Request $request): Response
@@ -35,6 +37,9 @@ class EmailServerController extends Controller
                 'is_active' => $config->is_active,
                 'summary' => $config->summary,
             ] : null,
+            'domainVerification' => $config
+                ? $this->domainVerifier->verify(DomainVerifier::domainFromEmail($config->from_email))
+                : null,
         ]);
     }
 
@@ -58,6 +63,8 @@ class EmailServerController extends Controller
             'workspace_id' => $workspaceId,
             'is_active' => true,
         ]));
+
+        $this->domainVerifier->forget(DomainVerifier::domainFromEmail($validated['from_email']));
 
         return back()->with('success', __('Email server configuration saved.'));
     }
@@ -95,13 +102,21 @@ class EmailServerController extends Controller
 
         $config->update($data);
 
+        $this->domainVerifier->forget(DomainVerifier::domainFromEmail($config->from_email));
+
         return back()->with('success', __('Email server configuration updated.'));
     }
 
     public function destroy(Request $request): RedirectResponse
     {
         $workspaceId = $this->workspaceId($request);
+        $config = WorkspaceSmtpConfig::where('workspace_id', $workspaceId)->first();
+
         WorkspaceSmtpConfig::where('workspace_id', $workspaceId)->delete();
+
+        if ($config) {
+            $this->domainVerifier->forget(DomainVerifier::domainFromEmail($config->from_email));
+        }
 
         return back()->with('success', __('Email server configuration removed.'));
     }
@@ -126,13 +141,28 @@ class EmailServerController extends Controller
                 $smtpToUse,
                 $validated['email'],
                 __('Test email from :app', ['app' => $appName]),
-                '<p>' . __('This is a test email. Your SMTP configuration is working correctly.') . '</p>'
+                '<p>'.__('This is a test email. Your SMTP configuration is working correctly.').'</p>'
             );
 
             return response()->json(['message' => __('Test email sent successfully.')]);
         } catch (\Throwable $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
+    }
+
+    public function verifyDomain(Request $request): JsonResponse
+    {
+        $workspaceId = $this->workspaceId($request);
+        $config = WorkspaceSmtpConfig::where('workspace_id', $workspaceId)->first();
+
+        if (! $config) {
+            return response()->json(['message' => __('No workspace SMTP configured. Please add your SMTP configuration first.')], 422);
+        }
+
+        $domain = DomainVerifier::domainFromEmail($config->from_email);
+        $this->domainVerifier->forget($domain);
+
+        return response()->json($this->domainVerifier->verify($domain));
     }
 
     private function workspaceId(Request $request): int

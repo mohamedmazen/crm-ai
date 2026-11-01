@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\Plan;
 use App\Models\SmtpConfiguration;
 use App\Models\User;
+use App\Rules\NotBreachedPassword;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -39,11 +40,11 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name'        => 'required|string|max:255',
-            'email'       => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password'    => ['required', 'confirmed', Rules\Password::defaults()],
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'password' => ['required', 'confirmed', Rules\Password::defaults(), new NotBreachedPassword],
             'agree_terms' => ['accepted'],
-            'timezone'    => ['nullable', 'string', 'max:64'],
+            'timezone' => ['nullable', 'string', 'max:64'],
         ], [
             'agree_terms.accepted' => 'You must accept the Terms & Conditions to create an account.',
         ]);
@@ -102,6 +103,7 @@ class RegisteredUserController extends Controller
         }
         try {
             new \DateTimeZone($tz);
+
             return $tz;
         } catch (\Exception) {
             return $default;

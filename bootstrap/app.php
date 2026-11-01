@@ -13,10 +13,13 @@ use App\Http\Middleware\EnsureNotDemoMode;
 use App\Http\Middleware\EnsureSuperAdmin;
 use App\Http\Middleware\EnsureUserRole;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\IpAllowlist;
 use App\Http\Middleware\RedirectIfAdminAuthenticated;
 use App\Http\Middleware\RequestIdMiddleware;
 use App\Http\Middleware\RequireFeature;
 use App\Http\Middleware\RequirePermission;
+use App\Http\Middleware\ResolveTenantDomain;
+use App\Http\Middleware\RestrictViewerWrites;
 use App\Http\Middleware\SecureHeaders;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Auth\AuthenticationException;
@@ -53,7 +56,7 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::middleware(['web'])
                 ->group(base_path('routes/webhooks.php'));
 
-            Route::middleware(['web', 'auth', 'role:client', 'client.scope', 'demo'])
+            Route::middleware(['web', 'auth', 'role:client', 'client.scope', 'readonly.viewer', 'demo'])
                 ->prefix('app')
                 ->name('client.')
                 ->group(base_path('routes/client.php'));
@@ -86,7 +89,7 @@ return Application::configure(basePath: dirname(__DIR__))
             // Admin panel (authenticated admin only; RBAC applied per-route).
             // `licensed` blocks the panel and redirects to /license when the
             // copy's license is missing/invalid.
-            Route::middleware(['web', 'auth:admin', 'licensed', 'demo'])
+            Route::middleware(['web', 'auth:admin', 'licensed', 'ip.allowlist', 'demo'])
                 ->prefix('admin')
                 ->name('admin.')
                 ->group(base_path('routes/admin.php'));
@@ -101,6 +104,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             AddLinkHeadersForPreloadedAssets::class,
             SetLocale::class,
+            ResolveTenantDomain::class,
             HandleInertiaRequests::class,
             SecureHeaders::class,
             RequestIdMiddleware::class,
@@ -115,6 +119,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => RequirePermission::class,
             'redirect.if.admin' => RedirectIfAdminAuthenticated::class,
             'client.scope' => EnsureClientScope::class,
+            'readonly.viewer' => RestrictViewerWrites::class,
+            'ip.allowlist' => IpAllowlist::class,
             'licensed' => EnsureLicensed::class,
             'limit' => EnforceLimit::class,
             'feature' => RequireFeature::class,
@@ -126,6 +132,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'verified',
             'role:client',
             EnsureClientScope::class,
+            RestrictViewerWrites::class,
             EnsureNotDemoMode::class,
         ]);
         // Trust all proxies so X-Forwarded-For is used for real client IPs.

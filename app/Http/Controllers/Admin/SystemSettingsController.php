@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -17,22 +18,22 @@ class SystemSettingsController extends Controller
 {
     public function index(): Response
     {
-        $generalKeys = ['app_name', 'app_tagline', 'support_email', 'primary_color', 'secondary_color', 'font_family'];
+        $generalKeys = ['app_name', 'app_tagline', 'support_email', 'primary_color', 'secondary_color', 'font_family', 'security_ip_allowlist_enabled', 'security_ip_allowlist'];
 
         $general = [];
         foreach ($generalKeys as $key) {
             $general[$key] = SystemSetting::get($key, '');
         }
 
-        $logoPath    = SystemSetting::get('app_logo_path');
+        $logoPath = SystemSetting::get('app_logo_path');
         $faviconPath = SystemSetting::get('app_favicon_path');
 
-        $logoDisk    = SystemSetting::get('app_logo_disk', 'public');
+        $logoDisk = SystemSetting::get('app_logo_disk', 'public');
         $faviconDisk = SystemSetting::get('app_favicon_disk', 'public');
         $sm = app(StorageManager::class);
         $sm->ensureDiskReady($logoDisk);
         $sm->ensureDiskReady($faviconDisk);
-        $general['logo_url']    = $logoPath    ? Storage::disk($logoDisk)->url($logoPath)       : null;
+        $general['logo_url'] = $logoPath ? Storage::disk($logoDisk)->url($logoPath) : null;
         $general['favicon_url'] = $faviconPath ? Storage::disk($faviconDisk)->url($faviconPath) : null;
 
         $advanced = SystemSetting::orderBy('group')
@@ -40,57 +41,89 @@ class SystemSettingsController extends Controller
             ->whereNotIn('key', array_merge($generalKeys, ['app_logo_path', 'app_favicon_path']))
             ->get()
             ->map(fn ($s) => [
-                'id'        => $s->id,
-                'key'       => $s->key,
-                'value'     => $s->is_secret
+                'id' => $s->id,
+                'key' => $s->key,
+                'value' => $s->is_secret
                     ? (strlen($s->attributes['value'] ?? '') > 0 ? '••••••••' : '')
                     : ($s->attributes['value'] ?? ''),
                 'is_secret' => $s->is_secret,
-                'group'     => $s->group,
+                'group' => $s->group,
             ]);
 
         $byGroup = $advanced->groupBy('group')->map->values();
 
         $firebase = [
-            'enabled'    => SystemSetting::get('firebase_enabled', 'false') === 'true',
-            'apiKey'     => SystemSetting::get('firebase_api_key', ''),
+            'enabled' => SystemSetting::get('firebase_enabled', 'false') === 'true',
+            'apiKey' => SystemSetting::get('firebase_api_key', ''),
             'authDomain' => SystemSetting::get('firebase_auth_domain', ''),
-            'projectId'  => SystemSetting::get('firebase_project_id', ''),
-            'appId'      => SystemSetting::get('firebase_app_id', ''),
+            'projectId' => SystemSetting::get('firebase_project_id', ''),
+            'appId' => SystemSetting::get('firebase_app_id', ''),
         ];
 
         // Fall back to the build defaults so the pickers open on the colours the UI
         // is actually rendering, rather than on an empty/black swatch.
-        $general['primary_color']   = $general['primary_color']   ?: config('saas.branding.primary_color', '#467235');
+        $general['primary_color'] = $general['primary_color'] ?: config('saas.branding.primary_color', '#467235');
         $general['secondary_color'] = $general['secondary_color'] ?: config('saas.branding.secondary_color', '#283f24');
-        $general['font_family']     = $general['font_family']     ?: config('saas.branding.font_family', 'space-grotesk');
+        $general['font_family'] = $general['font_family'] ?: config('saas.branding.font_family', 'space-grotesk');
 
         return Inertia::render('Admin/Settings/Index', [
-            'general'         => $general,
-            'fonts'           => config('saas.branding.fonts', []),
+            'general' => $general,
+            'fonts' => config('saas.branding.fonts', []),
             'settingsByGroup' => $byGroup,
-            'firebase'        => $firebase,
+            'firebase' => $firebase,
         ]);
     }
 
     public function updateGeneral(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'app_name'        => ['nullable', 'string', 'max:128'],
-            'app_tagline'     => ['nullable', 'string', 'max:255'],
-            'support_email'   => ['nullable', 'email', 'max:255'],
-            'primary_color'   => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'app_name' => ['nullable', 'string', 'max:128'],
+            'app_tagline' => ['nullable', 'string', 'max:255'],
+            'support_email' => ['nullable', 'email', 'max:255'],
+            'primary_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'secondary_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             // Whitelist: the slug reaches a fonts.bunny.net URL and the mapped family
             // name reaches a CSS declaration in app.blade.php.
-            'font_family'     => ['nullable', 'string', Rule::in(array_keys(config('saas.branding.fonts', [])))],
+            'font_family' => ['nullable', 'string', Rule::in(array_keys(config('saas.branding.fonts', [])))],
+            'security_ip_allowlist_enabled' => ['nullable', 'in:0,1'],
+            'security_ip_allowlist' => ['nullable', 'string', 'max:2000'],
         ]);
+
+        $this->validateAllowlistEntries($validated['security_ip_allowlist'] ?? null);
 
         foreach ($validated as $key => $value) {
             SystemSetting::set($key, $value, false, 'general');
         }
 
         return back()->with('success', __('General settings saved.'));
+    }
+
+    /**
+     * Reject malformed allowlist entries before they are saved, so a typo
+     * cannot silently lock administrators out (or silently allow everyone).
+     */
+    private function validateAllowlistEntries(?string $raw): void
+    {
+        if (! filled($raw)) {
+            return;
+        }
+
+        foreach (preg_split('/[\s,]+/', $raw) ?: [] as $entry) {
+            if ($entry === '') {
+                continue;
+            }
+
+            [$ip, $bits] = array_pad(explode('/', $entry, 2), 2, null);
+
+            $validIp = filter_var($ip, FILTER_VALIDATE_IP) !== false;
+            $validBits = $bits === null || (ctype_digit($bits) && (int) $bits >= 0 && (int) $bits <= 32);
+
+            if (! $validIp || ! $validBits) {
+                throw ValidationException::withMessages([
+                    'security_ip_allowlist' => __('":entry" is not a valid IP address or CIDR range.', ['entry' => $entry]),
+                ]);
+            }
+        }
     }
 
     public function uploadLogo(Request $request): RedirectResponse
@@ -101,7 +134,7 @@ class SystemSettingsController extends Controller
 
         $this->deleteFile('app_logo_path', 'app_logo_disk');
 
-        $sm   = app(StorageManager::class);
+        $sm = app(StorageManager::class);
         $disk = $sm->diskName();
         $file = $request->file('logo');
         $path = $sm->prefixedPath('branding/logo-'.Str::uuid().'.'.$file->getClientOriginalExtension());
@@ -129,7 +162,7 @@ class SystemSettingsController extends Controller
 
         $this->deleteFile('app_favicon_path', 'app_favicon_disk');
 
-        $sm   = app(StorageManager::class);
+        $sm = app(StorageManager::class);
         $disk = $sm->diskName();
         $file = $request->file('favicon');
         $path = $sm->prefixedPath('branding/favicon-'.Str::uuid().'.'.$file->getClientOriginalExtension());
@@ -152,11 +185,11 @@ class SystemSettingsController extends Controller
     public function updateFirebase(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'firebase_enabled'     => ['required', 'in:true,false'],
-            'firebase_api_key'     => ['nullable', 'string', 'max:255'],
+            'firebase_enabled' => ['required', 'in:true,false'],
+            'firebase_api_key' => ['nullable', 'string', 'max:255'],
             'firebase_auth_domain' => ['nullable', 'string', 'max:255'],
-            'firebase_project_id'  => ['nullable', 'string', 'max:128'],
-            'firebase_app_id'      => ['nullable', 'string', 'max:255'],
+            'firebase_project_id' => ['nullable', 'string', 'max:128'],
+            'firebase_app_id' => ['nullable', 'string', 'max:255'],
         ]);
 
         foreach ($validated as $key => $value) {
@@ -169,18 +202,18 @@ class SystemSettingsController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'settings'             => ['required', 'array'],
-            'settings.*.key'       => ['required', 'string', 'max:128'],
-            'settings.*.value'     => ['nullable', 'string'],
+            'settings' => ['required', 'array'],
+            'settings.*.key' => ['required', 'string', 'max:128'],
+            'settings.*.value' => ['nullable', 'string'],
             'settings.*.is_secret' => ['boolean'],
-            'settings.*.group'     => ['nullable', 'string', 'max:64'],
+            'settings.*.group' => ['nullable', 'string', 'max:64'],
         ]);
 
         foreach ($validated['settings'] as $s) {
-            $model            = SystemSetting::firstOrNew(['key' => $s['key']]);
+            $model = SystemSetting::firstOrNew(['key' => $s['key']]);
             $model->is_secret = $s['is_secret'] ?? false;
-            $model->group     = $s['group'] ?? null;
-            $value            = $s['value'] ?? null;
+            $model->group = $s['group'] ?? null;
+            $value = $s['value'] ?? null;
             if ($value !== null && $value !== '' && ! ($model->is_secret && preg_match('/^•+$/', (string) $value))) {
                 $model->value = $value;
             }
@@ -193,7 +226,7 @@ class SystemSettingsController extends Controller
     private function deleteFile(string $pathKey, string $diskKey): void
     {
         $existing = SystemSetting::get($pathKey);
-        $disk     = SystemSetting::get($diskKey, 'public');
+        $disk = SystemSetting::get($diskKey, 'public');
         if ($existing) {
             app(StorageManager::class)->ensureDiskReady($disk);
             Storage::disk($disk)->delete($existing);

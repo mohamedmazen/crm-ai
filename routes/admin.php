@@ -1,11 +1,10 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminSearchController;
-use App\Http\Controllers\Admin\AiDashboardController;
-use App\Http\Controllers\Admin\LandingPageController;
-use App\Http\Controllers\Admin\LicenseController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Admin\AiDashboardController;
 use App\Http\Controllers\Admin\AuditLogController;
+use App\Http\Controllers\Admin\BackupController;
 use App\Http\Controllers\Admin\ClientBrandingController;
 use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\CmsPageController;
@@ -14,11 +13,14 @@ use App\Http\Controllers\Admin\CronSetupController;
 use App\Http\Controllers\Admin\CurrencyController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EmailSystemController;
+use App\Http\Controllers\Admin\LandingPageController;
+use App\Http\Controllers\Admin\LicenseController;
 use App\Http\Controllers\Admin\LocaleController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\PaymentGatewayConfigController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\PlanController;
+use App\Http\Controllers\Admin\PusherSettingsController;
 use App\Http\Controllers\Admin\QueueController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\RolesPermissionsController;
@@ -28,7 +30,6 @@ use App\Http\Controllers\Admin\SystemSettingsController;
 use App\Http\Controllers\Admin\TaxRateController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\TranslationController;
-use App\Http\Controllers\Admin\PusherSettingsController;
 use App\Modules\Integrations\Http\Controllers\IntegrationConfigController;
 use Illuminate\Support\Facades\Route;
 
@@ -161,6 +162,13 @@ Route::post('/support/{supportTicket}/status', [SupportTicketController::class, 
 
 // Cron / Scheduler setup guide
 Route::get('/cron-setup', [CronSetupController::class, 'index'])->name('cron-setup.index')->middleware('permission:view_settings');
+
+// Database backups (db:backup writes to the configured disk)
+Route::get('/backups', [BackupController::class, 'index'])->name('backups.index')->middleware('permission:view_settings');
+Route::post('/backups', [BackupController::class, 'create'])->name('backups.create')->middleware('permission:manage_settings');
+Route::get('/backups/{file}/download', [BackupController::class, 'download'])->name('backups.download')->middleware('permission:view_settings')->where('file', '[A-Za-z0-9_.-]+');
+Route::get('/backups/{file}/verify', [BackupController::class, 'verify'])->name('backups.verify')->middleware('permission:view_settings')->where('file', '[A-Za-z0-9_.-]+');
+Route::delete('/backups/{file}', [BackupController::class, 'destroy'])->name('backups.destroy')->middleware('permission:manage_settings')->where('file', '[A-Za-z0-9_.-]+');
 
 // Queue / Failed Jobs monitor
 Route::get('/queue', [QueueController::class, 'index'])->name('queue.index')->middleware('permission:view_settings');

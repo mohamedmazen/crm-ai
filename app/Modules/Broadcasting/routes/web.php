@@ -31,4 +31,5 @@ Route::middleware(['web', 'client-app'])->prefix('app/broadcasts')->name('client
     Route::put('/email-server', [EmailServerController::class, 'update'])->name('email-server.update');
     Route::delete('/email-server', [EmailServerController::class, 'destroy'])->name('email-server.destroy');
     Route::post('/email-server/test', [EmailServerController::class, 'testEmail'])->name('email-server.test');
+    Route::post('/email-server/verify-domain', [EmailServerController::class, 'verifyDomain'])->name('email-server.verify-domain');
 });

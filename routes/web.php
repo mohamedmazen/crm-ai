@@ -10,11 +10,15 @@ use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ThemeController;
 use App\Http\Controllers\WebhookController;
 use App\Models\CmsPage;
+use App\Models\SystemSetting;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 // Home / Landing
 Route::get('/', [LandingController::class, 'index'])->name('home');
@@ -46,7 +50,7 @@ Route::get('/p/{slug}', [CmsPageController::class, 'show'])->name('cms-page.show
 Route::get('/sitemap.xml', function () {
     $landingEnabled = true;
     try {
-        $landingEnabled = \App\Models\SystemSetting::get('landing.page_enabled', '1') === '1';
+        $landingEnabled = SystemSetting::get('landing.page_enabled', '1') === '1';
     } catch (Throwable $e) {
         // table may not exist yet
     }
@@ -109,14 +113,79 @@ Route::post('/billing/iyzico/callback', [IyzicoCheckoutController::class, 'callb
     ->name('checkout.iyzico.callback');
 
 // ─── Health / readiness probes ───────────────────────────────────────────────
+/**
+ * Snapshot of the dependencies a node needs to serve traffic.
+ *
+ * @return array{database: string, cache: string, storage: string}
+ */
+$healthSnapshot = function (): array {
+    $checks = [];
+
+    try {
+        DB::selectOne('SELECT 1');
+        $checks['database'] = 'ok';
+    } catch (Throwable) {
+        $checks['database'] = 'error';
+    }
+
+    try {
+        $key = 'healthz:'.Str::random(8);
+        Cache::put($key, 'ok', 10);
+        $checks['cache'] = Cache::pull($key) === 'ok' ? 'ok' : 'error';
+    } catch (Throwable) {
+        $checks['cache'] = 'error';
+    }
+
+    try {
+        $disk = Storage::disk(config('filesystems.default'));
+        $path = 'healthz/'.Str::random(8).'.txt';
+        $disk->put($path, 'ok');
+        $checks['storage'] = $disk->exists($path) ? 'ok' : 'error';
+        $disk->delete($path);
+    } catch (Throwable) {
+        $checks['storage'] = 'error';
+    }
+
+    return $checks;
+};
+
+// `/up` is the conventional load-balancer probe. Replace Laravel's bare
+// "application booted" answer with a real dependency check so a node whose
+// database or cache is down is taken out of rotation.
+Route::get('/up', function () use ($healthSnapshot) {
+    $checks = $healthSnapshot();
+    $healthy = ! in_array('error', $checks, true);
+
+    return response()->json([
+        'status' => $healthy ? 'ok' : 'error',
+        'checks' => $checks,
+    ], $healthy ? 200 : 503);
+})->name('health.up');
+
 // Protected by a shared secret token (HEALTHZ_TOKEN env var). Set to a random
 // string in production and pass via Authorization: Bearer <token> header.
-Route::middleware('throttle:30,1')->group(function () {
-    $guardHealthz = function (Illuminate\Http\Request $request): bool {
+Route::middleware('throttle:30,1')->group(function () use ($healthSnapshot) {
+    $guardHealthz = function (Request $request): bool {
         $token = config('app.healthz_token');
 
         return ! filled($token) || hash_equals($token, $request->bearerToken() ?? '');
     };
+
+    // Aggregate readiness probe: database, cache and storage. Returns 503 when
+    // any dependency is unhealthy so a load balancer can take the node out.
+    Route::get('/healthz', function () use ($guardHealthz, $healthSnapshot) {
+        if (! $guardHealthz(request())) {
+            return response()->json(['error' => 'Unauthorized.'], 401);
+        }
+
+        $checks = $healthSnapshot();
+        $healthy = ! in_array('error', $checks, true);
+
+        return response()->json([
+            'status' => $healthy ? 'ok' : 'error',
+            'checks' => $checks,
+        ], $healthy ? 200 : 503);
+    })->name('healthz');
 
     Route::get('/healthz/db', function () use ($guardHealthz) {
         if (! $guardHealthz(request())) {

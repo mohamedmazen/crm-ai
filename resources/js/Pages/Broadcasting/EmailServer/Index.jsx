@@ -131,11 +131,13 @@ function FieldRow({ label, error, children }) {
     );
 }
 
-export default function EmailServerIndex({ config }) {
+export default function EmailServerIndex({ config, domainVerification }) {
     const { t } = useTranslation();
     const { props } = usePage();
     const flash = props.flash ?? {};
     const hasConfig = !!config;
+    const [verification, setVerification] = useState(domainVerification ?? null);
+    const [verifying, setVerifying] = useState(false);
 
     const ENCRYPTION_OPTIONS = [
         { value: 'tls', label: t('email_server.enc_tls') },
@@ -187,6 +189,18 @@ export default function EmailServerIndex({ config }) {
         }
     };
 
+    const handleVerifyDomain = async () => {
+        setVerifying(true);
+        try {
+            const res = await axios.post(route('client.email-server.verify-domain'));
+            setVerification(res.data);
+        } catch (err) {
+            setVerification({ verified: false, spf: false, dkim: false, error: err.response?.data?.message });
+        } finally {
+            setVerifying(false);
+        }
+    };
+
     return (
         <ClientLayout title={t('email_server.title')}>
             <Head title={t('email_server.title')} />
@@ -218,6 +232,54 @@ export default function EmailServerIndex({ config }) {
                     <div className="flex items-center gap-2 text-sm text-green-700 dark:text-green-400">
                         <CheckCircle className="h-4 w-4" />
                         <span>{t('email_server.connected_to')} <strong>{config.summary}</strong></span>
+                    </div>
+                )}
+
+                {/* Sending-domain SPF / DKIM status */}
+                {hasConfig && verification && (
+                    <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-5">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                            <div className="flex items-center gap-2">
+                                {verification.verified
+                                    ? <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                                    : <AlertCircle className="h-5 w-5 text-amber-500" />}
+                                <div>
+                                    <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                                        {t('email_server.domain_verification') || 'Sending domain authentication'}
+                                    </p>
+                                    <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                                        {verification.domain}
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={handleVerifyDomain}
+                                disabled={verifying}
+                                className="rounded-lg border border-neutral-200 dark:border-neutral-700 px-3 py-1.5 text-xs font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 disabled:opacity-60 transition"
+                            >
+                                {verifying ? (t('email_server.verifying') || 'Checking…') : (t('email_server.recheck') || 'Re-check DNS')}
+                            </button>
+                        </div>
+                        <div className="mt-4 grid grid-cols-2 gap-3">
+                            <div className={`rounded-lg px-3 py-2 text-xs ${verification.spf ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'}`}>
+                                <span className="font-semibold">SPF</span>
+                                <span className="ml-2">{verification.spf ? (t('email_server.found') || 'Found') : (t('email_server.missing') || 'Missing')}</span>
+                            </div>
+                            <div className={`rounded-lg px-3 py-2 text-xs ${verification.dkim ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'}`}>
+                                <span className="font-semibold">DKIM</span>
+                                <span className="ml-2">
+                                    {verification.dkim
+                                        ? `${t('email_server.found') || 'Found'}${verification.dkim_selector ? ` (${verification.dkim_selector})` : ''}`
+                                        : (t('email_server.missing') || 'Missing')}
+                                </span>
+                            </div>
+                        </div>
+                        {!verification.verified && (
+                            <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400">
+                                {t('email_server.domain_verification_hint') || 'Add an SPF TXT record and a DKIM DNS record at your domain provider before sending campaigns. Missing records lower deliverability and can get your domain flagged as spam.'}
+                            </p>
+                        )}
                     </div>
                 )}
 

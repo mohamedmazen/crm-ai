@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use App\Models\Invitation;
 use App\Models\User;
+use App\Rules\NotBreachedPassword;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -70,8 +71,8 @@ class TeamController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'client_role' => ['required', 'string', 'in:administrator,staff'],
+            'password' => ['required', 'string', 'min:8', 'confirmed', new NotBreachedPassword],
+            'client_role' => ['required', 'string', Rule::in(User::CLIENT_ROLES)],
             'status' => ['required', 'string', 'in:active,inactive'],
         ]);
 
@@ -103,8 +104,8 @@ class TeamController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($member->id)],
-            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
-            'client_role' => ['required', 'string', 'in:administrator,staff'],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed', new NotBreachedPassword],
+            'client_role' => ['required', 'string', Rule::in(User::CLIENT_ROLES)],
             'status' => ['required', 'string', 'in:active,inactive'],
         ]);
 

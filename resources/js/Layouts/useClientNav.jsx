@@ -6,6 +6,7 @@ import {
     Layers, Webhook, Key, BookOpen, Image, Radio, Inbox, Bot, Database,
     Zap, Share2, MapPin, Tag, LifeBuoy, ExternalLink, Mail, MessageSquare,
     ShoppingBag, KanbanSquare, SlidersHorizontal, CheckSquare, Building2, Copy, Calendar, BarChart3, Phone, Receipt,
+    ShieldCheck,
 } from 'lucide-react';
 
 const iconClass = 'h-4 w-4';
@@ -44,13 +45,14 @@ export default function useClientNav() {
     const accountSettingsItems = [
         { label: t('nav.workspaces'), href: safeRoute('client.workspaces.index'), icon: <Layers className={iconClass} />,   activePattern: 'client.workspaces.*' },
         { label: t('nav.custom_fields') || 'Custom Fields', href: safeRoute('client.custom-fields.index'), icon: <SlidersHorizontal className={iconClass} />, activePattern: 'client.custom-fields.*', feature: 'custom_fields' },
-        { label: t('nav.settings'),   href: safeRoute('client.settings.index'),   icon: <Settings className={iconClass} />, activePattern: 'client.settings.*' },
+        { label: t('nav.settings'),   href: safeRoute('client.settings.index'),   icon: <Settings className={iconClass} />, activePattern: 'client.settings.index' },
     ];
 
     if (isClientAdmin) {
         accountSettingsItems.push(
             { label: t('nav.team'),      href: safeRoute('client.team.index'),      icon: <Users className={iconClass} />,    activePattern: 'client.team.*' },
             { label: t('nav.audit_log'), href: safeRoute('client.audit-log.index'), icon: <FileText className={iconClass} />, activePattern: 'client.audit-log.*' },
+            { label: t('nav.gdpr'),      href: safeRoute('client.settings.gdpr'),  icon: <ShieldCheck className={iconClass} />, activePattern: 'client.settings.gdpr*' },
         );
     }
 
@@ -173,8 +175,12 @@ export default function useClientNav() {
         { type: 'group', label: t('nav.group_account'),       items: accountSettingsItems },
     ];
 
-    return groups.map((group) => ({
-        ...group,
-        items: group.items.map(gateItem),
-    }));
+    // Gate individual items first, then drop a whole section when every item in
+    // it is unavailable on the current plan — an all-locked section is noise.
+    return groups
+        .map((group) => ({
+            ...group,
+            items: group.items.map(gateItem),
+        }))
+        .filter((group) => group.items.some((item) => !item.locked));
 }

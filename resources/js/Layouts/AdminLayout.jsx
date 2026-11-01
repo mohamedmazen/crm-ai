@@ -26,6 +26,7 @@ import {
     Brain,
     Clock,
     KeyRound,
+    Database,
     LogOut,
 } from 'lucide-react';
 
@@ -49,6 +50,7 @@ const ADMIN_NAV_ITEMS = [
     { labelKey: 'admin.cms_pages', route: 'admin.cms-pages.index', href: () => route('admin.cms-pages.index'), icon: FileText, permission: 'view_settings' },
     { labelKey: 'admin.nav.queue', route: 'admin.queue.index', href: () => route('admin.queue.index'), icon: Server, permission: 'view_settings' },
     { labelKey: 'admin.cron_setup', route: 'admin.cron-setup.index', href: () => route('admin.cron-setup.index'), icon: Clock, permission: 'view_settings' },
+    { labelKey: 'admin.nav.backups', route: 'admin.backups.index', href: () => route('admin.backups.index'), icon: Database, permission: 'view_settings' },
     { labelKey: 'admin.pusher_settings', route: 'admin.pusher-settings.index', href: () => route('admin.pusher-settings.index'), icon: Radio, permission: 'manage_settings' },
     { labelKey: 'admin.nav.settings', route: 'admin.settings.index', href: () => route('admin.settings.index'), icon: Settings, permission: 'view_settings' },
     { labelKey: 'admin.license', route: 'admin.license.index', href: () => route('admin.license.index'), icon: KeyRound, permission: 'view_settings' },

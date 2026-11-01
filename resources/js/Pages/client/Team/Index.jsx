@@ -8,6 +8,7 @@ import { Users, Pencil, Trash2, UserPlus, Mail, X } from 'lucide-react';
 const STATUS_ACTIVE    = 'active';
 const CLIENT_ROLE_ADMIN = 'administrator';
 const CLIENT_ROLE_STAFF = 'staff';
+const CLIENT_ROLE_VIEWER = 'viewer';
 
 export default function TeamIndex({ users = [], client = {}, invitations = [] }) {
     const { t } = useTranslation();
@@ -172,7 +173,7 @@ export default function TeamIndex({ users = [], client = {}, invitations = [] })
                                         </td>
                                         <td className="px-4 py-3">
                                             <span className="inline-flex rounded-full px-2 py-0.5 text-xs font-medium bg-brand-50 dark:bg-brand-900/30 text-brand-800 dark:text-brand-300">
-                                                {u.client_role === CLIENT_ROLE_ADMIN ? (t('admin.administrator') || 'Administrator') : (t('admin.staff') || 'Staff')}
+                                                {u.client_role === CLIENT_ROLE_ADMIN ? (t('admin.administrator') || 'Administrator') : u.client_role === CLIENT_ROLE_VIEWER ? (t('admin.viewer') || 'Viewer') : (t('admin.staff') || 'Staff')}
                                             </span>
                                         </td>
                                         <td className="px-4 py-3">
@@ -270,6 +271,7 @@ export default function TeamIndex({ users = [], client = {}, invitations = [] })
                                     className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm"
                                 >
                                     <option value={CLIENT_ROLE_STAFF}>{t('admin.staff') || 'Staff'}</option>
+                                    <option value={CLIENT_ROLE_VIEWER}>{t('admin.viewer') || 'Viewer (read-only)'}</option>
                                     <option value={CLIENT_ROLE_ADMIN}>{t('admin.administrator') || 'Administrator'}</option>
                                 </select>
                             </div>
@@ -312,6 +314,7 @@ export default function TeamIndex({ users = [], client = {}, invitations = [] })
                                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('client.role') || 'Role'}</label>
                                     <select value={addForm.data.client_role} onChange={e => addForm.setData('client_role', e.target.value)} className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm">
                                         <option value={CLIENT_ROLE_STAFF}>{t('admin.staff') || 'Staff'}</option>
+                                        <option value={CLIENT_ROLE_VIEWER}>{t('admin.viewer') || 'Viewer (read-only)'}</option>
                                         <option value={CLIENT_ROLE_ADMIN}>{t('admin.administrator') || 'Administrator'}</option>
                                     </select>
                                 </div>
@@ -347,6 +350,7 @@ export default function TeamIndex({ users = [], client = {}, invitations = [] })
                                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('client.role') || 'Role'}</label>
                                     <select value={editForm.data.client_role} onChange={e => editForm.setData('client_role', e.target.value)} className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm">
                                         <option value={CLIENT_ROLE_STAFF}>{t('admin.staff') || 'Staff'}</option>
+                                        <option value={CLIENT_ROLE_VIEWER}>{t('admin.viewer') || 'Viewer (read-only)'}</option>
                                         <option value={CLIENT_ROLE_ADMIN}>{t('admin.administrator') || 'Administrator'}</option>
                                     </select>
                                 </div>

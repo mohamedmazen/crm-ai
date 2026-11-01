@@ -5,6 +5,7 @@ import { Dropdown } from '@/Components/ui';
 import { useTheme } from '@/context/ThemeContext';
 import { useLocale } from '@/hooks/useLocale';
 import { useBranding } from '@/hooks/useBranding';
+import CookieConsent from '@/Components/CookieConsent';
 import { Globe } from 'lucide-react';
 
 function SunIcon({ className }) {
@@ -369,6 +370,7 @@ export default function LandingLayout({ children }) {
                     </div>
                 </div>
             </footer>
+            <CookieConsent />
         </div>
     );
 }

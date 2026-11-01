@@ -6,6 +6,7 @@ import { Toaster, toast } from 'sonner';
 import Topbar from '@/Components/Topbar';
 import Sidebar from '@/Components/Sidebar';
 import UpgradeModal from '@/Components/UpgradeModal';
+import CookieConsent from '@/Components/CookieConsent';
 import useClientNav from '@/Layouts/useClientNav';
 import { ChannelBrandIcon } from '@/Components/BrandIcons';
 import {
@@ -217,6 +218,7 @@ footer={<ClientLayoutFooter />}
             </button>
 
             <UpgradeModal />
+            <CookieConsent />
             <Toaster richColors position="top-right" />
             {/* Demo notice — pinned to the bottom of the viewport */}
             {demoMode && (

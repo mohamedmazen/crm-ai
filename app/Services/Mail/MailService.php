@@ -5,6 +5,7 @@ namespace App\Services\Mail;
 use App\Models\SmtpConfiguration;
 use App\Models\Template;
 use App\Modules\Broadcasting\Models\WorkspaceSmtpConfig;
+use App\Modules\Broadcasting\Services\DomainVerifier;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
@@ -52,9 +53,9 @@ class MailService
      *
      * @param  SmtpConfiguration|WorkspaceSmtpConfig  $smtp
      * @param  array<string, string>  $extraHeaders  Additional RFC headers (e.g. List-Unsubscribe)
-     * @param  string|null  $fromEmail   Override the SMTP default from address
-     * @param  string|null  $fromName    Override the SMTP default from name
-     * @param  string|null  $replyTo     Optional reply-to address
+     * @param  string|null  $fromEmail  Override the SMTP default from address
+     * @param  string|null  $fromName  Override the SMTP default from name
+     * @param  string|null  $replyTo  Optional reply-to address
      */
     public function sendRaw(
         Model $smtp,
@@ -68,6 +69,15 @@ class MailService
     ): bool {
         try {
             $this->configureMailer($smtp);
+
+            if (config('security.verify_sending_domain', false)) {
+                $domain = DomainVerifier::domainFromEmail($fromEmail ?: (string) $smtp->from_email);
+
+                if (! app(DomainVerifier::class)->verify($domain)['verified']) {
+                    Log::warning('MailService: sending domain is missing SPF or DKIM.', ['domain' => $domain]);
+                }
+            }
+
             Mail::mailer('dynamic_smtp')->html($bodyHtml, function ($message) use ($to, $subject, $smtp, $extraHeaders, $fromEmail, $fromName, $replyTo) {
                 $message->to($to)
                     ->subject($subject)
@@ -81,6 +91,7 @@ class MailService
                     $message->getHeaders()->addTextHeader($name, $value);
                 }
             });
+
             return true;
         } catch (\Throwable $e) {
             Log::error('MailService: Failed to send email.', [
@@ -95,7 +106,7 @@ class MailService
     /**
      * Configure Laravel mail to use the given SMTP configuration for the 'dynamic_smtp' mailer.
      *
-     * @param SmtpConfiguration|WorkspaceSmtpConfig $smtp
+     * @param  SmtpConfiguration|WorkspaceSmtpConfig  $smtp
      */
     public function configureMailer(Model $smtp): void
     {
@@ -127,8 +138,9 @@ class MailService
     private function replacePlaceholders(string $text, array $replacements): string
     {
         foreach ($replacements as $key => $value) {
-            $text = str_replace('{{' . $key . '}}', (string) $value, $text);
+            $text = str_replace('{{'.$key.'}}', (string) $value, $text);
         }
+
         return $text;
     }
 }
