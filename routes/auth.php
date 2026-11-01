@@ -4,14 +4,13 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
+use App\Http\Controllers\Auth\FirebaseLoginController;
 use App\Http\Controllers\Auth\InvitationController;
 use App\Http\Controllers\Auth\MagicLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Auth\SessionController;
-use App\Http\Controllers\Auth\FirebaseLoginController;
 use App\Http\Controllers\Auth\SocialLoginController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\Auth\VerifyEmailController;
@@ -24,10 +23,10 @@ use Illuminate\Support\Facades\Route;
 */
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('register', [RegisteredUserController::class, 'store']);
+    Route::post('register', [RegisteredUserController::class, 'store'])->middleware('throttle:10,1');
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
-    Route::post('login', [AuthenticatedSessionController::class, 'store']);
+    Route::post('login', [AuthenticatedSessionController::class, 'store'])->middleware('throttle:10,1');
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])->middleware('throttle:5,1')->name('password.email');
@@ -42,7 +41,7 @@ Route::middleware('guest')->group(function () {
 
     // 2FA challenge (shown after login when 2FA is enabled)
     Route::get('two-factor-challenge', [TwoFactorController::class, 'challenge'])->name('auth.two-factor.challenge');
-    Route::post('two-factor-challenge', [TwoFactorController::class, 'verify'])->name('auth.two-factor.verify');
+    Route::post('two-factor-challenge', [TwoFactorController::class, 'verify'])->middleware('throttle:5,1')->name('auth.two-factor.verify');
 });
 
 /*
@@ -75,7 +74,7 @@ Route::get('auth/{provider}/redirect', [SocialLoginController::class, 'redirect'
 Route::get('auth/{provider}/callback', [SocialLoginController::class, 'callback'])->name('auth.social.callback');
 
 // Firebase authentication
-Route::middleware('guest')->post('auth/firebase', [FirebaseLoginController::class, 'login'])->name('auth.firebase');
+Route::middleware('guest')->post('auth/firebase', [FirebaseLoginController::class, 'login'])->middleware('throttle:10,1')->name('auth.firebase');
 
 /*
 |--------------------------------------------------------------------------

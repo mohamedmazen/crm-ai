@@ -37,10 +37,10 @@ class FirebaseLoginController extends Controller
             return response()->json(['message' => 'Invalid or expired token.'], 422);
         }
 
-        $email   = $tokenInfo['email'] ?? null;
-        $uid     = $tokenInfo['sub']   ?? null;
-        $name    = $tokenInfo['name']  ?? $email;
-        $avatar  = $tokenInfo['picture'] ?? null;
+        $email = $tokenInfo['email'] ?? null;
+        $uid = $tokenInfo['sub'] ?? null;
+        $name = $tokenInfo['name'] ?? $email;
+        $avatar = $tokenInfo['picture'] ?? null;
 
         if (! $email || ! $uid) {
             return response()->json(['message' => 'Could not retrieve email from token.'], 422);
@@ -53,6 +53,7 @@ class FirebaseLoginController extends Controller
 
         if ($existing) {
             Auth::login($existing->user, true);
+
             return response()->json(['redirect' => route('client.dashboard')]);
         }
 
@@ -65,30 +66,30 @@ class FirebaseLoginController extends Controller
 
             $user = DB::transaction(function () use ($name, $email) {
                 $client = Client::create([
-                    'name'              => $name,
-                    'email'             => $email,
-                    'status'            => Client::STATUS_ACTIVE,
+                    'name' => $name,
+                    'email' => $email,
+                    'status' => Client::STATUS_ACTIVE,
                     // Currency left null: inherit the platform default currency.
                 ]);
 
                 return User::create([
-                    'name'              => $name,
-                    'email'             => $email,
-                    'password'          => bcrypt(Str::random(32)),
-                    'role'              => User::ROLE_CLIENT,
-                    'status'            => User::STATUS_ACTIVE,
+                    'name' => $name,
+                    'email' => $email,
+                    'password' => bcrypt(Str::random(32)),
+                    'role' => User::ROLE_CLIENT,
+                    'status' => User::STATUS_ACTIVE,
                     'email_verified_at' => now(),
-                    'client_id'         => $client->id,
-                    'client_role'       => User::CLIENT_ROLE_ADMINISTRATOR,
+                    'client_id' => $client->id,
+                    'client_role' => User::CLIENT_ROLE_ADMINISTRATOR,
                 ]);
             });
         }
 
         $user->socialAccounts()->create([
-            'provider'    => 'firebase',
+            'provider' => 'firebase',
             'provider_id' => $uid,
-            'email'       => $email,
-            'avatar_url'  => $avatar,
+            'email' => $email,
+            'avatar_url' => $avatar,
         ]);
 
         Auth::login($user, true);
@@ -109,17 +110,19 @@ class FirebaseLoginController extends Controller
 
             $data = $response->json();
 
-            // Verify audience matches the Firebase project
+            // Both the audience and issuer must match this Firebase project
+            // exactly. A loose match (Str::contains) or accepting Google's
+            // generic issuer (`https://accounts.google.com`) lets an ID token
+            // from any other Google/Firebase app authenticate here.
             $aud = $data['aud'] ?? '';
             $iss = $data['iss'] ?? '';
+            $sub = $data['sub'] ?? '';
 
-            $validAudience = $aud === $projectId || Str::contains($aud, $projectId);
-            $validIssuer   = in_array($iss, [
-                "https://securetoken.google.com/{$projectId}",
-                'https://accounts.google.com',
-            ]);
+            $validAudience = is_string($aud) && hash_equals($projectId, $aud);
+            $validIssuer = is_string($iss) && hash_equals("https://securetoken.google.com/{$projectId}", $iss);
+            $validSubject = is_string($sub) && $sub !== '';
 
-            if (! $validAudience && ! $validIssuer) {
+            if (! $validAudience || ! $validIssuer || ! $validSubject) {
                 return null;
             }
 

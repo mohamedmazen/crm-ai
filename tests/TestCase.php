@@ -34,7 +34,7 @@ abstract class TestCase extends BaseTestCase
         // Attach common permissions so permission middleware passes
         $permKeys = [
             'view_settings', 'manage_settings',
-            'view_clients', 'manage_clients',
+            'view_clients', 'manage_clients', 'create_clients', 'update_clients', 'delete_clients', 'impersonate_clients',
             'view_plans', 'manage_plans', 'create_plans', 'delete_plans',
             'view_subscriptions', 'manage_subscriptions',
             'view_payment_gateways', 'manage_payment_gateways',

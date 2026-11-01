@@ -135,10 +135,12 @@ return Application::configure(basePath: dirname(__DIR__))
             RestrictViewerWrites::class,
             EnsureNotDemoMode::class,
         ]);
-        // Trust all proxies so X-Forwarded-For is used for real client IPs.
-        // In production, restrict to your actual load balancer IPs via TRUSTED_PROXIES env var.
+        // Trusted proxy IPs are resolved from config/trustedproxy.php at request
+        // time. Do not read env() here: this callback runs before the framework
+        // bootstrappers load the .env file, and it must never default to "*"
+        // (that would let any client spoof X-Forwarded-For and defeat the rate
+        // limiters and the admin IP allowlist).
         $middleware->trustProxies(
-            at: env('TRUSTED_PROXIES', '*'),
             headers: Request::HEADER_X_FORWARDED_FOR
                 | Request::HEADER_X_FORWARDED_HOST
                 | Request::HEADER_X_FORWARDED_PORT

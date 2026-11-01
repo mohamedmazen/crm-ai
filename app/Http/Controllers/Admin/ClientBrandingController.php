@@ -16,7 +16,7 @@ class ClientBrandingController extends Controller
     public function update(Request $request, Client $client): RedirectResponse
     {
         $validated = $request->validate([
-            'logo' => ['nullable', 'image', 'max:2048'],
+            'logo' => ['nullable', 'image', 'mimes:png,jpg,jpeg,gif,webp', 'max:2048'],
             'primary_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'tagline' => ['nullable', 'string', 'max:255'],
             'custom_domain' => ['nullable', 'string', 'max:255'],
@@ -26,7 +26,8 @@ class ClientBrandingController extends Controller
         if ($request->hasFile('logo')) {
             $file = $request->file('logo');
             $disk = $this->storage->diskName();
-            $path = $this->storage->prefixedPath('client-logos/'.Str::uuid().'.'.$file->getClientOriginalExtension());
+            $extension = $file->guessExtension() ?: 'png';
+            $path = $this->storage->prefixedPath('client-logos/'.Str::uuid().'.'.$extension);
             $this->storage->disk()->putFileAs(dirname($path), $file, basename($path));
             $validated['logo_path'] = $path;
             $validated['logo_disk'] = $disk;

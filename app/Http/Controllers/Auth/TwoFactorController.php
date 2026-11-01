@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -60,11 +61,13 @@ class TwoFactorController extends Controller
             return back()->withErrors(['code' => 'Invalid verification code.']);
         }
 
-        $user->update([
+        // 2FA fields are intentionally not mass-assignable, so write them
+        // explicitly instead of through update().
+        $user->forceFill([
             'two_factor_secret' => $secret,
             'two_factor_recovery_codes' => $this->generateRecoveryCodes(),
             'two_factor_confirmed_at' => now(),
-        ]);
+        ])->save();
 
         $request->session()->forget('2fa_secret');
 
@@ -78,11 +81,11 @@ class TwoFactorController extends Controller
     {
         $request->validate(['password' => ['required', 'current_password']]);
 
-        $request->user()->update([
+        $request->user()->forceFill([
             'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,
             'two_factor_confirmed_at' => null,
-        ]);
+        ])->save();
 
         return redirect()->route('client.profile.2fa')->with('success', 'Two-factor authentication disabled.');
     }
@@ -94,9 +97,9 @@ class TwoFactorController extends Controller
     {
         $request->validate(['password' => ['required', 'current_password']]);
 
-        $request->user()->update([
+        $request->user()->forceFill([
             'two_factor_recovery_codes' => $this->generateRecoveryCodes(),
-        ]);
+        ])->save();
 
         return redirect()->route('client.profile.2fa')->with('success', 'Recovery codes regenerated.');
     }
@@ -123,7 +126,7 @@ class TwoFactorController extends Controller
         ]);
 
         $userId = $request->session()->get('2fa_user_id');
-        $user = \App\Models\User::findOrFail($userId);
+        $user = User::findOrFail($userId);
         $code = $request->input('code');
 
         $valid = false;
@@ -137,7 +140,7 @@ class TwoFactorController extends Controller
             if ($index !== false) {
                 $valid = true;
                 unset($codes[$index]);
-                $user->update(['two_factor_recovery_codes' => array_values($codes)]);
+                $user->forceFill(['two_factor_recovery_codes' => array_values($codes)])->save();
             }
         }
 

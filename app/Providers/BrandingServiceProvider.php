@@ -40,12 +40,18 @@ class BrandingServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->app->booted(function () {
+            // Capture the build default before the white-label override below.
+            // MAIL_FROM_NAME defaults to APP_NAME, so equality means the mail
+            // sender was never customised. Do not read env() here: runtime env()
+            // returns null once the configuration is cached.
+            $defaultAppName = config('app.name');
+
             try {
                 $branding = Cache::rememberForever(self::CACHE_KEY, fn () => [
-                    'app_name'      => SystemSetting::get('app_name'),
-                    'app_tagline'   => SystemSetting::get('app_tagline'),
+                    'app_name' => SystemSetting::get('app_name'),
+                    'app_tagline' => SystemSetting::get('app_tagline'),
                     'support_email' => SystemSetting::get('support_email'),
-                    'docs_url'      => SystemSetting::get('docs_url'),
+                    'docs_url' => SystemSetting::get('docs_url'),
                     'primary_color' => SystemSetting::get('primary_color'),
                     'secondary_color' => SystemSetting::get('secondary_color'),
                     'font_family' => SystemSetting::get('font_family'),
@@ -57,14 +63,14 @@ class BrandingServiceProvider extends ServiceProvider
 
             if (! empty($branding['app_name'])) {
                 config([
-                    'app.name'      => $branding['app_name'],
+                    'app.name' => $branding['app_name'],
                     'saas.app_name' => $branding['app_name'],
                 ]);
 
                 // MAIL_FROM_NAME defaults to "${APP_NAME}" in .env, which Laravel
                 // resolves at env-parse time — before this override. Re-apply it so
                 // outgoing mail shows the white-label name rather than the build default.
-                if (config('mail.from.name') === env('APP_NAME')) {
+                if (config('mail.from.name') === $defaultAppName) {
                     config(['mail.from.name' => $branding['app_name']]);
                 }
             }

@@ -129,7 +129,9 @@ class SystemSettingsController extends Controller
     public function uploadLogo(Request $request): RedirectResponse
     {
         $request->validate([
-            'logo' => ['required', 'image', 'mimes:png,jpg,jpeg,gif,svg,webp', 'max:2048'],
+            // SVG is intentionally excluded: it is XML and can carry a
+            // <script> payload, which would be stored XSS when served.
+            'logo' => ['required', 'image', 'mimes:png,jpg,jpeg,gif,webp', 'max:2048'],
         ]);
 
         $this->deleteFile('app_logo_path', 'app_logo_disk');
@@ -137,7 +139,7 @@ class SystemSettingsController extends Controller
         $sm = app(StorageManager::class);
         $disk = $sm->diskName();
         $file = $request->file('logo');
-        $path = $sm->prefixedPath('branding/logo-'.Str::uuid().'.'.$file->getClientOriginalExtension());
+        $path = $sm->prefixedPath('branding/logo-'.Str::uuid().'.'.($file->guessExtension() ?: 'png'));
         $sm->disk()->putFileAs(dirname($path), $file, basename($path));
 
         SystemSetting::set('app_logo_path', $path, false, 'general');
@@ -157,7 +159,7 @@ class SystemSettingsController extends Controller
     public function uploadFavicon(Request $request): RedirectResponse
     {
         $request->validate([
-            'favicon' => ['required', 'file', 'mimes:png,jpg,jpeg,gif,ico,svg,webp', 'max:512'],
+            'favicon' => ['required', 'file', 'mimes:png,jpg,jpeg,gif,ico,webp', 'max:512'],
         ]);
 
         $this->deleteFile('app_favicon_path', 'app_favicon_disk');
@@ -165,7 +167,7 @@ class SystemSettingsController extends Controller
         $sm = app(StorageManager::class);
         $disk = $sm->diskName();
         $file = $request->file('favicon');
-        $path = $sm->prefixedPath('branding/favicon-'.Str::uuid().'.'.$file->getClientOriginalExtension());
+        $path = $sm->prefixedPath('branding/favicon-'.Str::uuid().'.'.($file->guessExtension() ?: 'ico'));
         $sm->disk()->putFileAs(dirname($path), $file, basename($path));
 
         SystemSetting::set('app_favicon_path', $path, false, 'general');

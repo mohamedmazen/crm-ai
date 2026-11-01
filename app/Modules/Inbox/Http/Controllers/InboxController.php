@@ -586,7 +586,17 @@ class InboxController extends Controller
     {
         $this->authorise($request, $conversation);
 
-        $request->validate(['file' => ['required', 'file', 'max:16384']]);
+        // Strict allow-list of messaging media. Without this a client could
+        // upload `shell.php` / `exploit.svg` into the public disk and execute it
+        // from the browser (RCE / stored XSS).
+        $request->validate([
+            'file' => [
+                'required',
+                'file',
+                'max:16384',
+                'mimes:jpg,jpeg,png,webp,gif,mp4,3gp,mov,mp3,aac,m4a,amr,ogg,pdf,doc,docx,xls,xlsx,ppt,pptx,txt',
+            ],
+        ]);
 
         $file = $request->file('file');
         $mimeType = $file->getMimeType() ?? 'application/octet-stream';

@@ -5,12 +5,21 @@ namespace App\Http\Middleware;
 use App\Modules\Integrations\Services\CredentialResolver;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class SecureHeaders
 {
     public function handle(Request $request, Closure $next): Response
     {
+        // Per-request CSP nonce. It is applied to Vite/Ziggy tags and the inline
+        // scripts in app.blade.php, so script-src can stop trusting every
+        // inline <script> ('unsafe-inline' remains only as a legacy fallback).
+        $nonce = Str::random(40);
+        $request->attributes->set('csp_nonce', $nonce);
+        Vite::useCspNonce($nonce);
+
         $response = $next($request);
 
         $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
@@ -29,7 +38,7 @@ class SecureHeaders
             $response->headers->set('Expires', '0');
         }
 
-        $csp = $this->buildCsp($request);
+        $csp = $this->buildCsp($request, $nonce);
         if ($csp !== null) {
             $response->headers->set('Content-Security-Policy', $csp);
         }
@@ -37,7 +46,7 @@ class SecureHeaders
         return $response;
     }
 
-    private function buildCsp(Request $request): ?string
+    private function buildCsp(Request $request, string $nonce): ?string
     {
         // iyzico's subscription checkout is embedded markup that pulls its own scripts and
         // 3-D Secure frames from iyzipay.com. Widen the policy only on the page that renders
@@ -50,7 +59,18 @@ class SecureHeaders
 
         $unsafeEval = config('app.env') !== 'production' ? " 'unsafe-eval'" : '';
         $vite = $this->viteDevSources($request);
-        $scriptSrc = "'self' 'unsafe-inline'".$unsafeEval.$vite.$this->thirdPartyScriptSources().$iyzico.$captcha;
+
+        // The nonce is enforced only in production. Locally, Herd Studio injects
+        // its own inline bootstrap and `/herd-studio/loader.js` after our
+        // response is built, so it cannot carry the nonce; keeping the legacy
+        // policy there avoids breaking the development overlay. iyzico renders
+        // third-party checkout markup (with its own inline scripts) that we
+        // cannot nonce either, so that page keeps the legacy policy too.
+        $nonceSource = config('app.env') === 'production' && ! $request->routeIs('checkout.iyzico.form')
+            ? " 'nonce-{$nonce}' 'strict-dynamic'"
+            : '';
+
+        $scriptSrc = "'self' 'unsafe-inline'".$nonceSource.$unsafeEval.$vite.$this->thirdPartyScriptSources().$iyzico.$captcha;
         $styleSrc = "'self' 'unsafe-inline' https://fonts.bunny.net https://fonts.googleapis.com".$vite.$this->thirdPartyStyleSources().$iyzico.$captcha;
         $fontSrc = "'self' data: https://fonts.bunny.net https://fonts.gstatic.com https://fonts.googleapis.com".$iyzico;
 

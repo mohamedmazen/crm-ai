@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Media;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -18,7 +19,9 @@ class MediaService
         string $collection = 'default',
         ?string $disk = null
     ): Media {
-        $ext = $file->getClientOriginalExtension();
+        // Derive the extension from the detected MIME type, never from the
+        // client-supplied filename, so an upload cannot be stored as .php/.phtml.
+        $ext = $file->guessExtension() ?: 'bin';
         $filename = $file->getClientOriginalName();
 
         // Resolve disk from StorageManager unless caller explicitly passes one
@@ -43,7 +46,7 @@ class MediaService
     /**
      * Get total storage used by owner in bytes.
      */
-    public function usedBytes(Model $owner, string $collection = null): int
+    public function usedBytes(Model $owner, ?string $collection = null): int
     {
         $query = Media::where('mediable_type', get_class($owner))
             ->where('mediable_id', $owner->getKey());
@@ -58,7 +61,7 @@ class MediaService
     /**
      * Get storage quota in bytes from plan limits (storage_gb).
      */
-    public function quotaBytes(\App\Models\User $user): int
+    public function quotaBytes(User $user): int
     {
         $plan = $user->effectiveSubscription()?->plan;
         $gb = $plan?->limitValue('storage_gb') ?? 1;

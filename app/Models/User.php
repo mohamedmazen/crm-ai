@@ -72,14 +72,15 @@ class User extends Authenticatable implements MustVerifyEmail
         'workspace_id',
         'theme',
         'timezone',
-        'two_factor_secret',
-        'two_factor_recovery_codes',
-        'two_factor_confirmed_at',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+        // 2FA material must never reach the frontend. It is encrypted at rest,
+        // but Inertia serialises the whole model into the page payload.
+        'two_factor_secret',
+        'two_factor_recovery_codes',
     ];
 
     /**

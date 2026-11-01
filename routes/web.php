@@ -34,7 +34,7 @@ Route::post('/theme/update', [ThemeController::class, 'update'])->name('theme.up
 
 // Public marketing pages
 Route::get('/contact', [ContactController::class, 'show'])->name('contact');
-Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:5,1')->name('contact.store');
 
 // Public marketing landing pages
 Route::get('/pricing', [LandingController::class, 'pricing'])->name('pricing');
@@ -166,9 +166,15 @@ Route::get('/up', function () use ($healthSnapshot) {
 // string in production and pass via Authorization: Bearer <token> header.
 Route::middleware('throttle:30,1')->group(function () use ($healthSnapshot) {
     $guardHealthz = function (Request $request): bool {
-        $token = config('app.healthz_token');
+        $token = (string) config('app.healthz_token');
 
-        return ! filled($token) || hash_equals($token, $request->bearerToken() ?? '');
+        // Never expose infrastructure details publicly on a production host.
+        // Local/testing keep the probes open for developer convenience.
+        if ($token === '') {
+            return ! app()->environment('production');
+        }
+
+        return hash_equals($token, (string) ($request->bearerToken() ?? ''));
     };
 
     // Aggregate readiness probe: database, cache and storage. Returns 503 when

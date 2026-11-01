@@ -23,6 +23,7 @@ class PermissionSeeder extends Seeder
             ['key' => 'create_clients', 'name' => 'Create Clients', 'category' => 'Clients', 'description' => 'Create clients'],
             ['key' => 'update_clients', 'name' => 'Update Clients', 'category' => 'Clients', 'description' => 'Edit clients'],
             ['key' => 'delete_clients', 'name' => 'Delete Clients', 'category' => 'Clients', 'description' => 'Delete clients'],
+            ['key' => 'impersonate_clients', 'name' => 'Impersonate Clients', 'category' => 'Clients', 'description' => 'Sign in as a client (grants full access to that tenant)'],
 
             // Subscriptions
             ['key' => 'view_subscriptions', 'name' => 'View Subscriptions', 'category' => 'Subscriptions', 'description' => 'View subscriptions'],

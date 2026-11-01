@@ -39,6 +39,8 @@ class ClientPolicy
 
     public function impersonate(AdminUser $user, Client $client): bool
     {
-        return $user->hasPermissionTo('view_clients');
+        // Impersonation is a privileged, audited action: it hands over the
+        // tenant's entire workspace. Do not inherit it from `view_clients`.
+        return $user->hasPermissionTo('impersonate_clients');
     }
 }

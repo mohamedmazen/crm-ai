@@ -77,7 +77,7 @@ class HandleInertiaRequests extends Middleware
                 'displayCurrency' => 'USD',
                 'theme' => 'light',
                 'demo_mode' => false,
-                'app_version' => env('APP_VERSION', '1.0.0'),
+                'app_version' => config('app.version', '1.0.0'),
                 'onboardingSummary' => null,
                 'plan' => null,
                 'plan_features' => [],
@@ -126,10 +126,10 @@ class HandleInertiaRequests extends Middleware
             $default = config('broadcasting.default');
 
             if ($default === 'reverb') {
-                $key = config('broadcasting.connections.reverb.key') ?: env('REVERB_APP_KEY', '');
-                $host = config('broadcasting.connections.reverb.options.host') ?: env('REVERB_HOST', 'localhost');
-                $port = (int) (config('broadcasting.connections.reverb.options.port') ?: env('REVERB_PORT', 8080));
-                $scheme = config('broadcasting.connections.reverb.options.scheme') ?: env('REVERB_SCHEME', 'http');
+                $key = config('broadcasting.connections.reverb.key') ?: '';
+                $host = config('broadcasting.connections.reverb.options.host') ?: 'localhost';
+                $port = (int) (config('broadcasting.connections.reverb.options.port') ?: 8080);
+                $scheme = config('broadcasting.connections.reverb.options.scheme') ?: 'http';
 
                 return [
                     'driver' => 'reverb',
@@ -167,8 +167,8 @@ class HandleInertiaRequests extends Middleware
     private function pusherPublicConfig(): array
     {
         try {
-            $key = SystemSetting::get('pusher_app_key') ?: env('PUSHER_APP_KEY', '');
-            $cluster = SystemSetting::get('pusher_app_cluster') ?: env('PUSHER_APP_CLUSTER', 'mt1');
+            $key = SystemSetting::get('pusher_app_key') ?: (config('broadcasting.connections.pusher.key') ?: '');
+            $cluster = SystemSetting::get('pusher_app_cluster') ?: (config('broadcasting.connections.pusher.options.cluster') ?: 'mt1');
             $dbFlag = SystemSetting::get('pusher_enabled');
 
             // If the admin panel has explicitly disabled Pusher, respect that.
@@ -182,9 +182,10 @@ class HandleInertiaRequests extends Middleware
                 'enabled' => $enabled,
             ];
         } catch (\Throwable) {
-            $key = env('PUSHER_APP_KEY', '');
+            $key = config('broadcasting.connections.pusher.key') ?: '';
+            $cluster = config('broadcasting.connections.pusher.options.cluster') ?: 'mt1';
 
-            return ['key' => $key, 'cluster' => env('PUSHER_APP_CLUSTER', 'mt1'), 'enabled' => ! empty($key)];
+            return ['key' => $key, 'cluster' => $cluster, 'enabled' => ! empty($key)];
         }
     }
 
@@ -440,7 +441,7 @@ class HandleInertiaRequests extends Middleware
             'displayCurrency' => $displayCurrency,
             'demo_mode' => config('app.demo_mode', false),
             'current_workspace_usage' => $this->workspaceUsage($workspaceId ?? null, $plan ?? null),
-            'app_version' => env('APP_VERSION', '1.0.0'),
+            'app_version' => config('app.version', '1.0.0'),
             'onboardingSummary' => $onboardingSummary,
             'landingPageEnabled' => SystemSetting::get('landing.page_enabled', '1') === '1',
             'cookie_consent_enabled' => SystemSetting::get('privacy.cookie_consent_enabled', '1') === '1',

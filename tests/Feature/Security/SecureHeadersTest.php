@@ -51,6 +51,32 @@ class SecureHeadersTest extends TestCase
     }
 
     #[Test]
+    public function production_csp_requires_a_per_request_nonce_and_strict_dynamic(): void
+    {
+        config(['app.env' => 'production']);
+
+        $csp = (string) $this->get('https://crm.test/login')
+            ->headers->get('Content-Security-Policy');
+
+        $this->assertMatchesRegularExpression("/script-src[^;]*'nonce-[A-Za-z0-9]+'/", $csp);
+        $this->assertStringContainsString("'strict-dynamic'", $csp);
+    }
+
+    #[Test]
+    public function local_csp_keeps_herd_and_vite_inline_scripts_working(): void
+    {
+        config(['app.env' => 'local']);
+
+        $csp = (string) $this->get('https://crm.test/login')
+            ->headers->get('Content-Security-Policy');
+
+        // Herd Studio injects un-nonceable scripts after the response, so a
+        // local strict-dynamic policy would break the development overlay.
+        $this->assertStringNotContainsString("'strict-dynamic'", $csp);
+        $this->assertStringContainsString("'unsafe-inline'", $csp);
+    }
+
+    #[Test]
     public function the_hot_file_url_is_normalised_to_a_csp_origin(): void
     {
         $this->assertSame('https://crm.test:5173', SecureHeaders::devServerOrigin("https://crm.test:5173\n"));
