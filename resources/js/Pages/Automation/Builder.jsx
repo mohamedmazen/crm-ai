@@ -9,7 +9,7 @@ import {
     ShoppingBag, PackageCheck, XCircle, ShoppingCart, UserPlus,
     Image, Layers, MousePointerClick, List, HelpCircle, Workflow, Sparkles,
     UserCheck, ExternalLink, MapPin, BarChart3, CalendarClock, Video,
-    ClipboardList, ClipboardCheck, Store, Sheet, LayoutTemplate, AlertTriangle, GripVertical,
+    ClipboardList, ClipboardCheck, Store, Sheet, LayoutTemplate, AlertTriangle, GripVertical, ListOrdered,
     FlaskConical, Loader2, CheckCircle2, MinusCircle, AlertCircle,
 } from 'lucide-react';
 import { ChannelBrandIcon } from '@/Components/BrandIcons';
@@ -84,6 +84,7 @@ const NODE_DEFS = {
     update_contact:      { labelKey: 'automation.node_update_contact',      color: '#0ea5e9', bg: '#f0f9ff', icon: UserCog,           category: 'contact' },
     assign_agent:        { labelKey: 'automation.node_assign_agent',        color: '#0284c7', bg: '#f0f9ff', icon: UserCheck,         category: 'contact' },
     add_to_campaign:     { labelKey: 'automation.node_add_to_campaign',     color: '#f97316', bg: '#fff7ed', icon: Megaphone,         category: 'contact' },
+    enroll_in_sequence:  { labelKey: 'automation.node_enroll_in_sequence',  color: '#0d9488', bg: '#f0fdfa', icon: ListOrdered,       category: 'contact' },
     create_task:         { labelKey: 'automation.node_create_task',         color: '#0d9488', bg: '#f0fdfa', icon: ClipboardList,     category: 'contact' },
     move_to_pipeline:    { labelKey: 'automation.node_move_to_pipeline',    color: '#7c3aed', bg: '#faf5ff', icon: GitBranch,         category: 'contact' },
     update_deal_value:   { labelKey: 'automation.node_update_deal_value',   color: '#059669', bg: '#ecfdf5', icon: BarChart3,         category: 'contact' },
@@ -303,6 +304,7 @@ function summarizeConfig(data, t) {
         case 'send_email': return data.subject ?? '';
         case 'update_contact': return data.field ? `${data.field} = ${data.value ?? ''}` : '';
         case 'add_to_campaign': return data.campaign_id ? t('automation.campaign_ref', { id: data.campaign_id }) : '';
+        case 'enroll_in_sequence': return data.sequence_id ? t('automation.sequence_ref', { id: data.sequence_id }) : '';
         case 'create_task': return clip(data.title, 30);
         case 'move_to_pipeline': return data.stage_name ?? (data.stage_id ? `#${data.stage_id}` : '');
         case 'update_deal_value': return data.amount !== undefined && data.amount !== '' ? `${data.mode ?? 'set'} ${data.amount}` : '';
@@ -359,6 +361,7 @@ const FIELD_COMPONENTS = {
     update_contact: UpdateContactFields,
     assign_agent: AssignAgentFields,
     add_to_campaign: CampaignFields,
+    enroll_in_sequence: EnrollSequenceFields,
     create_task: CreateTaskFields,
     move_to_pipeline: MoveToPipelineFields,
     update_deal_value: UpdateDealValueFields,
@@ -987,6 +990,26 @@ function CampaignFields({ d, set }) {
             ) : (
                 <input type="number" className={inputCls} value={d.campaign_id ?? ''} onChange={e => set('campaign_id', e.target.value)} placeholder="123" />
             )}
+        </Field>
+    );
+}
+
+function EnrollSequenceFields({ d, set }) {
+    const { t } = useTranslation();
+    const { sequences = [] } = useResources();
+    return (
+        <Field label={t('automation.field_sequence_required')}>
+            {sequences.length ? (
+                <select className={selectCls} value={d.sequence_id ?? ''} onChange={e => set('sequence_id', e.target.value)}>
+                    <option value="">{t('automation.select_sequence')}</option>
+                    {sequences.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                </select>
+            ) : (
+                <input type="number" className={inputCls} value={d.sequence_id ?? ''} onChange={e => set('sequence_id', e.target.value)} placeholder="123" />
+            )}
+            <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+                {t('automation.enroll_in_sequence_hint')}
+            </p>
         </Field>
     );
 }

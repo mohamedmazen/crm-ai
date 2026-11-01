@@ -39,6 +39,8 @@ use App\Listeners\SendSubscriptionRenewedNotification;
 use App\Listeners\SendSubscriptionStartedNotification;
 use App\Listeners\SendTrialEndingNotification;
 use App\Listeners\SendWelcomeNotification;
+use App\Listeners\StopSequencesOnReply;
+use App\Listeners\StopSequencesOnWon;
 use App\Models\Workspace;
 use App\Modules\Shared\Services\ChannelManager;
 use App\Services\Billing\BillingGatewayRegistry;
@@ -99,6 +101,10 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(MessageReceived::class, [RecordBehavioralScore::class, 'handleMessageReceived']);
         Event::listen(FormSubmitted::class, [RecordBehavioralScore::class, 'handleFormSubmitted']);
         Event::listen(CommerceEventReceived::class, [RecordBehavioralScore::class, 'handleCommerceEvent']);
+
+        // ── Sequence stop rules ──────────────────────────────────────────────
+        Event::listen(MessageReceived::class, [StopSequencesOnReply::class, 'handle']);
+        Event::listen(LeadStageChanged::class, [StopSequencesOnWon::class, 'handle']);
 
         // ── Outbound webhook event delivery ─────────────────────────────────
         Event::listen(ContactCreated::class, [DispatchOutboundWebhookListener::class, 'handleContactCreated']);

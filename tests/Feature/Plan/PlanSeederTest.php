@@ -41,7 +41,6 @@ class PlanSeederTest extends TestCase
 
         $this->assertSame(100, $starter->featureLimit('form_submissions'));
         $this->assertSame(0, $starter->featureLimit('sequences'));
-        $this->assertSame(0, $starter->featureLimit('landing_pages'));
     }
 
     public function test_pro_unlocks_the_core_crm_and_sales_modules(): void
@@ -58,7 +57,6 @@ class PlanSeederTest extends TestCase
         $this->assertSame(10, $pro->featureLimit('forms'));
         $this->assertSame(5000, $pro->featureLimit('form_submissions'));
         $this->assertSame(5, $pro->featureLimit('sequences'));
-        $this->assertSame(5, $pro->featureLimit('landing_pages'));
     }
 
     public function test_business_unlocks_everything_without_caps_where_advertised(): void
@@ -69,7 +67,7 @@ class PlanSeederTest extends TestCase
             $this->assertTrue($business->hasFeature($feature), "Business should include {$feature}.");
         }
 
-        foreach (['custom_fields', 'forms', 'form_submissions', 'sequences', 'landing_pages'] as $feature) {
+        foreach (['custom_fields', 'forms', 'form_submissions', 'sequences'] as $feature) {
             $this->assertNull($business->featureLimit($feature));
         }
     }

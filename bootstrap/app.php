@@ -24,6 +24,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Sentry\Laravel\Integration;
@@ -131,10 +132,10 @@ return Application::configure(basePath: dirname(__DIR__))
         // In production, restrict to your actual load balancer IPs via TRUSTED_PROXIES env var.
         $middleware->trustProxies(
             at: env('TRUSTED_PROXIES', '*'),
-            headers: \Illuminate\Http\Request::HEADER_X_FORWARDED_FOR
-                | \Illuminate\Http\Request::HEADER_X_FORWARDED_HOST
-                | \Illuminate\Http\Request::HEADER_X_FORWARDED_PORT
-                | \Illuminate\Http\Request::HEADER_X_FORWARDED_PROTO,
+            headers: Request::HEADER_X_FORWARDED_FOR
+                | Request::HEADER_X_FORWARDED_HOST
+                | Request::HEADER_X_FORWARDED_PORT
+                | Request::HEADER_X_FORWARDED_PROTO,
         );
 
         // Gateways sign their webhooks; each handler verifies that signature itself. They
@@ -163,6 +164,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'webhooks/ecommerce/*',
             'webhooks/lead-source/*',
             'webhooks/meta-leadgen/*',
+            'webhooks/calls/*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

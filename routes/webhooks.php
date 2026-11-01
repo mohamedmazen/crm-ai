@@ -17,6 +17,7 @@ use App\Modules\Broadcasting\Http\Controllers\SmsStatusWebhookController;
 use App\Modules\Ecommerce\Http\Controllers\EcommerceOAuthController;
 use App\Modules\Ecommerce\Http\Controllers\EcommerceWebhookController;
 use App\Modules\Inbox\Http\Controllers\MetaWebhookController;
+use App\Modules\Sales\Http\Controllers\CallWebhookController;
 use App\Modules\Sales\Http\Controllers\LeadWebhookController;
 use App\Modules\Sales\Http\Controllers\MetaLeadAdsWebhookController;
 use App\Modules\Whatsapp\Http\Controllers\WhatsappWebhookController;
@@ -59,6 +60,12 @@ Route::middleware('throttle:webhooks')->group(function () {
         ->name('webhooks.meta_leadgen.verify');
     Route::post('webhooks/meta-leadgen/{token}', [MetaLeadAdsWebhookController::class, 'receive'])
         ->name('webhooks.meta_leadgen.receive');
+
+    // ─── Telephony call status / recording callbacks ─────────────────────────────
+    Route::post('webhooks/calls/{provider}/{config}', [CallWebhookController::class, 'handle'])
+        ->name('webhooks.calls.status')
+        ->whereIn('provider', ['twilio', 'telnyx'])
+        ->whereNumber('config');
 
     // ─── Ecommerce (Shopify / WooCommerce) per-store webhooks ────────────────────
     Route::post('webhooks/ecommerce/shopify/{store}', [EcommerceWebhookController::class, 'shopify'])

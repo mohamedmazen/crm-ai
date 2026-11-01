@@ -23,6 +23,8 @@ use App\Modules\Leads\Models\Lead;
 use App\Modules\Leads\Models\LeadPipelineStage;
 use App\Modules\Leads\Models\LeadTask;
 use App\Modules\Leads\Services\PipelineManager;
+use App\Modules\Sales\Models\Sequence;
+use App\Modules\Sales\Services\SequenceEngine;
 use App\Modules\Shared\Models\ChannelAccount;
 use App\Modules\Shared\Models\Contact;
 use App\Modules\Shared\Models\ContactTag;
@@ -51,6 +53,7 @@ use Illuminate\Support\Facades\Mail;
  *   - add_tag / remove_tag
  *   - update_contact     (set custom field value)
  *   - add_to_campaign    (enqueue contact to broadcast campaign)
+ *   - enroll_in_sequence (enroll the lead in a Phase 4 sequence)
  *   - ai_reply           (generate AI response and send)
  *   - webhook            (POST JSON payload to URL)
  */
@@ -441,6 +444,7 @@ class AutomationEngine
             'update_contact' => ($data['field'] ?? '') === '' ? $skip('No field selected.') : $ok('Would set contact.'.$data['field'].' = "'.$this->snippet($render($data['value'] ?? '')).'".'),
             'assign_agent' => $ok(! empty($data['agent_name']) ? 'Would assign to '.$data['agent_name'].'.' : 'Would hand off to a human agent.'),
             'add_to_campaign' => ($data['campaign_id'] ?? '') === '' ? $skip('No campaign selected.') : $ok('Would add contact to campaign #'.$data['campaign_id'].'.'),
+            'enroll_in_sequence' => ($data['sequence_id'] ?? '') === '' ? $skip('No sequence selected.') : $ok('Would enroll the lead in sequence #'.$data['sequence_id'].'.'),
             'create_task' => ($data['title'] ?? '') === '' ? $skip('No task title.') : $ok('Would create task "'.$this->snippet($render($data['title']), 30).'".'),
             'move_to_pipeline' => empty($data['stage_id']) ? $skip('No target stage.') : $ok('Would move the lead to stage #'.$data['stage_id'].'.'),
             'update_deal_value' => $ok('Would '.($data['mode'] ?? 'set').' the deal value to '.($data['amount'] ?? '0').'.'),
@@ -489,6 +493,7 @@ class AutomationEngine
                 'send_email' => $this->executeSendEmail($data, $run, $context),
                 'ai_reply' => $this->executeAiReply($data, $run, $context),
                 'add_to_campaign' => $this->executeAddToCampaign($data, $run),
+                'enroll_in_sequence' => $this->executeEnrollInSequence($data, $run, $context),
                 // ── SEND ──────────────────────────────────────────────────────
                 'send_template' => $this->executeSendTemplate($data, $run, $context),
                 'send_media' => $this->executeSendMedia($data, $run, $context),
@@ -676,6 +681,34 @@ class AutomationEngine
         ]);
 
         return ['status' => 'ok', 'message' => "Contact added to campaign {$campaignId}."];
+    }
+
+    private function executeEnrollInSequence(array $data, AutomationRun $run, array $context): array
+    {
+        $lead = $this->resolveRunLead($run, $context);
+
+        if (! $lead) {
+            return ['status' => 'skipped', 'message' => 'No lead linked to this contact.'];
+        }
+
+        $sequenceId = (int) ($data['sequence_id'] ?? 0);
+        $sequence = Sequence::where('workspace_id', $lead->workspace_id)->find($sequenceId);
+
+        if (! $sequence) {
+            return ['status' => 'skipped', 'message' => 'Sequence not found.'];
+        }
+
+        if ($sequence->status !== Sequence::STATUS_ACTIVE) {
+            return ['status' => 'skipped', 'message' => 'Sequence is not active.'];
+        }
+
+        $enrollment = app(SequenceEngine::class)->enroll($sequence, $lead, 'automation');
+
+        return [
+            'status' => 'ok',
+            'message' => "Enrolled lead in sequence '{$sequence->name}'.",
+            'output' => ['enrollment_id' => $enrollment->id],
+        ];
     }
 
     // ─── Token replacement ───────────────────────────────────────────────────

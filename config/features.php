@@ -27,7 +27,7 @@ return [
         'sales_reports' => 'Sales reports',
         'sequences' => 'Email sequences',
         'quotes' => 'Quotes',
-        'landing_pages' => 'Landing pages',
+        'call_logs' => 'Call log & click-to-call',
         'api_access' => 'API access',
         'white_label' => 'White-label branding',
     ],

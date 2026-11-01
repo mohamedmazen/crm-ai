@@ -185,8 +185,7 @@ Account          → Workspaces, Settings, Team, Audit Log
 |---|---|---|
 | 1 | Email Sequences | لا يوجد (الحملات one-shot فقط) |
 | 2 | منتجات + عروض أسعار + فواتير (للعملاء) | لا يوجد (فواتير الاشتراكات فقط) |
-| 3 | Landing Pages | لا يوجد |
-| 4 | Click-to-Call | لا يوجد |
+| 3 | Click-to-Call | لا يوجد |
 
 ### 2.5 ميزات منصة مفقودة (P2)
 
@@ -231,7 +230,6 @@ Account          → Workspaces, Settings, Team, Audit Log
 | Phase 4 | **Sales** | Quotes (جديد) | `client.quotes.index` |
 | Phase 4 | **Sales** | Invoices (جديد) | `client.invoices.index` |
 | Phase 4 | **Sales** | Call Log (جديد) | `client.calls.index` |
-| Phase 4 | **Capture** | Landing Pages (جديد) | `client.landing-pages.index` |
 
 ### 3.2 الشكل النهائي للقائمة الجانبية (بعد كل المراحل)
 
@@ -240,7 +238,7 @@ Account              → Dashboard
 Inbox                → Inbox, Channel Setup
 Tasks ⭐ جديد        → My Tasks
 Leads ⭐ موسّع       → Pipeline, Table View, Companies, Duplicates, Import
-Capture ⭐ جديد      → Forms, Booking Pages, Landing Pages, Lead Sources
+Capture ⭐ جديد      → Forms, Booking Pages, Lead Sources
 Sales ⭐ جديد        → Sequences, Products, Quotes, Invoices, Call Log
 Social Media         → (بدون تغيير)
 Messaging            → (بدون تغيير)
@@ -319,7 +317,6 @@ Account              → (بدون تغيير)
 // Phase 4
 'sequences'            => 0,    // Starter: 0, Pro: 5, Business: null
 'quotes'               => false, // Starter: false, Pro: true, Business: true
-'landing_pages'        => 0,    // Starter: 0, Pro: 5, Business: null
 'api_access'           => false, // Starter: false, Pro: true, Business: true
 ```
 
@@ -1486,40 +1483,6 @@ CREATE TABLE invoice_payments (
 
 ---
 
-### 8.3 Landing Pages (L — 3 أسابيع)
-
-#### 8.3.1 الـ Schema
-
-```sql
-CREATE TABLE landing_pages (
-    id            BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    uuid          CHAR(36) NOT NULL UNIQUE,
-    workspace_id  BIGINT UNSIGNED NOT NULL,
-    name          VARCHAR(128) NOT NULL,
-    slug          VARCHAR(128) NOT NULL,
-    template      VARCHAR(64) DEFAULT NULL,
-    blocks        JSON NOT NULL,
-    meta_title    VARCHAR(256) DEFAULT NULL,
-    meta_desc     VARCHAR(512) DEFAULT NULL,
-    og_image      VARCHAR(512) DEFAULT NULL,
-    status        ENUM('draft', 'published') DEFAULT 'draft',
-    views_count   INT UNSIGNED DEFAULT 0,
-    created_at    TIMESTAMP NULL,
-    updated_at    TIMESTAMP NULL,
-    UNIQUE (workspace_id, slug)
-);
-```
-
-#### 8.3.2 Builder Blocks
-
-```
-hero, text, image, form (من 6.1), cta, testimonials, faq, video, features, pricing
-```
-
-ابدأ بـ 3 قوالب جاهزة فقط. Tracker.js مدمج تلقائياً.
-
----
-
 ### 8.4 Click-to-Call + Call Log (L — 2-3 أسابيع)
 
 #### 8.4.1 الـ Schema
@@ -1550,7 +1513,6 @@ CREATE TABLE call_logs (
 **معيار الانتهاء:**
 - [ ] Sequence كامل يوقف لوحده لما العميل يرد
 - [ ] عرض سعر اتبعت واتقبل واتحول لفاتورة
-- [ ] صفحة هبوط بفورم دخّلت Lead بالـ UTM
 - [ ] مكالمة اتسجلت على الـ Lead
 
 ---
@@ -1600,7 +1562,7 @@ CREATE TABLE call_logs (
 | **Phase 1** | 3–12 | الأسبوع 3-12 | CRM كامل (Pipelines + Deals + Tasks + Companies + Custom Fields) |
 | **Phase 2** | 13–24 | الأسبوع 13-24 | فورمات + حجز + مصادر + UTM |
 | **Phase 3** | 25–32 | الأسبوع 25-32 | 8 تقارير + Conversation Intelligence + Scoring سلوكي |
-| **Phase 4** | 33–45 | الأسبوع 33-45 | Sequences + عروض أسعار + فواتير + Landing Pages + مكالمات |
+| **Phase 4** | 33–45 | الأسبوع 33-45 | Sequences + عروض أسعار + فواتير + مكالمات |
 | **Phase 5** | مستمر | بعد 45 | حسب طلب العملاء |
 | **Phase 6** | بعد Phase 4 | بعد 45 | AI للمبيعات |
 

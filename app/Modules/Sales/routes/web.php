@@ -1,11 +1,19 @@
 <?php
 
 use App\Modules\Sales\Http\Controllers\BookingPublicController;
+use App\Modules\Sales\Http\Controllers\CallController;
 use App\Modules\Sales\Http\Controllers\FormController;
 use App\Modules\Sales\Http\Controllers\FormEmbedController;
 use App\Modules\Sales\Http\Controllers\FormPublicController;
+use App\Modules\Sales\Http\Controllers\InvoiceController;
+use App\Modules\Sales\Http\Controllers\InvoicePublicController;
 use App\Modules\Sales\Http\Controllers\LeadSourceController;
 use App\Modules\Sales\Http\Controllers\MeetingTypeController;
+use App\Modules\Sales\Http\Controllers\ProductController;
+use App\Modules\Sales\Http\Controllers\QuoteController;
+use App\Modules\Sales\Http\Controllers\QuotePublicController;
+use App\Modules\Sales\Http\Controllers\SequenceController;
+use App\Modules\Sales\Http\Controllers\SequenceUnsubscribeController;
 use App\Modules\Sales\Http\Controllers\TrackerScriptController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +36,20 @@ Route::middleware(['web'])->group(function () {
     // literal prefix so it is not mistaken for a meeting-type slug.
     Route::get('/b/reschedule/{token}', [BookingPublicController::class, 'rescheduleShow'])->name('booking.public.reschedule.show');
     Route::post('/b/reschedule/{token}', [BookingPublicController::class, 'reschedule'])->name('booking.public.reschedule')->middleware('throttle:30,1');
+
+    // One-click unsubscribe for sequence emails (signed URL, no auth).
+    Route::get('/u/sequence/{enrollment}', [SequenceUnsubscribeController::class, 'unsubscribe'])
+        ->name('sequences.unsubscribe')
+        ->middleware('signed');
+
+    // Public quotes & invoices. The long token is the only credential.
+    Route::get('/q/{token}', [QuotePublicController::class, 'show'])->name('quotes.public.show');
+    Route::post('/q/{token}/accept', [QuotePublicController::class, 'accept'])->name('quotes.public.accept')->middleware('throttle:20,1');
+    Route::post('/q/{token}/reject', [QuotePublicController::class, 'reject'])->name('quotes.public.reject')->middleware('throttle:20,1');
+    Route::get('/q/{token}/pdf', [QuotePublicController::class, 'pdf'])->name('quotes.public.pdf');
+
+    Route::get('/i/{token}', [InvoicePublicController::class, 'show'])->name('invoices.public.show');
+    Route::get('/i/{token}/pdf', [InvoicePublicController::class, 'pdf'])->name('invoices.public.pdf');
 });
 
 // Client app authenticated routes
@@ -44,6 +66,39 @@ Route::middleware(['web', 'client-app'])->prefix('app/sales')->name('client.sale
     Route::middleware('feature:lead_sources')->group(function () {
         Route::post('lead-sources/{lead_source}/regenerate-token', [LeadSourceController::class, 'regenerateToken'])->name('lead-sources.regenerate-token');
         Route::resource('lead-sources', LeadSourceController::class)->only(['index', 'store', 'update', 'destroy']);
+    });
+
+    // Email / WhatsApp sequences
+    Route::middleware('feature:sequences')->group(function () {
+        Route::post('sequences/{sequence}/status', [SequenceController::class, 'updateStatus'])->name('sequences.status');
+        Route::post('sequences/{sequence}/enroll', [SequenceController::class, 'enroll'])->name('sequences.enroll');
+        Route::get('sequences/{sequence}/builder', [SequenceController::class, 'builder'])->name('sequences.builder');
+        Route::put('sequences/{sequence}/builder', [SequenceController::class, 'updateBuilder'])->name('sequences.builder.update');
+        Route::resource('sequences', SequenceController::class)->only(['index', 'store', 'destroy']);
+    });
+
+    // Call log + click-to-call
+    Route::middleware('feature:call_logs')->group(function () {
+        Route::post('calls/initiate', [CallController::class, 'initiate'])->name('calls.initiate');
+        Route::post('calls/settings', [CallController::class, 'updateSettings'])->name('calls.settings.update');
+        Route::resource('calls', CallController::class)->only(['index', 'store', 'destroy']);
+    });
+
+    // Products, quotes and invoices
+    Route::middleware('feature:quotes')->group(function () {
+        Route::resource('products', ProductController::class)->only(['index', 'store', 'update', 'destroy']);
+
+        Route::post('quotes/{quote}/send', [QuoteController::class, 'send'])->name('quotes.send');
+        Route::post('quotes/{quote}/accept', [QuoteController::class, 'accept'])->name('quotes.accept');
+        Route::post('quotes/{quote}/reject', [QuoteController::class, 'reject'])->name('quotes.reject');
+        Route::post('quotes/{quote}/convert', [QuoteController::class, 'convert'])->name('quotes.convert');
+        Route::get('quotes/{quote}/pdf', [QuoteController::class, 'pdf'])->name('quotes.pdf');
+        Route::resource('quotes', QuoteController::class);
+
+        Route::post('invoices/{invoice}/send', [InvoiceController::class, 'send'])->name('invoices.send');
+        Route::post('invoices/{invoice}/payments', [InvoiceController::class, 'payment'])->name('invoices.payments.store');
+        Route::get('invoices/{invoice}/pdf', [InvoiceController::class, 'pdf'])->name('invoices.pdf');
+        Route::resource('invoices', InvoiceController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
     });
 
     // Booking Pages & Appointments

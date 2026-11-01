@@ -1,12 +1,33 @@
 import { Link } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, Lock, Plus, X } from 'lucide-react';
 import { useBranding } from '@/hooks/useBranding';
 
 function NavGroup({ label, items, onClose }) {
-    const [open, setOpen] = useState(true);
     const { t } = useTranslation();
+
+    const hasActiveChild = items.some((item) => {
+        if (typeof item.active === 'function') {
+            try { return item.active(); } catch { return false; }
+        }
+        if (item.active) return true;
+        if (item.route) {
+            try { return route().current(item.route); } catch { return false; }
+        }
+        if (item.href && typeof window !== 'undefined') {
+            return window.location.pathname === item.href;
+        }
+        return false;
+    });
+
+    const [open, setOpen] = useState(hasActiveChild);
+
+    useEffect(() => {
+        if (hasActiveChild) {
+            setOpen(true);
+        }
+    }, [hasActiveChild]);
 
     return (
         <div className="mb-0.5">
@@ -21,7 +42,7 @@ function NavGroup({ label, items, onClose }) {
                 <ChevronDown
                     className={[
                         'h-3 w-3 transition-transform duration-200',
-                        open ? 'rotate-0' : '-rotate-90',
+                        open ? 'rotate-0' : '-rotate-90 rtl:rotate-90',
                     ].join(' ')}
                 />
             </button>

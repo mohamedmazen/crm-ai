@@ -39,7 +39,6 @@
 | 15 | Business hours + Date trigger + Lead triggers إضافية | P1 | S | Phase 3 |
 | 16 | Email sequences | P1 | L | Phase 4 |
 | 17 | منتجات + Quotes + Invoices | P1 | L | Phase 4 |
-| 18 | Landing pages لكل عميل | P1 | L | Phase 4 |
 | 19 | Click-to-call + Call log | P1 | L | Phase 4 |
 | 20 | GDPR suite (DPA, Cookie consent, Erasure, Retention) | P2 | M | Phase 5 |
 | 21 | Subdomain لكل Tenant | P2 | M | Phase 5 |
@@ -333,14 +332,6 @@
 - زر «حوّل لفاتورة»، وعند قبول العرض تتحدث `deal_value` ويقترح نقل الصفقة لـ Won.
 - الدفع الأونلاين عن طريق بواباتك الـ 14 يتأجل لإصدار تاني.
 
-### 4.3 صفحات الهبوط — Landing pages (L، حوالي 3 أسابيع)
-
-- Builder بسيط بـ Blocks: Hero، نص، صورة، فورم (من 2.1)، CTA، آراء عملاء، أسئلة شائعة.
-- ابدأ بـ 3 قوالب جاهزة بس.
-- العنوان `/p/{workspace}/{slug}` مع SEO وOG image.
-- الـ Tracker من 2.2 مدمج فيها تلقائي.
-- الدومين المخصص يتأجل لحد Phase 5 (Subdomain).
-
 ### 4.4 Click-to-call وCall log (L، 2–3 أسابيع)
 
 - Twilio Voice بمفاتيح كل workspace (**BYO credentials**، عشان تكلفة المكالمات تتحاسب على حساب العميل مش عليك).
@@ -352,7 +343,6 @@
 
 - Sequence كامل بيوقف لوحده لما العميل يرد.
 - عرض سعر اتبعت واتقبل واتحول لفاتورة اتسجل دفعها، وقيمة الصفقة اتحدّثت.
-- صفحة هبوط بفورم دخّلت Lead بالـ UTM.
 - مكالمة اتسجلت على الـ Lead.
 
 ## Phase 5 — نضج المنصة (مستمر، حسب طلب العملاء)
@@ -361,7 +351,7 @@
 
 | الميزة | التفاصيل | الجهد |
 | --- | --- | --- |
-| GDPR suite | صفحة DPA تتحمّل PDF، Cookie consent للفورمات وصفحات الهبوط، طلب الحذف (Erasure) بفترة انتظار 30 يوم ثم Purge، تصدير بيانات Lead/Contact ZIP، وسياسات الاحتفاظ بالـ Audit logs والـ Login attempts بأمر مجدول | M |
+| GDPR suite | صفحة DPA تتحمّل PDF، Cookie consent للفورمات، طلب الحذف (Erasure) بفترة انتظار 30 يوم ثم Purge، تصدير بيانات Lead/Contact ZIP، وسياسات الاحتفاظ بالـ Audit logs والـ Login attempts بأمر مجدول | M |
 | Subdomain لكل Tenant | Wildcard DNS وSSL، Middleware يحدد الـ Tenant من الـ Host، وفعّل حقل `custom_domain` الموجود، وخلّي `/app` كبديل، وكل اللينكات العامة (فورمات وحجز) تتولّد من دومين الـ Tenant | M |
 | أدوار إضافية | دور Viewer (قراءة فقط) وSection hiding حسب الباقة (إخفاء Reports أو Sales) | M |
 | IP allowlist للـ Super-admin | قائمة IP/CIDR مع وضع صارم | S |
@@ -392,7 +382,7 @@ Affiliate engine، Marketplace، Installer للاستضافة المشتركة،
 | Phase 1 | 3–12 | CRM كامل |
 | Phase 2 | 13–24 | جذب وحجز |
 | Phase 3 | 25–32 | تقارير وذكاء المحادثات |
-| Phase 4 | 33–45 | Sequences وعروض أسعار وصفحات هبوط ومكالمات |
+| Phase 4 | 33–45 | Sequences وعروض أسعار ومكالمات |
 | Phase 5 | مستمر | حسب الطلب |
 | Phase 6 | بعد 45 | AI للمبيعات |
 

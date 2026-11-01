@@ -14,6 +14,7 @@ use App\Modules\Broadcasting\Models\Campaign;
 use App\Modules\Ecommerce\Models\EcommerceStore;
 use App\Modules\Integrations\Models\IntegrationConfig;
 use App\Modules\Leads\Models\LeadPipeline;
+use App\Modules\Sales\Models\Sequence;
 use App\Modules\Shared\Models\CustomField;
 use App\Modules\Whatsapp\Models\WhatsappTemplate;
 use Illuminate\Http\JsonResponse;
@@ -135,6 +136,11 @@ class AutomationController extends Controller
                 ->values(),
             'campaigns' => Campaign::where('workspace_id', $workspaceId)
                 ->latest()->limit(100)->get(['id', 'name'])->values(),
+            // Only active sequences can accept an enrollment, so the action's
+            // dropdown lists just those (the engine skips anything else).
+            'sequences' => Sequence::where('workspace_id', $workspaceId)
+                ->where('status', Sequence::STATUS_ACTIVE)
+                ->orderBy('name')->get(['id', 'name'])->values(),
             'chatbots' => AiChatbot::where('workspace_id', $workspaceId)
                 ->where('enabled', true)->orderBy('name')->get(['id', 'name'])->values(),
             'subflows' => Automation::where('workspace_id', $workspaceId)

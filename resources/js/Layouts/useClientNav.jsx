@@ -5,7 +5,7 @@ import {
     LayoutDashboard, CreditCard, Package, FileText, Users, Settings,
     Layers, Webhook, Key, BookOpen, Image, Radio, Inbox, Bot, Database,
     Zap, Share2, MapPin, Tag, LifeBuoy, ExternalLink, Mail, MessageSquare,
-    ShoppingBag, KanbanSquare, SlidersHorizontal, CheckSquare, Building2, Copy, Calendar, BarChart3,
+    ShoppingBag, KanbanSquare, SlidersHorizontal, CheckSquare, Building2, Copy, Calendar, BarChart3, Phone, Receipt,
 } from 'lucide-react';
 
 const iconClass = 'h-4 w-4';
@@ -116,6 +116,14 @@ export default function useClientNav() {
         { label: t('nav.lead_sources') || 'Lead Sources', href: safeRoute('client.sales.lead-sources.index'), icon: <Radio className={iconClass} />, activePattern: 'client.sales.lead-sources.*', feature: 'lead_sources' },
     ];
 
+    const salesItems = [
+        { label: t('nav.sequences') || 'Sequences', href: safeRoute('client.sales.sequences.index'), icon: <Mail className={iconClass} />, activePattern: 'client.sales.sequences.*', feature: 'sequences' },
+        { label: t('nav.quotes') || 'Quotes', href: safeRoute('client.sales.quotes.index'), icon: <FileText className={iconClass} />, activePattern: 'client.sales.quotes.*', feature: 'quotes' },
+        { label: t('nav.invoices') || 'Invoices', href: safeRoute('client.sales.invoices.index'), icon: <Receipt className={iconClass} />, activePattern: 'client.sales.invoices.*', feature: 'quotes' },
+        { label: t('nav.sales_products') || 'Products', href: safeRoute('client.sales.products.index'), icon: <Package className={iconClass} />, activePattern: 'client.sales.products.*', feature: 'quotes' },
+        { label: t('nav.calls') || 'Call Log', href: safeRoute('client.sales.calls.index'), icon: <Phone className={iconClass} />, activePattern: 'client.sales.calls.*', feature: 'call_logs' },
+    ];
+
     const leadsItems = [
         { label: t('nav.tasks') || 'Tasks', href: safeRoute('client.tasks.index'), icon: <CheckSquare className={iconClass} />, activePattern: 'client.tasks.*', feature: 'tasks' },
         { label: t('nav.companies') || 'Companies', href: safeRoute('client.leads.companies.index'), icon: <Building2 className={iconClass} />, activePattern: 'client.leads.companies.*', feature: 'companies' },
@@ -156,6 +164,7 @@ export default function useClientNav() {
         { type: 'group', label: t('nav.group_ecommerce'),    items: ecommerceItems },
         { type: 'group', label: t('nav.group_ai'),            items: aiItems },
         { type: 'group', label: t('nav.group_capture'),       items: captureItems },
+        { type: 'group', label: t('nav.group_sales'),         items: salesItems },
         { type: 'group', label: t('nav.group_leads'),         items: leadsItems },
         { type: 'group', label: t('nav.group_reports'),       items: reportsItems },
         { type: 'group', label: t('nav.group_support'),       items: supportItems },

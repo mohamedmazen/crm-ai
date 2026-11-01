@@ -1,6 +1,6 @@
 import Modal from '@/Components/ui/Modal';
 import Button from '@/Components/ui/Button';
-import { Phone, Globe, MapPin, Star, History, BarChart3, DollarSign, CheckCircle2, User, CheckSquare, Tag, Sliders, Building2, MessageSquare } from 'lucide-react';
+import { Phone, Globe, MapPin, Star, History, BarChart3, DollarSign, CheckCircle2, User, CheckSquare, Tag, Sliders, Building2, MessageSquare, PhoneCall } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { router } from '@inertiajs/react';
@@ -12,6 +12,7 @@ import LogActivityForm from './LogActivityForm';
 import LeadTasksManager from './LeadTasksManager';
 import LeadCustomFieldsEditor from './LeadCustomFieldsEditor';
 import LeadConversationPanel from './LeadConversationPanel';
+import LeadCallsPanel from './LeadCallsPanel';
 
 /**
  * Lead detail: the follow-up history first, because "what happened with this
@@ -22,6 +23,7 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
     const { t } = useTranslation();
     const [tab, setTab] = useState('history');
     const conversationEnabled = useFeature('sales_reports');
+    const callsEnabled = useFeature('call_logs');
 
     const lead = detail?.lead;
     const open = !!lead || loading;
@@ -65,6 +67,13 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
             label: `${t('leads.tab_custom_fields') || 'Custom Fields'}${detail?.custom_fields?.length ? ` (${detail.custom_fields.length})` : ''}`,
             Icon: Sliders,
         },
+        ...(callsEnabled
+            ? [{
+                key: 'calls',
+                label: `${t('calls.title')}${detail?.calls?.length ? ` (${detail.calls.length})` : ''}`,
+                Icon: PhoneCall,
+            }]
+            : []),
         { key: 'deal', label: t('leads.tab_deal') || 'Deal & Economics', Icon: DollarSign },
         { key: 'score', label: t('leads.tab_score'), Icon: BarChart3 },
     ];

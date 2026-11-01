@@ -19,7 +19,7 @@ class WorkflowGenerator
     private const NODE_TYPES = [
         'send_whatsapp', 'send_template', 'send_media', 'send_sequence', 'quick_replies', 'list_message',
         'send_sms', 'send_email', 'ask_question', 'condition', 'wait', 'webhook', 'run_subflow', 'ai_reply',
-        'add_tag', 'remove_tag', 'update_contact', 'assign_agent', 'add_to_campaign', 'cta_button',
+        'add_tag', 'remove_tag', 'update_contact', 'assign_agent', 'add_to_campaign', 'enroll_in_sequence', 'cta_button',
         'send_location', 'send_poll', 'run_chatbot', 'book_appointment', 'google_meet', 'whatsapp_form',
         'whatsapp_catalog', 'woocommerce_product', 'shopify_product', 'google_sheets', 'google_docs',
         'create_task', 'move_to_pipeline', 'update_deal_value',
@@ -83,7 +83,7 @@ Rules:
 - Allowed node types: {$nodeTypes}.
 - Prefer nodes that need no external setup: send_whatsapp, send_template, send_media, quick_replies,
   list_message, ask_question, condition, wait, add_tag, remove_tag, update_contact, send_email, ai_reply,
-  cta_button, send_poll. Only use run_subflow, assign_agent, add_to_campaign, run_chatbot, book_appointment,
+  cta_button, send_poll. Only use run_subflow, assign_agent, add_to_campaign, enroll_in_sequence, run_chatbot, book_appointment,
   google_meet, whatsapp_form, whatsapp_catalog, woocommerce_product, shopify_product, google_sheets or
   google_docs when the request clearly asks for it.
 - Personalise text with tokens: {{contact.name}}, {{contact.first_name}}, {{contact.email}}, {{contact.phone}},
@@ -106,6 +106,7 @@ Node "data" by type:
 - webhook: { "url": "https://...", "method": "POST", "headers": "{\\"K\\":\\"V\\"}", "payload": "{\\"k\\":\\"v\\"}" }
 - ai_reply: { "prompt": "instructions for the AI", "channel": "whatsapp" }
 - add_tag / remove_tag: { "tag": "name" }
+- enroll_in_sequence: { "sequence_id": 123 }  (only when the request names an existing sequence)
 - update_contact: { "field": "name|email|phone|notes", "value": "text" }
 - cta_button: { "body": "text", "display_text": "Open", "url": "https://..." }
 - send_poll: { "question": "text", "options": ["A","B","C"] }

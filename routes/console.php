@@ -177,3 +177,11 @@ Schedule::command('reports:process-scheduled')
     ->name('process-scheduled-reports')
     ->withoutOverlapping()
     ->onOneServer();
+
+// Email / WhatsApp sequences (every minute). Enrollments are claimed when queued,
+// so a second tick cannot dispatch the same step twice.
+Schedule::command('sequences:process')
+    ->everyMinute()
+    ->name('process-sequence-steps')
+    ->withoutOverlapping()
+    ->onOneServer();

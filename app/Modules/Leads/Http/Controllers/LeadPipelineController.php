@@ -18,6 +18,7 @@ use App\Modules\Leads\Services\ActivityRecorder;
 use App\Modules\Leads\Services\LeadAssignmentService;
 use App\Modules\Leads\Services\PipelineManager;
 use App\Modules\Leads\Services\UnifiedTimelineService;
+use App\Modules\Sales\Models\CallLog;
 use App\Modules\Shared\Models\Conversation;
 use App\Modules\Shared\Services\CustomFieldService;
 use App\Services\FeatureGate;
@@ -190,12 +191,13 @@ class LeadPipelineController extends Controller
                 $wid,
                 $request->integer('lead') ?: null,
                 FeatureGate::forUser($request->user())->enabled('sales_reports'),
+                FeatureGate::forUser($request->user())->enabled('call_logs'),
             ),
         ]);
     }
 
     /** One lead plus its follow-up history, for the detail modal. */
-    private function leadDetail(int $wid, ?int $leadId, bool $withConversation = false): ?array
+    private function leadDetail(int $wid, ?int $leadId, bool $withConversation = false, bool $withCalls = false): ?array
     {
         if (! $leadId) {
             return null;
@@ -267,9 +269,39 @@ class LeadPipelineController extends Controller
                 'color' => $t->color,
             ])->values(),
             'custom_fields' => app(CustomFieldService::class)->fieldsWithValues($wid, 'lead', $lead->id),
+            'calls' => $withCalls ? $this->leadCalls($lead) : [],
             'conversation' => $withConversation ? $this->leadConversation($lead) : null,
             'timeline' => $withConversation ? app(UnifiedTimelineService::class)->forLead($lead) : [],
         ];
+    }
+
+    /**
+     * The lead's recent calls, for the detail modal. Only called when the plan
+     * includes the call log, so workspaces without it pay no extra queries.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function leadCalls(Lead $lead): array
+    {
+        return CallLog::forWorkspace((int) $lead->workspace_id)
+            ->where('lead_id', $lead->id)
+            ->with('user:id,name')
+            ->latest('id')
+            ->limit(20)
+            ->get()
+            ->map(fn (CallLog $call) => [
+                'id' => $call->id,
+                'direction' => $call->direction,
+                'status' => $call->status,
+                'from_number' => $call->from_number,
+                'to_number' => $call->to_number,
+                'duration_secs' => (int) $call->duration_secs,
+                'recording_url' => $call->recording_url,
+                'notes' => $call->notes,
+                'user' => $call->user ? ['id' => $call->user->id, 'name' => $call->user->name] : null,
+                'created_at' => $call->created_at?->toIso8601String(),
+            ])
+            ->all();
     }
 
     /**
