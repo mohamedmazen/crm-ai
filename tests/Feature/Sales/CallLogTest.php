@@ -9,6 +9,7 @@ use App\Models\Plan;
 use App\Modules\Leads\Models\Lead;
 use App\Modules\Sales\Models\CallLog;
 use App\Modules\Sales\Models\CallProviderConfig;
+use App\Modules\Sales\Services\Calls\CallWebhookToken;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
@@ -65,6 +66,36 @@ class CallLogTest extends TestCase
             'provider' => 'twilio',
             'provider_sid' => 'CA_existing',
         ], $overrides));
+    }
+
+    private function unifonicConfig($workspace): CallProviderConfig
+    {
+        return CallProviderConfig::create([
+            'workspace_id' => $workspace->id,
+            'provider' => CallProviderConfig::PROVIDER_UNIFONIC,
+            'credentials' => [
+                'app_sid' => 'AppSid_test',
+                'message' => 'Please hold while we connect you.',
+                'agent_number' => '+201000000000',
+            ],
+            'caller_id' => '+966115219000',
+            'default' => true,
+        ]);
+    }
+
+    private function cequensConfig($workspace): CallProviderConfig
+    {
+        return CallProviderConfig::create([
+            'workspace_id' => $workspace->id,
+            'provider' => CallProviderConfig::PROVIDER_CEQUENS,
+            'credentials' => [
+                'username' => 'svcuser',
+                'api_key' => 'apikey',
+                'message' => 'Hello from AYDRA.',
+            ],
+            'caller_id' => '+201000000001',
+            'default' => true,
+        ]);
     }
 
     /** @param array<string, string> $params */
@@ -137,7 +168,13 @@ class CallLogTest extends TestCase
             ->assertInertia(fn ($page) => $page
                 ->component('Calls/Index')
                 ->has('calls.data', 1)
-                ->where('calls.data.0.id', $mine->id));
+                ->where('calls.data.0.id', $mine->id)
+                // Call settings shows the Egypt/Gulf coverage rows for the
+                // selected provider, so the payload must carry them.
+                ->where('providerCoverage.twilio.0.country', 'Egypt')
+                ->where('providerCoverage.telnyx.0.country', 'Egypt')
+                ->where('providerCoverage.cequens.0.country', 'Egypt')
+                ->where('providerCoverage.unifonic.0.country', 'Saudi Arabia'));
     }
 
     #[Test]
@@ -370,5 +407,131 @@ class CallLogTest extends TestCase
             ->get(route('client.leads.pipeline.index', ['lead' => $lead->id]))
             ->assertOk()
             ->assertInertia(fn ($page) => $page->where('leadDetail.calls', []));
+    }
+
+    #[Test]
+    public function a_unifonic_call_is_placed_with_the_greeting_and_agent_transfer(): void
+    {
+        [$user, $workspace] = $this->actorWithPlan();
+        $this->unifonicConfig($workspace);
+        Event::fake([CallInitiated::class]);
+
+        Http::fake([
+            'voice.unifonic.com/*' => Http::response(['callId' => 'UNI_new', 'status' => 'Request has been sent.'], 201),
+        ]);
+
+        $lead = Lead::factory()->create(['workspace_id' => $workspace->id, 'phone' => '+966500000000']);
+
+        $this->actingAs($user)
+            ->post(route('client.sales.calls.initiate'), ['lead_id' => $lead->id])
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $call = CallLog::where('workspace_id', $workspace->id)->firstOrFail();
+
+        $this->assertSame('UNI_new', $call->provider_sid);
+        $this->assertSame('unifonic', $call->provider);
+        $this->assertSame('+966500000000', $call->to_number);
+
+        Http::assertSent(fn ($request) => str_contains($request->url(), 'voice.unifonic.com/v1/calls')
+            && $request->hasHeader('AppsId', 'AppSid_test')
+            && $request['recipient'] === ['+966500000000']
+            && $request['callerId'] === '+966115219000'
+            && $request['type'] === 'ivr'
+            && $request['ivr']['say'] === 'Please hold while we connect you.'
+            && $request['ivr']['transfer'] === '+201000000000');
+    }
+
+    #[Test]
+    public function a_unifonic_webhook_completes_the_call(): void
+    {
+        [, $workspace] = $this->actorWithPlan();
+        $config = $this->unifonicConfig($workspace);
+        Event::fake([CallCompleted::class]);
+
+        $call = $this->makeCall($workspace, ['provider' => 'unifonic', 'provider_sid' => 'UNI_secured']);
+
+        $this->post(CallWebhookToken::url('unifonic', $config->id), [
+            'callId' => 'UNI_secured',
+            'status' => 'Completed',
+            'duration' => '37',
+            'from' => '+966115219000',
+            'to' => '+966500000000',
+            'recordingUrl' => 'https://voice.unifonic.com/recordings/1.mp3',
+        ])->assertOk()->assertJson(['ok' => true]);
+
+        $call->refresh();
+
+        $this->assertSame(CallLog::STATUS_COMPLETED, $call->status);
+        $this->assertSame(37, $call->duration_secs);
+        $this->assertSame('https://voice.unifonic.com/recordings/1.mp3', $call->recording_url);
+
+        Event::assertDispatched(CallCompleted::class, fn (CallCompleted $event) => $event->callId === $call->id);
+    }
+
+    #[Test]
+    public function a_unifonic_webhook_without_the_token_is_rejected(): void
+    {
+        [, $workspace] = $this->actorWithPlan();
+        $config = $this->unifonicConfig($workspace);
+        $call = $this->makeCall($workspace, ['provider' => 'unifonic', 'provider_sid' => 'UNI_secured']);
+
+        $this->post(
+            route('webhooks.calls.status', ['provider' => 'unifonic', 'config' => $config->id]),
+            ['callId' => 'UNI_secured', 'status' => 'Completed'],
+        )->assertForbidden();
+
+        $this->assertSame(CallLog::STATUS_INITIATED, $call->fresh()->status);
+    }
+
+    #[Test]
+    public function a_cequens_call_authenticates_then_places_the_call(): void
+    {
+        [$user, $workspace] = $this->actorWithPlan();
+        $this->cequensConfig($workspace);
+        Event::fake([CallInitiated::class]);
+
+        Http::fake([
+            'apis.cequens.com/auth/v1/tokens/*' => Http::response(['replyCode' => 0, 'data' => ['access_token' => 'JWT123', 'expires_in' => 3600]], 200),
+            'apis.cequens.com/voice/v1/call' => Http::response(['callId' => 'CEQ_new'], 200),
+        ]);
+
+        $lead = Lead::factory()->create(['workspace_id' => $workspace->id, 'phone' => '+201234567890']);
+
+        $this->actingAs($user)
+            ->post(route('client.sales.calls.initiate'), ['lead_id' => $lead->id])
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $call = CallLog::where('workspace_id', $workspace->id)->firstOrFail();
+
+        $this->assertSame('CEQ_new', $call->provider_sid);
+        $this->assertSame('cequens', $call->provider);
+
+        Http::assertSent(fn ($request) => str_contains($request->url(), 'apis.cequens.com/voice/v1/call')
+            && $request->hasHeader('Authorization', 'Bearer JWT123')
+            && $request['to'] === '+201234567890'
+            && $request['sayText'] === 'Hello from AYDRA.'
+            && str_contains((string) $request['statusCallbackEndpoint'], '/webhooks/calls/cequens/')
+            && str_contains((string) $request['statusCallbackEndpoint'], 'token='));
+    }
+
+    #[Test]
+    public function a_cequens_webhook_updates_the_call(): void
+    {
+        [, $workspace] = $this->actorWithPlan();
+        $config = $this->cequensConfig($workspace);
+        $call = $this->makeCall($workspace, ['provider' => 'cequens', 'provider_sid' => 'CEQ_secured']);
+
+        $this->post(CallWebhookToken::url('cequens', $config->id), [
+            'callId' => 'CEQ_secured',
+            'status' => 'completed',
+            'duration' => '21',
+        ])->assertOk()->assertJson(['ok' => true]);
+
+        $call->refresh();
+
+        $this->assertSame(CallLog::STATUS_COMPLETED, $call->status);
+        $this->assertSame(21, $call->duration_secs);
     }
 }

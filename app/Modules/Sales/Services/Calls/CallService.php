@@ -49,10 +49,7 @@ class CallService
             );
         }
 
-        $callbackUrl = route('webhooks.calls.status', [
-            'provider' => $config->provider,
-            'config' => $config->id,
-        ]);
+        $callbackUrl = CallWebhookToken::url($config->provider, (int) $config->id);
 
         try {
             $providerSid = CallProviderManager::forConfig($config)->initiate($to, $from, $callbackUrl);

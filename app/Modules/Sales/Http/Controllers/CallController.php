@@ -8,6 +8,7 @@ use App\Modules\Sales\Exceptions\CallNotPossible;
 use App\Modules\Sales\Models\CallLog;
 use App\Modules\Sales\Models\CallProviderConfig;
 use App\Modules\Sales\Services\Calls\CallService;
+use App\Modules\Sales\Services\Calls\CallWebhookToken;
 use App\Services\FeatureGate;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -93,7 +94,11 @@ class CallController extends Controller
                 'name' => $config?->provider,
                 'caller_id' => $config?->caller_id,
             ],
+            // Unifonic registers its status webhook per voice application, so the
+            // workspace needs the exact URL to paste into the Unifonic console.
+            'webhookUrl' => $config ? CallWebhookToken::url($config->provider, (int) $config->id) : null,
             'providerFields' => CallProviderConfig::FIELDS,
+            'providerCoverage' => CallProviderConfig::COVERAGE,
             'providers' => CallProviderConfig::PROVIDERS,
             'aiEnabled' => FeatureGate::forUser($request->user())->enabled('ai_sales'),
         ]);

@@ -65,7 +65,7 @@ Route::middleware('throttle:webhooks')->group(function () {
     // ─── Telephony call status / recording callbacks ─────────────────────────────
     Route::post('webhooks/calls/{provider}/{config}', [CallWebhookController::class, 'handle'])
         ->name('webhooks.calls.status')
-        ->whereIn('provider', ['twilio', 'telnyx'])
+        ->whereIn('provider', ['twilio', 'telnyx', 'cequens', 'unifonic'])
         ->whereNumber('config');
 
     // ─── Ecommerce (Shopify / WooCommerce) per-store webhooks ────────────────────

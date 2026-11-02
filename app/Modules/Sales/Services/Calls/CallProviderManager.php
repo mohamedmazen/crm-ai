@@ -27,6 +27,8 @@ class CallProviderManager
         return match ($config->provider) {
             CallProviderConfig::PROVIDER_TWILIO => new TwilioCallProvider($config->credentials ?? [], $config->caller_id),
             CallProviderConfig::PROVIDER_TELNYX => new TelnyxCallProvider($config->credentials ?? [], $config->caller_id),
+            CallProviderConfig::PROVIDER_CEQUENS => new CequensCallProvider($config->credentials ?? [], $config->caller_id),
+            CallProviderConfig::PROVIDER_UNIFONIC => new UnifonicCallProvider($config->credentials ?? [], $config->caller_id),
             default => throw new RuntimeException("Unknown call provider: {$config->provider}"),
         };
     }

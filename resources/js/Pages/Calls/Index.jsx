@@ -38,7 +38,9 @@ export default function CallsIndex({
     filters = { q: '', status: '', direction: '', lead_id: null },
     stats = { total: 0, completed: 0, today: 0, avg_duration: 0 },
     provider = { connected: false, name: null, caller_id: null },
+    webhookUrl = null,
     providerFields = {},
+    providerCoverage = {},
     providers = [],
     aiEnabled = false,
 }) {
@@ -151,6 +153,7 @@ export default function CallsIndex({
     ];
 
     const activeFields = providerFields[settingsForm.data.provider] || [];
+    const activeCoverage = providerCoverage[settingsForm.data.provider] || [];
 
     return (
         <ClientLayout>
@@ -592,6 +595,26 @@ export default function CallsIndex({
                         {settingsForm.errors.provider && <p className="mt-1 text-xs text-red-700 dark:text-red-400">{settingsForm.errors.provider}</p>}
                     </div>
 
+                    {activeCoverage.length > 0 && (
+                        <div className="rounded-lg border border-soft bg-neutral-50 p-3 dark:bg-neutral-800/60">
+                            <p className="text-2xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+                                {t('calls.coverage_title') || 'Egypt and Gulf coverage'}
+                            </p>
+                            <ul className="mt-1.5 space-y-1.5">
+                                {activeCoverage.map((row) => (
+                                    <li key={row.country} className="text-2xs text-neutral-600 dark:text-neutral-300">
+                                        <span className="font-semibold text-neutral-800 dark:text-neutral-100">{row.country}</span>
+                                        {' — '}
+                                        {row.coverage}
+                                        {row.requirement && (
+                                            <span className="text-neutral-500 dark:text-neutral-400"> ({row.requirement})</span>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+
                     <div>
                         <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300">
                             {t('calls.caller_id') || 'Caller ID (your number)'}
@@ -608,28 +631,57 @@ export default function CallsIndex({
 
                     {activeFields.map((field) => {
                         const errorKey = `credentials.${field.key}`;
+                        const updateField = (value) => settingsForm.setData('credentials', {
+                            ...settingsForm.data.credentials,
+                            [field.key]: value,
+                        });
 
                         return (
                             <div key={field.key}>
                                 <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300">
                                     {field.label}{field.required ? ' *' : ''}
                                 </label>
-                                <input
-                                    type={field.type === 'password' ? 'password' : 'text'}
-                                    value={settingsForm.data.credentials[field.key] ?? ''}
-                                    onChange={(event) => settingsForm.setData('credentials', {
-                                        ...settingsForm.data.credentials,
-                                        [field.key]: event.target.value,
-                                    })}
-                                    placeholder={field.type === 'password' ? '••••••••' : ''}
-                                    autoComplete="off"
-                                    className="mt-1 w-full rounded-lg border-soft bg-white p-2.5 text-sm dark:bg-neutral-800 dark:text-neutral-100"
-                                />
+                                {field.type === 'textarea' ? (
+                                    <textarea
+                                        rows={3}
+                                        value={settingsForm.data.credentials[field.key] ?? ''}
+                                        onChange={(event) => updateField(event.target.value)}
+                                        autoComplete="off"
+                                        className="mt-1 w-full rounded-lg border-soft bg-white p-2.5 text-sm dark:bg-neutral-800 dark:text-neutral-100"
+                                    />
+                                ) : (
+                                    <input
+                                        type={field.type === 'password' ? 'password' : 'text'}
+                                        value={settingsForm.data.credentials[field.key] ?? ''}
+                                        onChange={(event) => updateField(event.target.value)}
+                                        placeholder={field.type === 'password' ? '••••••••' : ''}
+                                        autoComplete="off"
+                                        className="mt-1 w-full rounded-lg border-soft bg-white p-2.5 text-sm dark:bg-neutral-800 dark:text-neutral-100"
+                                    />
+                                )}
                                 {field.hint && <p className="mt-1 text-2xs text-neutral-500 dark:text-neutral-400">{field.hint}</p>}
                                 {settingsForm.errors[errorKey] && <p className="mt-1 text-xs text-red-700 dark:text-red-400">{settingsForm.errors[errorKey]}</p>}
                             </div>
                         );
                     })}
+
+                    {webhookUrl && (
+                        <div>
+                            <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+                                {t('calls.webhook_url') || 'Status webhook URL'}
+                            </label>
+                            <input
+                                type="text"
+                                readOnly
+                                value={webhookUrl}
+                                onFocus={(event) => event.target.select()}
+                                className="mt-1 w-full rounded-lg border-soft bg-neutral-100 p-2.5 font-mono text-2xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
+                            />
+                            <p className="mt-1 text-2xs text-neutral-500 dark:text-neutral-400">
+                                {t('calls.webhook_url_hint') || 'Register this URL for call status updates (required for Unifonic).'}
+                            </p>
+                        </div>
+                    )}
 
                     <div className="flex justify-end gap-2 border-t border-soft pt-4">
                         <Button type="button" variant="secondary" onClick={() => setShowSettings(false)}>
