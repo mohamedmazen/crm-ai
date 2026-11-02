@@ -26,10 +26,24 @@ class WebhookHardeningTest extends TestCase
         $this->assertNotEquals(404, $response->getStatusCode());
     }
 
-    public function test_paddle_webhook_endpoint_exists(): void
+    public function test_paymob_webhook_endpoint_exists(): void
     {
-        $response = $this->postJson('/webhooks/paddle', []);
+        $response = $this->postJson('/webhooks/paymob', []);
 
         $this->assertNotEquals(404, $response->getStatusCode());
+    }
+
+    public function test_myfatoorah_webhook_endpoint_exists(): void
+    {
+        $response = $this->postJson('/webhooks/myfatoorah', []);
+
+        $this->assertNotEquals(404, $response->getStatusCode());
+    }
+
+    public function test_removed_gateway_webhooks_return_not_found(): void
+    {
+        $this->postJson('/webhooks/paddle', [])->assertNotFound();
+        $this->postJson('/webhooks/razorpay', [])->assertNotFound();
+        $this->postJson('/webhooks/iyzico', [])->assertNotFound();
     }
 }

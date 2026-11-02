@@ -11,8 +11,7 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Handles inbound delivery-status webhooks from all supported SMS providers
- * (Twilio, Nexmo/Vonage, MessageBird, Plivo, Telnyx, Infobip, ClickSend, and the
- * regional BD/IN gateways).
+ * (Twilio, Nexmo/Vonage, Telnyx and ClickSend).
  *
  * They share one controller; the route {provider} segment determines which
  * signature verification and field parsing logic to use.
@@ -24,37 +23,19 @@ class SmsStatusWebhookController extends Controller
     public function handle(Request $request, string $provider): Response
     {
         match ($provider) {
-            'twilio'      => $this->verifyTwilio($request),
-            'nexmo'       => $this->verifyNexmo($request),
-            'messagebird' => $this->verifyMessageBird($request),
-            'plivo'       => $this->verifyGenericToken($request, 'plivo'),
-            'telnyx'      => $this->verifyGenericToken($request, 'telnyx'),
-            'infobip'     => $this->verifyGenericToken($request, 'infobip'),
-            'clicksend'   => $this->verifyGenericToken($request, 'clicksend'),
-            'smsbd'       => $this->verifySmsBd($request),
-            'reve'        => $this->verifyReve($request),
-            'bulksmsbd'   => $this->verifyGenericToken($request, 'bulksmsbd'),
-            'sms_dot_bd'  => null, // sms.net.bd does not sign DLR callbacks
-            'mimsms'      => $this->verifyGenericToken($request, 'mimsms'),
-            'fast2sms'    => $this->verifyGenericToken($request, 'fast2sms'),
-            default       => abort(404),
+            'twilio' => $this->verifyTwilio($request),
+            'nexmo' => $this->verifyNexmo($request),
+            'telnyx' => $this->verifyGenericToken($request, 'telnyx'),
+            'clicksend' => $this->verifyGenericToken($request, 'clicksend'),
+            default => abort(404),
         };
 
         [$msgId, $status] = match ($provider) {
-            'twilio'      => [$request->input('MessageSid'), $this->mapTwilioStatus($request->input('MessageStatus'))],
-            'nexmo'       => [$request->input('messageId'), $this->mapNexmoStatus($request->input('status'))],
-            'messagebird' => [$request->input('id'), $this->mapMessageBirdStatus($request->input('status'))],
-            'plivo'       => [$request->input('MessageUUID'), $this->mapPlivoStatus($request->input('Status'))],
-            'telnyx'      => [$request->input('data.payload.id'), $this->mapTelnyxStatus($request->input('data.payload.to.0.status'))],
-            'infobip'     => [$request->input('results.0.messageId'), $this->mapInfobipStatus($request->input('results.0.status.groupName'))],
-            'clicksend'   => [$request->input('message_id'), $this->mapClickSendStatus($request->input('status'))],
-            'smsbd'       => [$request->input('Message_ID') ?? $request->input('msgid'), $this->mapSmsBdStatus($request->input('Delivery_Status') ?? $request->input('status'))],
-            'reve'        => [$request->input('message_id'), $this->mapReveStatus($request->input('status') ?? $request->input('delivery_status'))],
-            'bulksmsbd'   => [$request->input('message_id'), $this->mapSmsBdStatus($request->input('status') ?? $request->input('delivery_status'))],
-            'sms_dot_bd'  => [$request->input('batch_id') ?? $request->input('message_id'), $this->mapSmsBdStatus($request->input('status'))],
-            'mimsms'      => [$request->input('message_id'), $this->mapSmsBdStatus($request->input('status') ?? $request->input('delivery_status'))],
-            'fast2sms'    => [$request->input('request_id'), $this->mapFast2SmsStatus($request->input('status'))],
-            default       => [null, null],
+            'twilio' => [$request->input('MessageSid'), $this->mapTwilioStatus($request->input('MessageStatus'))],
+            'nexmo' => [$request->input('messageId'), $this->mapNexmoStatus($request->input('status'))],
+            'telnyx' => [$request->input('data.payload.id'), $this->mapTelnyxStatus($request->input('data.payload.to.0.status'))],
+            'clicksend' => [$request->input('message_id'), $this->mapClickSendStatus($request->input('status'))],
+            default => [null, null],
         };
 
         if (! $msgId || ! $status) {
@@ -154,32 +135,6 @@ class SmsStatusWebhookController extends Controller
         abort_unless(hash_equals($expected, strtolower($sig)), 401, 'Invalid Vonage signature');
     }
 
-    private function verifyMessageBird(Request $request): void
-    {
-        $secret = config('services.messagebird.signing_key') ?? null;
-        if (! $secret) {
-            return;
-        }
-
-        $signature = $request->header('MessageBird-Signature', '');
-        if (! $signature) {
-            if (app()->environment('production')) {
-                abort(401, 'Missing MessageBird signature');
-            }
-
-            return;
-        }
-
-        // MessageBird: ts.queryString.sha256BodyHash signed with HMAC-SHA256
-        $ts = $request->header('MessageBird-Request-Timestamp', '');
-        $queryString = $request->server('QUERY_STRING', '');
-        $bodyHash = hash('sha256', $request->getContent());
-        $payload = "{$ts}\n{$queryString}\n{$bodyHash}";
-        $expected = base64_encode(hash_hmac('sha256', $payload, $secret, true));
-
-        abort_unless(hash_equals($expected, $signature), 401, 'Invalid MessageBird signature');
-    }
-
     private function verifyTwilio(Request $request): void
     {
         // Twilio sends X-Twilio-Signature; verify if configured
@@ -219,42 +174,12 @@ class SmsStatusWebhookController extends Controller
         };
     }
 
-    private function mapMessageBirdStatus(string $s): string
-    {
-        return match ($s) {
-            'delivered' => 'delivered',
-            'sent' => 'sent',
-            'failed', 'delivery_failed' => 'failed',
-            default => 'queued',
-        };
-    }
-
-    private function mapPlivoStatus(?string $s): string
-    {
-        return match (strtolower((string) $s)) {
-            'delivered' => 'delivered',
-            'sent' => 'sent',
-            'failed', 'undelivered', 'rejected' => 'failed',
-            default => 'queued',
-        };
-    }
-
     private function mapTelnyxStatus(?string $s): string
     {
         return match (strtolower((string) $s)) {
             'delivered' => 'delivered',
             'sent', 'sending' => 'sent',
             'delivery_failed', 'sending_failed', 'expired' => 'failed',
-            default => 'queued',
-        };
-    }
-
-    private function mapInfobipStatus(?string $s): string
-    {
-        return match (strtoupper((string) $s)) {
-            'DELIVERED' => 'delivered',
-            'PENDING' => 'sent',
-            'UNDELIVERABLE', 'REJECTED', 'EXPIRED' => 'failed',
             default => 'queued',
         };
     }
@@ -271,16 +196,6 @@ class SmsStatusWebhookController extends Controller
         };
     }
 
-    private function verifySmsBd(Request $request): void
-    {
-        $secret = config('services.smsbd.webhook_secret');
-        if (! $secret) {
-            return;
-        }
-        $token = $request->input('token') ?? $request->header('X-Smsbd-Token', '');
-        abort_unless(hash_equals($secret, $token), 401, 'Invalid SMSBD webhook token');
-    }
-
     private function verifyGenericToken(Request $request, string $key): void
     {
         $secret = config("services.{$key}.webhook_secret");
@@ -289,51 +204,5 @@ class SmsStatusWebhookController extends Controller
         }
         $token = $request->input('token') ?? $request->header('X-Webhook-Token', '');
         abort_unless(hash_equals($secret, $token), 401, 'Invalid webhook token');
-    }
-
-    private function verifyReve(Request $request): void
-    {
-        $secret = config('services.reve.webhook_secret');
-        if (! $secret) {
-            return;
-        }
-        $token = $request->header('X-Reve-Token', '') ?? $request->input('token', '');
-        abort_unless(hash_equals($secret, $token), 401, 'Invalid REVE webhook token');
-    }
-
-    private function mapSmsBdStatus(string $s): string
-    {
-        $s = strtolower($s);
-
-        return match (true) {
-            str_contains($s, 'delivrd') || str_contains($s, 'delivered') => 'delivered',
-            str_contains($s, 'failed') || str_contains($s, 'undeliv') || str_contains($s, 'rejectd') => 'failed',
-            str_contains($s, 'sent') || str_contains($s, 'accept') || str_contains($s, 'submit') => 'sent',
-            default => 'queued',
-        };
-    }
-
-    private function mapReveStatus(string $s): string
-    {
-        $s = strtolower($s);
-
-        return match (true) {
-            str_contains($s, 'delivrd') || str_contains($s, 'delivered') => 'delivered',
-            str_contains($s, 'failed') || str_contains($s, 'undeliv') || str_contains($s, 'reject') => 'failed',
-            str_contains($s, 'sent') || str_contains($s, 'accept') || str_contains($s, 'submit') => 'sent',
-            default => 'queued',
-        };
-    }
-
-    private function mapFast2SmsStatus(?string $s): string
-    {
-        $s = strtolower((string) $s);
-
-        return match (true) {
-            str_contains($s, 'delivrd') || str_contains($s, 'delivered') => 'delivered',
-            str_contains($s, 'undeliv') || str_contains($s, 'failed') || str_contains($s, 'rejectd') => 'failed',
-            str_contains($s, 'sent') || str_contains($s, 'submit') || str_contains($s, 'accept') => 'sent',
-            default => 'queued',
-        };
     }
 }

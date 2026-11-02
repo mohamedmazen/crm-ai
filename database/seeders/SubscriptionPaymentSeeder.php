@@ -23,7 +23,7 @@ class SubscriptionPaymentSeeder extends Seeder
             return;
         }
 
-        $gateways = ['stripe', 'paypal', 'paddle'];
+        $gateways = ['stripe', 'paypal'];
         $statuses = ['active', 'trialing', 'canceled', 'past_due'];
 
         foreach ($plans->take(2) as $index => $plan) {
@@ -44,7 +44,7 @@ class SubscriptionPaymentSeeder extends Seeder
                     'status' => $status,
                     'starts_at' => $startsAt,
                     'ends_at' => $endsAt,
-                    'gateway_subscription_id' => 'sub_' . $gateway . '_' . uniqid(),
+                    'gateway_subscription_id' => 'sub_'.$gateway.'_'.uniqid(),
                     'renews_at' => $renewsAt,
                 ]
             );
@@ -54,7 +54,7 @@ class SubscriptionPaymentSeeder extends Seeder
                 PaymentTransaction::firstOrCreate(
                     [
                         'subscription_id' => $sub->id,
-                        'gateway_transaction_id' => 'tx_seed_' . $sub->id . '_1',
+                        'gateway_transaction_id' => 'tx_seed_'.$sub->id.'_1',
                     ],
                     [
                         'user_id' => $user->id,
@@ -68,7 +68,7 @@ class SubscriptionPaymentSeeder extends Seeder
                 PaymentTransaction::firstOrCreate(
                     [
                         'subscription_id' => $sub->id,
-                        'gateway_transaction_id' => 'tx_seed_' . $sub->id . '_2',
+                        'gateway_transaction_id' => 'tx_seed_'.$sub->id.'_2',
                     ],
                     [
                         'user_id' => $user->id,
@@ -95,7 +95,7 @@ class SubscriptionPaymentSeeder extends Seeder
                     'gateway' => 'stripe',
                     'starts_at' => Carbon::now()->subMonths(2),
                     'renews_at' => Carbon::now()->addMonth(),
-                    'gateway_subscription_id' => 'sub_stripe_pro_' . uniqid(),
+                    'gateway_subscription_id' => 'sub_stripe_pro_'.uniqid(),
                 ]
             );
         }

@@ -144,22 +144,8 @@ class ConnectionTester
                 : ['ok' => false, 'message' => $resp->json()['error-text'] ?? 'Vonage error.'];
         }
 
-        if (str_contains($config->provider, 'messagebird')) {
-            $key = $creds['api_key'] ?? '';
-            if (empty($key)) {
-                return ['ok' => false, 'message' => 'API Key required.'];
-            }
-            $resp = HttpFacade::timeout(10)
-                ->withToken($key)
-                ->get('https://rest.messagebird.com/balance');
-
-            return $resp->successful()
-                ? ['ok' => true,  'message' => 'MessageBird balance: '.$resp->json()['amount'].' '.$resp->json()['type']]
-                : ['ok' => false, 'message' => 'MessageBird error.'];
-        }
-
-        // For SMSBD and REVE: just validate keys are present
-        $key = $creds['api_key'] ?? '';
+        // Generic providers (Telnyx, ClickSend, Amazon SNS): just validate a key is present.
+        $key = $creds['api_key'] ?? $creds['access_key'] ?? '';
 
         return empty($key)
             ? ['ok' => false, 'message' => 'API key is required.']

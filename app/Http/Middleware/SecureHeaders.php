@@ -48,11 +48,6 @@ class SecureHeaders
 
     private function buildCsp(Request $request, string $nonce): ?string
     {
-        // iyzico's subscription checkout is embedded markup that pulls its own scripts and
-        // 3-D Secure frames from iyzipay.com. Widen the policy only on the page that renders
-        // that form rather than for the whole app.
-        $iyzico = $request->routeIs('checkout.iyzico.form') ? ' https://iyzipay.com https://*.iyzipay.com' : '';
-
         // Public forms may embed Turnstile or reCAPTCHA; allow their scripts,
         // challenge frames and verification calls only on the form page.
         $captcha = $this->captchaSources($request);
@@ -63,18 +58,16 @@ class SecureHeaders
         // The nonce is enforced only in production. Locally, Herd Studio injects
         // its own inline bootstrap and `/herd-studio/loader.js` after our
         // response is built, so it cannot carry the nonce; keeping the legacy
-        // policy there avoids breaking the development overlay. iyzico renders
-        // third-party checkout markup (with its own inline scripts) that we
-        // cannot nonce either, so that page keeps the legacy policy too.
-        $nonceSource = config('app.env') === 'production' && ! $request->routeIs('checkout.iyzico.form')
+        // policy there avoids breaking the development overlay.
+        $nonceSource = config('app.env') === 'production'
             ? " 'nonce-{$nonce}' 'strict-dynamic'"
             : '';
 
-        $scriptSrc = "'self' 'unsafe-inline'".$nonceSource.$unsafeEval.$vite.$this->thirdPartyScriptSources().$iyzico.$captcha;
-        $styleSrc = "'self' 'unsafe-inline' https://fonts.bunny.net https://fonts.googleapis.com".$vite.$this->thirdPartyStyleSources().$iyzico.$captcha;
-        $fontSrc = "'self' data: https://fonts.bunny.net https://fonts.gstatic.com https://fonts.googleapis.com".$iyzico;
+        $scriptSrc = "'self' 'unsafe-inline'".$nonceSource.$unsafeEval.$vite.$this->thirdPartyScriptSources().$captcha;
+        $styleSrc = "'self' 'unsafe-inline' https://fonts.bunny.net https://fonts.googleapis.com".$vite.$this->thirdPartyStyleSources().$captcha;
+        $fontSrc = "'self' data: https://fonts.bunny.net https://fonts.gstatic.com https://fonts.googleapis.com";
 
-        $frameSrc = "'self'".$this->metaFrameSources().$iyzico.$captcha;
+        $frameSrc = "'self'".$this->metaFrameSources().$captcha;
 
         $directives = array_filter([
             "default-src 'self'",
@@ -84,7 +77,7 @@ class SecureHeaders
             'style-src-elem '.$styleSrc,
             "img-src 'self' data: https: blob:",
             'font-src '.$fontSrc,
-            "connect-src 'self'".$vite.$this->connectSources().$iyzico.$captcha,
+            "connect-src 'self'".$vite.$this->connectSources().$captcha,
             'frame-src '.$frameSrc,
             "frame-ancestors 'self'",
         ]);

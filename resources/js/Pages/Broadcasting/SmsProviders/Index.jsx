@@ -26,27 +26,6 @@ const SETUP_GUIDES = {
         link: 'https://dashboard.nexmo.com',
         linkLabel: 'Open Vonage Dashboard',
     },
-    messagebird: {
-        steps: [
-            'Sign up at messagebird.com.',
-            'Go to Developers → API access keys → Add access key.',
-            'Copy the live API key.',
-            'Optionally, buy a virtual number under Numbers.',
-            'Paste the API key below.',
-        ],
-        link: 'https://dashboard.messagebird.com/en/developers/access',
-        linkLabel: 'Open MessageBird Dashboard',
-    },
-    plivo: {
-        steps: [
-            'Sign up at plivo.com and verify your account.',
-            'From the Console, open Account → Keys & Credentials to copy your Auth ID and Auth Token.',
-            'Buy an SMS-enabled number under Phone Numbers → Buy Numbers (or use a registered Sender ID).',
-            'Enter the Auth ID, Auth Token, and From number/Sender ID below.',
-        ],
-        link: 'https://console.plivo.com',
-        linkLabel: 'Open Plivo Console',
-    },
     telnyx: {
         steps: [
             'Sign up at telnyx.com and complete verification.',
@@ -58,16 +37,6 @@ const SETUP_GUIDES = {
         link: 'https://portal.telnyx.com',
         linkLabel: 'Open Telnyx Portal',
     },
-    infobip: {
-        steps: [
-            'Sign up at infobip.com.',
-            'From the homepage/API settings, copy your API Key and your account Base URL (e.g. xyz.api.infobip.com).',
-            'Register a Sender ID / alphanumeric sender for your destination countries.',
-            'Enter the API Key, Base URL, and Sender below.',
-        ],
-        link: 'https://portal.infobip.com',
-        linkLabel: 'Open Infobip Portal',
-    },
     clicksend: {
         steps: [
             'Sign up at clicksend.com and add credit.',
@@ -77,69 +46,6 @@ const SETUP_GUIDES = {
         ],
         link: 'https://dashboard.clicksend.com/account/subaccounts',
         linkLabel: 'Open ClickSend Dashboard',
-    },
-    smsbd: {
-        steps: [
-            'Register at smsbd.com.bd.',
-            'After approval, log in and go to your profile to find your API credentials.',
-            'Copy the API Token / User credential.',
-            'Enter the credentials below.',
-        ],
-    },
-    reve: {
-        steps: [
-            'Register at revesms.com or contact their sales team.',
-            'Log in and navigate to your account settings to get API credentials.',
-            'Copy the API key or username/password pair.',
-            'Enter the credentials below.',
-        ],
-    },
-    bulksmsbd: {
-        steps: [
-            'Register at bulksmsbd.com.',
-            'After account activation, go to My Account → API credentials.',
-            'Copy the API key.',
-            'Enter the API key and your sender ID below.',
-        ],
-    },
-    sms_dot_bd: {
-        steps: [
-            'Register at sms.com.bd.',
-            'After account activation, find your API credentials in the account settings.',
-            'Copy the API key or access token.',
-            'Enter the credentials below.',
-        ],
-    },
-    mimsms: {
-        steps: [
-            'Register at mimsms.com.',
-            'After approval, log in and go to API Settings.',
-            'Copy your API key.',
-            'Enter the API key and sender ID below.',
-        ],
-    },
-    fast2sms: {
-        steps: [
-            'Register at fast2sms.com (Indian mobile numbers only).',
-            'After KYC approval, go to Dev API → Authorization to copy your API key.',
-            'Choose route: "q" for Quick/Transactional or "dlt" for DLT promotional messages.',
-            'For DLT route, register your sender ID and templates on the DLT portal first.',
-            'Enter the API key, sender ID, and route below.',
-        ],
-        link: 'https://www.fast2sms.com/dashboard/api',
-        linkLabel: 'Open Fast2SMS Dashboard',
-    },
-    msg91: {
-        steps: [
-            'Register at msg91.com and complete KYC verification.',
-            'Go to Settings → API Keys (Authkey) and copy your Auth Key.',
-            'Create and get a 6-character Sender ID approved under Settings → Sender ID.',
-            'Choose route: 4 for Transactional or 1 for Promotional.',
-            'For Indian traffic, register your content template on the DLT portal and enter the DLT Template ID.',
-            'Enter the Auth Key, Sender ID, and Route below.',
-        ],
-        link: 'https://control.msg91.com/app/',
-        linkLabel: 'Open MSG91 Dashboard',
     },
     amazon_sns: {
         steps: [
@@ -202,53 +108,13 @@ const BRAND = {
         color: '#6E3697',
         logo: 'vonage',
     },
-    messagebird: {
-        color: '#2481CC',
-        logo: 'messagebird',
-    },
-    plivo: {
-        color: '#1B75BB',
-        logo: 'plivo',
-    },
     telnyx: {
         color: '#00C08B',
         logo: 'telnyx',
     },
-    infobip: {
-        color: '#FF6B00',
-        logo: 'infobip',
-    },
     clicksend: {
         color: '#00AEEF',
         logo: 'clicksend',
-    },
-    smsbd: {
-        color: '#0d9488',
-        logo: 'smsbd',
-    },
-    reve: {
-        color: '#4f46e5',
-        logo: 'revesms',
-    },
-    bulksmsbd: {
-        color: '#16a34a',
-        logo: 'bulksmsbd',
-    },
-    sms_dot_bd: {
-        color: '#0284c7',
-        logo: 'smsdotbd',
-    },
-    mimsms: {
-        color: '#7c3aed',
-        logo: 'mimsms',
-    },
-    fast2sms: {
-        color: '#e65c00',
-        logo: 'fast2sms',
-    },
-    msg91: {
-        color: '#008adf',
-        logo: 'msg91',
     },
     amazon_sns: {
         color: '#FF9900',

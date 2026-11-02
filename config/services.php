@@ -69,20 +69,8 @@ return [
         'api_key' => env('QDRANT_API_KEY', ''),
     ],
 
-    'fast2sms' => [
-        'webhook_secret' => env('FAST2SMS_WEBHOOK_SECRET'),
-    ],
-
-    'plivo' => [
-        'webhook_secret' => env('PLIVO_WEBHOOK_SECRET'),
-    ],
-
     'telnyx' => [
         'webhook_secret' => env('TELNYX_WEBHOOK_SECRET'),
-    ],
-
-    'infobip' => [
-        'webhook_secret' => env('INFOBIP_WEBHOOK_SECRET'),
     ],
 
     'clicksend' => [

@@ -84,7 +84,7 @@ class CredentialResolver
         return $this->resolve('llm_'.$provider.'_default', LlmCredentials::class);
     }
 
-    /** @param string $provider  twilio|nexmo|messagebird|smsbd|reve */
+    /** @param string $provider  twilio|nexmo|telnyx|clicksend|amazon_sns */
     public function sms(string $provider): ?SmsCredentials
     {
         // Check workspace override table first (sms_provider_configs)

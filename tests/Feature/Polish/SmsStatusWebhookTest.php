@@ -43,49 +43,61 @@ class SmsStatusWebhookTest extends TestCase
         ]);
     }
 
-    public function test_smsbd_delivery_updates_recipient_status(): void
+    public function test_nexmo_delivery_updates_recipient_status(): void
     {
-        $recipient = $this->makeRecipient('SMSBD_001');
+        $recipient = $this->makeRecipient('NX_001');
 
-        $this->postJson(route('webhooks.sms.status', 'smsbd'), [
-            'Message_ID' => 'SMSBD_001',
-            'Delivery_Status' => 'DELIVRD',
+        $this->postJson(route('webhooks.sms.status', 'nexmo'), [
+            'messageId' => 'NX_001',
+            'status' => 'delivered',
         ])->assertOk();
 
         $this->assertDatabaseHas('campaign_recipients', [
-            'provider_message_id' => 'SMSBD_001',
+            'provider_message_id' => 'NX_001',
             'status' => 'delivered',
         ]);
     }
 
-    public function test_reve_delivery_updates_recipient_status(): void
+    public function test_telnyx_delivery_updates_recipient_status(): void
     {
-        $recipient = $this->makeRecipient('REVE_002');
+        $recipient = $this->makeRecipient('TLX_002');
 
-        $this->postJson(route('webhooks.sms.status', 'reve'), [
-            'message_id' => 'REVE_002',
-            'status' => 'delivered',
+        $this->postJson(route('webhooks.sms.status', 'telnyx'), [
+            'data' => [
+                'payload' => [
+                    'id' => 'TLX_002',
+                    'to' => [['status' => 'delivered']],
+                ],
+            ],
         ])->assertOk();
 
         $this->assertDatabaseHas('campaign_recipients', [
-            'provider_message_id' => 'REVE_002',
+            'provider_message_id' => 'TLX_002',
             'status' => 'delivered',
         ]);
     }
 
-    public function test_smsbd_failed_status_maps_correctly(): void
+    public function test_clicksend_failed_status_maps_correctly(): void
     {
-        $recipient = $this->makeRecipient('SMSBD_FAIL');
+        $recipient = $this->makeRecipient('CS_FAIL');
 
-        $this->postJson(route('webhooks.sms.status', 'smsbd'), [
-            'Message_ID' => 'SMSBD_FAIL',
-            'Delivery_Status' => 'UNDELIV',
+        $this->postJson(route('webhooks.sms.status', 'clicksend'), [
+            'message_id' => 'CS_FAIL',
+            'status' => 'Failed',
         ])->assertOk();
 
         $this->assertDatabaseHas('campaign_recipients', [
-            'provider_message_id' => 'SMSBD_FAIL',
+            'provider_message_id' => 'CS_FAIL',
             'status' => 'failed',
         ]);
+    }
+
+    public function test_removed_provider_webhooks_return_not_found(): void
+    {
+        $this->postJson('/webhooks/sms/smsbd')->assertNotFound();
+        $this->postJson('/webhooks/sms/reve')->assertNotFound();
+        $this->postJson('/webhooks/sms/msg91')->assertNotFound();
+        $this->postJson('/webhooks/sms/plivo')->assertNotFound();
     }
 
     public function test_unknown_provider_returns_404(): void

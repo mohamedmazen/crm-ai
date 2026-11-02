@@ -9,13 +9,14 @@ use Illuminate\Support\Facades\Log;
 
 class BillingSyncCommand extends Command
 {
-    protected $signature   = 'billing:sync {--gateway= : Only sync a specific gateway (stripe|paypal|paddle|razorpay|cashfree)} {--dry-run : Preview changes without saving}';
+    protected $signature = 'billing:sync {--gateway= : Only sync a specific gateway (stripe|paypal|paymob|myfatoorah)} {--dry-run : Preview changes without saving}';
+
     protected $description = 'Sync active subscriptions with payment gateways to reconcile status.';
 
     public function handle(BillingGatewayRegistry $registry): int
     {
         $gatewayFilter = $this->option('gateway');
-        $dryRun        = $this->option('dry-run');
+        $dryRun = $this->option('dry-run');
 
         if ($dryRun) {
             $this->warn('DRY-RUN mode — no changes will be saved.');
@@ -25,10 +26,10 @@ class BillingSyncCommand extends Command
             ->whereNotIn('status', ['canceled'])
             ->when($gatewayFilter, fn ($q) => $q->where('gateway', $gatewayFilter));
 
-        $total     = $query->count();
-        $updated   = 0;
+        $total = $query->count();
+        $updated = 0;
         $unchanged = 0;
-        $errors    = 0;
+        $errors = 0;
 
         $this->info("Syncing {$total} subscription(s)…");
         $bar = $this->output->createProgressBar($total);
@@ -40,12 +41,14 @@ class BillingSyncCommand extends Command
                 try {
                     if (! $sub->gateway || ! $sub->gateway_subscription_id) {
                         $unchanged++;
+
                         continue;
                     }
 
                     $gateway = $registry->get($sub->gateway);
                     if (! $gateway) {
                         $unchanged++;
+
                         continue;
                     }
                     $previousStatus = $sub->status;
@@ -53,6 +56,7 @@ class BillingSyncCommand extends Command
                     if ($dryRun) {
                         // In dry-run, peek at what sync would do without persisting
                         $unchanged++;
+
                         continue;
                     }
 

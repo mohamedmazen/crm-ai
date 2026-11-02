@@ -93,13 +93,6 @@ Schedule::command('ai-sdr:run')
     ->withoutOverlapping()
     ->onOneServer();
 
-// Bill Tap subscriptions due for renewal (Tap has no hosted auto-renew; merchant-initiated)
-Schedule::command('billing:charge-recurring')
-    ->hourly()
-    ->name('billing-charge-recurring-tap')
-    ->withoutOverlapping()
-    ->onOneServer();
-
 // Bill Paymob subscriptions due for renewal (MIT save-card pattern)
 Schedule::command('billing:charge-recurring-paymob')
     ->hourly()

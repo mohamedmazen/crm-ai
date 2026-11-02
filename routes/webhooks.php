@@ -42,10 +42,10 @@ Route::middleware('throttle:webhooks')->group(function () {
         Route::post('/{token}', [MetaWebhookController::class, 'receive'])->name('receive');
     });
 
-    // ─── SMS delivery status (Twilio, Nexmo/Vonage, MessageBird) ─────────────────
+    // ─── SMS delivery status (Twilio, Nexmo/Vonage, Telnyx, ClickSend) ───────────
     Route::post('webhooks/sms/{provider}', [SmsStatusWebhookController::class, 'handle'])
         ->name('webhooks.sms.status')
-        ->where('provider', 'twilio|nexmo|messagebird|plivo|telnyx|infobip|clicksend|smsbd|reve|bulksmsbd|sms_dot_bd|mimsms|fast2sms');
+        ->where('provider', 'twilio|nexmo|telnyx|clicksend');
 
     // ─── Automation inbound webhook trigger ─────────────────────────────────────
     Route::post('webhooks/automation/{trigger_token}', [AutomationWebhookController::class, 'receive'])
