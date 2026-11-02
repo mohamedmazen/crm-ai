@@ -609,8 +609,13 @@
     "client": {
         "profile": {
             "edit": "تعديل",
-            "2fa": "2Fa",
-            "sessions": "Sessions",
+            "2fa": {
+                "enable": "Enable",
+                "disable": "Disable"
+            },
+            "sessions": {
+                "destroy": "Destroy"
+            },
             "update": "Update",
             "destroy": "Destroy"
         },
@@ -781,7 +786,10 @@
             "index": "القائمة",
             "store": "حفظ",
             "destroy": "حذف",
-            "contacts": "Contacts"
+            "contacts": {
+                "attach": "Attach",
+                "detach": "Detach"
+            }
         },
         "whatsapp": {
             "templates": {
@@ -803,10 +811,7 @@
                 "create": "إنشاء",
                 "edit": "تعديل"
             },
-            "setup": {
-                "destroy": "Destroy",
-                "manual": "Manual"
-            }
+            "setup": "Setup"
         },
         "broadcasts": {
             "campaigns": {
@@ -839,10 +844,7 @@
             "templates": "القوالب",
             "assign": "تعيين",
             "setup": {
-                "resubscribe": "Resubscribe",
-                "manual": {
-                    "instagram": "Instagram"
-                }
+                "destroy": "Destroy"
             },
             "activities": {
                 "index": "Index"
@@ -999,11 +1001,7 @@
                 "response": "Response",
                 "sources": "Sources",
                 "export": "Export",
-                "schedules": {
-                    "update": "Update",
-                    "store": "Store",
-                    "destroy": "Destroy"
-                }
+                "schedules": "Schedules"
             }
         },
         "push": {
@@ -1051,23 +1049,12 @@
                 "connect": "اتصال"
             }
         },
-        "workspaces": {
-            "switch": "Switch",
-            "index": "Index",
-            "store": "Store"
-        },
+        "workspaces": "Workspaces",
         "settings": {
             "update": "تحديث",
             "notifications": "الإشعارات",
             "index": "Index",
-            "gdpr": {
-                "erasure": {
-                    "store": "Store",
-                    "cancel": "Cancel"
-                },
-                "retention": "Retention",
-                "dpa": "Dpa"
-            }
+            "gdpr": "Gdpr"
         },
         "team": {
             "store": "متجر",
@@ -1114,7 +1101,9 @@
         "sales": {
             "forms": {
                 "index": "Index",
-                "builder": "Builder",
+                "builder": {
+                    "update": "Update"
+                },
                 "store": "Store",
                 "destroy": "Destroy",
                 "analytics": "Analytics"
@@ -1133,7 +1122,9 @@
             },
             "sequences": {
                 "index": "Index",
-                "builder": "Builder",
+                "builder": {
+                    "update": "Update"
+                },
                 "status": "Status",
                 "enroll": "Enroll",
                 "store": "Store",
@@ -1512,40 +1503,38 @@
         "secret_key_hint": "المفتاح السري للخادم — حافظ على سريته",
         "stripe_webhook_hint": "سر توقيع Webhook‏ (whsec_…) من لوحة تحكم Stripe",
         "webhook_hint": "سر Webhook المستخدم للتحقق من أحداث بوابة الدفع الواردة",
-        "clients": {
+        "clients": "Clients",
+        "subscriptions": {
             "index": "Index",
-            "users": {
-                "index": "Index",
-                "store": "Store",
-                "update": "Update",
-                "destroy": "Destroy"
-            },
-            "impersonate": "Impersonate",
-            "destroy": "Destroy",
-            "export": "Export",
             "store": "Store",
-            "update": "Update"
+            "export": "Export"
         },
-        "subscriptions": "Subscriptions",
-        "payments": {
-            "index": "Index"
-        },
-        "plans": {
+        "payments": "Payments",
+        "plans": "Plans",
+        "currencies": {
             "index": "Index",
             "update": "Update",
-            "duplicate": "Duplicate",
-            "destroy": "Destroy",
-            "reorder": "Reorder",
             "store": "Store"
         },
-        "currencies": "Currencies",
-        "admins": {
+        "admins": "Admins",
+        "settings": {
             "index": "Index",
-            "destroy": "Destroy",
-            "store": "Store",
-            "update": "Update"
+            "general": {
+                "update": "Update"
+            },
+            "logo": {
+                "upload": "Upload",
+                "delete": "Delete"
+            },
+            "favicon": {
+                "upload": "Upload",
+                "delete": "Delete"
+            },
+            "update": "Update",
+            "firebase": {
+                "update": "Update"
+            }
         },
-        "settings": "Settings",
         "ai": {
             "index": "الفهرس"
         },
@@ -1629,7 +1618,11 @@
         "recent_payments": "Recent payments",
         "amount": "Amount",
         "last_n_days": "Last {{n}} days",
-        "license": "License",
+        "license": {
+            "index": "Index",
+            "deactivate": "Deactivate",
+            "activate": "Activate"
+        },
         "add_currency": "Add Currency",
         "currency_inherit": "Platform default",
         "exchange_rate_hint": "Exchange rate is how much one unit of the currency is worth in USD — EUR is 1.087, INR is about 0.012. The currency with rate 1 is the reference. Setting a currency as Default makes it the platform-wide currency for anyone who has not picked their own.",
