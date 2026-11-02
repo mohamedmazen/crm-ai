@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Broadcasting;
 
+use App\Modules\Broadcasting\Models\SmsProviderConfig;
 use App\Modules\Broadcasting\Services\Sms\CequensDriver;
 use App\Modules\Broadcasting\Services\Sms\InfobipDriver;
 use App\Modules\Broadcasting\Services\Sms\MsegatDriver;
@@ -10,6 +11,7 @@ use App\Modules\Broadcasting\Services\Sms\SmsMisrDriver;
 use App\Modules\Broadcasting\Services\Sms\TaqnyatDriver;
 use App\Modules\Broadcasting\Services\Sms\UnifonicDriver;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use RuntimeException;
 use Tests\TestCase;
 
@@ -69,5 +71,39 @@ class SmsProviderTest extends TestCase
             'provider' => 'taqnyat',
             'default' => true,
         ]);
+    }
+
+    public function test_workspace_sender_override_replaces_the_credential_sender(): void
+    {
+        ['workspace' => $workspace] = $this->createWorkspaceContext();
+
+        SmsProviderConfig::create([
+            'workspace_id' => $workspace->id,
+            'provider' => 'twilio',
+            'credentials' => ['account_sid' => 'AC1', 'auth_token' => 'tok', 'from_number' => '+10000000000'],
+            'sender_id' => '+19999999999',
+            'default' => true,
+        ]);
+
+        Http::fake(['api.twilio.com/*' => Http::response(['sid' => 'SM1'], 201)]);
+
+        SmsDriverManager::forWorkspace($workspace->id)->send('+16175551234', 'Hi');
+
+        Http::assertSent(fn ($request) => str_contains($request->url(), 'api.twilio.com')
+            && $request->data()['From'] === '+19999999999');
+    }
+
+    public function test_for_workspace_uses_a_non_default_workspace_config(): void
+    {
+        ['workspace' => $workspace] = $this->createWorkspaceContext();
+
+        SmsProviderConfig::create([
+            'workspace_id' => $workspace->id,
+            'provider' => 'taqnyat',
+            'credentials' => ['token' => 'tok', 'sender' => 'Brand'],
+            'default' => false,
+        ]);
+
+        $this->assertInstanceOf(TaqnyatDriver::class, SmsDriverManager::forWorkspace($workspace->id));
     }
 }

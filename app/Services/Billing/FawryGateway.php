@@ -183,6 +183,32 @@ class FawryGateway implements BillingGatewayInterface
         // fall back to the authoritative status API so a spoofed POST cannot activate access.
         if ($this->verifyWebhookSignature($data)) {
             $status = $reportedStatus;
+
+            // Defense in depth: even a correctly signed PAID notification is cross-checked
+            // against the authoritative status API before access is granted. A contradictory
+            // authoritative status means the signed body is stale or forged.
+            if ($status === 'PAID') {
+                $lookup = $this->fetchStatus($merchantRef);
+
+                if ($lookup !== null && $lookup['status'] !== 'PAID') {
+                    Log::warning('Fawry webhook: signed PAID contradicts status API', [
+                        'merchant_ref' => $merchantRef,
+                        'reported' => $status,
+                        'authoritative' => $lookup['status'],
+                    ]);
+
+                    return new Response('OK', 200);
+                }
+
+                if ($lookup !== null) {
+                    // Prefer the authoritative figures (amount, currency, reference) over the body.
+                    $data = array_merge($data, $lookup['data']);
+                } else {
+                    Log::warning('Fawry webhook: status API unavailable, trusting valid signature', [
+                        'merchant_ref' => $merchantRef,
+                    ]);
+                }
+            }
         } else {
             $lookup = $this->fetchStatus($merchantRef);
             if ($lookup === null) {
@@ -299,7 +325,7 @@ class FawryGateway implements BillingGatewayInterface
         $currency = strtoupper((string) ($data['currencyCode'] ?? $plan->currency_code ?? 'EGP'));
         $paid = (float) ($data['paymentAmount'] ?? $data['orderAmount'] ?? 0);
         $amountCents = $paid > 0
-            ? $this->minorAmount($paid, $currency)
+            ? $this->minorAmount($paid)
             : ($plan->priceCentsForCycle($meta['billing_cycle']) ?? 0);
 
         $renewal = $this->nextRenewal($meta['billing_cycle']);
@@ -506,10 +532,16 @@ class FawryGateway implements BillingGatewayInterface
         return number_format($cents / 100, $this->currencyDecimals($currency), '.', '');
     }
 
-    /** Convert a Fawry major-unit amount back to the app's amount_cents (×100). */
-    private function minorAmount(float $amount, string $currency): int
+    /**
+     * Convert a Fawry major-unit amount back to the app's amount_cents (×100).
+     *
+     * The app stores `amount_cents` as ×100 minor units for every currency (the inverse
+     * of majorAmountString), so the conversion is always ×100 — never the currency's
+     * display precision (which would over-store 3-decimal currencies by 10×).
+     */
+    private function minorAmount(float $amount): int
     {
-        return (int) round($amount * (10 ** $this->currencyDecimals($currency)));
+        return (int) round($amount * 100);
     }
 
     /** Best-effort PDF invoice generation; never let it break webhook processing. */

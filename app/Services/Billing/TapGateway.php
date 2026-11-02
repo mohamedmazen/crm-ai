@@ -35,9 +35,10 @@ use Symfony\Component\HttpFoundation\Response;
  * Webhooks are verified with Tap's `hashstring` HMAC-SHA256 keyed by the secret API key.
  *
  * NOTE: Tap's `hashstring` field order and the exact JSON paths for reference.gateway /
- * reference.payment / transaction.created should be confirmed against a real sandbox
- * webhook before going live (Tap's docs render these in an interactive widget). The
- * computed-vs-received hash is logged at debug level in non-production to ease that check.
+ * reference.payment / transaction.created are implemented from Tap's documentation but
+ * have not been captured from a live sandbox webhook. TapGatewayWebhookTest pins the
+ * expected order with a fixed hash so any drift is caught immediately. The computed-vs-
+ * received hash is also logged at debug level in non-production to ease confirmation.
  */
 class TapGateway implements BillingGatewayInterface
 {
@@ -418,7 +419,12 @@ class TapGateway implements BillingGatewayInterface
 
     public function sync(Subscription $subscription): bool
     {
-        // Tap subscription state is driven entirely by our own charges; nothing to pull.
+        // Tap subscription state is driven entirely by our own charges. Renewals are
+        // merchant-initiated and captured synchronously in chargeRecurring(), which records
+        // the payment transaction and advances renews_at; the webhook is only a redundant
+        // idempotent confirmation. A pull-based reconciliation would therefore need Tap's
+        // charge-listing endpoint (not used elsewhere) to add anything, so there is nothing
+        // safe and useful to pull here. The billing:sync command still reports it unchanged.
         return false;
     }
 

@@ -153,6 +153,70 @@ class SmsStatusWebhookTest extends TestCase
         ]);
     }
 
+    public function test_sms_misr_delivery_updates_recipient_status(): void
+    {
+        $this->makeRecipient('MISR_DLR1');
+
+        $this->postJson(route('webhooks.sms.status', 'sms_misr'), [
+            'SMSID' => 'MISR_DLR1',
+            'status' => 'Delivered',
+        ])->assertOk();
+
+        $this->assertDatabaseHas('campaign_recipients', [
+            'provider_message_id' => 'MISR_DLR1',
+            'status' => 'delivered',
+        ]);
+    }
+
+    public function test_msegat_failed_status_maps_correctly(): void
+    {
+        $this->makeRecipient('MS_DLR1');
+
+        $this->postJson(route('webhooks.sms.status', 'msegat'), [
+            'msgId' => 'MS_DLR1',
+            'status' => 'Failed',
+        ])->assertOk();
+
+        $this->assertDatabaseHas('campaign_recipients', [
+            'provider_message_id' => 'MS_DLR1',
+            'status' => 'failed',
+        ]);
+    }
+
+    public function test_generic_webhook_verifies_the_configured_secret(): void
+    {
+        config(['services.msegat.webhook_secret' => 's3cret']);
+        $this->makeRecipient('MS_SECRET');
+
+        $this->postJson(route('webhooks.sms.status', 'msegat'), [
+            'msgId' => 'MS_SECRET',
+            'status' => 'Delivered',
+            'token' => 'wrong',
+        ])->assertStatus(401);
+
+        $this->postJson(route('webhooks.sms.status', 'msegat'), [
+            'msgId' => 'MS_SECRET',
+            'status' => 'Delivered',
+            'token' => 's3cret',
+        ])->assertOk();
+
+        $this->assertDatabaseHas('campaign_recipients', [
+            'provider_message_id' => 'MS_SECRET',
+            'status' => 'delivered',
+        ]);
+    }
+
+    public function test_unsigned_webhook_is_rejected_in_production_without_a_secret(): void
+    {
+        config(['services.msegat.webhook_secret' => null]);
+        $this->app['env'] = 'production';
+
+        $this->postJson(route('webhooks.sms.status', 'msegat'), [
+            'msgId' => 'MS_PROD',
+            'status' => 'Delivered',
+        ])->assertStatus(401);
+    }
+
     public function test_removed_provider_webhooks_return_not_found(): void
     {
         $this->postJson('/webhooks/sms/smsbd')->assertNotFound();

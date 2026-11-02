@@ -72,8 +72,12 @@ class SmsDriverHttpTest extends TestCase
     public function test_cequens_driver_authenticates_then_sends(): void
     {
         Http::fake([
-            'apis.cequens.com/auth/v1/tokens/*' => Http::response(['data' => ['access_token' => 'JWT123']], 200),
-            'apis.cequens.com/sms/v1/messages' => Http::response(['data' => ['messageId' => 'CEQ1']], 200),
+            'apis.cequens.com/auth/v1/tokens/*' => Http::response(['replyCode' => 0, 'data' => ['access_token' => 'JWT123']], 200),
+            'apis.cequens.com/sms/v1/messages' => Http::response([
+                'replyCode' => 0,
+                'replyMessage' => 'Request handled successfully',
+                'data' => ['SentSMSIDs' => [['SMSId' => 'CEQ1']], 'InvalidRecipients' => ''],
+            ], 200),
         ]);
 
         $result = (new CequensDriver('svcuser', 'apikey', 'CEQUENS'))->send('+201234567890', 'Hello');
@@ -87,6 +91,21 @@ class SmsDriverHttpTest extends TestCase
             $request->data()['senderName'] === 'CEQUENS'
         );
         Http::assertSent(fn ($request) => str_contains($request->url(), '/auth/v1/tokens/'));
+    }
+
+    public function test_cequens_driver_reuses_the_cached_access_token(): void
+    {
+        Http::fake([
+            'apis.cequens.com/auth/v1/tokens/*' => Http::response(['data' => ['access_token' => 'JWT123', 'expires_in' => 3600]], 200),
+            'apis.cequens.com/sms/v1/messages' => Http::response(['data' => ['SentSMSIDs' => [['SMSId' => 'CEQ1']]]], 200),
+        ]);
+
+        $driver = new CequensDriver('svcuser', 'apikey', 'CEQUENS');
+        $driver->send('+201234567890', 'First');
+        $driver->send('+201234567890', 'Second');
+
+        // One sign-in for two sends — the token is cached between calls.
+        Http::assertSentCount(3);
     }
 
     public function test_cequens_driver_fails_when_authentication_fails(): void
@@ -135,6 +154,30 @@ class SmsDriverHttpTest extends TestCase
             $request->data()['recipients'] === ['966500000000'] &&
             $request->data()['sender'] === 'MyBrand'
         );
+    }
+
+    public function test_taqnyat_driver_reports_failure_on_rejected_sender(): void
+    {
+        Http::fake([
+            'api.taqnyat.sa/*' => Http::response(['statusCode' => 400, 'message' => 'Sender Name is not accepted'], 400),
+        ]);
+
+        $result = (new TaqnyatDriver('token123', 'BadSender'))->send('+966500000000', 'Hello');
+
+        $this->assertFalse($result->success);
+        $this->assertSame('Sender Name is not accepted', $result->error);
+    }
+
+    public function test_unifonic_driver_reports_failure_on_error_response(): void
+    {
+        Http::fake([
+            'el.cloud.unifonic.com/*' => Http::response(['success' => false, 'message' => 'Invalid AppSid'], 200),
+        ]);
+
+        $result = (new UnifonicDriver('bad', 'Sender'))->send('+966500000000', 'Hello');
+
+        $this->assertFalse($result->success);
+        $this->assertSame('Invalid AppSid', $result->error);
     }
 
     public function test_msegat_driver_treats_success_codes_as_accepted(): void

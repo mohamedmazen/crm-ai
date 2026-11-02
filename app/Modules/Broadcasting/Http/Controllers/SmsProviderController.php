@@ -56,7 +56,6 @@ class SmsProviderController extends Controller
             ['key' => 'access_key', 'label' => 'AWS Access Key ID',     'type' => 'text',     'required' => true],
             ['key' => 'secret_key', 'label' => 'AWS Secret Access Key', 'type' => 'password', 'required' => true],
             ['key' => 'region',     'label' => 'AWS Region',            'type' => 'text',     'required' => true],
-            ['key' => 'sender_id',  'label' => 'Sender ID',             'type' => 'text',     'required' => false],
             ['key' => 'sms_type',   'label' => 'SMS Type (Transactional / Promotional)', 'type' => 'text', 'required' => false],
         ],
         'sms_misr' => [
@@ -72,8 +71,7 @@ class SmsProviderController extends Controller
             ['key' => 'sender_name', 'label' => 'Sender Name',      'type' => 'text',     'required' => true],
         ],
         'unifonic' => [
-            ['key' => 'app_sid',   'label' => 'AppSid (Application ID)', 'type' => 'text', 'required' => true],
-            ['key' => 'sender_id', 'label' => 'Sender ID',               'type' => 'text', 'required' => false],
+            ['key' => 'app_sid', 'label' => 'AppSid (Application ID)', 'type' => 'text', 'required' => true],
         ],
         'taqnyat' => [
             ['key' => 'token',  'label' => 'Bearer Token', 'type' => 'password', 'required' => true],

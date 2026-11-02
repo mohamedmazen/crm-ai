@@ -7,11 +7,36 @@ use App\Models\PaymentGatewayConfig;
 
 class BillingGatewayRegistry
 {
+    /**
+     * Frontend display order with fallback labels for gateways that are listed but not
+     * configured (and therefore have no instance whose name() can be used).
+     */
+    private const FRONTEND_GATEWAYS = [
+        'stripe' => 'Stripe',
+        'paypal' => 'PayPal',
+        'paymob' => 'Paymob',
+        'myfatoorah' => 'MyFatoorah',
+        'fawry' => 'Fawry',
+        'tap' => 'Tap',
+    ];
+
     /** @var array<string, BillingGatewayInterface> */
     private array $gateways = [];
 
-    public function __construct()
+    private bool $loaded = false;
+
+    /**
+     * Resolve gateway instances lazily so the PaymentGatewayConfig query runs at most once
+     * per registry (it is a container singleton) and only when gateways are actually needed.
+     */
+    private function load(): void
     {
+        if ($this->loaded) {
+            return;
+        }
+
+        $this->loaded = true;
+
         $this->registerFromDatabase();
         $this->registerFromConfig();
     }
@@ -172,6 +197,8 @@ class BillingGatewayRegistry
      */
     public function all(): array
     {
+        $this->load();
+
         return $this->gateways;
     }
 
@@ -182,11 +209,15 @@ class BillingGatewayRegistry
      */
     public function configured(): array
     {
+        $this->load();
+
         return array_filter($this->gateways, fn (BillingGatewayInterface $g) => $g->isConfigured());
     }
 
     public function get(string $key): ?BillingGatewayInterface
     {
+        $this->load();
+
         return $this->gateways[$key] ?? null;
     }
 
@@ -195,21 +226,15 @@ class BillingGatewayRegistry
      */
     public function listForFrontend(): array
     {
+        $this->load();
+
         $out = [];
-        $labels = [
-            'stripe' => 'Stripe',
-            'paypal' => 'PayPal',
-            'paymob' => 'Paymob',
-            'myfatoorah' => 'MyFatoorah',
-            'fawry' => 'Fawry',
-            'tap' => 'Tap',
-        ];
-        foreach ($labels as $key => $label) {
-            $g = $this->gateways[$key] ?? null;
+        foreach (self::FRONTEND_GATEWAYS as $key => $fallbackLabel) {
+            $gateway = $this->gateways[$key] ?? null;
             $out[] = [
                 'key' => $key,
-                'name' => $g ? $g->name() : $label,
-                'configured' => $g ? $g->isConfigured() : false,
+                'name' => $gateway?->name() ?? $fallbackLabel,
+                'configured' => $gateway?->isConfigured() ?? false,
             ];
         }
 

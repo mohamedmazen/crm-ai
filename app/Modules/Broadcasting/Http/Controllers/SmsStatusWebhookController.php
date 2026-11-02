@@ -16,6 +16,17 @@ use Illuminate\Support\Facades\Log;
  *
  * They share one controller; the route {provider} segment determines which
  * signature verification and field parsing logic to use.
+ *
+ * Verified DLR payloads (checked against provider docs):
+ *   - CEQUENS: query params `msgid` + `statusid` (1 = Delivered, 2 = UnDelivered).
+ *   - Infobip: `results[0].messageId` + `results[0].status.groupName`.
+ *   - Unifonic: `body.messageId` + `body.finalStatus` (DELIVRD, UNDELIV, …).
+ *
+ * Best-effort DLR payloads (not publicly documented — confirm against a real capture
+ * from each provider's portal webhook and tighten the mapping if it differs):
+ *   - SMS Misr: `SMSID` (or `msgId`) + `status`/`Status`.
+ *   - Taqnyat:  `messageId`/`msgId`/`id` + `status`/`statusText`.
+ *   - Msegat:   `msgId`/`messageId`/`id` + `status`/`stat`.
  */
 class SmsStatusWebhookController extends Controller
 {
@@ -265,9 +276,15 @@ class SmsStatusWebhookController extends Controller
     private function verifyGenericToken(Request $request, string $key): void
     {
         $secret = config("services.{$key}.webhook_secret");
+
         if (! $secret) {
+            // With no configured secret there is nothing to verify against. Refuse to trust
+            // unsigned delivery reports in production; allow them locally for development.
+            abort_if(app()->environment('production'), 401, 'SMS webhook secret not configured');
+
             return;
         }
+
         $token = $request->input('token') ?? $request->header('X-Webhook-Token', '');
         abort_unless(hash_equals($secret, $token), 401, 'Invalid webhook token');
     }
