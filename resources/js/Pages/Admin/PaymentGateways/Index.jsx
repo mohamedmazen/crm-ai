@@ -17,6 +17,8 @@ const GATEWAY_LOGOS = {
 const GATEWAY_FALLBACK_COLORS = {
     paymob: '#0F4C81',
     myfatoorah: '#3266AC',
+    fawry: '#00558C',
+    tap: '#00BFA5',
 };
 
 function GatewayLogo({ gateway, name }) {
@@ -194,6 +196,18 @@ function EditGatewayModal({ show, gatewayKey, initialData, loading, error, valid
             secret: 'MyFatoorah API Key (sandbox or live token).',
             webhook: 'Not required — MyFatoorah does not sign webhook payloads. Endpoint: /webhooks/myfatoorah',
             note: 'MyFatoorah uses the MIT save-token pattern; renewals are charged off-session by the billing:charge-recurring-myfatoorah scheduler. Only the API Key is needed; toggle Test Mode for the sandbox.',
+        },
+        fawry: {
+            publishable: 'Fawry Merchant Code (from the Fawry dashboard).',
+            secret: 'Fawry Secure Key. Used to sign checkout, status and refund requests — never sent to Fawry.',
+            webhook: 'No separate secret — Fawry signs notifications and we fall back to the status API. Set the notification URL in the Fawry dashboard to /webhooks/fawry',
+            note: 'Fawry is one-time billing only (no saved-card recurring): each purchase grants access until the end of the bought cycle and renewal is a fresh checkout. Map: Publishable Key = Merchant Code, Secret Key = Secure Key. Toggle Test Mode for the Fawry sandbox.',
+        },
+        tap: {
+            publishable: 'Not required for Tap — leave blank.',
+            secret: 'Tap Secret API Key (Dashboard → Developers → API keys). Also signs webhook payloads.',
+            webhook: 'Not required — Tap signs webhooks with your secret key via the hashstring header. Endpoint: /webhooks/tap',
+            note: 'Tap uses the MIT save-card pattern; renewals are charged off-session by the billing:charge-recurring-tap scheduler. Map: Secret Key = Secret API Key.',
         },
     };
     const isStripe = gatewayKey === 'stripe';

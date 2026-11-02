@@ -89,6 +89,8 @@ Route::middleware('throttle:webhooks')->group(function () {
     Route::post('/webhooks/paypal', [WebhookController::class, 'paypal'])->name('webhooks.paypal');
     Route::post('/webhooks/paymob', [WebhookController::class, 'paymob'])->name('webhooks.paymob');
     Route::post('/webhooks/myfatoorah', [WebhookController::class, 'myfatoorah'])->name('webhooks.myfatoorah');
+    Route::post('/webhooks/fawry', [WebhookController::class, 'fawry'])->name('webhooks.fawry');
+    Route::post('/webhooks/tap', [WebhookController::class, 'tap'])->name('webhooks.tap');
 });
 
 // ─── Health / readiness probes ───────────────────────────────────────────────

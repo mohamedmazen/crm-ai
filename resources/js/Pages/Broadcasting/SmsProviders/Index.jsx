@@ -60,6 +60,69 @@ const SETUP_GUIDES = {
         link: 'https://console.aws.amazon.com/sns/v3/home#/mobile/text-messaging',
         linkLabel: 'Open AWS SNS Console',
     },
+    sms_misr: {
+        steps: [
+            'Sign in to your SMS Misr account at sms.com.eg.',
+            'Copy your Username and Password from your account settings.',
+            'Request a Sender (Sender Token) and wait for it to be approved.',
+            'Use environment 1 for live sending or 2 for testing; language 2 supports Arabic/Unicode.',
+            'Enter the Username, Password, Sender Token and options below.',
+        ],
+        link: 'https://sms.com.eg/',
+        linkLabel: 'Open SMS Misr',
+    },
+    cequens: {
+        steps: [
+            'Log in to the CEQUENS Communication Platform.',
+            'Under Developers, create an API Key (used together with your service username).',
+            'Request and activate an approved Sender Name for your target countries.',
+            'Enter the service Username, API Key and Sender Name below.',
+        ],
+        link: 'https://www.cequens.com/',
+        linkLabel: 'Open CEQUENS',
+    },
+    unifonic: {
+        steps: [
+            'Sign up at unifonic.com and open the Developers section.',
+            'Create an Application to obtain your AppSid (Application ID).',
+            'Register and get a Sender ID approved for your account.',
+            'Enter the AppSid and Sender ID below.',
+        ],
+        link: 'https://www.unifonic.com/',
+        linkLabel: 'Open Unifonic',
+    },
+    taqnyat: {
+        steps: [
+            'Log in to your Taqnyat account.',
+            'Under Developer → Application, create an app and copy the Bearer Token.',
+            'Register a Sender Name under Settings → Manage Senders.',
+            'Optionally set the SMS Webhook to your delivery-status URL for delivery reports.',
+            'Enter the Bearer Token and Sender Name below.',
+        ],
+        link: 'https://www.taqnyat.sa/',
+        linkLabel: 'Open Taqnyat',
+    },
+    msegat: {
+        steps: [
+            'Sign up at msegat.com and note your account Username.',
+            'Request your API Key from the Msegat dashboard or support.',
+            'Register and activate a Sender Name (userSender).',
+            'Enter the Username, API Key and Sender Name below.',
+        ],
+        link: 'https://www.msegat.com/en/',
+        linkLabel: 'Open Msegat',
+    },
+    infobip: {
+        steps: [
+            'Log in to your Infobip account.',
+            'Copy your API Key from the Developer → API keys section.',
+            'Note your personal Base URL (for example xyz.api.infobip.com).',
+            'Register an approved Sender (From) for your traffic.',
+            'Enter the API Key, Base URL and Sender below.',
+        ],
+        link: 'https://portal.infobip.com/',
+        linkLabel: 'Open Infobip Portal',
+    },
 };
 
 function SetupGuide({ providerKey }) {
@@ -119,6 +182,30 @@ const BRAND = {
     amazon_sns: {
         color: '#FF9900',
         logo: 'amazonsns',
+    },
+    sms_misr: {
+        color: '#0F9D58',
+        logo: 'smsmisr',
+    },
+    cequens: {
+        color: '#0091D5',
+        logo: 'cequens',
+    },
+    unifonic: {
+        color: '#2E5BFF',
+        logo: 'unifonic',
+    },
+    taqnyat: {
+        color: '#0E63B3',
+        logo: 'taqnyat',
+    },
+    msegat: {
+        color: '#F26522',
+        logo: 'msegat',
+    },
+    infobip: {
+        color: '#F04E37',
+        logo: 'infobip',
     },
 };
 
@@ -266,10 +353,19 @@ function ProviderCard({ provider }) {
     );
 }
 
+const REGION_ORDER = ['egypt', 'gcc', 'global'];
+
 export default function SmsProvidersIndex({ providers }) {
     const { t } = useTranslation();
     const { props } = usePage();
     const flash = props.flash ?? {};
+
+    const grouped = REGION_ORDER
+        .map(region => ({
+            region,
+            items: (providers ?? []).filter(p => (p.region ?? 'global') === region),
+        }))
+        .filter(group => group.items.length > 0);
 
     return (
         <ClientLayout title={t('sms.title')}>
@@ -293,11 +389,19 @@ export default function SmsProvidersIndex({ providers }) {
                     </div>
                 )}
 
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {providers.map(p => (
-                        <ProviderCard key={p.provider} provider={p} />
-                    ))}
-                </div>
+                {grouped.map(group => (
+                    <div key={group.region} className="space-y-3">
+                        <h3 className="flex items-center gap-2 text-sm font-semibold text-neutral-700 dark:text-neutral-300">
+                            <span className="inline-block h-2 w-2 rounded-full bg-brand-500" />
+                            {t(`sms.region_${group.region}`)}
+                        </h3>
+                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            {group.items.map(p => (
+                                <ProviderCard key={p.provider} provider={p} />
+                            ))}
+                        </div>
+                    </div>
+                ))}
             </div>
         </ClientLayout>
     );

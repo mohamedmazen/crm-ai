@@ -35,6 +35,12 @@ class BillingController extends Controller
         if ($paymentId) {
             $this->callFulfil('myfatoorah', $paymentId, $userId);
         }
+
+        // Fawry: ?merchantRefNumber=<ref> (appended to our returnUrl)
+        $merchantRef = $request->query('merchantRefNumber');
+        if ($merchantRef) {
+            $this->callFulfil('fawry', $merchantRef, $userId);
+        }
     }
 
     private function callFulfil(string $gatewayKey, string $sessionId, int $userId): void

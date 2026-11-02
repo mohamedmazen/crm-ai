@@ -40,6 +40,20 @@ class WebhookHardeningTest extends TestCase
         $this->assertNotEquals(404, $response->getStatusCode());
     }
 
+    public function test_fawry_webhook_endpoint_exists(): void
+    {
+        $response = $this->postJson('/webhooks/fawry', []);
+
+        $this->assertNotEquals(404, $response->getStatusCode());
+    }
+
+    public function test_tap_webhook_endpoint_exists(): void
+    {
+        $response = $this->postJson('/webhooks/tap', []);
+
+        $this->assertNotEquals(404, $response->getStatusCode());
+    }
+
     public function test_removed_gateway_webhooks_return_not_found(): void
     {
         $this->postJson('/webhooks/paddle', [])->assertNotFound();

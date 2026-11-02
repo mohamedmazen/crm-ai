@@ -255,6 +255,8 @@ export default function AdminSubscriptionsIndex({ subscriptions, filters = {}, p
                         <option value="paypal">PayPal</option>
                         <option value="paymob">Paymob</option>
                         <option value="myfatoorah">MyFatoorah</option>
+                        <option value="fawry">Fawry</option>
+                        <option value="tap">Tap Payments</option>
                         <option value="manual">{t('admin.subscriptions_gateway_manual')}</option>
                     </select>
                     <Button type="submit" variant="outline" size="sm">{t('common.filter')}</Button>

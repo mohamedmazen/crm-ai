@@ -99,6 +99,42 @@ class WebhookController extends Controller
         return $gateway->handleWebhook($request);
     }
 
+    /**
+     * Fawry webhook (no auth; verified by signature and/or status lookup inside gateway).
+     */
+    public function fawry(Request $request): Response
+    {
+        Log::channel('single')->info('Fawry webhook received', [
+            'headers' => $this->safeHeaders($request),
+            'body_length' => strlen($request->getContent()),
+        ]);
+
+        $gateway = $this->gateways->get('fawry');
+        if (! $gateway) {
+            return new Response('Gateway not configured', 503);
+        }
+
+        return $gateway->handleWebhook($request);
+    }
+
+    /**
+     * Tap Payments webhook (verified by the `hashstring` header inside the gateway).
+     */
+    public function tap(Request $request): Response
+    {
+        Log::channel('single')->info('Tap webhook received', [
+            'headers' => $this->safeHeaders($request),
+            'body_length' => strlen($request->getContent()),
+        ]);
+
+        $gateway = $this->gateways->get('tap');
+        if (! $gateway) {
+            return new Response('Gateway not configured', 503);
+        }
+
+        return $gateway->handleWebhook($request);
+    }
+
     private function safeHeaders(Request $request): array
     {
         return collect($request->headers->all())

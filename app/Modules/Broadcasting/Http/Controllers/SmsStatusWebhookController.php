@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Handles inbound delivery-status webhooks from all supported SMS providers
- * (Twilio, Nexmo/Vonage, Telnyx and ClickSend).
+ * (Twilio, Nexmo/Vonage, Telnyx, ClickSend, Infobip, SMS Misr, CEQUENS,
+ * Unifonic, Taqnyat and Msegat).
  *
  * They share one controller; the route {provider} segment determines which
  * signature verification and field parsing logic to use.
@@ -27,6 +28,12 @@ class SmsStatusWebhookController extends Controller
             'nexmo' => $this->verifyNexmo($request),
             'telnyx' => $this->verifyGenericToken($request, 'telnyx'),
             'clicksend' => $this->verifyGenericToken($request, 'clicksend'),
+            'sms_misr' => $this->verifyGenericToken($request, 'sms_misr'),
+            'cequens' => $this->verifyGenericToken($request, 'cequens'),
+            'unifonic' => $this->verifyGenericToken($request, 'unifonic'),
+            'taqnyat' => $this->verifyGenericToken($request, 'taqnyat'),
+            'msegat' => $this->verifyGenericToken($request, 'msegat'),
+            'infobip' => $this->verifyGenericToken($request, 'infobip'),
             default => abort(404),
         };
 
@@ -35,6 +42,12 @@ class SmsStatusWebhookController extends Controller
             'nexmo' => [$request->input('messageId'), $this->mapNexmoStatus($request->input('status'))],
             'telnyx' => [$request->input('data.payload.id'), $this->mapTelnyxStatus($request->input('data.payload.to.0.status'))],
             'clicksend' => [$request->input('message_id'), $this->mapClickSendStatus($request->input('status'))],
+            'infobip' => [$request->input('results.0.messageId'), $this->mapInfobipStatus($request->input('results.0.status.groupName'))],
+            'cequens' => [$request->input('msgid') ?? $request->input('messageId'), $this->mapCequensStatus($request->input('statusid') ?? $request->input('status'))],
+            'unifonic' => [$request->input('body.messageId'), $this->mapUnifonicStatus($request->input('body.finalStatus'))],
+            'sms_misr' => [$request->input('SMSID') ?? $request->input('msgId'), $this->mapTextualStatus($request->input('status') ?? $request->input('Status'))],
+            'taqnyat' => [$request->input('messageId') ?? $request->input('msgId') ?? $request->input('id'), $this->mapTextualStatus($request->input('status') ?? $request->input('statusText'))],
+            'msegat' => [$request->input('msgId') ?? $request->input('messageId') ?? $request->input('id'), $this->mapTextualStatus($request->input('status') ?? $request->input('stat'))],
             default => [null, null],
         };
 
@@ -192,6 +205,59 @@ class SmsStatusWebhookController extends Controller
             str_contains($s, 'delivered') => 'delivered',
             str_contains($s, 'bounce') || str_contains($s, 'undeliv') || str_contains($s, 'fail') || str_contains($s, 'reject') => 'failed',
             str_contains($s, 'sent') || str_contains($s, 'submit') => 'sent',
+            default => 'queued',
+        };
+    }
+
+    private function mapInfobipStatus(?string $s): string
+    {
+        return match (strtoupper((string) $s)) {
+            'DELIVERED' => 'delivered',
+            'PENDING' => 'sent',
+            'UNDELIVERABLE', 'REJECTED', 'EXPIRED' => 'failed',
+            default => 'queued',
+        };
+    }
+
+    /** CEQUENS DLR: statusid 1 = Delivered, 2 = UnDelivered. */
+    private function mapCequensStatus(mixed $s): string
+    {
+        $s = strtolower(trim((string) $s));
+
+        return match ($s) {
+            '1', 'delivered', 'delivrd' => 'delivered',
+            '2', 'undelivered', 'undeliv', 'failed', 'rejected', 'expired' => 'failed',
+            'sent', 'accepted', 'submitted' => 'sent',
+            default => 'queued',
+        };
+    }
+
+    /** Unifonic DLR: finalStatus of DELIVRD / DELIVERED is a positive report. */
+    private function mapUnifonicStatus(?string $s): string
+    {
+        $s = strtoupper(trim((string) $s));
+
+        return match ($s) {
+            'DELIVRD', 'DELIVERED' => 'delivered',
+            'UNDELIV', 'EXPIRED', 'REJECTD', 'REJECTED', 'DELETED', 'UNKNOWN', 'FAILED' => 'failed',
+            'SENT', 'ENROUTE', 'ACCEPTD', 'ACCEPTED', 'SUBMITTED' => 'sent',
+            default => 'queued',
+        };
+    }
+
+    /**
+     * Best-effort mapping for gateways whose DLR payloads use plain text
+     * status labels (SMS Misr, Taqnyat, Msegat).
+     */
+    private function mapTextualStatus(mixed $s): string
+    {
+        $s = strtolower(trim((string) $s));
+
+        return match (true) {
+            $s === '' => 'queued',
+            str_contains($s, 'deliver') && ! str_contains($s, 'undeliver') => 'delivered',
+            str_contains($s, 'undeliver') || str_contains($s, 'fail') || str_contains($s, 'reject') || str_contains($s, 'expire') => 'failed',
+            str_contains($s, 'sent') || str_contains($s, 'accept') || str_contains($s, 'submit') => 'sent',
             default => 'queued',
         };
     }

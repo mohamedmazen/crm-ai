@@ -33,6 +33,8 @@ export default function AdminPaymentsIndex({ payments, filters = {} }) {
                         <option value="paypal">PayPal</option>
                         <option value="paymob">Paymob</option>
                         <option value="myfatoorah">MyFatoorah</option>
+                        <option value="fawry">Fawry</option>
+                        <option value="tap">Tap Payments</option>
                     </select>
                     <Button type="submit" variant="outline" size="sm">{t('common.filter')}</Button>
                 </form>

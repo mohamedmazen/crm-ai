@@ -4558,6 +4558,9 @@
         "sender_id": "Sender ID (optional override)",
         "sender_id_placeholder": "e.g. MyBrand",
         "set_default": "Set as default SMS gateway",
+        "region_egypt": "Egypt",
+        "region_gcc": "Gulf (GCC)",
+        "region_global": "Global",
         "saving": "Saving…"
     },
     "social": {

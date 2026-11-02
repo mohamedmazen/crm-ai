@@ -77,6 +77,30 @@ return [
         'webhook_secret' => env('CLICKSEND_WEBHOOK_SECRET'),
     ],
 
+    'sms_misr' => [
+        'webhook_secret' => env('SMS_MISR_WEBHOOK_SECRET'),
+    ],
+
+    'cequens' => [
+        'webhook_secret' => env('CEQUENS_WEBHOOK_SECRET'),
+    ],
+
+    'unifonic' => [
+        'webhook_secret' => env('UNIFONIC_WEBHOOK_SECRET'),
+    ],
+
+    'taqnyat' => [
+        'webhook_secret' => env('TAQNYAT_WEBHOOK_SECRET'),
+    ],
+
+    'msegat' => [
+        'webhook_secret' => env('MSEGAT_WEBHOOK_SECRET'),
+    ],
+
+    'infobip' => [
+        'webhook_secret' => env('INFOBIP_WEBHOOK_SECRET'),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Form Spam Protection

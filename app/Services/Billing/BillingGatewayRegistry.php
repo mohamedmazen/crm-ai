@@ -27,6 +27,7 @@ class BillingGatewayRegistry
         $appUrl = config('app.url', '');
         $successUrl = rtrim($appUrl, '/').'/app/billing?checkout=success';
         $cancelUrl = rtrim($appUrl, '/').'/app/pricing?checkout=canceled';
+        $tapWebhookUrl = rtrim($appUrl, '/').'/webhooks/tap';
 
         foreach ($configs as $row) {
             if (isset($this->gateways[$row->gateway])) {
@@ -70,6 +71,25 @@ class BillingGatewayRegistry
             // MyFatoorah: secret_key → api_key.
             if ($row->gateway === 'myfatoorah' && ! empty($creds['secret_key'] ?? '')) {
                 $this->gateways['myfatoorah'] = new MyFatoorahGateway(
+                    $creds['secret_key'],
+                    (bool) $row->test_mode,
+                    $successUrl,
+                    $cancelUrl
+                );
+            }
+            // Tap: secret_key → secret API key (also the webhook signing key).
+            if ($row->gateway === 'tap' && ! empty($creds['secret_key'] ?? '')) {
+                $this->gateways['tap'] = new TapGateway(
+                    $creds['secret_key'],
+                    $successUrl,
+                    $cancelUrl,
+                    $tapWebhookUrl
+                );
+            }
+            // Fawry: publishable_key → merchant code, secret_key → secure key.
+            if ($row->gateway === 'fawry' && ! empty($creds['secret_key'] ?? '')) {
+                $this->gateways['fawry'] = new FawryGateway(
+                    $creds['publishable_key'] ?? $creds['merchant_code'] ?? '',
                     $creds['secret_key'],
                     (bool) $row->test_mode,
                     $successUrl,
@@ -126,6 +146,25 @@ class BillingGatewayRegistry
                 $config['myfatoorah']['cancel_url'] ?? $cancelUrl
             );
         }
+
+        if (! isset($this->gateways['tap']) && ! empty($config['tap']['enabled']) && ($config['tap']['api_key'] ?? '')) {
+            $this->gateways['tap'] = new TapGateway(
+                $config['tap']['api_key'] ?? '',
+                $config['tap']['success_url'] ?? $successUrl,
+                $config['tap']['cancel_url'] ?? $cancelUrl,
+                $config['tap']['webhook_url'] ?? (rtrim($appUrl, '/').'/webhooks/tap')
+            );
+        }
+
+        if (! isset($this->gateways['fawry']) && ! empty($config['fawry']['enabled']) && ($config['fawry']['secure_key'] ?? '')) {
+            $this->gateways['fawry'] = new FawryGateway(
+                $config['fawry']['merchant_code'] ?? '',
+                $config['fawry']['secure_key'] ?? '',
+                (bool) ($config['fawry']['sandbox'] ?? true),
+                $config['fawry']['success_url'] ?? $successUrl,
+                $config['fawry']['cancel_url'] ?? $cancelUrl
+            );
+        }
     }
 
     /**
@@ -162,6 +201,8 @@ class BillingGatewayRegistry
             'paypal' => 'PayPal',
             'paymob' => 'Paymob',
             'myfatoorah' => 'MyFatoorah',
+            'fawry' => 'Fawry',
+            'tap' => 'Tap',
         ];
         foreach ($labels as $key => $label) {
             $g = $this->gateways[$key] ?? null;

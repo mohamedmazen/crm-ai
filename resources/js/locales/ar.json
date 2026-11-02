@@ -4085,6 +4085,9 @@
         "sender_id": "معرّف المُرسِل (تجاوز اختياري)",
         "sender_id_placeholder": "مثل MyBrand",
         "set_default": "تعيين كبوابة SMS افتراضية",
+        "region_egypt": "مصر",
+        "region_gcc": "الخليج (GCC)",
+        "region_global": "عالمي",
         "saving": "جارٍ الحفظ…"
     },
     "workspaces": {

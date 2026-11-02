@@ -11,7 +11,25 @@ use Inertia\Response;
 
 class SmsProviderController extends Controller
 {
-    public const PROVIDERS = ['twilio', 'nexmo', 'telnyx', 'clicksend', 'amazon_sns'];
+    public const PROVIDERS = [
+        'twilio', 'nexmo', 'telnyx', 'clicksend', 'amazon_sns',
+        'sms_misr', 'cequens', 'unifonic', 'taqnyat', 'msegat', 'infobip',
+    ];
+
+    /** Primary region used to group the providers UI. */
+    public const REGIONS = [
+        'sms_misr' => 'egypt',
+        'cequens' => 'gcc',
+        'unifonic' => 'gcc',
+        'taqnyat' => 'gcc',
+        'msegat' => 'gcc',
+        'twilio' => 'global',
+        'nexmo' => 'global',
+        'telnyx' => 'global',
+        'clicksend' => 'global',
+        'amazon_sns' => 'global',
+        'infobip' => 'global',
+    ];
 
     public const FIELDS = [
         'twilio' => [
@@ -41,6 +59,36 @@ class SmsProviderController extends Controller
             ['key' => 'sender_id',  'label' => 'Sender ID',             'type' => 'text',     'required' => false],
             ['key' => 'sms_type',   'label' => 'SMS Type (Transactional / Promotional)', 'type' => 'text', 'required' => false],
         ],
+        'sms_misr' => [
+            ['key' => 'username',    'label' => 'Username',                 'type' => 'text',     'required' => true],
+            ['key' => 'password',    'label' => 'Password',                 'type' => 'password', 'required' => true],
+            ['key' => 'sender',      'label' => 'Sender Token',             'type' => 'text',     'required' => true],
+            ['key' => 'environment', 'label' => 'Environment (1 = live, 2 = test)', 'type' => 'text', 'required' => false],
+            ['key' => 'language',    'label' => 'Language (1 = English, 2 = Arabic)', 'type' => 'text', 'required' => false],
+        ],
+        'cequens' => [
+            ['key' => 'username',    'label' => 'Service Username', 'type' => 'text',     'required' => true],
+            ['key' => 'api_key',     'label' => 'API Key',          'type' => 'password', 'required' => true],
+            ['key' => 'sender_name', 'label' => 'Sender Name',      'type' => 'text',     'required' => true],
+        ],
+        'unifonic' => [
+            ['key' => 'app_sid',   'label' => 'AppSid (Application ID)', 'type' => 'text', 'required' => true],
+            ['key' => 'sender_id', 'label' => 'Sender ID',               'type' => 'text', 'required' => false],
+        ],
+        'taqnyat' => [
+            ['key' => 'token',  'label' => 'Bearer Token', 'type' => 'password', 'required' => true],
+            ['key' => 'sender', 'label' => 'Sender Name',  'type' => 'text',     'required' => true],
+        ],
+        'msegat' => [
+            ['key' => 'username', 'label' => 'Username',   'type' => 'text',     'required' => true],
+            ['key' => 'api_key',  'label' => 'API Key',    'type' => 'password', 'required' => true],
+            ['key' => 'sender',   'label' => 'Sender Name', 'type' => 'text',    'required' => true],
+        ],
+        'infobip' => [
+            ['key' => 'api_key',  'label' => 'API Key',                        'type' => 'password', 'required' => true],
+            ['key' => 'base_url', 'label' => 'Base URL (e.g. xyz.api.infobip.com)', 'type' => 'text', 'required' => true],
+            ['key' => 'from',     'label' => 'Sender / From',                  'type' => 'text',     'required' => false],
+        ],
     ];
 
     public const LABELS = [
@@ -49,6 +97,12 @@ class SmsProviderController extends Controller
         'telnyx' => 'Telnyx',
         'clicksend' => 'ClickSend',
         'amazon_sns' => 'Amazon SNS',
+        'sms_misr' => 'SMS Misr',
+        'cequens' => 'CEQUENS',
+        'unifonic' => 'Unifonic',
+        'taqnyat' => 'Taqnyat',
+        'msegat' => 'Msegat',
+        'infobip' => 'Infobip',
     ];
 
     public function index(Request $request): Response
@@ -59,6 +113,7 @@ class SmsProviderController extends Controller
         $providers = collect(self::PROVIDERS)->map(fn ($p) => [
             'provider' => $p,
             'label' => self::LABELS[$p],
+            'region' => self::REGIONS[$p] ?? 'global',
             'fields' => self::FIELDS[$p],
             'configured' => $configs->has($p) && ! empty($configs->get($p)->credentials),
             'default' => $configs->get($p)?->default ?? false,

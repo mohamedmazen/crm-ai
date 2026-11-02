@@ -22,7 +22,10 @@ class SmsDriverManager
 
         // 2. Fall back to first configured system default (in priority order)
         $workspace = app(Workspace::class)->find($workspaceId);
-        foreach (['twilio', 'nexmo', 'telnyx', 'clicksend', 'amazon_sns'] as $provider) {
+        foreach ([
+            'twilio', 'nexmo', 'telnyx', 'clicksend', 'amazon_sns',
+            'sms_misr', 'cequens', 'unifonic', 'taqnyat', 'msegat', 'infobip',
+        ] as $provider) {
             $creds = CredentialResolver::for($workspace)->sms($provider);
             if ($creds) {
                 return static::build($provider, $creds->toArray());
@@ -40,6 +43,12 @@ class SmsDriverManager
             'telnyx' => new TelnyxDriver($creds['api_key'] ?? '', $creds['from'] ?? '', $creds['messaging_profile_id'] ?? ''),
             'clicksend' => new ClickSendDriver($creds['username'] ?? '', $creds['api_key'] ?? '', $creds['from'] ?? ''),
             'amazon_sns' => new AmazonSnsDriver($creds['access_key'] ?? '', $creds['secret_key'] ?? '', $creds['region'] ?? 'us-east-1', $creds['sender_id'] ?? '', $creds['sms_type'] ?? 'Transactional'),
+            'sms_misr' => new SmsMisrDriver($creds['username'] ?? '', $creds['password'] ?? '', $creds['sender'] ?? '', $creds['environment'] ?? '1', $creds['language'] ?? '2'),
+            'cequens' => new CequensDriver($creds['username'] ?? '', $creds['api_key'] ?? '', $creds['sender_name'] ?? ''),
+            'unifonic' => new UnifonicDriver($creds['app_sid'] ?? '', $creds['sender_id'] ?? ''),
+            'taqnyat' => new TaqnyatDriver($creds['token'] ?? '', $creds['sender'] ?? ''),
+            'msegat' => new MsegatDriver($creds['username'] ?? '', $creds['api_key'] ?? '', $creds['sender'] ?? ''),
+            'infobip' => new InfobipDriver($creds['api_key'] ?? '', $creds['base_url'] ?? '', $creds['from'] ?? ''),
             default => throw new RuntimeException("Unknown SMS provider: {$provider}"),
         };
     }

@@ -14,7 +14,7 @@ use Inertia\Response;
 class PaymentGatewayConfigController extends Controller
 {
     /** Gateways the admin panel can configure. */
-    private const GATEWAYS = ['stripe', 'paypal', 'paymob', 'myfatoorah'];
+    private const GATEWAYS = ['stripe', 'paypal', 'paymob', 'myfatoorah', 'fawry', 'tap'];
 
     /** Display labels (falls back to ucfirst for anything missing). */
     private const LABELS = [
@@ -22,6 +22,8 @@ class PaymentGatewayConfigController extends Controller
         'paypal' => 'PayPal',
         'paymob' => 'Paymob',
         'myfatoorah' => 'MyFatoorah',
+        'fawry' => 'Fawry',
+        'tap' => 'Tap Payments',
     ];
 
     public function index(): Response

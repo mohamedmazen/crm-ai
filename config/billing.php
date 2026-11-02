@@ -38,5 +38,23 @@ return [
             'success_url' => env('MYFATOORAH_SUCCESS_URL', env('APP_URL').'/app/billing?checkout=success'),
             'cancel_url' => env('MYFATOORAH_CANCEL_URL', env('APP_URL').'/app/pricing?checkout=canceled'),
         ],
+        // Fawry (Egypt) — one-time checkout: card, mobile wallet or cash at a Fawry outlet.
+        'fawry' => [
+            'enabled' => env('BILLING_FAWRY_ENABLED', false),
+            'merchant_code' => env('FAWRY_MERCHANT_CODE'),
+            'secure_key' => env('FAWRY_SECURE_KEY'),
+            'sandbox' => env('FAWRY_SANDBOX', true),
+            'success_url' => env('FAWRY_SUCCESS_URL', env('APP_URL').'/app/billing?checkout=success'),
+            'cancel_url' => env('FAWRY_CANCEL_URL', env('APP_URL').'/app/pricing?checkout=canceled'),
+        ],
+        // Tap Payments (Kuwait, Saudi Arabia, UAE, Bahrain, Oman, Qatar, Jordan, Egypt)
+        // MIT save-card pattern — merchant-initiated recurring via scheduler.
+        'tap' => [
+            'enabled' => env('BILLING_TAP_ENABLED', false),
+            'api_key' => env('TAP_API_KEY'),
+            'success_url' => env('TAP_SUCCESS_URL', env('APP_URL').'/app/billing?checkout=success'),
+            'cancel_url' => env('TAP_CANCEL_URL', env('APP_URL').'/app/pricing?checkout=canceled'),
+            'webhook_url' => env('TAP_WEBHOOK_URL', env('APP_URL').'/webhooks/tap'),
+        ],
     ],
 ];

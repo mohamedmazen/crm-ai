@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Plan;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class BillingCheckoutTest extends TestCase
@@ -55,5 +56,33 @@ class BillingCheckoutTest extends TestCase
             'gateway' => 'invalid',
         ]);
         $response->assertSessionHasErrors('gateway');
+    }
+
+    #[DataProvider('newGatewayProvider')]
+    public function test_checkout_accepts_new_gateways(string $gateway): void
+    {
+        $user = User::factory()->create(['role' => 'client', 'email_verified_at' => now()]);
+        $plan = Plan::factory()->create();
+
+        $response = $this->actingAs($user)->post(route('client.checkout.store'), [
+            'plan_id' => $plan->id,
+            'billing_cycle' => 'month',
+            'gateway' => $gateway,
+        ]);
+
+        // The gateway passes validation; it is simply not configured in the test environment.
+        $response->assertSessionHasNoErrors();
+        $response->assertSessionHas('error');
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function newGatewayProvider(): array
+    {
+        return [
+            'fawry' => ['fawry'],
+            'tap' => ['tap'],
+        ];
     }
 }

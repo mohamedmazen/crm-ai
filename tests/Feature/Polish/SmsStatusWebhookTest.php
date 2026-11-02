@@ -92,6 +92,67 @@ class SmsStatusWebhookTest extends TestCase
         ]);
     }
 
+    public function test_cequens_delivery_updates_recipient_status(): void
+    {
+        $this->makeRecipient('CEQ_DLR1');
+
+        $this->postJson(route('webhooks.sms.status', 'cequens'), [
+            'msgid' => 'CEQ_DLR1',
+            'statusid' => 1,
+        ])->assertOk();
+
+        $this->assertDatabaseHas('campaign_recipients', [
+            'provider_message_id' => 'CEQ_DLR1',
+            'status' => 'delivered',
+        ]);
+    }
+
+    public function test_unifonic_delivery_updates_recipient_status(): void
+    {
+        $this->makeRecipient('UN_001');
+
+        $this->postJson(route('webhooks.sms.status', 'unifonic'), [
+            'eventName' => 'dlr',
+            'body' => ['messageId' => 'UN_001', 'finalStatus' => 'DELIVRD'],
+        ])->assertOk();
+
+        $this->assertDatabaseHas('campaign_recipients', [
+            'provider_message_id' => 'UN_001',
+            'status' => 'delivered',
+        ]);
+    }
+
+    public function test_infobip_failed_status_maps_correctly(): void
+    {
+        $this->makeRecipient('IB_FAIL');
+
+        $this->postJson(route('webhooks.sms.status', 'infobip'), [
+            'results' => [
+                ['messageId' => 'IB_FAIL', 'status' => ['groupName' => 'UNDELIVERABLE']],
+            ],
+        ])->assertOk();
+
+        $this->assertDatabaseHas('campaign_recipients', [
+            'provider_message_id' => 'IB_FAIL',
+            'status' => 'failed',
+        ]);
+    }
+
+    public function test_taqnyat_delivery_updates_recipient_status(): void
+    {
+        $this->makeRecipient('TAQ_DLR');
+
+        $this->postJson(route('webhooks.sms.status', 'taqnyat'), [
+            'messageId' => 'TAQ_DLR',
+            'status' => 'Delivered',
+        ])->assertOk();
+
+        $this->assertDatabaseHas('campaign_recipients', [
+            'provider_message_id' => 'TAQ_DLR',
+            'status' => 'delivered',
+        ]);
+    }
+
     public function test_removed_provider_webhooks_return_not_found(): void
     {
         $this->postJson('/webhooks/sms/smsbd')->assertNotFound();

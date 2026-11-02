@@ -294,7 +294,7 @@ class LandingPageController extends Controller
             'landing.intcat_3_title' => 'E-commerce',
             'landing.intcat_3_items' => "Shopify\nWooCommerce\nMagento\nBigCommerce",
             'landing.intcat_4_title' => 'Payments & Billing',
-            'landing.intcat_4_items' => "Stripe\nPayPal\nPaymob\nMyFatoorah",
+            'landing.intcat_4_items' => "Stripe\nPayPal\nPaymob\nMyFatoorah\nFawry\nTap Payments",
             'landing.intcat_5_title' => 'CRM & Automation',
             'landing.intcat_5_items' => "Zapier\nHubSpot\nGoogle Sheets\nWebhooks",
             'landing.intcat_6_title' => 'Developer Tools',
