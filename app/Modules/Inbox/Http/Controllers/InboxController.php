@@ -427,6 +427,8 @@ class InboxController extends Controller
         $symbols = [
             'USD' => '$', 'EUR' => '€', 'GBP' => '£', 'JPY' => '¥', 'INR' => '₹',
             'AUD' => 'A$', 'CAD' => 'C$', 'NZD' => 'NZ$', 'BRL' => 'R$',
+            'EGP' => 'ج.م', 'SAR' => 'ر.س', 'AED' => 'د.إ', 'KWD' => 'د.ك',
+            'QAR' => 'ر.ق', 'BHD' => 'د.ب', 'OMR' => 'ر.ع',
         ];
 
         return $symbols[$currency] ?? $currency.' ';

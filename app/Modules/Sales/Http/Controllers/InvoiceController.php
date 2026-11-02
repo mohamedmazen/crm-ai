@@ -207,6 +207,6 @@ class InvoiceController extends Controller
     {
         $codes = Currency::where('enabled', true)->orderBy('code')->pluck('code')->all();
 
-        return $codes !== [] ? $codes : ['USD', 'EUR', 'GBP', 'AED', 'SAR', 'EGP'];
+        return $codes !== [] ? $codes : ['USD', 'EGP', 'SAR', 'AED', 'KWD', 'QAR', 'BHD', 'OMR'];
     }
 }

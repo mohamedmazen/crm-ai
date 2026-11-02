@@ -237,7 +237,7 @@ class QuoteController extends Controller
                 ->orderBy('name')
                 ->limit(500)
                 ->get(['id', 'name']),
-            'currencies' => $codes !== [] ? $codes : ['USD', 'EUR', 'GBP', 'AED', 'SAR', 'EGP'],
+            'currencies' => $codes !== [] ? $codes : ['USD', 'EGP', 'SAR', 'AED', 'KWD', 'QAR', 'BHD', 'OMR'],
             'defaultCurrency' => Currency::defaultCode(),
         ];
     }
