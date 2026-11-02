@@ -25,7 +25,7 @@ export default {
                 '3xs': ['0.625rem', { lineHeight: '0.875rem' }],
                 '2xs': ['0.6875rem', { lineHeight: '1rem' }],
             },
-            // WhatsMine palette — brand (360 Golden Yellow #F9A61A), accent
+            // AYDRA palette — brand (360 Golden Yellow #F9A61A), accent
             // (amber #FFBF00 / light-yellow #FFF78D), secondary (360 Warm Brown
             // #B07436). Source of truth: ./.branding
             //

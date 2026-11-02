@@ -338,7 +338,7 @@ class LeadSourceAndUtmTest extends TestCase
         $response = $this->get(route('tracker.script'));
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', 'application/javascript');
-        $this->assertStringContainsString('WhatsMineTracker', $response->getContent());
+        $this->assertStringContainsString('AydraTracker', $response->getContent());
         $this->assertStringContainsString('_wm_utm', $response->getContent());
     }
 

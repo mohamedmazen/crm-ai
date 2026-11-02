@@ -114,7 +114,7 @@ class TrackerScriptController extends Controller
     }
 
     // Expose global tracker API
-    window.WhatsMineTracker = {
+    window.AydraTracker = {
         getAttribution: getStoredAttribution,
         populateForms: populateFormInputs
     };

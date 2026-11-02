@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "whatsmine/whatsmine",
+    "name": "aydra/aydra",
     "type": "project",
-    "description": "WhatsMine — multi-channel customer messaging, AI chatbots, broadcasting and automation platform.",
+    "description": "AYDRA — AI Business Platform: multi-channel customer messaging, AI chatbots, broadcasting and automation.",
     "keywords": ["whatsapp", "messaging", "saas", "inbox", "automation"],
     "license": "proprietary",
     "require": {

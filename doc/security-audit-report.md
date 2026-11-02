@@ -1,12 +1,12 @@
 # تقرير التدقيق الأمني الشامل وخطة الإصلاح
 ## Comprehensive Security Audit Report & Remediation Plan
-**WhatsMine CRM — Senior Software Architect Security Audit**
+**AYDRA CRM — Senior Software Architect Security Audit**
 
 ---
 
 ## 📌 1. ملخص تنفيذي (Executive Summary)
 
-تم إجراء فحص وتدقيق أمني معماري شامل لكافة طبقات نظام **WhatsMine CRM** قبل مرحلة الرفع على سيرفر الإنتاج والـ VPS (aaPanel). شمل التدقيق:
+تم إجراء فحص وتدقيق أمني معماري شامل لكافة طبقات نظام **AYDRA CRM** قبل مرحلة الرفع على سيرفر الإنتاج والـ VPS (aaPanel). شمل التدقيق:
 - طبقات المصادقة وإدارة الجلسات (`Authentication & Session Management`).
 - العزل بين المشتركين في بيئة الـ Multi-tenancy (`Client & Workspace Isolation`).
 - مسارات الـ Webhooks وحماية الـ CSRF والتحقق من التوقيع الرقمي.
