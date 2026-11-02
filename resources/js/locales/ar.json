@@ -47,7 +47,9 @@
         "skip": "Skip",
         "confirm": "Confirm",
         "copy": "نسخ",
-        "copied": "تم النسخ!"
+        "copied": "تم النسخ!",
+        "hide": "Hide",
+        "show": "Show"
     },
     "nav": {
         "home": "الرئيسية",
@@ -382,7 +384,8 @@
         "delete_body": "عروض الأسعار المُنشأة تحتفظ ببنودها؛ سيُحذف المنتج من الكتالوج فقط. لا يمكن التراجع.",
         "status_${product": {
             "status}": "Status}"
-        }
+        },
+        "filter_status": "Filter Status"
     },
     "quotes": {
         "title": "عروض الأسعار",
@@ -470,7 +473,8 @@
         "public": {
             "accept": "Accept",
             "reject": "Reject"
-        }
+        },
+        "filter_status": "Filter Status"
     },
     "invoices": {
         "title": "الفواتير",
@@ -544,7 +548,8 @@
         "status_${invoice": {
             "status}": "Status}"
         },
-        "method_${value}": "Method ${Value}"
+        "method_${value}": "Method ${Value}",
+        "filter_status": "Filter Status"
     },
     "welcome": {
         "title": "ابنِ مواقع بالذكاء الاصطناعي.",
@@ -604,13 +609,8 @@
     "client": {
         "profile": {
             "edit": "تعديل",
-            "2fa": {
-                "enable": "Enable",
-                "disable": "Disable"
-            },
-            "sessions": {
-                "destroy": "Destroy"
-            },
+            "2fa": "2Fa",
+            "sessions": "Sessions",
             "update": "Update",
             "destroy": "Destroy"
         },
@@ -781,10 +781,7 @@
             "index": "القائمة",
             "store": "حفظ",
             "destroy": "حذف",
-            "contacts": {
-                "attach": "Attach",
-                "detach": "Detach"
-            }
+            "contacts": "Contacts"
         },
         "whatsapp": {
             "templates": {
@@ -806,7 +803,10 @@
                 "create": "إنشاء",
                 "edit": "تعديل"
             },
-            "setup": "Setup"
+            "setup": {
+                "destroy": "Destroy",
+                "manual": "Manual"
+            }
         },
         "broadcasts": {
             "campaigns": {
@@ -823,7 +823,8 @@
                 "store": "حفظ",
                 "destroy": "حذف",
                 "detach": "فصل",
-                "attach": "إرفاق"
+                "attach": "إرفاق",
+                "index": "Index"
             },
             "typing": "يكتب",
             "notes": {
@@ -838,7 +839,10 @@
             "templates": "القوالب",
             "assign": "تعيين",
             "setup": {
-                "destroy": "Destroy"
+                "resubscribe": "Resubscribe",
+                "manual": {
+                    "instagram": "Instagram"
+                }
             },
             "activities": {
                 "index": "Index"
@@ -995,7 +999,11 @@
                 "response": "Response",
                 "sources": "Sources",
                 "export": "Export",
-                "schedules": "Schedules"
+                "schedules": {
+                    "update": "Update",
+                    "store": "Store",
+                    "destroy": "Destroy"
+                }
             }
         },
         "push": {
@@ -1043,12 +1051,23 @@
                 "connect": "اتصال"
             }
         },
-        "workspaces": "Workspaces",
+        "workspaces": {
+            "switch": "Switch",
+            "index": "Index",
+            "store": "Store"
+        },
         "settings": {
             "update": "تحديث",
             "notifications": "الإشعارات",
             "index": "Index",
-            "gdpr": "Gdpr"
+            "gdpr": {
+                "erasure": {
+                    "store": "Store",
+                    "cancel": "Cancel"
+                },
+                "retention": "Retention",
+                "dpa": "Dpa"
+            }
         },
         "team": {
             "store": "متجر",
@@ -1095,9 +1114,7 @@
         "sales": {
             "forms": {
                 "index": "Index",
-                "builder": {
-                    "update": "Update"
-                },
+                "builder": "Builder",
                 "store": "Store",
                 "destroy": "Destroy",
                 "analytics": "Analytics"
@@ -1116,9 +1133,7 @@
             },
             "sequences": {
                 "index": "Index",
-                "builder": {
-                    "update": "Update"
-                },
+                "builder": "Builder",
                 "status": "Status",
                 "enroll": "Enroll",
                 "store": "Store",
@@ -1497,38 +1512,40 @@
         "secret_key_hint": "المفتاح السري للخادم — حافظ على سريته",
         "stripe_webhook_hint": "سر توقيع Webhook‏ (whsec_…) من لوحة تحكم Stripe",
         "webhook_hint": "سر Webhook المستخدم للتحقق من أحداث بوابة الدفع الواردة",
-        "clients": "Clients",
-        "subscriptions": {
+        "clients": {
             "index": "Index",
+            "users": {
+                "index": "Index",
+                "store": "Store",
+                "update": "Update",
+                "destroy": "Destroy"
+            },
+            "impersonate": "Impersonate",
+            "destroy": "Destroy",
+            "export": "Export",
             "store": "Store",
-            "export": "Export"
+            "update": "Update"
         },
-        "payments": "Payments",
-        "plans": "Plans",
-        "currencies": {
+        "subscriptions": "Subscriptions",
+        "payments": {
+            "index": "Index"
+        },
+        "plans": {
             "index": "Index",
             "update": "Update",
+            "duplicate": "Duplicate",
+            "destroy": "Destroy",
+            "reorder": "Reorder",
             "store": "Store"
         },
-        "admins": "Admins",
-        "settings": {
+        "currencies": "Currencies",
+        "admins": {
             "index": "Index",
-            "general": {
-                "update": "Update"
-            },
-            "logo": {
-                "upload": "Upload",
-                "delete": "Delete"
-            },
-            "favicon": {
-                "upload": "Upload",
-                "delete": "Delete"
-            },
-            "update": "Update",
-            "firebase": {
-                "update": "Update"
-            }
+            "destroy": "Destroy",
+            "store": "Store",
+            "update": "Update"
         },
+        "settings": "Settings",
         "ai": {
             "index": "الفهرس"
         },
@@ -1612,11 +1629,7 @@
         "recent_payments": "Recent payments",
         "amount": "Amount",
         "last_n_days": "Last {{n}} days",
-        "license": {
-            "index": "Index",
-            "deactivate": "Deactivate",
-            "activate": "Activate"
-        },
+        "license": "License",
         "add_currency": "Add Currency",
         "currency_inherit": "Platform default",
         "exchange_rate_hint": "Exchange rate is how much one unit of the currency is worth in USD — EUR is 1.087, INR is about 0.012. The currency with rate 1 is the reference. Setting a currency as Default makes it the platform-wide currency for anyone who has not picked their own.",
@@ -2056,7 +2069,9 @@
         "live_preview": "معاينة مباشرة",
         "variables_hint": "تظهر المتغيّرات على شكل <field>[الحقل]<\/field>. يحصل كل مستلم على قيمته الخاصة.",
         "at_a_glance": "نظرة سريعة",
-        "reachable": "قابل للوصول"
+        "reachable": "قابل للوصول",
+        "filter_channel": "Filter Channel",
+        "filter_status": "Filter Status"
     },
     "form": {
         "submitted": "تم الإرسال"
@@ -2284,7 +2299,8 @@
         "sales_utm_campaign": "حملة UTM",
         "series_posts": "المنشورات",
         "post_no_title": "(بلا عنوان)",
-        "no_posts_found": "لم يتم العثور على منشورات"
+        "no_posts_found": "لم يتم العثور على منشورات",
+        "open_post": "Open Post"
     },
     "wamid": {
         "xxx": "xxx"
@@ -3267,7 +3283,11 @@
         "bulk_segments_btn": "Segments",
         "bulk_tags_title": "Tags for {{count}} contact(s)",
         "bulk_segments_title": "Segments for {{count}} contact(s)",
-        "bulk_apply": "Apply to {{count}} contact(s)"
+        "bulk_apply": "Apply to {{count}} contact(s)",
+        "view_contact": "View Contact",
+        "delete_contact": "Delete Contact",
+        "seg_remove_rule": "Seg Remove Rule",
+        "seg_delete": "Seg Delete"
     },
     "ui": {
         "search_placeholder": "ابحث عن العملاء والمستخدمين والخطط…",
@@ -3340,7 +3360,8 @@
         "date_prev": "Previous",
         "date_next": "Next",
         "date_time": "Time",
-        "date_today": "Today"
+        "date_today": "Today",
+        "clear": "Clear"
     },
     "inbox_ui": {
         "new_conversation": "محادثة جديدة",
@@ -3647,7 +3668,8 @@
         "manual_page_id": "Facebook Page ID",
         "manual_page_id_help": "Found in your Facebook Page → About → Page transparency, or in Meta Business Suite → Pages.",
         "manual_page_token": "Page Access Token",
-        "connected_with_warnings": "Connected, but with warnings — inbound messages may not arrive:"
+        "connected_with_warnings": "Connected, but with warnings — inbound messages may not arrive:",
+        "assign_chatbot": "Assign Chatbot"
     },
     "notifications": {
         "preferences_title": "تفضيلات الإشعارات",
@@ -3721,7 +3743,10 @@
         "bc_install_hint": "ثبّت التطبيق من لوحة تحكم BigCommerce ‏(Apps ← My Apps). ستتم إعادة توجيهك إلى هنا تلقائيًا بمجرد الموافقة.",
         "connect_with": "الربط عبر",
         "or_manual": "أو أدخل بيانات اعتماد API",
-        "stock_n_low": "{{count}} منخفض"
+        "stock_n_low": "{{count}} منخفض",
+        "filter_store": "Filter Store",
+        "filter_fulfillment": "Filter Fulfillment",
+        "disconnect": "Disconnect"
     },
     "webpush": {
         "vapid_public_key": "مفتاح VAPID العام"
@@ -4096,7 +4121,10 @@
         "region_egypt": "مصر",
         "region_gcc": "الخليج (GCC)",
         "region_global": "عالمي",
-        "saving": "جارٍ الحفظ…"
+        "saving": "جارٍ الحفظ…",
+        "region_${group": {
+            "region}": "Region}"
+        }
     },
     "workspaces": {
         "title": "مساحات العمل",
@@ -4294,7 +4322,11 @@
         "manual_connecting": "Connecting…",
         "manual_connect": "Connect",
         "manual_setup": "Manual setup",
-        "manual_title": "Manual setup — {{network}}"
+        "manual_title": "Manual setup — {{network}}",
+        "filter_status": "Filter Status",
+        "prev_month": "Prev Month",
+        "next_month": "Next Month",
+        "filter_platform": "Filter Platform"
     },
     "forms": {
         "title": "نماذج التقاط العملاء",
@@ -4812,7 +4844,13 @@
         },
         "risk_${risk": {
             "level}": "Level}"
-        }
+        },
+        "filter_pipeline": "Filter Pipeline",
+        "filter_stage": "Filter Stage",
+        "filter_assignee": "Filter Assignee",
+        "filter_tag": "Filter Tag",
+        "pipeline": "Pipeline",
+        "reason_type": "Reason Type"
     },
     "automation": {
         "title": "الأتمتة",
@@ -5522,7 +5560,10 @@
         "all_priorities": "All Priorities",
         "all_types": "All Types",
         "empty_title": "Empty Title",
-        "empty_subtitle": "Empty Subtitle"
+        "empty_subtitle": "Empty Subtitle",
+        "filter_assignee": "Filter Assignee",
+        "filter_priority": "Filter Priority",
+        "filter_type": "Filter Type"
     },
     "Your booking is confirmed": "Your Booking Is Confirmed",
     "there": "There",
@@ -5550,6 +5591,10 @@
     "crm": {
         "yourcompany": {
             "com": "Com"
+        },
+        "onboarding": {
+            "dismissed": "Dismissed",
+            "sample": "Sample"
         }
     },
     "Amount due": "Amount Due",

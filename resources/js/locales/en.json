@@ -53,7 +53,9 @@
         "skip": "Skip",
         "confirm": "Confirm",
         "copy": "Copy",
-        "copied": "Copied!"
+        "copied": "Copied!",
+        "hide": "Hide",
+        "show": "Show"
     },
     "nav": {
         "home": "Home",
@@ -388,7 +390,8 @@
         "delete_body": "Quotes already built keep their line items; the product is only removed from your catalogue. This cannot be undone.",
         "status_${product": {
             "status}": "Status}"
-        }
+        },
+        "filter_status": "Filter Status"
     },
     "quotes": {
         "title": "Quotes",
@@ -476,7 +479,8 @@
         "public": {
             "accept": "Accept",
             "reject": "Reject"
-        }
+        },
+        "filter_status": "Filter Status"
     },
     "invoices": {
         "title": "Invoices",
@@ -550,7 +554,8 @@
         "status_${invoice": {
             "status}": "Status}"
         },
-        "method_${value}": "Method ${Value}"
+        "method_${value}": "Method ${Value}",
+        "filter_status": "Filter Status"
     },
     "welcome": {
         "title": "Build websites with AI.",
@@ -610,8 +615,13 @@
     "client": {
         "profile": {
             "edit": "Edit",
-            "2fa": "2Fa",
-            "sessions": "Sessions",
+            "2fa": {
+                "enable": "Enable",
+                "disable": "Disable"
+            },
+            "sessions": {
+                "destroy": "Destroy"
+            },
             "update": "Update",
             "destroy": "Destroy"
         },
@@ -782,7 +792,10 @@
             "index": "Index",
             "store": "Store",
             "destroy": "Destroy",
-            "contacts": "Contacts"
+            "contacts": {
+                "attach": "Attach",
+                "detach": "Detach"
+            }
         },
         "whatsapp": {
             "templates": {
@@ -805,7 +818,7 @@
                 "edit": "Edit"
             },
             "setup": {
-                "destroy": "Destroy"
+                "manual": "Manual"
             }
         },
         "broadcasts": {
@@ -823,7 +836,8 @@
                 "store": "Store",
                 "destroy": "Destroy",
                 "detach": "Detach",
-                "attach": "Attach"
+                "attach": "Attach",
+                "index": "Index"
             },
             "typing": "Typing",
             "notes": {
@@ -837,7 +851,13 @@
             "start": "Start",
             "templates": "Templates",
             "assign": "Assign",
-            "setup": "Setup",
+            "setup": {
+                "destroy": "Destroy",
+                "resubscribe": "Resubscribe",
+                "manual": {
+                    "instagram": "Instagram"
+                }
+            },
             "activities": {
                 "index": "Index"
             }
@@ -993,7 +1013,11 @@
                 "response": "Response",
                 "sources": "Sources",
                 "export": "Export",
-                "schedules": "Schedules"
+                "schedules": {
+                    "update": "Update",
+                    "store": "Store",
+                    "destroy": "Destroy"
+                }
             }
         },
         "push": {
@@ -1072,16 +1096,19 @@
                 "connect": "Connect"
             }
         },
-        "workspaces": {
-            "switch": "Switch",
-            "index": "Index",
-            "store": "Store"
-        },
+        "workspaces": "Workspaces",
         "settings": {
             "update": "Update",
             "notifications": "Notifications",
             "index": "Index",
-            "gdpr": "Gdpr"
+            "gdpr": {
+                "erasure": {
+                    "store": "Store",
+                    "cancel": "Cancel"
+                },
+                "retention": "Retention",
+                "dpa": "Dpa"
+            }
         },
         "team": {
             "store": "Store",
@@ -1097,9 +1124,7 @@
         "sales": {
             "forms": {
                 "index": "Index",
-                "builder": {
-                    "update": "Update"
-                },
+                "builder": "Builder",
                 "store": "Store",
                 "destroy": "Destroy",
                 "analytics": "Analytics"
@@ -1118,9 +1143,7 @@
             },
             "sequences": {
                 "index": "Index",
-                "builder": {
-                    "update": "Update"
-                },
+                "builder": "Builder",
                 "status": "Status",
                 "enroll": "Enroll",
                 "store": "Store",
@@ -1416,11 +1439,7 @@
         "tax_rates": "Tax Rates",
         "landing_page": "Site Content",
         "cms_pages": "CMS Pages",
-        "license": {
-            "index": "Index",
-            "deactivate": "Deactivate",
-            "activate": "Activate"
-        },
+        "license": "License",
         "cron_setup": "Cron Setup",
         "support": {
             "index": "Index",
@@ -1537,40 +1556,38 @@
         "secret_key_hint": "Server-side secret key — keep this private",
         "stripe_webhook_hint": "Webhook signing secret (whsec_…) from the Stripe dashboard",
         "webhook_hint": "Webhook secret used to verify incoming gateway events",
-        "clients": {
+        "clients": "Clients",
+        "subscriptions": {
             "index": "Index",
-            "users": {
-                "index": "Index",
-                "store": "Store",
-                "update": "Update",
-                "destroy": "Destroy"
-            },
-            "impersonate": "Impersonate",
-            "destroy": "Destroy",
-            "export": "Export",
             "store": "Store",
-            "update": "Update"
+            "export": "Export"
         },
-        "subscriptions": "Subscriptions",
-        "payments": {
-            "index": "Index"
-        },
-        "plans": {
+        "payments": "Payments",
+        "plans": "Plans",
+        "currencies": {
             "index": "Index",
             "update": "Update",
-            "duplicate": "Duplicate",
-            "destroy": "Destroy",
-            "reorder": "Reorder",
             "store": "Store"
         },
-        "currencies": "Currencies",
-        "admins": {
+        "admins": "Admins",
+        "settings": {
             "index": "Index",
-            "destroy": "Destroy",
-            "store": "Store",
-            "update": "Update"
+            "general": {
+                "update": "Update"
+            },
+            "logo": {
+                "upload": "Upload",
+                "delete": "Delete"
+            },
+            "favicon": {
+                "upload": "Upload",
+                "delete": "Delete"
+            },
+            "update": "Update",
+            "firebase": {
+                "update": "Update"
+            }
         },
-        "settings": "Settings",
         "ai": {
             "index": "Index"
         },
@@ -2060,7 +2077,9 @@
         "live_preview": "Live preview",
         "variables_hint": "Variables show up as <field>[Field]<\/field>. Each recipient gets their own value.",
         "at_a_glance": "At a glance",
-        "reachable": "Reachable"
+        "reachable": "Reachable",
+        "filter_channel": "Filter Channel",
+        "filter_status": "Filter Status"
     },
     "form": {
         "submitted": "Submitted"
@@ -2288,7 +2307,8 @@
         "sales_utm_campaign": "UTM campaign",
         "series_posts": "Posts",
         "post_no_title": "(no title)",
-        "no_posts_found": "No posts found"
+        "no_posts_found": "No posts found",
+        "open_post": "Open Post"
     },
     "wamid": {
         "xxx": "Xxx"
@@ -2525,7 +2545,10 @@
         "view_contact": "View contact",
         "message": "Message",
         "products_synced": "Products Synced",
-        "stock_n_low": "{{count}} low"
+        "stock_n_low": "{{count}} low",
+        "filter_store": "Filter Store",
+        "filter_fulfillment": "Filter Fulfillment",
+        "disconnect": "Disconnect"
     },
     "integrations": {
         "title": "Integrations",
@@ -3337,7 +3360,11 @@
         "bulk_new_tag_placeholder": "New tag name…",
         "bulk_no_tags": "No tags yet — type a name above to create one.",
         "bulk_no_segments": "No static segments yet. Create one under Contacts → Segments.",
-        "bulk_apply": "Apply to {{count}} contact(s)"
+        "bulk_apply": "Apply to {{count}} contact(s)",
+        "view_contact": "View Contact",
+        "delete_contact": "Delete Contact",
+        "seg_remove_rule": "Seg Remove Rule",
+        "seg_delete": "Seg Delete"
     },
     "ui": {
         "search_placeholder": "Search clients, users, plans…",
@@ -3410,7 +3437,8 @@
         "browse": "browse",
         "max_size_mb": "max {{max}} MB",
         "file_exceeds_limit": "File exceeds {{max}} MB limit.",
-        "upload_failed_retry": "Upload failed. Please try again."
+        "upload_failed_retry": "Upload failed. Please try again.",
+        "clear": "Clear"
     },
     "inbox_ui": {
         "new_conversation": "New Conversation",
@@ -3722,7 +3750,8 @@
         "health_last_inbound": "Last inbound message",
         "health_${check": {
             "key}": "Key}"
-        }
+        },
+        "assign_chatbot": "Assign Chatbot"
     },
     "notifications": {
         "preferences_title": "Notification Preferences",
@@ -4569,7 +4598,10 @@
         "region_egypt": "Egypt",
         "region_gcc": "Gulf (GCC)",
         "region_global": "Global",
-        "saving": "Saving…"
+        "saving": "Saving…",
+        "region_${group": {
+            "region}": "Region}"
+        }
     },
     "social": {
         "composer_title": "Post Composer",
@@ -4755,7 +4787,11 @@
         "select_one_post": "Select at least one post to schedule.",
         "plan_limit_reached": "Plan limit reached. Please upgrade your plan.",
         "scheduling_failed": "Scheduling failed. Please try again.",
-        "manual_help_${network}": "Manual Help ${Network}"
+        "manual_help_${network}": "Manual Help ${Network}",
+        "filter_status": "Filter Status",
+        "prev_month": "Prev Month",
+        "next_month": "Next Month",
+        "filter_platform": "Filter Platform"
     },
     "forms": {
         "title": "Lead Capture Forms",
@@ -5261,7 +5297,13 @@
         },
         "risk_${risk": {
             "level}": "Level}"
-        }
+        },
+        "filter_pipeline": "Filter Pipeline",
+        "filter_stage": "Filter Stage",
+        "filter_assignee": "Filter Assignee",
+        "filter_tag": "Filter Tag",
+        "pipeline": "Pipeline",
+        "reason_type": "Reason Type"
     },
     "workspaces": {
         "title": "Workspaces",
@@ -5538,7 +5580,10 @@
         "all_priorities": "All Priorities",
         "all_types": "All Types",
         "empty_title": "Empty Title",
-        "empty_subtitle": "Empty Subtitle"
+        "empty_subtitle": "Empty Subtitle",
+        "filter_assignee": "Filter Assignee",
+        "filter_priority": "Filter Priority",
+        "filter_type": "Filter Type"
     },
     "Your booking is confirmed": "Your Booking Is Confirmed",
     "there": "There",
@@ -5566,6 +5611,10 @@
     "crm": {
         "yourcompany": {
             "com": "Com"
+        },
+        "onboarding": {
+            "dismissed": "Dismissed",
+            "sample": "Sample"
         }
     },
     "Amount due": "Amount Due",
