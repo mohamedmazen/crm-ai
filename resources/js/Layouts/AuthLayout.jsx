@@ -42,7 +42,7 @@ const SOCIAL_PROOF = [
 function LeftPane({ variant }) {
     const { t } = useTranslation();
     const features = variant === 'admin' ? ADMIN_FEATURES : CLIENT_FEATURES;
-    const { appName, logoUrl } = useBranding();
+    const { appName } = useBranding();
 
     return (
         <div className="relative hidden lg:flex lg:w-[45%] flex-col justify-between overflow-hidden p-10 text-white bg-secondary-800">
@@ -65,16 +65,9 @@ function LeftPane({ variant }) {
                 }}
             />
 
-            {/* Brand: the uploaded logo stands alone; the name is only a fallback
-                for installs that haven't uploaded one. */}
+            {/* Brand: this pane is always dark, so the dark lockup is always right. */}
             <div className="relative flex items-center gap-3">
-                {logoUrl ? (
-                    <ApplicationLogo className="h-10 max-w-[220px] fill-current text-white/90" alt={appName} />
-                ) : (
-                    <span className="text-xl font-bold tracking-tight text-white">
-                        {appName}
-                    </span>
-                )}
+                <ApplicationLogo tone="dark" className="h-10 max-w-[220px]" alt={appName} />
                 {variant === 'admin' && (
                     <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2 py-0.5 text-xs font-medium text-white">
                         <ShieldCheck className="h-3 w-3" />
@@ -206,7 +199,7 @@ export default function AuthLayout({
     error,
     children,
 }) {
-    const { appName, logoUrl } = useBranding();
+    const { appName } = useBranding();
 
     return (
         <div className="flex min-h-screen">
@@ -218,13 +211,7 @@ export default function AuthLayout({
                 <div className="flex items-center justify-between px-6 py-4">
                     {/* Mobile logo */}
                     <Link href={route('home')} className="flex items-center gap-2 lg:hidden">
-                        {logoUrl ? (
-                            <ApplicationLogo className="h-8 max-w-[160px] fill-current text-brand-600 dark:text-brand-400" alt={appName} />
-                        ) : (
-                            <span className="text-sm font-semibold text-neutral-900 dark:text-white">
-                                {appName}
-                            </span>
-                        )}
+                        <ApplicationLogo className="h-8 max-w-[160px]" alt={appName} />
                     </Link>
                     <span className="hidden lg:block" />
                     <div className="flex items-center gap-2">

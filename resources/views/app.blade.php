@@ -54,10 +54,9 @@
             <link rel="icon" href="{{ $faviconUrl }}">
             <link rel="apple-touch-icon" href="{{ $faviconUrl }}">
         @else
-            {{-- Fallback brand icon: SVG for modern browsers, .ico for legacy,
-                 PNG apple-touch for iOS home-screen. See public/aydra-icon.svg. --}}
-            <link rel="icon" type="image/svg+xml" href="/aydra-icon.svg">
-            <link rel="alternate icon" href="/favicon.ico" sizes="any">
+            {{-- Fallback brand icon: a multi-size .ico for browsers plus a PNG
+                 apple-touch for the iOS home screen (see public/brand/). --}}
+            <link rel="icon" href="/favicon.ico" sizes="any">
             <link rel="apple-touch-icon" href="/apple-touch-icon.png">
         @endif
 

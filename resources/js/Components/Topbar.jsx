@@ -115,7 +115,7 @@ export default function Topbar({
             <div className="flex min-w-0 flex-1 items-center gap-3">
                 {showLogo && (
                     <Link href={logoHref} className="shrink-0">
-                        <ApplicationLogo className="h-8 w-auto fill-current text-gray-900 dark:text-neutral-100" />
+                        <ApplicationLogo tone="auto" className="h-8 w-auto" />
                     </Link>
                 )}
                 {title && (

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
+import ApplicationLogo from '@/Components/ApplicationLogo';
 import { Dropdown } from '@/Components/ui';
 import { useTheme } from '@/context/ThemeContext';
 import { useLocale } from '@/hooks/useLocale';
@@ -58,13 +59,13 @@ export default function LandingLayout({ children }) {
     const supportedLocales = page.props.supportedLocales ?? { en: 'English' };
     const localeEntries = Object.entries(supportedLocales);
     const { appName, logoUrl } = useBranding();
-    // No uploaded logo → fall back to the brand name as a wordmark rather than a
-    // vendor logo file, which a white-label install has no way to replace.
+    // Header and footer are always dark, so an uploaded logo is shown as-is and
+    // the bundled fallback uses the dark lockup.
     const brandMark = (className) =>
         logoUrl ? (
             <img src={logoUrl} alt={appName} className={className} />
         ) : (
-            <span className="text-xl font-semibold text-white truncate max-w-[180px]">{appName}</span>
+            <ApplicationLogo tone="dark" className={className} alt={appName} />
         );
     const [mobileOpen, setMobileOpen] = useState(false);
     const landing = page.props.landing ?? {};

@@ -2,6 +2,7 @@ import { Link } from '@inertiajs/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, Lock, Plus, X, Search, PanelLeftClose, PanelLeftOpen, Star, Clock } from 'lucide-react';
+import ApplicationLogo from '@/Components/ApplicationLogo';
 import { useBranding } from '@/hooks/useBranding';
 import useNavPrefs, { navItemKey } from '@/hooks/useNavPrefs';
 
@@ -413,7 +414,6 @@ export default function Sidebar({
     open = false,
     onClose,
     footer,
-    title,
     logo,
     showCreateButton = true,
     // rail (client)
@@ -433,15 +433,21 @@ export default function Sidebar({
         <aside className={`flex h-full ${width} flex-col bg-secondary-900 dark:bg-neutral-900`}>
             <div className="flex h-14 shrink-0 items-center gap-2.5 border-b border-white/8 px-4">
                 {collapsed && enableCollapse ? (
-                    <span className="mx-auto text-sm font-semibold text-white" title={appName}>
-                        {(appName || 'C').charAt(0).toUpperCase()}
+                    <span className="mx-auto flex items-center justify-center" title={appName}>
+                        {logoUrl ? (
+                            <span className="text-sm font-semibold text-white">
+                                {(appName || 'C').charAt(0).toUpperCase()}
+                            </span>
+                        ) : (
+                            <img src="/brand/aydra-mark-dark.png" alt={appName} className="h-7 w-7 object-contain" />
+                        )}
                     </span>
                 ) : logoUrl ? (
                     <img src={logoUrl} alt={appName} className="h-7 max-w-[140px] object-contain" />
                 ) : logo ? (
                     logo
                 ) : (
-                    <span className="truncate text-lg font-semibold text-white">{title || appName}</span>
+                    <ApplicationLogo tone="dark" className="h-7 max-w-[140px]" alt={appName} />
                 )}
                 {enableCollapse && (
                     <button

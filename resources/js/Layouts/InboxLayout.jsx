@@ -75,7 +75,6 @@ export default function InboxLayout({ children }) {
                 <Sidebar
                     open={sidebarOpen}
                     onClose={() => setSidebarOpen(false)}
-                    title={t('client.panel') || 'Client Panel'}
                     logo={logoUrl ? <img src={logoUrl} alt="Logo" className="h-8 max-w-[160px] object-contain" /> : null}
                     showCreateButton={false}
                     home={navHome}

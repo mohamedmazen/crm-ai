@@ -23,11 +23,11 @@ export default function SeoHead({ title, description, keywords, image, canonical
         canonical ||
         (typeof window !== 'undefined' ? window.location.href.split(/[?#]/)[0] : undefined);
 
-    // Fall back to the brand icon when a page doesn't supply its own og:image.
-    // A page-provided `image` is assumed wide (2:1), so it gets a large card;
-    // the square brand fallback uses the standard summary card.
-    const ogImage = image || faviconUrl || `${origin}/aydra-icon-512.png`;
-    const twitterCard = image ? 'summary_large_image' : 'summary';
+    // Fall back to the bundled 1200x630 social card when a page doesn't supply
+    // its own og:image. An uploaded favicon is square, so only that case uses the
+    // small summary card.
+    const ogImage = image || faviconUrl || `${origin}/brand/aydra-og.jpg`;
+    const twitterCard = faviconUrl && !image ? 'summary' : 'summary_large_image';
 
     const graphs = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 

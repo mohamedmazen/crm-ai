@@ -37,8 +37,7 @@
         <link rel="icon" href="{{ $faviconUrl }}">
         <link rel="apple-touch-icon" href="{{ $faviconUrl }}">
     @else
-        <link rel="icon" type="image/svg+xml" href="/aydra-icon.svg">
-        <link rel="alternate icon" href="/favicon.ico" sizes="any">
+        <link rel="icon" href="/favicon.ico" sizes="any">
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     @endif
     <style>

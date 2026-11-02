@@ -137,7 +137,6 @@ export default function AdminLayout({ title = 'Admin', header, children }) {
             <Sidebar
                 open={sidebarOpen}
                 onClose={() => setSidebarOpen(false)}
-                title={t('nav.admin')}
                 logo={logoUrl ? <img src={logoUrl} alt="Logo" className="h-8 max-w-[160px] object-contain" /> : null}
                 showCreateButton={false}
                 navItems={adminNav.map((item, i) => ({
