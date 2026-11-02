@@ -3,6 +3,7 @@ import AdminLayout from '@/Layouts/AdminLayout';
 import { Button, Card, Tabs } from '@/Components/ui';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
+import { readableTextColor } from '@/lib/contrast';
 import { Upload, X, Image, Globe, Palette, ShieldCheck, Settings2, Code2, Flame } from 'lucide-react';
 
 // ─── Appearance controls ──────────────────────────────────────────────────────
@@ -42,12 +43,15 @@ function ColorField({ label, hint, value, onChange, error, placeholder }) {
 function ThemePreview({ primary, secondary, fontSlug, fontName }) {
     const { t } = useTranslation();
     const valid = (c) => /^#[0-9A-Fa-f]{6}$/.test(c ?? '');
+    const primaryHex = valid(primary) ? primary : '#F9A61A';
+    const secondaryHex = valid(secondary) ? secondary : '#B07436';
 
     // The chosen font is only in the document if it happens to be the saved one, so
     // pull it from the CDN on demand to make the preview truthful. Bunny dedupes by
-    // href, and the browser drops the sheet when this unmounts.
+    // href, and the browser drops the sheet when this unmounts. BDO Grotesk is
+    // self-hosted by app.css, so it needs no extra request.
     useEffect(() => {
-        if (!fontSlug) return;
+        if (!fontSlug || fontSlug === 'bdo-grotesk') return;
         const link = document.createElement('link');
         link.rel = 'stylesheet';
         link.href = `https://fonts.bunny.net/css?family=${encodeURIComponent(fontSlug)}:400,500,600,700&display=swap`;
@@ -63,14 +67,14 @@ function ThemePreview({ primary, secondary, fontSlug, fontName }) {
             </p>
             <div className="flex flex-wrap items-center gap-3" style={fontName ? { fontFamily: `'${fontName}', sans-serif` } : undefined}>
                 <span
-                    className="rounded-soft px-4 py-2 text-sm font-medium text-white"
-                    style={{ backgroundColor: valid(primary) ? primary : '#467235' }}
+                    className="rounded-soft px-4 py-2 text-sm font-medium"
+                    style={{ backgroundColor: primaryHex, color: readableTextColor(primaryHex) }}
                 >
                     {t('settings.preview_primary_button')}
                 </span>
                 <span
-                    className="rounded-soft px-4 py-2 text-sm font-medium text-white"
-                    style={{ backgroundColor: valid(secondary) ? secondary : '#283f24' }}
+                    className="rounded-soft px-4 py-2 text-sm font-medium"
+                    style={{ backgroundColor: secondaryHex, color: readableTextColor(secondaryHex) }}
                 >
                     {t('settings.preview_secondary_button')}
                 </span>
@@ -88,11 +92,13 @@ function GeneralTab({ general, fonts, flash }) {
     const { t } = useTranslation();
     const { data, setData, put, processing, errors } = useForm({
         app_name:        general?.app_name        ?? '',
+        app_name_ar:     general?.app_name_ar     ?? '',
         app_tagline:     general?.app_tagline     ?? '',
+        app_tagline_ar:  general?.app_tagline_ar  ?? '',
         support_email:   general?.support_email   ?? '',
-        primary_color:   general?.primary_color   ?? '#467235',
-        secondary_color: general?.secondary_color ?? '#283f24',
-        font_family:     general?.font_family     ?? 'space-grotesk',
+        primary_color:   general?.primary_color   ?? '#F9A61A',
+        secondary_color: general?.secondary_color ?? '#B07436',
+        font_family:     general?.font_family     ?? 'bdo-grotesk',
         security_ip_allowlist_enabled: general?.security_ip_allowlist_enabled ?? '0',
         security_ip_allowlist:         general?.security_ip_allowlist ?? '',
     });
@@ -145,6 +151,20 @@ function GeneralTab({ general, fonts, flash }) {
                             </div>
 
                             <div className="space-y-1">
+                                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('settings.app_name_ar')}</label>
+                                <input
+                                    type="text"
+                                    value={data.app_name_ar}
+                                    onChange={(e) => setData('app_name_ar', e.target.value)}
+                                    placeholder={t('settings.app_name_ar_placeholder')}
+                                    dir="rtl"
+                                    className="w-full rounded-soft border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                                />
+                                <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('settings.app_name_ar_hint')}</p>
+                                {errors.app_name_ar && <p className="text-xs text-red-500">{errors.app_name_ar}</p>}
+                            </div>
+
+                            <div className="space-y-1">
                                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('settings.support_email')}</label>
                                 <input
                                     type="email"
@@ -167,6 +187,19 @@ function GeneralTab({ general, fonts, flash }) {
                                 />
                                 {errors.app_tagline && <p className="text-xs text-red-500">{errors.app_tagline}</p>}
                             </div>
+
+                            <div className="space-y-1 sm:col-span-2">
+                                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('settings.app_tagline_ar')}</label>
+                                <input
+                                    type="text"
+                                    value={data.app_tagline_ar}
+                                    onChange={(e) => setData('app_tagline_ar', e.target.value)}
+                                    placeholder={t('settings.app_tagline_ar_placeholder')}
+                                    dir="rtl"
+                                    className="w-full rounded-soft border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                                />
+                                {errors.app_tagline_ar && <p className="text-xs text-red-500">{errors.app_tagline_ar}</p>}
+                            </div>
                         </div>
 
                         <div className="flex items-center gap-3 pb-4 pt-2 border-b border-neutral-100 dark:border-neutral-800">
@@ -184,7 +217,7 @@ function GeneralTab({ general, fonts, flash }) {
                                 value={data.primary_color}
                                 onChange={(v) => setData('primary_color', v)}
                                 error={errors.primary_color}
-                                placeholder="#467235"
+                                placeholder="#F9A61A"
                             />
                             <ColorField
                                 label={t('settings.secondary_brand_color')}
@@ -192,7 +225,7 @@ function GeneralTab({ general, fonts, flash }) {
                                 value={data.secondary_color}
                                 onChange={(v) => setData('secondary_color', v)}
                                 error={errors.secondary_color}
-                                placeholder="#283f24"
+                                placeholder="#B07436"
                             />
                         </div>
 

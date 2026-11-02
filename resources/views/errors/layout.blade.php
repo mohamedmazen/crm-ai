@@ -1,10 +1,11 @@
 @php
     use App\Models\SystemSetting;
+    use App\Support\Brand;
 
     // Resolve branding with graceful fallback (mirrors HandleInertiaRequests::brandingShare()).
     try {
-        $appName  = SystemSetting::get('app_name') ?: config('saas.app_name', config('app.name'));
-        $primary  = SystemSetting::get('primary_color') ?: config('saas.branding.primary_color', '#467235');
+        $appName  = Brand::name();
+        $primary  = SystemSetting::get('primary_color') ?: config('saas.branding.primary_color', '#F9A61A');
         $logoPath = SystemSetting::get('app_logo_path');
         $logoUrl  = $logoPath
             ? \Illuminate\Support\Facades\Storage::disk(SystemSetting::get('app_logo_disk', 'public'))->url($logoPath)
@@ -14,22 +15,17 @@
             ? \Illuminate\Support\Facades\Storage::disk(SystemSetting::get('app_favicon_disk', 'public'))->url($faviconPath)
             : null;
     } catch (\Throwable) {
-        $appName  = config('saas.app_name', config('app.name'));
-        $primary  = config('saas.branding.primary_color', '#467235');
+        $appName  = Brand::name();
+        $primary  = config('saas.branding.primary_color', '#F9A61A');
         $logoUrl  = null;
         $faviconUrl = null;
     }
 
-    // Pick readable text on the primary color from its relative luminance.
-    $hex = ltrim($primary, '#');
-    if (strlen($hex) === 3) {
-        $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
-    }
-    [$r, $g, $b] = strlen($hex) === 6
-        ? [hexdec(substr($hex, 0, 2)), hexdec(substr($hex, 2, 2)), hexdec(substr($hex, 4, 2))]
-        : [70, 114, 53];
-    $luminance = (0.2126 * $r + 0.7152 * $g + 0.0722 * $b) / 255;
-    $onPrimary = $luminance > 0.6 ? '#20321d' : '#ffffff';
+    // Pick readable ink on the primary colour with the same helper the main app
+    // palette uses (a light Golden Yellow needs dark text, not white).
+    $onPrimary = \App\Support\BrandPalette::isValidHex($primary)
+        ? \App\Support\BrandPalette::onBrand($primary)
+        : '#ffffff';
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
@@ -41,22 +37,45 @@
         <link rel="icon" href="{{ $faviconUrl }}">
         <link rel="apple-touch-icon" href="{{ $faviconUrl }}">
     @else
-        <link rel="icon" type="image/svg+xml" href="/whatsmine-icon.svg">
+        <link rel="icon" type="image/svg+xml" href="/aydra-icon.svg">
         <link rel="alternate icon" href="/favicon.ico" sizes="any">
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     @endif
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=space-grotesk:400,500,600,700&display=swap" rel="stylesheet" />
     <style>
+        /* BDO Grotesk is self-hosted (public/fonts) so this standalone error page
+           matches the app without a third-party font request. */
+        @font-face {
+            font-family: 'BDO Grotesk';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url('/fonts/bdo-grotesk/BDOGrotesk-Regular.woff2') format('woff2');
+        }
+        @font-face {
+            font-family: 'BDO Grotesk';
+            font-style: normal;
+            font-weight: 600;
+            font-display: swap;
+            src: url('/fonts/bdo-grotesk/BDOGrotesk-DemiBold.woff2') format('woff2');
+        }
+        @font-face {
+            font-family: 'BDO Grotesk';
+            font-style: normal;
+            font-weight: 700;
+            font-display: swap;
+            src: url('/fonts/bdo-grotesk/BDOGrotesk-Bold.woff2') format('woff2');
+        }
         :root {
             --primary: {{ $primary }};
             --on-primary: {{ $onPrimary }};
-            --ink: #20321d;       /* secondary-900 (dark green) */
-            --ink-soft: #566b50;  /* muted green */
-            --surface: #f7faec;   /* brand surface */
+            --ink: #241a0f;       /* warm near-black */
+            --ink-soft: #6b5b48;  /* muted warm brown */
+            --surface: #fffbf4;   /* brand surface */
         }
         *, *::before, *::after { box-sizing: border-box; }
-        html, body { height: 100%; margin: 0; font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif; }
+        html, body { height: 100%; margin: 0; font-family: 'BDO Grotesk', ui-sans-serif, system-ui, sans-serif; }
+        /* BDO Grotesk is Latin-only; Arabic keeps the system Arabic stack. */
+        html[lang="ar"] body { font-family: 'Segoe UI', Tahoma, 'Noto Sans Arabic', Arial, sans-serif; }
         body {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             color: var(--ink); padding: 2rem; position: relative; overflow: hidden;
@@ -87,9 +106,9 @@
         .card {
             position: relative; z-index: 1; background: rgba(255, 255, 255, .85);
             backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(8, 33, 50, .08); border-radius: 1.25rem;
+            border: 1px solid rgba(36, 26, 15, .10); border-radius: 1.25rem;
             padding: 3.25rem 2.75rem; max-width: 460px; width: 100%; text-align: center;
-            box-shadow: 0 24px 60px -24px rgba(8, 33, 50, .25), 0 2px 8px rgba(8, 33, 50, .04);
+            box-shadow: 0 24px 60px -24px rgba(36, 26, 15, .25), 0 2px 8px rgba(36, 26, 15, .04);
         }
         .code {
             font-size: clamp(5rem, 18vw, 7.5rem); font-weight: 700; line-height: .9;
@@ -111,16 +130,16 @@
             box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--primary) 75%, transparent);
         }
         .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 14px 28px -10px color-mix(in srgb, var(--primary) 80%, transparent); }
-        .btn-ghost { background: transparent; color: var(--ink); border: 1px solid rgba(8, 33, 50, .14); }
-        .btn-ghost:hover { background: rgba(8, 33, 50, .04); transform: translateY(-1px); }
+        .btn-ghost { background: transparent; color: var(--ink); border: 1px solid rgba(36, 26, 15, .14); }
+        .btn-ghost:hover { background: rgba(36, 26, 15, .04); transform: translateY(-1px); }
 
         @media (prefers-color-scheme: dark) {
-            :root { --ink: #eef2f6; --ink-soft: #94a3b8; --surface: #0a1722; }
+            :root { --ink: #f4eee6; --ink-soft: #b6a48f; --surface: #14100b; }
             body { background:
                 radial-gradient(60rem 40rem at 50% -10%, color-mix(in srgb, var(--primary) 18%, transparent), transparent 70%),
-                linear-gradient(180deg, #0a1722, #050c13 60%); }
+                linear-gradient(180deg, #14100b, #0a0705 60%); }
             .brand { color: var(--ink); }
-            .card { background: rgba(13, 27, 40, .7); border-color: rgba(255, 255, 255, .08); box-shadow: 0 24px 60px -24px rgba(0, 0, 0, .6); }
+            .card { background: rgba(20, 16, 11, .7); border-color: rgba(255, 255, 255, .08); box-shadow: 0 24px 60px -24px rgba(0, 0, 0, .6); }
             .code { background: linear-gradient(135deg, #eef2f6 35%, var(--primary)); -webkit-background-clip: text; background-clip: text; }
             .btn-ghost { color: var(--ink); border-color: rgba(255, 255, 255, .16); }
             .btn-ghost:hover { background: rgba(255, 255, 255, .06); }

@@ -8,10 +8,10 @@
         body { font-family: DejaVu Sans, sans-serif; color: #1f2937; font-size: 10.5px; line-height: 1.55; margin: 0; }
         .sheet { padding: 46px; }
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 26px; border-bottom: 1px solid #e5e7eb; padding-bottom: 14px; }
-        .brand { font-size: 18px; font-weight: bold; color: #467235; }
+        .brand { font-size: 18px; font-weight: bold; color: #B07436; }
         .muted { color: #6b7280; font-size: 10px; }
         h1 { font-size: 20px; margin: 0 0 4px; }
-        h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #467235; margin: 20px 0 6px; }
+        h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #8A5B2A; margin: 20px 0 6px; }
         p { margin: 0 0 7px; }
         ul { margin: 0 0 7px; padding-left: 16px; }
         li { margin-bottom: 3px; }

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\SystemSetting;
 use App\Services\StorageManager;
-use App\Support\BrandPalette;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -19,7 +18,7 @@ class SystemSettingsController extends Controller
 {
     public function index(): Response
     {
-        $generalKeys = ['app_name', 'app_tagline', 'support_email', 'primary_color', 'secondary_color', 'font_family', 'security_ip_allowlist_enabled', 'security_ip_allowlist'];
+        $generalKeys = ['app_name', 'app_name_ar', 'app_tagline', 'app_tagline_ar', 'support_email', 'primary_color', 'secondary_color', 'font_family', 'security_ip_allowlist_enabled', 'security_ip_allowlist'];
 
         $general = [];
         foreach ($generalKeys as $key) {
@@ -63,9 +62,9 @@ class SystemSettingsController extends Controller
 
         // Fall back to the build defaults so the pickers open on the colours the UI
         // is actually rendering, rather than on an empty/black swatch.
-        $general['primary_color'] = $general['primary_color'] ?: config('saas.branding.primary_color', '#467235');
-        $general['secondary_color'] = $general['secondary_color'] ?: config('saas.branding.secondary_color', '#283f24');
-        $general['font_family'] = $general['font_family'] ?: config('saas.branding.font_family', 'space-grotesk');
+        $general['primary_color'] = $general['primary_color'] ?: config('saas.branding.primary_color', '#F9A61A');
+        $general['secondary_color'] = $general['secondary_color'] ?: config('saas.branding.secondary_color', '#B07436');
+        $general['font_family'] = $general['font_family'] ?: config('saas.branding.font_family', 'bdo-grotesk');
 
         return Inertia::render('Admin/Settings/Index', [
             'general' => $general,
@@ -79,51 +78,27 @@ class SystemSettingsController extends Controller
     {
         $validated = $request->validate([
             'app_name' => ['nullable', 'string', 'max:128'],
+            'app_name_ar' => ['nullable', 'string', 'max:128'],
             'app_tagline' => ['nullable', 'string', 'max:255'],
+            'app_tagline_ar' => ['nullable', 'string', 'max:255'],
             'support_email' => ['nullable', 'email', 'max:255'],
             'primary_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'secondary_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
-            // Whitelist: the slug reaches a fonts.bunny.net URL and the mapped family
-            // name reaches a CSS declaration in app.blade.php.
+            // Whitelist: the slug reaches a fonts.bunny.net URL or selects a
+            // self-hosted face, and the mapped family name reaches a CSS
+            // declaration in app.blade.php.
             'font_family' => ['nullable', 'string', Rule::in(array_keys(config('saas.branding.fonts', [])))],
             'security_ip_allowlist_enabled' => ['nullable', 'in:0,1'],
             'security_ip_allowlist' => ['nullable', 'string', 'max:2000'],
         ]);
 
         $this->validateAllowlistEntries($validated['security_ip_allowlist'] ?? null);
-        $this->validateBrandColors($validated);
 
         foreach ($validated as $key => $value) {
             SystemSetting::set($key, $value, false, 'general');
         }
 
         return back()->with('success', __('General settings saved.'));
-    }
-
-    /**
-     * Reject brand colours that cannot carry white text. The palette pins the
-     * picked hex to the 600 stop and every primary button/badge paints white on
-     * it, so a light pick would ship unreadable UI.
-     *
-     * @param  array<string, mixed>  $validated
-     */
-    private function validateBrandColors(array $validated): void
-    {
-        foreach (['primary_color', 'secondary_color'] as $key) {
-            $hex = $validated[$key] ?? null;
-
-            if (! BrandPalette::isValidHex($hex)) {
-                continue;
-            }
-
-            if (! BrandPalette::meetsContrast($hex, '#ffffff')) {
-                throw ValidationException::withMessages([
-                    $key => __('":color" is too light for white text (needs 4.5:1 contrast). Pick a darker shade.', [
-                        'color' => $hex,
-                    ]),
-                ]);
-            }
-        }
     }
 
     /**

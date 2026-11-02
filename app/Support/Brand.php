@@ -14,10 +14,43 @@ class Brand
 {
     public const TOKEN = ':brand';
 
-    /** The brand name an admin configured (falls back to .env APP_NAME). */
-    public static function name(): string
+    /**
+     * The brand name for the active locale. The Arabic interface shows the
+     * Arabic name (saas.app_name_ar); every other locale shows the
+     * admin-configured / .env name.
+     */
+    public static function name(?string $locale = null): string
     {
+        return self::localizedName($locale);
+    }
+
+    /** The brand name for a locale, falling back to the base name when unset. */
+    public static function localizedName(?string $locale = null): string
+    {
+        $locale ??= app()->getLocale();
+
+        if (self::isArabic($locale)) {
+            return (string) (config('saas.app_name_ar') ?: config('app.name'));
+        }
+
         return (string) config('app.name');
+    }
+
+    /** The slogan for the active locale (saas.tagline / saas.tagline_ar). */
+    public static function tagline(?string $locale = null): string
+    {
+        $locale ??= app()->getLocale();
+
+        if (self::isArabic($locale)) {
+            return (string) (config('saas.tagline_ar') ?: config('saas.tagline'));
+        }
+
+        return (string) config('saas.tagline');
+    }
+
+    private static function isArabic(string $locale): bool
+    {
+        return str_starts_with(strtolower($locale), 'ar');
     }
 
     /** Resolve the token in a single value. Safe to call on null. */

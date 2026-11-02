@@ -49,7 +49,9 @@ class BrandingServiceProvider extends ServiceProvider
             try {
                 $branding = Cache::rememberForever(self::CACHE_KEY, fn () => [
                     'app_name' => SystemSetting::get('app_name'),
+                    'app_name_ar' => SystemSetting::get('app_name_ar'),
                     'app_tagline' => SystemSetting::get('app_tagline'),
+                    'app_tagline_ar' => SystemSetting::get('app_tagline_ar'),
                     'support_email' => SystemSetting::get('support_email'),
                     'docs_url' => SystemSetting::get('docs_url'),
                     'primary_color' => SystemSetting::get('primary_color'),
@@ -75,8 +77,16 @@ class BrandingServiceProvider extends ServiceProvider
                 }
             }
 
+            if (! empty($branding['app_name_ar'])) {
+                config(['saas.app_name_ar' => $branding['app_name_ar']]);
+            }
+
             if (! empty($branding['app_tagline'])) {
                 config(['saas.tagline' => $branding['app_tagline']]);
+            }
+
+            if (! empty($branding['app_tagline_ar'])) {
+                config(['saas.tagline_ar' => $branding['app_tagline_ar']]);
             }
 
             if (! empty($branding['support_email'])) {

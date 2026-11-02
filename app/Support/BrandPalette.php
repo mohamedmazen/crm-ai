@@ -100,8 +100,9 @@ class BrandPalette
     /**
      * WCAG 2.1 contrast ratio between two hex colours, from 1 to 21.
      *
-     * The picked brand colour is pinned to the 600 stop, and the UI paints white
-     * text on that stop, so the admin settings can compare the two directly.
+     * Used to pick the readable ink for a brand surface (see onBrand), rather
+     * than to reject colours: a light brand pick is valid, it just needs dark
+     * text on top of it.
      */
     public static function contrastRatio(string $foreground, string $background): float
     {
@@ -117,6 +118,25 @@ class BrandPalette
     public static function meetsContrast(string $foreground, string $background, float $minimum = 4.5): bool
     {
         return self::contrastRatio($foreground, $background) >= $minimum;
+    }
+
+    /**
+     * The ink colour for a solid brand surface: black or white, whichever clears
+     * WCAG's 4.5:1 floor against the given colour. Brand picks can be light (the
+     * 360 Golden Yellow is), so the UI cannot hard-code white text on them.
+     */
+    public static function onBrand(string $background): string
+    {
+        return self::meetsContrast('#ffffff', $background) ? '#ffffff' : '#000000';
+    }
+
+    /**
+     * `onBrand()` as bare RGB channels, ready for the `--on-brand` custom property
+     * (Tailwind composes it as `rgb(var(--on-brand) / <alpha-value>)`).
+     */
+    public static function onBrandChannels(string $background): string
+    {
+        return self::onBrand($background) === '#ffffff' ? '255 255 255' : '0 0 0';
     }
 
     /** Relative luminance per WCAG 2.1 (0 = black, 1 = white). */

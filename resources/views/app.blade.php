@@ -55,8 +55,8 @@
             <link rel="apple-touch-icon" href="{{ $faviconUrl }}">
         @else
             {{-- Fallback brand icon: SVG for modern browsers, .ico for legacy,
-                 PNG apple-touch for iOS home-screen. See public/whatsmine-icon.svg. --}}
-            <link rel="icon" type="image/svg+xml" href="/whatsmine-icon.svg">
+                 PNG apple-touch for iOS home-screen. See public/aydra-icon.svg. --}}
+            <link rel="icon" type="image/svg+xml" href="/aydra-icon.svg">
             <link rel="alternate icon" href="/favicon.ico" sizes="any">
             <link rel="apple-touch-icon" href="/apple-touch-icon.png">
         @endif
@@ -76,14 +76,24 @@
             $fonts = config('saas.branding.fonts', []);
             // Reject anything not on the whitelist — the slug is interpolated into a
             // stylesheet URL below, and the family name into a CSS declaration.
+            // BDO Grotesk ships with the app (public/fonts) instead of bunny.net.
             $brandFont  = $branding['font_family'] ?? null;
-            $fontSlug   = ($brandFont && array_key_exists($brandFont, $fonts)) ? $brandFont : config('saas.branding.font_family', 'space-grotesk');
-            $fontFamily = $fonts[$fontSlug] ?? 'Space Grotesk';
+            // The family compiled into app.css. Kept as a literal rather than read
+            // from config: BrandingServiceProvider rewrites that config value at
+            // boot from the saved setting, so comparing against it would suppress
+            // the override for the very font it was meant to apply.
+            $cssDefaultFontSlug = 'bdo-grotesk';
+            $fontSlug   = ($brandFont && array_key_exists($brandFont, $fonts)) ? $brandFont : config('saas.branding.font_family', $cssDefaultFontSlug);
+            $fontFamily = $fonts[$fontSlug] ?? 'BDO Grotesk';
+            $fontIsSelfHosted = $fontSlug === 'bdo-grotesk';
+            $fontOverridesCssDefault = $fontSlug !== $cssDefaultFontSlug;
         @endphp
 
         <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family={{ urlencode($fontSlug) }}:400,500,600,700&display=swap" rel="stylesheet" />
+        @unless($fontIsSelfHosted)
+            <link rel="preconnect" href="https://fonts.bunny.net">
+            <link href="https://fonts.bunny.net/css?family={{ urlencode($fontSlug) }}:400,500,600,700&display=swap" rel="stylesheet" />
+        @endunless
         {{-- Anek Bangla for Bengali script. The Bengali glyph files are lazy-loaded
              by unicode-range, so they're only fetched when bn text actually renders
              (i.e. html[lang="bn"]); keeping the link unconditional means a client-side
@@ -232,11 +242,11 @@
              Must stay AFTER @vite: this and app.css both declare these custom
              properties on :root at equal specificity, so whichever comes last wins.
              Emitted above the stylesheet, it silently loses and nothing retints. --}}
-        @if($brandPrimary || $brandSecondary || $fontSlug !== 'space-grotesk')
+        @if($brandPrimary || $brandSecondary || $fontOverridesCssDefault)
         <style>
             :root {
-                @if($fontSlug !== 'space-grotesk') --font-sans: '{{ $fontFamily }}'; @endif
-                @if($brandPrimary) {!! \App\Support\BrandPalette::cssVars('brand', $brandPrimary) !!} {!! \App\Support\BrandPalette::surfaceVars($brandPrimary) !!} @endif
+                @if($fontOverridesCssDefault) --font-sans: '{{ $fontFamily }}'; @endif
+                @if($brandPrimary) --on-brand: {{ \App\Support\BrandPalette::onBrandChannels($brandPrimary) }}; {!! \App\Support\BrandPalette::cssVars('brand', $brandPrimary) !!} {!! \App\Support\BrandPalette::surfaceVars($brandPrimary) !!} @endif
                 @if($brandSecondary) {!! \App\Support\BrandPalette::cssVars('secondary', $brandSecondary) !!} @endif
             }
         </style>

@@ -14,6 +14,7 @@ use App\Services\FeatureGate;
 use App\Services\I18n\I18nFileService;
 use App\Services\OnboardingService;
 use App\Services\StorageManager;
+use App\Support\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -196,13 +197,13 @@ class HandleInertiaRequests extends Middleware
             $faviconPath = SystemSetting::get('app_favicon_path');
 
             $branding = [
-                'app_name' => SystemSetting::get('app_name') ?: config('saas.app_name', config('app.name')),
-                'app_tagline' => SystemSetting::get('app_tagline') ?: config('saas.tagline'),
+                'app_name' => Brand::name(),
+                'app_tagline' => Brand::tagline(),
                 'support_email' => SystemSetting::get('support_email') ?: config('saas.support_email'),
                 'docs_url' => SystemSetting::get('docs_url') ?: config('saas.docs_url'),
-                'primary_color' => SystemSetting::get('primary_color') ?: config('saas.branding.primary_color', '#467235'),
-                'secondary_color' => SystemSetting::get('secondary_color') ?: config('saas.branding.secondary_color', '#283f24'),
-                'font_family' => SystemSetting::get('font_family') ?: config('saas.branding.font_family', 'space-grotesk'),
+                'primary_color' => SystemSetting::get('primary_color') ?: config('saas.branding.primary_color', '#F9A61A'),
+                'secondary_color' => SystemSetting::get('secondary_color') ?: config('saas.branding.secondary_color', '#B07436'),
+                'font_family' => SystemSetting::get('font_family') ?: config('saas.branding.font_family', 'bdo-grotesk'),
                 'logo_url' => $logoPath ? $this->assetUrl($logoPath, SystemSetting::get('app_logo_disk', 'public')) : null,
                 'favicon_url' => $faviconPath ? $this->assetUrl($faviconPath, SystemSetting::get('app_favicon_disk', 'public')) : null,
             ];
@@ -212,13 +213,13 @@ class HandleInertiaRequests extends Middleware
             return $branding;
         } catch (\Throwable) {
             return [
-                'app_name' => config('saas.app_name', config('app.name')),
-                'app_tagline' => config('saas.tagline'),
+                'app_name' => Brand::name(),
+                'app_tagline' => Brand::tagline(),
                 'support_email' => config('saas.support_email'),
                 'docs_url' => config('saas.docs_url'),
-                'primary_color' => config('saas.branding.primary_color', '#467235'),
-                'secondary_color' => config('saas.branding.secondary_color', '#283f24'),
-                'font_family' => config('saas.branding.font_family', 'space-grotesk'),
+                'primary_color' => config('saas.branding.primary_color', '#F9A61A'),
+                'secondary_color' => config('saas.branding.secondary_color', '#B07436'),
+                'font_family' => config('saas.branding.font_family', 'bdo-grotesk'),
                 'logo_url' => null,
                 'favicon_url' => null,
             ];

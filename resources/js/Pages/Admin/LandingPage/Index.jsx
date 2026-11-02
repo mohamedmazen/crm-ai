@@ -602,10 +602,10 @@ function SeoTab({ data, setData, t }) {
             <Card.Body className="space-y-5">
                 <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 pb-3 border-b border-neutral-100 dark:border-neutral-800">{t('landing_page_admin.seo_section', { defaultValue: 'Search Engine Optimization' })}</h3>
                 <Field label={t('landing_page_admin.seo_title', { defaultValue: 'Meta Title' })} hint={t('landing_page_admin.seo_title_hint', { defaultValue: 'Shown in browser tabs and search results (~60 chars).' })}>
-                    <Input value={s('seo_title')} onChange={(e) => set('seo_title', e.target.value)} placeholder=":brand — One Inbox for WhatsApp, Messenger & Instagram" />
+                    <Input value={s('seo_title')} onChange={(e) => set('seo_title', e.target.value)} placeholder=":brand — AI Business Platform" />
                 </Field>
                 <Field label={t('landing_page_admin.seo_description', { defaultValue: 'Meta Description' })} hint={t('landing_page_admin.seo_description_hint', { defaultValue: 'Shown under the title in search results (~155 chars).' })}>
-                    <Input value={s('seo_description')} onChange={(e) => set('seo_description', e.target.value)} multiline rows={3} placeholder="Unify WhatsApp, Messenger and Instagram..." />
+                    <Input value={s('seo_description')} onChange={(e) => set('seo_description', e.target.value)} multiline rows={3} placeholder="The all-in-one AI-powered platform to manage customers, capture leads, automate conversations, and grow your business." />
                 </Field>
                 <Field label={t('landing_page_admin.seo_keywords', { defaultValue: 'Keywords' })} hint={t('landing_page_admin.seo_keywords_hint', { defaultValue: 'Comma-separated.' })}>
                     <Input value={s('seo_keywords')} onChange={(e) => set('seo_keywords', e.target.value)} placeholder="WhatsApp Business API, team inbox, AI chatbot" />

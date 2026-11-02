@@ -32,23 +32,23 @@ class LandingPageController extends Controller
             'landing.signin_label' => 'Sign In',
             'landing.signin_link_type' => 'dynamic',
             'landing.signin_link_url' => '',
-            'landing.getstarted_label' => 'Start Free Trial',
+            'landing.getstarted_label' => 'Start Your Free Trial',
             'landing.getstarted_link_type' => 'dynamic',
             'landing.getstarted_link_url' => '',
 
             // ── SEO ─────────────────────────────────────────────────
-            'landing.seo_title' => ':brand — One Inbox for WhatsApp, Messenger & Instagram',
-            'landing.seo_description' => ':brand unifies WhatsApp, Messenger and Instagram in one inbox with AI chatbots, no-code automation, bulk broadcasting and a built-in CRM. Start free — no credit card required.',
+            'landing.seo_title' => ':brand — AI Business Platform',
+            'landing.seo_description' => 'The all-in-one AI-powered platform to manage customers, capture leads, automate conversations, and grow your business. CRM, AI agents, chatbots, and automation — seamlessly connected in one place.',
             'landing.seo_keywords' => 'WhatsApp Business API, team inbox, WhatsApp marketing, AI chatbot, Messenger, Instagram DM, bulk messaging, marketing automation, CRM',
             'landing.seo_og_image' => '',
 
             // ── Hero ────────────────────────────────────────────────
             'landing.hero_enabled' => '1',
-            'landing.hero_badge' => 'Now with AI chatbots & multi-channel automation',
-            'landing.hero_title' => 'Every Customer Conversation, One Smart Inbox',
-            'landing.hero_subtitle' => 'Unify WhatsApp, Messenger and Instagram, automate replies with AI chatbots, run bulk broadcasts, and turn conversations into revenue — all from one platform.',
-            'landing.hero_cta_primary' => 'Start Free Trial',
-            'landing.hero_cta_secondary' => 'View Pricing',
+            'landing.hero_badge' => 'AI Business Platform',
+            'landing.hero_title' => 'Your Business. Smarter.',
+            'landing.hero_subtitle' => 'The all-in-one AI-powered platform to manage customers, capture leads, automate conversations, and grow your business. CRM, AI agents, chatbots, and automation — seamlessly connected in one place.',
+            'landing.hero_cta_primary' => 'Start Your Free Trial',
+            'landing.hero_cta_secondary' => 'Book a Demo',
             'landing.hero_trust_1' => 'No credit card required',
             'landing.hero_trust_2' => '14-day free trial',
             'landing.hero_trust_3' => 'Official Meta Business APIs',
@@ -66,7 +66,7 @@ class LandingPageController extends Controller
 
             // ── Trusted By (brand logos) ────────────────────────────
             'landing.stats_enabled' => '1',
-            'landing.stats_heading' => 'Trusted by 12,000+ businesses worldwide',
+            'landing.stats_heading' => 'Trusted by businesses ready to grow smarter.',
             'landing.stats_1_label' => 'Acme',
             'landing.stats_2_label' => 'TechStart',
             'landing.stats_3_label' => 'GrowthLab',
@@ -249,10 +249,10 @@ class LandingPageController extends Controller
 
             // ── CTA ─────────────────────────────────────────────────
             'landing.cta_enabled' => '1',
-            'landing.cta_title' => 'Ready to win every conversation?',
-            'landing.cta_subtitle' => 'Join 12,000+ businesses growing faster with :brand. Start free — no credit card required.',
-            'landing.cta_primary' => 'Start Free Trial',
-            'landing.cta_secondary' => 'Talk to Sales',
+            'landing.cta_title' => 'Ready to grow smarter?',
+            'landing.cta_subtitle' => 'Join the businesses growing smarter with :brand. Start free — no credit card required.',
+            'landing.cta_primary' => 'Start Your Free Trial',
+            'landing.cta_secondary' => 'Book a Demo',
 
             // ── About page ──────────────────────────────────────────
             'landing.about_badge' => 'About :brand',

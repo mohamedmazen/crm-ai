@@ -10,7 +10,11 @@ return [
     | Override these values in config/app.php (app.name) or via .env APP_NAME.
     */
     'app_name' => env('APP_NAME', 'App'),
-    'tagline' => env('SAAS_TAGLINE', 'Customer messaging on WhatsApp'),
+    // Arabic brand name and tagline. App\Support\Brand resolves these per
+    // request locale and falls back to the English values when unset.
+    'app_name_ar' => env('SAAS_APP_NAME_AR', env('APP_NAME', 'App')),
+    'tagline' => env('SAAS_TAGLINE', 'Your Business. Smarter.'),
+    'tagline_ar' => env('SAAS_TAGLINE_AR', 'أعمالك، بذكاء أكبر.'),
     'support_email' => env('SAAS_SUPPORT_EMAIL', env('MAIL_FROM_ADDRESS', 'support@example.com')),
     // External help/documentation URL shown in the client "Help & Docs" nav
     // item. Leave blank to hide the link. Configure in the admin panel or .env.
@@ -38,16 +42,17 @@ return [
     |--------------------------------------------------------------------------
     */
     'branding' => [
-        'primary_color' => env('SAAS_PRIMARY_COLOR', '#467235'),
-        'secondary_color' => env('SAAS_SECONDARY_COLOR', '#283f24'),
+        'primary_color' => env('SAAS_PRIMARY_COLOR', '#F9A61A'),
+        'secondary_color' => env('SAAS_SECONDARY_COLOR', '#B07436'),
         'logo_path' => env('SAAS_LOGO_PATH', null),
 
-        // Key must match the family slug used by fonts.bunny.net; the value is the
-        // CSS family name. Anything not in this list is rejected on save, so a
-        // stored value can be interpolated into the stylesheet URL as-is.
-        'font_family' => env('SAAS_FONT_FAMILY', 'space-grotesk'),
+        // Key is either a fonts.bunny.net slug or a face shipped with the app
+        // (`bdo-grotesk`, self-hosted from public/fonts). The value is the CSS
+        // family name. Anything not in this list is rejected on save, so a
+        // stored value can be interpolated into a stylesheet URL/declaration.
+        'font_family' => env('SAAS_FONT_FAMILY', 'bdo-grotesk'),
         'fonts' => [
-            'space-grotesk' => 'Space Grotesk',
+            'bdo-grotesk' => 'BDO Grotesk',
             'inter' => 'Inter',
             'dm-sans' => 'DM Sans',
             'plus-jakarta-sans' => 'Plus Jakarta Sans',

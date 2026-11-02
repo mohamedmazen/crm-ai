@@ -45,6 +45,33 @@ class BrandPaletteTest extends TestCase
         $this->assertSame($expected, BrandPalette::meetsContrast($hex, '#ffffff'));
     }
 
+    /**
+     * @return array<string, array{string, string}>
+     */
+    public static function onBrandColours(): array
+    {
+        return [
+            '360 golden yellow' => ['#F9A61A', '#000000'],
+            '360 warm brown' => ['#B07436', '#000000'],
+            'default forest green' => ['#467235', '#ffffff'],
+            'amber accent' => ['#ffbf00', '#000000'],
+            'white' => ['#ffffff', '#000000'],
+            'black' => ['#000000', '#ffffff'],
+        ];
+    }
+
+    #[DataProvider('onBrandColours')]
+    public function test_on_brand_picks_the_readable_ink(string $background, string $expected): void
+    {
+        $this->assertSame($expected, BrandPalette::onBrand($background));
+    }
+
+    public function test_on_brand_channels_are_bare_rgb_for_the_css_variable(): void
+    {
+        $this->assertSame('0 0 0', BrandPalette::onBrandChannels('#F9A61A'));
+        $this->assertSame('255 255 255', BrandPalette::onBrandChannels('#467235'));
+    }
+
     public function test_contrast_ratio_accepts_hex_values_without_alpha(): void
     {
         $this->assertEqualsWithDelta(

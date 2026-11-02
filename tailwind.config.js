@@ -25,9 +25,9 @@ export default {
                 '3xs': ['0.625rem', { lineHeight: '0.875rem' }],
                 '2xs': ['0.6875rem', { lineHeight: '1rem' }],
             },
-            // WhatsMine palette — brand (forest-green #467235), accent (amber
-            // #FFBF00 / light-yellow #FFF78D), secondary (dark-green #283F24).
-            // Source of truth: ./.branding
+            // WhatsMine palette — brand (360 Golden Yellow #F9A61A), accent
+            // (amber #FFBF00 / light-yellow #FFF78D), secondary (360 Warm Brown
+            // #B07436). Source of truth: ./.branding
             //
             // brand/secondary/surface resolve through CSS custom properties so the
             // admin's colour pickers can retint the whole UI at runtime without a
@@ -40,6 +40,9 @@ export default {
                     DEFAULT: 'rgb(var(--surface) / <alpha-value>)',
                     subtle: 'rgb(var(--surface-subtle) / <alpha-value>)',
                 },
+                // Readable ink for solid brand surfaces (black or white, computed
+                // from the saved primary colour). See app.css.
+                'on-brand': 'rgb(var(--on-brand) / <alpha-value>)',
                 secondary: {
                     50: 'rgb(var(--secondary-50) / <alpha-value>)',
                     100: 'rgb(var(--secondary-100) / <alpha-value>)',
