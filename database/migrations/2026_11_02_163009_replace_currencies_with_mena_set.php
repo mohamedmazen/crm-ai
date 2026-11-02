@@ -31,6 +31,13 @@ return new class extends Migration
 
     public function up(): void
     {
+        // Only migrate installs that already seeded currencies. Fresh installs
+        // (and tests) get their set from CurrencySeeder, so touching an empty
+        // table here would duplicate rows the seeder is about to create.
+        if (DB::table('currencies')->doesntExist()) {
+            return;
+        }
+
         $now = now();
 
         foreach (self::CURRENCIES as $row) {
@@ -59,6 +66,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (DB::table('currencies')->doesntExist()) {
+            return;
+        }
+
         $now = now();
 
         $legacy = [

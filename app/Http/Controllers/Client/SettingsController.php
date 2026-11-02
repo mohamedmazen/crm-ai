@@ -49,7 +49,7 @@ class SettingsController extends Controller
                 'theme' => $user->theme ?? 'light',
                 'timezone' => $user->timezone ?? 'Asia/Dhaka',
             ],
-            'supportedLocales' => $supportedLocales->map(fn ($l) => ['code' => $l->code, 'name' => $l->name]),
+            'supportedLocales' => $supportedLocales->map(fn ($l) => ['code' => data_get($l, 'code'), 'name' => data_get($l, 'name')]),
             'supportedCurrencies' => $supportedCurrencies->map(fn ($c) => ['code' => $c->code, 'name' => $c->code, 'symbol' => $c->symbol ?? $c->code]),
             'client' => $client,
             'tenantBaseDomain' => config('tenancy.base_domain'),
