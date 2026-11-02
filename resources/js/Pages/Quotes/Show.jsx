@@ -96,14 +96,14 @@ export default function QuoteShow({ quote = {}, publicUrl = '' }) {
                     <div className="flex items-center gap-3">
                         <Link
                             href={route('client.sales.quotes.index')}
-                            className="rounded-lg p-2 text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                            className="rounded-lg p-2 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800"
                         >
                             <ArrowLeft className="h-4 w-4" />
                         </Link>
                         <div>
                             <div className="flex items-center gap-2">
                                 <h1 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">{quote.number}</h1>
-                                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${statusStyles[quote.status] || statusStyles.draft}`}>
+                                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-2xs font-semibold ${statusStyles[quote.status] || statusStyles.draft}`}>
                                     {t(`quotes.status_${quote.status}`)}
                                 </span>
                             </div>
@@ -170,7 +170,7 @@ export default function QuoteShow({ quote = {}, publicUrl = '' }) {
                         <button
                             type="button"
                             onClick={() => setDeleting(true)}
-                            className="rounded-lg p-2 text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30"
+                            className="rounded-lg p-2 text-neutral-500 dark:text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30"
                             title={t('common.delete')}
                         >
                             <Trash2 className="h-4 w-4" />
@@ -213,12 +213,12 @@ export default function QuoteShow({ quote = {}, publicUrl = '' }) {
                                                 <td className="px-5 py-4">
                                                     <div className="font-medium text-neutral-900 dark:text-neutral-100">{item.description}</div>
                                                     {item.product?.name && (
-                                                        <div className="text-[11px] text-neutral-400">{item.product.name}</div>
+                                                        <div className="text-2xs text-neutral-500 dark:text-neutral-400">{item.product.name}</div>
                                                     )}
                                                 </td>
                                                 <td className="px-4 py-4 text-end tabular-nums text-neutral-600 dark:text-neutral-300">{lineQuantity(item.quantity)}</td>
                                                 <td className="px-4 py-4 text-end tabular-nums text-neutral-600 dark:text-neutral-300">{money(item.unit_price)}</td>
-                                                <td className="px-4 py-4 text-end tabular-nums text-neutral-500">{Number(item.tax_rate || 0)}%</td>
+                                                <td className="px-4 py-4 text-end tabular-nums text-neutral-500 dark:text-neutral-400">{Number(item.tax_rate || 0)}%</td>
                                                 <td className="px-5 py-4 text-end tabular-nums font-medium text-neutral-900 dark:text-neutral-100">{money(item.total)}</td>
                                             </tr>
                                         ))}
@@ -231,13 +231,13 @@ export default function QuoteShow({ quote = {}, publicUrl = '' }) {
                             <div className="grid gap-5 sm:grid-cols-2">
                                 {quote.notes && (
                                     <div className="rounded-2xl border border-soft bg-white p-5 dark:bg-neutral-900">
-                                        <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">{t('quotes.notes')}</h2>
+                                        <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">{t('quotes.notes')}</h2>
                                         <p className="mt-2 whitespace-pre-line text-sm text-neutral-700 dark:text-neutral-300">{quote.notes}</p>
                                     </div>
                                 )}
                                 {quote.terms && (
                                     <div className="rounded-2xl border border-soft bg-white p-5 dark:bg-neutral-900">
-                                        <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">{t('quotes.terms')}</h2>
+                                        <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">{t('quotes.terms')}</h2>
                                         <p className="mt-2 whitespace-pre-line text-sm text-neutral-700 dark:text-neutral-300">{quote.terms}</p>
                                     </div>
                                 )}
@@ -249,19 +249,19 @@ export default function QuoteShow({ quote = {}, publicUrl = '' }) {
                         <div className="space-y-3 rounded-2xl border border-soft bg-white p-5 dark:bg-neutral-900">
                             <dl className="space-y-2 text-sm">
                                 <div className="flex justify-between">
-                                    <dt className="text-neutral-500">{t('quotes.subtotal')}</dt>
+                                    <dt className="text-neutral-500 dark:text-neutral-400">{t('quotes.subtotal')}</dt>
                                     <dd className="tabular-nums text-neutral-900 dark:text-neutral-100">{money(quote.subtotal)}</dd>
                                 </div>
                                 {Number(quote.discount_value) > 0 && (
                                     <div className="flex justify-between">
-                                        <dt className="text-neutral-500">{t('quotes.discount')}</dt>
+                                        <dt className="text-neutral-500 dark:text-neutral-400">{t('quotes.discount')}</dt>
                                         <dd className="tabular-nums text-neutral-900 dark:text-neutral-100">
                                             -{money(quote.discount_value)}{quote.discount_type === 'percent' ? '%' : ''}
                                         </dd>
                                     </div>
                                 )}
                                 <div className="flex justify-between">
-                                    <dt className="text-neutral-500">{t('quotes.tax')}</dt>
+                                    <dt className="text-neutral-500 dark:text-neutral-400">{t('quotes.tax')}</dt>
                                     <dd className="tabular-nums text-neutral-900 dark:text-neutral-100">{money(quote.tax_total)}</dd>
                                 </div>
                                 <div className="flex justify-between border-t border-soft pt-2 text-base font-bold">
@@ -279,8 +279,8 @@ export default function QuoteShow({ quote = {}, publicUrl = '' }) {
                         </div>
 
                         <div className="space-y-2 rounded-2xl border border-soft bg-white p-5 dark:bg-neutral-900">
-                            <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">{t('quotes.public_link')}</h2>
-                            <p className="text-[11px] text-neutral-400">{t('quotes.public_link_hint')}</p>
+                            <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">{t('quotes.public_link')}</h2>
+                            <p className="text-2xs text-neutral-500 dark:text-neutral-400">{t('quotes.public_link_hint')}</p>
                             <div className="flex gap-2">
                                 <input
                                     readOnly
@@ -297,14 +297,14 @@ export default function QuoteShow({ quote = {}, publicUrl = '' }) {
 
                         {timeline.length > 0 && (
                             <div className="space-y-3 rounded-2xl border border-soft bg-white p-5 dark:bg-neutral-900">
-                                <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">{t('quotes.timeline')}</h2>
+                                <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">{t('quotes.timeline')}</h2>
                                 <ol className="space-y-3">
                                     {timeline.map((entry) => (
                                         <li key={entry.key} className="flex items-start gap-2 text-sm">
                                             <span className="mt-0.5 text-brand-600 dark:text-brand-400">{entry.icon}</span>
                                             <div>
                                                 <div className="text-neutral-700 dark:text-neutral-300">{entry.label}</div>
-                                                <div className="text-[11px] text-neutral-400">{formatDateTime(entry.value)}</div>
+                                                <div className="text-2xs text-neutral-500 dark:text-neutral-400">{formatDateTime(entry.value)}</div>
                                             </div>
                                         </li>
                                     ))}

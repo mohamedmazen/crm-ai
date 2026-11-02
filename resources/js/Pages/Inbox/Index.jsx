@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { ChannelBrandIcon, CHANNEL_LABELS } from '@/Components/BrandIcons';
 import SlaBadge from '@/Components/SlaBadge';
 import { formatTimeTz } from '@/Utils/datetime';
+import { readableTextColor } from '@/lib/contrast';
 
 const FOLDERS = [
     { key: null,         labelKey: 'inbox.folder_all',        icon: Inbox },
@@ -80,22 +81,22 @@ function ConversationCard({ conv, isFlashing, isActive, userTz }) {
                     <div className="flex items-center justify-between gap-1">
                         <button
                             onClick={handleContactClick}
-                            className={`text-sm truncate text-left hover:underline ${conv.unread_count > 0 ? 'font-semibold text-neutral-900 dark:text-neutral-100' : 'font-medium text-neutral-700 dark:text-neutral-300'}`}
+                            className={`text-sm truncate text-left py-0.5 hover:underline ${conv.unread_count > 0 ? 'font-semibold text-neutral-900 dark:text-neutral-100' : 'font-medium text-neutral-700 dark:text-neutral-300'}`}
                             title={t('inbox.view_contact_profile')}
                         >
                             {name}
                         </button>
-                        <span className="text-[11px] text-neutral-400 shrink-0">
+                        <span className="text-2xs text-neutral-500 dark:text-neutral-400 shrink-0">
                             {conv.last_message_at ? formatTimeTz(conv.last_message_at, userTz) : ''}
                         </span>
                     </div>
                     <div className="flex items-center gap-1.5 mt-0.5">
-                        <p className={`text-xs truncate flex-1 ${conv.unread_count > 0 ? 'text-neutral-700 dark:text-neutral-300' : 'text-neutral-400 dark:text-neutral-500'}`}>
+                        <p className={`text-xs truncate flex-1 ${conv.unread_count > 0 ? 'text-neutral-700 dark:text-neutral-300' : 'text-neutral-500 dark:text-neutral-400'}`}>
                             {lastMsg.body || '(media)'}
                         </p>
                         <SlaBadge awaitingSince={conv.awaiting_since} />
                         {conv.unread_count > 0 && (
-                            <span className="shrink-0 h-5 min-w-5 rounded-full bg-brand-600 text-white text-[10px] font-bold flex items-center justify-center px-1">
+                            <span className="shrink-0 h-5 min-w-5 rounded-full bg-brand-600 text-white text-3xs font-bold flex items-center justify-center px-1">
                                 {conv.unread_count > 99 ? '99+' : conv.unread_count}
                             </span>
                         )}
@@ -103,7 +104,11 @@ function ConversationCard({ conv, isFlashing, isActive, userTz }) {
                     {conv.labels?.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-1.5">
                             {conv.labels.map(label => (
-                                <span key={label.id} className="inline-flex items-center rounded-full px-1.5 py-px text-[10px] font-medium text-white" style={{ backgroundColor: label.color }}>
+                                <span
+                                    key={label.id}
+                                    className="inline-flex items-center rounded-full px-1.5 py-px text-3xs font-medium"
+                                    style={{ backgroundColor: label.color, color: readableTextColor(label.color) }}
+                                >
                                     {label.name}
                                 </span>
                             ))}
@@ -133,7 +138,7 @@ function FilterSidebar({ filters, labels, channelAccounts = [], onFolder, onChan
         <div className="flex flex-col h-full overflow-y-auto">
             {/* Folders */}
             <div className="p-2 border-b border-neutral-100 dark:border-neutral-800">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 px-2 py-1.5">{t('inbox.views')}</p>
+                <p className="text-3xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 px-2 py-1.5">{t('inbox.views')}</p>
                 {FOLDERS.map(({ key, labelKey, icon: Icon }) => (
                     <button
                         key={key ?? 'all'}
@@ -152,7 +157,7 @@ function FilterSidebar({ filters, labels, channelAccounts = [], onFolder, onChan
 
             {/* Channels */}
             <div className="p-2 border-b border-neutral-100 dark:border-neutral-800">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 px-2 py-1.5">{t('inbox.channels')}</p>
+                <p className="text-3xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 px-2 py-1.5">{t('inbox.channels')}</p>
                 {ALL_CHANNELS.map(ch => (
                     <button
                         key={ch}
@@ -172,7 +177,7 @@ function FilterSidebar({ filters, labels, channelAccounts = [], onFolder, onChan
             {/* Numbers (channel accounts) */}
             {channelAccounts.length > 0 && (
                 <div className="p-2 border-b border-neutral-100 dark:border-neutral-800">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 px-2 py-1.5">{t('inbox.numbers')}</p>
+                    <p className="text-3xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 px-2 py-1.5">{t('inbox.numbers')}</p>
                     {channelAccounts.map(account => (
                         <button
                             key={account.id}
@@ -193,7 +198,7 @@ function FilterSidebar({ filters, labels, channelAccounts = [], onFolder, onChan
             {/* Labels / Tags */}
             {labels.length > 0 && (
                 <div className="p-2">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 px-2 py-1.5">{t('inbox.labels')}</p>
+                    <p className="text-3xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 px-2 py-1.5">{t('inbox.labels')}</p>
                     {labels.map(label => (
                         <button
                             key={label.id}
@@ -290,7 +295,7 @@ export default function InboxIndex({ conversations: initialConversations, filter
                 <aside className="w-48 shrink-0 border-r border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col overflow-hidden">
                     <div className="px-3 py-3 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between gap-1">
                         <p className="text-sm font-bold text-neutral-800 dark:text-neutral-200 flex items-center gap-2">
-                            <Inbox className="h-4 w-4 text-brand-600" />
+                            <Inbox className="h-4 w-4 text-brand-600 dark:text-brand-400" />
                             {t('inbox.title')}
                         </p>
                         <button
@@ -319,17 +324,17 @@ export default function InboxIndex({ conversations: initialConversations, filter
                         <div className="flex items-center justify-between">
                             <span className="text-sm font-semibold text-neutral-800 dark:text-neutral-200 flex items-center gap-1 flex-wrap">
                                 {activeFolder ? t(activeFolder.labelKey) : t('inbox.folder_all')}
-                                {filters.channel && <span className="text-xs font-normal text-neutral-400">· {CHANNEL_LABELS[filters.channel] ?? filters.channel}</span>}
+                                {filters.channel && <span className="text-xs font-normal text-neutral-500 dark:text-neutral-400">· {CHANNEL_LABELS[filters.channel] ?? filters.channel}</span>}
                                 {filters.account_id && (() => {
                                     const acct = channelAccounts.find(a => String(a.id) === String(filters.account_id));
-                                    return acct ? <span className="text-xs font-normal text-neutral-400">· {acct.display_name || acct.phone_number_id}</span> : null;
+                                    return acct ? <span className="text-xs font-normal text-neutral-500 dark:text-neutral-400">· {acct.display_name || acct.phone_number_id}</span> : null;
                                 })()}
                             </span>
                             <div className="flex items-center gap-1">
-                                <span className="text-xs text-neutral-400 tabular-nums">{conversations.total}</span>
+                                <span className="text-xs text-neutral-500 dark:text-neutral-400 tabular-nums">{conversations.total}</span>
                                 <button
                                     onClick={() => { setLoading(true); router.reload(); }}
-                                    className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-400 hover:text-neutral-600 transition"
+                                    className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-neutral-600 transition"
                                     title={t('inbox.refresh')}
                                 >
                                     <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
@@ -338,7 +343,7 @@ export default function InboxIndex({ conversations: initialConversations, filter
                         </div>
                         {/* Search */}
                         <div className="relative">
-                            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-neutral-400 pointer-events-none" />
+                            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400 pointer-events-none" />
                             <input
                                 type="text"
                                 value={search}
@@ -382,7 +387,7 @@ export default function InboxIndex({ conversations: initialConversations, filter
                             <MessageSquare className="h-8 w-8 text-neutral-300 dark:text-neutral-600" />
                         </div>
                         <p className="text-base font-semibold text-neutral-500 dark:text-neutral-400">{t('inbox.select_conversation')}</p>
-                        <p className="text-sm text-neutral-400 dark:text-neutral-500 mt-1">{t('inbox.select_conversation_desc')}</p>
+                        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">{t('inbox.select_conversation_desc')}</p>
                     </div>
                 </div>
             </div>

@@ -277,8 +277,8 @@ export default function DatePicker({
                 aria-haspopup="dialog"
                 aria-expanded={open}
             >
-                <Calendar className="h-4 w-4 shrink-0 text-neutral-400" />
-                <span className={`flex-1 truncate ${selected ? 'text-neutral-900 dark:text-neutral-100' : 'text-neutral-400 dark:text-neutral-500'}`}>
+                <Calendar className="h-4 w-4 shrink-0 text-neutral-500 dark:text-neutral-400" />
+                <span className={`flex-1 truncate ${selected ? 'text-neutral-900 dark:text-neutral-100' : 'text-neutral-500 dark:text-neutral-400'}`}>
                     {triggerLabel}
                 </span>
                 {selected && !disabled && (
@@ -286,7 +286,7 @@ export default function DatePicker({
                         role="button"
                         tabIndex={-1}
                         onClick={(e) => { e.stopPropagation(); emit(null); }}
-                        className="shrink-0 rounded p-0.5 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
+                        className="shrink-0 rounded p-0.5 text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
                         aria-label={t('ui.date_clear', 'Clear')}
                     >
                         <X className="h-3.5 w-3.5" />
@@ -313,7 +313,7 @@ export default function DatePicker({
                             <button
                                 type="button"
                                 onClick={() => (view === 'days' ? stepMonth(-1) : setCursor((c) => ({ ...c, year: c.year - 1 })))}
-                                className="rounded-soft p-1 text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
+                                className="rounded-soft p-1 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
                                 aria-label={t('ui.date_prev', 'Previous')}
                             >
                                 <ChevronLeft className="h-4 w-4 rtl:rotate-180" />
@@ -321,7 +321,7 @@ export default function DatePicker({
                             <button
                                 type="button"
                                 onClick={() => (view === 'days' ? stepMonth(1) : setCursor((c) => ({ ...c, year: c.year + 1 })))}
-                                className="rounded-soft p-1 text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
+                                className="rounded-soft p-1 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
                                 aria-label={t('ui.date_next', 'Next')}
                             >
                                 <ChevronRight className="h-4 w-4 rtl:rotate-180" />
@@ -333,7 +333,7 @@ export default function DatePicker({
                         <>
                             <div className="grid grid-cols-7 gap-0.5">
                                 {weekdays.map((w, i) => (
-                                    <div key={i} className="py-1 text-center text-xs font-medium text-neutral-400">
+                                    <div key={i} className="py-1 text-center text-xs font-medium text-neutral-500 dark:text-neutral-400">
                                         {w}
                                     </div>
                                 ))}
@@ -351,12 +351,12 @@ export default function DatePicker({
                                             className={[
                                                 'h-8 w-8 mx-auto flex items-center justify-center rounded-soft text-sm transition',
                                                 isSelected
-                                                    ? 'bg-brand-500 text-white font-semibold hover:bg-brand-600'
+                                                    ? 'bg-brand-600 text-white font-semibold hover:bg-brand-700'
                                                     : disabledDay
                                                         ? 'text-neutral-300 dark:text-neutral-600 cursor-not-allowed'
                                                         : c.inMonth
                                                             ? 'text-neutral-700 dark:text-neutral-200 hover:bg-brand-50 dark:hover:bg-neutral-800'
-                                                            : 'text-neutral-400 dark:text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800',
+                                                            : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800',
                                                 !isSelected && isToday ? 'ring-1 ring-brand-400 font-semibold' : '',
                                             ].join(' ')}
                                         >
@@ -381,7 +381,7 @@ export default function DatePicker({
                                             <option key={h} value={h}>{pad2(h)}</option>
                                         ))}
                                     </select>
-                                    <span className="text-neutral-400">:</span>
+                                    <span className="text-neutral-500 dark:text-neutral-400">:</span>
                                     <select
                                         value={selected ? selected.minute : ''}
                                         onChange={(e) => setTime(selected ? selected.hour : new Date().getHours(), +e.target.value)}
@@ -405,7 +405,7 @@ export default function DatePicker({
                                     className={[
                                         'rounded-soft py-2 text-sm transition',
                                         i === cursor.month
-                                            ? 'bg-brand-500 text-white font-semibold'
+                                            ? 'bg-brand-600 text-white font-semibold'
                                             : 'text-neutral-700 dark:text-neutral-200 hover:bg-brand-50 dark:hover:bg-neutral-800',
                                     ].join(' ')}
                                 >

@@ -8,7 +8,7 @@ const statusStyles = {
     viewed: 'bg-sky-100 text-sky-800',
     paid: 'bg-emerald-100 text-emerald-800',
     overdue: 'bg-red-100 text-red-800',
-    cancelled: 'bg-neutral-100 text-neutral-500',
+    cancelled: 'bg-neutral-100 text-neutral-600 dark:text-neutral-400',
 };
 
 function money(value, currency) {
@@ -58,7 +58,7 @@ export default function PublicInvoice({ invoice = {}, pdfUrl = '', paidAmount = 
                         </div>
 
                         <div className="text-start sm:text-end">
-                            <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${statusStyles[invoice.status] || statusStyles.draft}`}>
+                            <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-2xs font-semibold ${statusStyles[invoice.status] || statusStyles.draft}`}>
                                 {invoice.status === 'overdue' && <AlertTriangle className="h-3 w-3" />}
                                 {t(`invoices.status_${invoice.status}`)}
                             </span>
@@ -72,7 +72,7 @@ export default function PublicInvoice({ invoice = {}, pdfUrl = '', paidAmount = 
                         <div className="overflow-x-auto">
                             <table className="w-full text-start text-sm">
                                 <thead>
-                                    <tr className="border-b border-neutral-100 bg-neutral-50/70 text-xs font-medium text-neutral-500 dark:border-neutral-800 dark:bg-neutral-800/50">
+                                    <tr className="border-b border-neutral-100 bg-neutral-50/70 text-xs font-medium text-neutral-500 dark:text-neutral-400 dark:border-neutral-800 dark:bg-neutral-800/50">
                                         <th className="px-6 py-3 text-start">{t('quotes.item_description')}</th>
                                         <th className="px-4 py-3 text-end">{t('quotes.item_qty')}</th>
                                         <th className="px-4 py-3 text-end">{t('quotes.item_price')}</th>
@@ -96,11 +96,11 @@ export default function PublicInvoice({ invoice = {}, pdfUrl = '', paidAmount = 
                     <div className="flex justify-end border-t border-neutral-100 p-6 dark:border-neutral-800">
                         <dl className="w-full max-w-xs space-y-2 text-sm">
                             <div className="flex justify-between">
-                                <dt className="text-neutral-500">{t('invoices.subtotal')}</dt>
+                                <dt className="text-neutral-500 dark:text-neutral-400">{t('invoices.subtotal')}</dt>
                                 <dd className="tabular-nums">{money(invoice.subtotal)}</dd>
                             </div>
                             <div className="flex justify-between">
-                                <dt className="text-neutral-500">{t('invoices.tax')}</dt>
+                                <dt className="text-neutral-500 dark:text-neutral-400">{t('invoices.tax')}</dt>
                                 <dd className="tabular-nums">{money(invoice.tax_total)}</dd>
                             </div>
                             <div className="flex justify-between border-t border-neutral-200 pt-2 text-lg font-bold dark:border-neutral-700">
@@ -108,7 +108,7 @@ export default function PublicInvoice({ invoice = {}, pdfUrl = '', paidAmount = 
                                 <dd className="tabular-nums">{money(invoice.total, invoice.currency)}</dd>
                             </div>
                             <div className="flex justify-between">
-                                <dt className="text-neutral-500">{t('invoices.paid')}</dt>
+                                <dt className="text-neutral-500 dark:text-neutral-400">{t('invoices.paid')}</dt>
                                 <dd className="tabular-nums text-emerald-700 dark:text-emerald-400">{money(paidAmount)}</dd>
                             </div>
                             <div className="flex justify-between font-semibold">
@@ -120,7 +120,7 @@ export default function PublicInvoice({ invoice = {}, pdfUrl = '', paidAmount = 
 
                     {payments.length > 0 && (
                         <div className="border-t border-neutral-100 p-6 dark:border-neutral-800">
-                            <h2 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">
+                            <h2 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
                                 <Wallet className="h-3.5 w-3.5" />
                                 {t('invoices.payments')}
                             </h2>
@@ -140,7 +140,7 @@ export default function PublicInvoice({ invoice = {}, pdfUrl = '', paidAmount = 
 
                     {invoice.notes && (
                         <div className="border-t border-neutral-100 p-6 text-sm dark:border-neutral-800">
-                            <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">{t('invoices.notes')}</h2>
+                            <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">{t('invoices.notes')}</h2>
                             <p className="mt-1 whitespace-pre-line text-neutral-600 dark:text-neutral-300">{invoice.notes}</p>
                         </div>
                     )}
@@ -167,7 +167,7 @@ export default function PublicInvoice({ invoice = {}, pdfUrl = '', paidAmount = 
                     </div>
                 </div>
 
-                <p className="flex items-center justify-center gap-1.5 text-center text-xs text-neutral-400">
+                <p className="flex items-center justify-center gap-1.5 text-center text-xs text-neutral-500 dark:text-neutral-400">
                     <ShieldCheck className="h-3.5 w-3.5" />
                     {t('invoices.public_footer', { app: invoice.workspace?.name || '' })}
                 </p>

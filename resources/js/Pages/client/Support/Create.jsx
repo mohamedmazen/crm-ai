@@ -34,7 +34,7 @@ export default function SupportCreate() {
             <div className="max-w-2xl space-y-6">
                 {/* Header */}
                 <div className="flex items-center gap-3">
-                    <Link href={route('client.support.index')} className="p-1.5 rounded-soft text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors">
+                    <Link href={route('client.support.index')} aria-label={t('common.back')} className="p-1.5 rounded-soft text-neutral-600 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors">
                         <ArrowLeft className="h-4 w-4" />
                     </Link>
                     <div>
@@ -71,13 +71,14 @@ export default function SupportCreate() {
                                 <select
                                     value={data.priority}
                                     onChange={e => setData('priority', e.target.value)}
+                                    aria-label={t('support_tickets.priority_label')}
                                     className="w-full appearance-none border border-neutral-300 dark:border-neutral-600 rounded-soft-lg px-3 py-2.5 text-sm text-neutral-900 dark:text-white bg-white dark:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 transition-colors pr-8"
                                 >
                                     {priorityOptions.map(p => (
                                         <option key={p.value} value={p.value}>{p.label} — {p.desc}</option>
                                     ))}
                                 </select>
-                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 pointer-events-none" />
+                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500 dark:text-neutral-400 pointer-events-none" />
                             </div>
                             <div className="mt-2 grid grid-cols-4 gap-1.5">
                                 {priorityOptions.map(p => (
@@ -103,7 +104,7 @@ export default function SupportCreate() {
                             <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
                                 {t('support_tickets.message_label')} <span className="text-red-500">*</span>
                             </label>
-                            <span className={`text-xs tabular-nums ${remaining < 200 ? 'text-orange-500' : 'text-neutral-400 dark:text-neutral-500'}`}>
+                            <span className={`text-xs tabular-nums ${remaining < 200 ? 'text-orange-700 dark:text-orange-400' : 'text-neutral-500 dark:text-neutral-400'}`}>
                                 {t('support_tickets.chars_left', { count: remaining })}
                             </span>
                         </div>

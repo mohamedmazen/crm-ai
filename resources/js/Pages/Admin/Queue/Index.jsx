@@ -20,7 +20,7 @@ export default function QueueIndex({ tab, failedJobs, batches }) {
             <div className="max-w-6xl space-y-6">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <Server className="h-6 w-6 text-indigo-600" />
+                        <Server className="h-6 w-6 text-indigo-700 dark:text-indigo-400" />
                         <h1 className="text-xl font-bold text-gray-900 dark:text-white">{t('queue.title')}</h1>
                     </div>
 
@@ -29,7 +29,7 @@ export default function QueueIndex({ tab, failedJobs, batches }) {
                             <button onClick={() => router.post(route('admin.queue.retry-all'))} className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
                                 <RefreshCw className="h-3.5 w-3.5" /> {t('queue.retry_all')}
                             </button>
-                            <button onClick={() => { if (confirm(t('queue.flush_confirm'))) router.post(route('admin.queue.flush')); }} className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-red-200 text-red-600 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/10">
+                            <button onClick={() => { if (confirm(t('queue.flush_confirm'))) router.post(route('admin.queue.flush')); }} className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-red-200 text-red-700 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/10">
                                 <Trash2 className="h-3.5 w-3.5" /> {t('queue.flush_all')}
                             </button>
                         </div>
@@ -40,10 +40,10 @@ export default function QueueIndex({ tab, failedJobs, batches }) {
                 <div className="flex gap-1 border-b border-gray-200 dark:border-gray-700">
                     {tabs.map(tb => (
                         <button key={tb.id} onClick={() => router.get(route('admin.queue.index'), { tab: tb.id })}
-                            className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${tab === tb.id ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}>
+                            className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${tab === tb.id ? 'border-indigo-600 text-indigo-700 dark:text-indigo-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}>
                             {tb.label}
                             {tb.id === 'failed' && failedJobs?.total > 0 && (
-                                <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-red-100 text-red-600 rounded-full">{failedJobs.total}</span>
+                                <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-red-100 text-red-700 rounded-full">{failedJobs.total}</span>
                             )}
                         </button>
                     ))}
@@ -69,7 +69,7 @@ export default function QueueIndex({ tab, failedJobs, batches }) {
                                         <td className="px-4 py-3 text-gray-400 text-xs font-mono">{job.id}</td>
                                         <td className="px-4 py-3 text-gray-600 dark:text-gray-300 text-xs">{job.queue}</td>
                                         <td className="px-4 py-3 font-medium text-gray-900 dark:text-white text-xs">{job.class}</td>
-                                        <td className="px-4 py-3 text-gray-500 text-xs max-w-xs truncate" title={job.exception}>{job.exception}</td>
+                                        <td className="px-4 py-3 text-gray-500 dark:text-gray-400 text-xs max-w-xs truncate" title={job.exception}>{job.exception}</td>
                                         <td className="px-4 py-3 text-gray-400 text-xs">{job.failed_at}</td>
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-1 justify-end">

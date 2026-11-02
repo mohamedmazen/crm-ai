@@ -50,7 +50,7 @@ function EndpointForm({ endpoint = null, onClose }) {
                     placeholder="https://your-app.com/webhooks"
                     required
                 />
-                {errors.url && <p className="text-coral-600 text-xs mt-1">{errors.url}</p>}
+                {errors.url && <p className="text-coral-600 dark:text-coral-400 text-xs mt-1">{errors.url}</p>}
             </div>
             <div>
                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('webhook.description')}</label>
@@ -84,7 +84,7 @@ function EndpointForm({ endpoint = null, onClose }) {
             </label>
             <div className="flex justify-end gap-2 pt-2">
                 <button type="button" onClick={onClose} className="px-4 py-2 text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg">{t('common.cancel')}</button>
-                <button type="submit" disabled={processing} className="px-4 py-2 text-sm bg-brand-500 text-white rounded-soft hover:bg-brand-600 shadow-soft disabled:opacity-50 transition-all duration-150">
+                <button type="submit" disabled={processing} className="px-4 py-2 text-sm bg-brand-600 text-white rounded-soft hover:bg-brand-700 shadow-soft disabled:opacity-50 transition-all duration-150">
                     {endpoint ? t('webhook.update_endpoint') : t('webhook.create_endpoint')}
                 </button>
             </div>
@@ -134,7 +134,7 @@ export default function WebhooksIndex({ endpoints }) {
                         </div>
                     </div>
                     {(
-                        <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 px-4 py-2 bg-brand-500 text-white text-sm rounded-soft hover:bg-brand-600 shadow-soft transition-all duration-150">
+                        <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white text-sm rounded-soft hover:bg-brand-700 shadow-soft transition-all duration-150">
                             <Plus className="h-4 w-4" /> {t('webhook.add_endpoint')}
                         </button>
                     )}
@@ -178,7 +178,7 @@ export default function WebhooksIndex({ endpoints }) {
                                                 </div>
                                             )}
                                             {!ep.events?.length && (
-                                                <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1">{t('webhook.listening_all')}</p>
+                                                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">{t('webhook.listening_all')}</p>
                                             )}
 
                                             {revealedSecret[ep.id] && (
@@ -189,19 +189,19 @@ export default function WebhooksIndex({ endpoints }) {
                                             )}
                                         </div>
                                         <div className="flex items-center gap-1 shrink-0">
-                                            <button onClick={() => handleTest(ep)} className="p-1.5 text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition" title={t('webhook.send_test')}>
+                                            <button onClick={() => handleTest(ep)} className="p-1.5 text-neutral-500 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition" title={t('webhook.send_test')}>
                                                 <Play className="h-4 w-4" />
                                             </button>
-                                            <button onClick={() => handleRotateSecret(ep)} className="p-1.5 text-neutral-400 hover:text-amber-600" title={t('webhook.rotate_secret')}>
+                                            <button onClick={() => handleRotateSecret(ep)} className="p-1.5 text-neutral-500 dark:text-neutral-400 hover:text-amber-600" title={t('webhook.rotate_secret')}>
                                                 <RefreshCw className="h-4 w-4" />
                                             </button>
-                                            <Link href={route('client.webhooks.deliveries', ep.id)} className="p-1.5 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200" title={t('webhook.view_deliveries')}>
+                                            <Link href={route('client.webhooks.deliveries', ep.id)} className="p-1.5 text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200" title={t('webhook.view_deliveries')}>
                                                 <Eye className="h-4 w-4" />
                                             </Link>
-                                            <button onClick={() => setEditing(ep)} className="p-1.5 text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition" title={t('common.edit')}>
+                                            <button onClick={() => setEditing(ep)} className="p-1.5 text-neutral-500 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition" title={t('common.edit')}>
                                                 <Pencil className="h-4 w-4" />
                                             </button>
-                                            <button onClick={() => handleDelete(ep)} className="p-1.5 text-neutral-400 hover:text-coral-600" title={t('common.delete')}>
+                                            <button onClick={() => handleDelete(ep)} className="p-1.5 text-neutral-500 dark:text-neutral-400 hover:text-coral-600" title={t('common.delete')}>
                                                 <Trash2 className="h-4 w-4" />
                                             </button>
                                         </div>
@@ -210,7 +210,7 @@ export default function WebhooksIndex({ endpoints }) {
                             </div>
                             {ep.recent_deliveries?.length > 0 && editing?.id !== ep.id && (
                                 <div className="border-t border-neutral-100 dark:border-neutral-700 px-4 py-2">
-                                    <p className="text-xs text-neutral-400 dark:text-neutral-500 mb-1.5">{t('webhook.recent_deliveries')}</p>
+                                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1.5">{t('webhook.recent_deliveries')}</p>
                                     <div className="space-y-1">
                                         {ep.recent_deliveries.map(d => (
                                             <div key={d.id} className="flex items-center gap-2 text-xs text-neutral-600 dark:text-neutral-400">
@@ -219,8 +219,8 @@ export default function WebhooksIndex({ endpoints }) {
                                                     : <X className="h-3 w-3 text-coral-500" />
                                                 }
                                                 <code>{d.event}</code>
-                                                <span className="text-neutral-400">{d.response_status ?? '—'}</span>
-                                                <span className="ml-auto text-neutral-400">{formatInTz(d.created_at, userTz)}</span>
+                                                <span className="text-neutral-500 dark:text-neutral-400">{d.response_status ?? '—'}</span>
+                                                <span className="ml-auto text-neutral-500 dark:text-neutral-400">{formatInTz(d.created_at, userTz)}</span>
                                             </div>
                                         ))}
                                     </div>
@@ -230,7 +230,7 @@ export default function WebhooksIndex({ endpoints }) {
                     ))}
 
                     {endpoints.length === 0 && (
-                        <div className="text-center py-12 text-neutral-400 dark:text-neutral-500">
+                        <div className="text-center py-12 text-neutral-500 dark:text-neutral-400">
                             <Webhook className="h-10 w-10 mx-auto mb-3 opacity-30" />
                             <p>{t('webhook.no_endpoints')}</p>
                         </div>

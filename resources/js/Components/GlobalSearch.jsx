@@ -85,7 +85,7 @@ export default function GlobalSearch() {
             >
                 <Search className="h-3.5 w-3.5" />
                 <span>{t('ui.search_short')}</span>
-                <kbd className="text-xs bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 rounded">⌘K</kbd>
+                <kbd className="text-xs bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-200 px-1.5 py-0.5 rounded">⌘K</kbd>
             </button>
         );
     }
@@ -95,7 +95,7 @@ export default function GlobalSearch() {
             <div className="fixed inset-0 bg-black/50" onClick={() => setOpen(false)} />
             <div className="relative w-full max-w-xl bg-white dark:bg-neutral-900 rounded-xl shadow-soft-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
                 <div className="flex items-center gap-3 px-4 py-3 border-b border-neutral-200 dark:border-neutral-700">
-                    <Search className="h-4 w-4 text-neutral-400 shrink-0" />
+                    <Search className="h-4 w-4 text-neutral-500 dark:text-neutral-400 shrink-0" />
                     <input
                         ref={inputRef}
                         type="text"
@@ -106,11 +106,11 @@ export default function GlobalSearch() {
                         className="flex-1 bg-transparent text-sm text-neutral-900 dark:text-white placeholder-neutral-400 outline-none"
                     />
                     {query && (
-                        <button onClick={() => { setQuery(''); setResults([]); inputRef.current?.focus(); }} className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200">
+                        <button onClick={() => { setQuery(''); setResults([]); inputRef.current?.focus(); }} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200">
                             <X className="h-4 w-4" />
                         </button>
                     )}
-                    <button onClick={() => setOpen(false)} className="text-xs text-neutral-400 border border-neutral-300 dark:border-neutral-600 px-1.5 py-0.5 rounded">
+                    <button onClick={() => setOpen(false)} className="text-xs text-neutral-500 dark:text-neutral-400 border border-neutral-300 dark:border-neutral-600 px-1.5 py-0.5 rounded">
                         Esc
                     </button>
                 </div>
@@ -129,7 +129,7 @@ export default function GlobalSearch() {
                                     }`}
                                 >
                                     <span className="flex-1">{result.label}</span>
-                                    <span className="text-xs text-neutral-400 capitalize">{result.type}</span>
+                                    <span className="text-xs text-neutral-500 dark:text-neutral-400 capitalize">{result.type}</span>
                                 </button>
                             </li>
                         ))}
@@ -137,18 +137,18 @@ export default function GlobalSearch() {
                 )}
 
                 {query.length >= 2 && !loading && results.length === 0 && (
-                    <div className="px-4 py-6 text-center text-sm text-neutral-400 dark:text-neutral-500">
+                    <div className="px-4 py-6 text-center text-sm text-neutral-500 dark:text-neutral-400">
                         No results for "{query}"
                     </div>
                 )}
 
                 {loading && (
-                    <div className="px-4 py-6 text-center text-sm text-neutral-400 dark:text-neutral-500">
+                    <div className="px-4 py-6 text-center text-sm text-neutral-500 dark:text-neutral-400">
                         Searching...
                     </div>
                 )}
 
-                <div className="px-4 py-2 border-t border-neutral-100 dark:border-neutral-800 flex items-center gap-3 text-xs text-neutral-400 dark:text-neutral-500">
+                <div className="px-4 py-2 border-t border-neutral-100 dark:border-neutral-800 flex items-center gap-3 text-xs text-neutral-500 dark:text-neutral-400">
                     <span>↑↓ navigate</span>
                     <span>↵ open</span>
                     <span>{t('ui.global_search_hint')}</span>

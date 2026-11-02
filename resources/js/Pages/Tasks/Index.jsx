@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Head, router, Link, usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 import ClientLayout from '@/Layouts/ClientLayout';
+import PageHeader from '@/Components/PageHeader';
 import Button from '@/Components/ui/Button';
 import {
     CheckSquare, Circle, CheckCircle2, Clock, AlertCircle,
@@ -90,21 +91,16 @@ export default function TasksIndex({
 
             <div className="space-y-6">
                 {/* Header */}
-                <div className="flex flex-wrap items-center justify-between gap-4">
-                    <div>
-                        <h1 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
-                            <CheckSquare className="h-5 w-5 text-brand-600" />
-                            {t('tasks.title') || 'Tasks & Follow-ups'}
-                        </h1>
-                        <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-                            {t('tasks.subtitle') || 'Manage follow-ups, calls, and action items across your pipeline.'}
-                        </p>
-                    </div>
-
-                    <Button variant="secondary" onClick={() => router.visit(route('client.leads.pipeline.index'))}>
-                        {t('leads.view_pipeline') || 'View Pipeline Board'}
-                    </Button>
-                </div>
+                <PageHeader
+                    icon={CheckSquare}
+                    title={t('tasks.title') || 'Tasks & Follow-ups'}
+                    description={t('tasks.subtitle') || 'Manage follow-ups, calls, and action items across your pipeline.'}
+                    actions={
+                        <Button variant="secondary" onClick={() => router.visit(route('client.leads.pipeline.index'))}>
+                            {t('leads.view_pipeline') || 'View Pipeline Board'}
+                        </Button>
+                    }
+                />
 
                 {flash?.success && (
                     <div className="rounded-soft border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700 dark:border-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300">
@@ -147,7 +143,7 @@ export default function TasksIndex({
                 {/* Filter & Search Bar */}
                 <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-800">
                     <form onSubmit={handleSearchSubmit} className="relative flex-1 min-w-[220px]">
-                        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500 dark:text-neutral-400" />
                         <input
                             type="search"
                             value={search}
@@ -162,6 +158,7 @@ export default function TasksIndex({
                         <select
                             value={filters.assigned ?? 'me'}
                             onChange={(e) => applyFilter({ assigned: e.target.value })}
+                            aria-label={t('tasks.filter_assignee', { defaultValue: 'Filter by assignee' })}
                             className="rounded-soft border-soft bg-white py-1.5 px-3 text-xs font-medium dark:bg-neutral-800 dark:text-neutral-200"
                         >
                             <option value="me">{t('tasks.my_tasks') || 'My Tasks'}</option>
@@ -182,6 +179,7 @@ export default function TasksIndex({
                         <select
                             value={filters.priority ?? ''}
                             onChange={(e) => applyFilter({ priority: e.target.value || undefined })}
+                            aria-label={t('tasks.filter_priority', { defaultValue: 'Filter by priority' })}
                             className="rounded-soft border-soft bg-white py-1.5 px-3 text-xs font-medium dark:bg-neutral-800 dark:text-neutral-200"
                         >
                             <option value="">{t('tasks.all_priorities') || 'All Priorities'}</option>
@@ -194,6 +192,7 @@ export default function TasksIndex({
                         <select
                             value={filters.type ?? ''}
                             onChange={(e) => applyFilter({ type: e.target.value || undefined })}
+                            aria-label={t('tasks.filter_type', { defaultValue: 'Filter by type' })}
                             className="rounded-soft border-soft bg-white py-1.5 px-3 text-xs font-medium dark:bg-neutral-800 dark:text-neutral-200"
                         >
                             <option value="">{t('tasks.all_types') || 'All Types'}</option>
@@ -211,9 +210,9 @@ export default function TasksIndex({
                     {tasks.data.length === 0 ? (
                         <div className="p-12 text-center">
                             <CheckSquare className="mx-auto h-10 w-10 text-neutral-300 dark:text-neutral-600" />
-                            <h3 className="mt-3 text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+                            <h2 className="mt-3 text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                                 {t('tasks.empty_title') || 'No tasks found'}
-                            </h3>
+                            </h2>
                             <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
                                 {t('tasks.empty_subtitle') || 'There are no tasks matching your selected filters.'}
                             </p>
@@ -240,7 +239,7 @@ export default function TasksIndex({
                                             <button
                                                 type="button"
                                                 onClick={() => handleToggleTask(task)}
-                                                className="mt-0.5 text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 focus:outline-none"
+                                                className="mt-0.5 text-neutral-500 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 focus:outline-none"
                                                 title={isCompleted ? (t('leads.mark_incomplete') || 'Mark incomplete') : (t('leads.mark_complete') || 'Mark complete')}
                                             >
                                                 {isCompleted ? (
@@ -252,16 +251,16 @@ export default function TasksIndex({
 
                                             <div className="min-w-0 flex-1">
                                                 <div className="flex flex-wrap items-center gap-2">
-                                                    <span className={`text-sm font-medium ${isCompleted ? 'line-through text-neutral-400 dark:text-neutral-500' : 'text-neutral-900 dark:text-neutral-100'}`}>
+                                                    <span className={`text-sm font-medium ${isCompleted ? 'line-through text-neutral-500 dark:text-neutral-400' : 'text-neutral-900 dark:text-neutral-100'}`}>
                                                         {task.title}
                                                     </span>
 
-                                                    <span className="inline-flex items-center gap-1 rounded bg-neutral-100 px-2 py-0.5 text-[11px] font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
+                                                    <span className="inline-flex items-center gap-1 rounded bg-neutral-100 px-2 py-0.5 text-2xs font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
                                                         <Icon className="h-3 w-3" />
                                                         {task.type}
                                                     </span>
 
-                                                    <span className={`inline-flex items-center rounded border px-1.5 py-0.2 text-[10px] font-medium uppercase ${PRIORITY_BADGES[task.priority] || PRIORITY_BADGES.medium}`}>
+                                                    <span className={`inline-flex items-center rounded border px-1.5 py-0.2 text-3xs font-medium uppercase ${PRIORITY_BADGES[task.priority] || PRIORITY_BADGES.medium}`}>
                                                         {task.priority}
                                                     </span>
                                                 </div>
@@ -284,7 +283,7 @@ export default function TasksIndex({
                                                     )}
 
                                                     {task.due_at && (
-                                                        <span className={`inline-flex items-center gap-1 font-medium ${isOverdue ? 'text-red-600 dark:text-red-400 font-semibold' : ''}`}>
+                                                        <span className={`inline-flex items-center gap-1 font-medium ${isOverdue ? 'text-red-700 dark:text-red-400 font-semibold' : ''}`}>
                                                             {isOverdue && <AlertCircle className="h-3.5 w-3.5 text-red-500" />}
                                                             <Clock className="h-3.5 w-3.5" />
                                                             {new Date(task.due_at).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
@@ -305,7 +304,7 @@ export default function TasksIndex({
                                             <button
                                                 type="button"
                                                 onClick={() => handleDeleteTask(task)}
-                                                className="rounded p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-red-600 dark:hover:bg-neutral-800"
+                                                className="rounded p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-red-600 dark:hover:bg-neutral-800"
                                                 title={t('common.delete') || 'Delete'}
                                             >
                                                 <Trash2 className="h-4 w-4" />
@@ -320,7 +319,7 @@ export default function TasksIndex({
                     {/* Pagination links */}
                     {tasks.links && tasks.links.length > 3 && (
                         <div className="flex items-center justify-between border-t border-neutral-100 px-4 py-3 dark:border-neutral-800">
-                            <div className="text-xs text-neutral-500">
+                            <div className="text-xs text-neutral-500 dark:text-neutral-400">
                                 {t('common.showing_results', { from: tasks.from, to: tasks.to, total: tasks.total }) || `Showing ${tasks.from}-${tasks.to} of ${tasks.total}`}
                             </div>
                             <div className="flex gap-1">
@@ -331,7 +330,7 @@ export default function TasksIndex({
                                         onClick={() => link.url && router.visit(link.url, { preserveScroll: true, preserveState: true })}
                                         className={`rounded px-2.5 py-1 text-xs font-medium ${
                                             link.active
-                                                ? 'bg-brand-500 text-white'
+                                                ? 'bg-brand-600 text-white'
                                                 : link.url
                                                 ? 'text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800'
                                                 : 'text-neutral-300 dark:text-neutral-600 cursor-not-allowed'

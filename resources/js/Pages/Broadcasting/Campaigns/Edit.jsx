@@ -29,7 +29,8 @@ export default function CampaignEdit({
                 <div className="flex items-center gap-3">
                     <Link
                         href={route('client.campaigns.show', campaign.uuid)}
-                        className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition"
+                        aria-label={t('common.back') || 'Back'}
+                        className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition"
                     >
                         <ArrowLeft className="h-5 w-5" />
                     </Link>

@@ -89,7 +89,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                         {processing ? t('common.saving') : t('profile.update_password')}
                     </Button>
                     {saved && (
-                        <p className="text-sm text-green-600 dark:text-green-400">{t('profile.saved')}</p>
+                        <p className="text-sm text-green-700 dark:text-green-400">{t('profile.saved')}</p>
                     )}
                 </div>
             </form>

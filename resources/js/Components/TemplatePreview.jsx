@@ -39,7 +39,7 @@ function HeaderPreview({ comp }) {
     if (format === 'TEXT') {
         const text = substitute(comp.text ?? '', comp.example?.header_text?.[0] ?? []);
         if (!text) return null;
-        return <p className="font-semibold text-[13px] text-neutral-900 dark:text-neutral-100 mb-1">{text}</p>;
+        return <p className="font-semibold text-sm text-neutral-900 dark:text-neutral-100 mb-1">{text}</p>;
     }
 
     // Media header — show the uploaded preview if present, else a typed placeholder tile.
@@ -49,7 +49,7 @@ function HeaderPreview({ comp }) {
             {format === 'IMAGE' && preview ? (
                 <img src={preview} alt="" className="h-32 w-full object-cover" />
             ) : (
-                <div className="flex h-24 w-full items-center justify-center bg-neutral-200 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400">
+                <div className="flex h-24 w-full items-center justify-center bg-neutral-200 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300">
                     {MEDIA_ICON[format] ?? MEDIA_ICON.IMAGE}
                 </div>
             )}
@@ -74,18 +74,18 @@ export default function TemplatePreview({ components = [], className = '' }) {
                 {header && <HeaderPreview comp={header} />}
 
                 {bodyText ? (
-                    <p className="whitespace-pre-wrap break-words text-[13px] leading-snug text-neutral-800 dark:text-neutral-100">
+                    <p className="whitespace-pre-wrap break-words text-sm leading-snug text-neutral-800 dark:text-neutral-100">
                         {bodyText}
                     </p>
                 ) : (
-                    isEmpty && <p className="text-[13px] italic text-neutral-400">{t('whatsapp.templates_preview_placeholder')}</p>
+                    isEmpty && <p className="text-sm italic text-neutral-600 dark:text-neutral-400">{t('whatsapp.templates_preview_placeholder')}</p>
                 )}
 
                 {footer?.text && (
-                    <p className="mt-1 text-[11px] text-neutral-500 dark:text-neutral-400">{footer.text}</p>
+                    <p className="mt-1 text-2xs text-neutral-600 dark:text-neutral-400">{footer.text}</p>
                 )}
 
-                <span className="mt-0.5 block text-right text-[10px] text-neutral-400">12:00</span>
+                <span className="mt-0.5 block text-right text-3xs text-neutral-600 dark:text-neutral-400">12:00</span>
             </div>
 
             {buttons.length > 0 && (
@@ -93,7 +93,7 @@ export default function TemplatePreview({ components = [], className = '' }) {
                     {buttons.map((btn, i) => (
                         <div
                             key={i}
-                            className="flex items-center justify-center gap-1.5 rounded-md bg-white dark:bg-neutral-700 px-2 py-1.5 text-[13px] font-medium text-[#00a5f4] dark:text-sky-300 shadow-sm"
+                            className="flex items-center justify-center gap-1.5 rounded-md bg-white dark:bg-neutral-700 px-2 py-1.5 text-sm font-medium text-sky-700 dark:text-sky-300 shadow-sm"
                         >
                             {BTN_ICON[btn.type] ?? BTN_ICON.QUICK_REPLY}
                             <span className="truncate">{btn.text || t('whatsapp.templates_button_fallback')}</span>

@@ -147,7 +147,7 @@ stdout_logfile=${basePath}/storage/logs/worker.log`;
                     <Card.Body className="space-y-3">
                         <div>
                             <h3 className="flex items-center gap-2 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                                <Terminal className="h-4 w-4 text-neutral-400" />
+                                <Terminal className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
                                 {t('cron.step1_title')}
                             </h3>
                             <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">{t('cron.step1_desc')}</p>
@@ -161,7 +161,7 @@ stdout_logfile=${basePath}/storage/logs/worker.log`;
                     <Card.Body className="space-y-3">
                         <div>
                             <h3 className="flex items-center gap-2 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                                <Server className="h-4 w-4 text-neutral-400" />
+                                <Server className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
                                 {t('cron.step2_title')}
                             </h3>
                             <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">{t('cron.step2_desc')}</p>
@@ -179,7 +179,7 @@ stdout_logfile=${basePath}/storage/logs/worker.log`;
                     <Card.Body className="space-y-3">
                         <div>
                             <h3 className="flex items-center gap-2 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                                <CheckCircle className="h-4 w-4 text-neutral-400" />
+                                <CheckCircle className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
                                 {t('cron.step3_title')}
                             </h3>
                             <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">{t('cron.step3_desc')}</p>
@@ -204,7 +204,7 @@ stdout_logfile=${basePath}/storage/logs/worker.log`;
                         </div>
 
                         {tasks.length === 0 ? (
-                            <p className="text-sm text-neutral-400">{t('cron.tasks_empty')}</p>
+                            <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('cron.tasks_empty')}</p>
                         ) : (
                             <div className="overflow-hidden rounded-soft border border-neutral-200 dark:border-neutral-800">
                                 <table className="min-w-full divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
@@ -222,7 +222,7 @@ stdout_logfile=${basePath}/storage/logs/worker.log`;
                                                     <td className="px-4 py-2 text-neutral-800 dark:text-neutral-200">{task.description}</td>
                                                     <td className="px-4 py-2 text-neutral-500 dark:text-neutral-400">
                                                         {human && <span className="block">{human}</span>}
-                                                        <span dir="ltr" className="block font-mono text-xs text-neutral-400">{task.expression}</span>
+                                                        <span dir="ltr" className="block font-mono text-xs text-neutral-500 dark:text-neutral-400">{task.expression}</span>
                                                     </td>
                                                 </tr>
                                             );

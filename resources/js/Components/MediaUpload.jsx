@@ -103,7 +103,7 @@ export default function MediaUpload({
                     onClick={() => setMode('url')}
                     className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${
                         mode === 'url'
-                            ? 'bg-brand-500 text-white'
+                            ? 'bg-brand-600 text-white'
                             : 'bg-white dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-700'
                     }`}
                 >
@@ -115,7 +115,7 @@ export default function MediaUpload({
                     onClick={() => setMode('upload')}
                     className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${
                         mode === 'upload'
-                            ? 'bg-brand-500 text-white'
+                            ? 'bg-brand-600 text-white'
                             : 'bg-white dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-700'
                     }`}
                 >
@@ -139,7 +139,8 @@ export default function MediaUpload({
                         <button
                             type="button"
                             onClick={clear}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
+                            aria-label={t('ui.clear', 'Clear')}
+                            className="absolute right-1 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
                         >
                             <X className="h-4 w-4" />
                         </button>
@@ -169,11 +170,11 @@ export default function MediaUpload({
                         </>
                     ) : (
                         <>
-                            <Upload className="h-6 w-6 text-neutral-400" />
+                            <Upload className="h-6 w-6 text-neutral-500 dark:text-neutral-400" />
                             <span className="text-sm text-neutral-500 dark:text-neutral-400 text-center">
                                 {t('ui.drag_drop_or')} <span className="text-brand-600 dark:text-brand-400 font-medium">{t('ui.browse')}</span>
                             </span>
-                            <span className="text-xs text-neutral-400">
+                            <span className="text-xs text-neutral-500 dark:text-neutral-400">
                                 {accept} · {t('ui.max_size_mb', { max: maxSizeMb })}
                             </span>
                         </>
@@ -204,14 +205,14 @@ export default function MediaUpload({
                         <img src={value} alt="preview" className="h-10 w-10 rounded object-cover shrink-0" />
                     ) : (
                         <div className="h-10 w-10 rounded bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center shrink-0">
-                            <FileText className="h-5 w-5 text-neutral-500" />
+                            <FileText className="h-5 w-5 text-neutral-500 dark:text-neutral-400" />
                         </div>
                     )}
                     <span className="text-xs text-neutral-500 dark:text-neutral-400 truncate flex-1 min-w-0">{value}</span>
                     <button
                         type="button"
                         onClick={clear}
-                        className="shrink-0 text-neutral-400 hover:text-coral-500 transition"
+                        className="shrink-0 text-neutral-500 dark:text-neutral-400 hover:text-coral-500 transition"
                     >
                         <X className="h-4 w-4" />
                     </button>

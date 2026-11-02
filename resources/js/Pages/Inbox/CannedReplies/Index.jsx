@@ -59,7 +59,7 @@ export default function CannedRepliesIndex({ cannedReplies }) {
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{t('inbox.canned_replies')}</h1>
-                        <p className="text-sm text-neutral-500 mt-1">{t('inbox.canned_replies_hint_1')} <code className="font-mono bg-neutral-100 dark:bg-neutral-800 px-1 rounded">/shortcut</code> {t('inbox.canned_replies_hint_2')}</p>
+                        <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">{t('inbox.canned_replies_hint_1')} <code className="font-mono bg-neutral-100 dark:bg-neutral-800 px-1 rounded">/shortcut</code> {t('inbox.canned_replies_hint_2')}</p>
                     </div>
                     <button onClick={openCreate} className="flex items-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 transition">
                         <Plus className="h-4 w-4" /> {t('inbox.new_reply')}
@@ -79,14 +79,14 @@ export default function CannedRepliesIndex({ cannedReplies }) {
                             <h2 className="font-semibold text-neutral-900 dark:text-neutral-100">
                                 {editing ? t('inbox.edit_canned_reply') : t('inbox.new_canned_reply')}
                             </h2>
-                            <button onClick={resetForm} className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200">
+                            <button onClick={resetForm} aria-label={t('common.close')} className="inline-flex h-6 w-6 items-center justify-center text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200">
                                 <X className="h-4 w-4" />
                             </button>
                         </div>
                         <form onSubmit={submit} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                                    {t('inbox.shortcut')} <span className="text-neutral-400">{t('inbox.shortcut_hint')}</span>
+                                    {t('inbox.shortcut')} <span className="text-neutral-500 dark:text-neutral-400">{t('inbox.shortcut_hint')}</span>
                                 </label>
                                 <input
                                     value={form.shortcut}
@@ -98,7 +98,7 @@ export default function CannedRepliesIndex({ cannedReplies }) {
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                                    {t('inbox.body')} <span className="text-neutral-400">{t('inbox.body_hint', { token: '{{contact.first_name}}' })}</span>
+                                    {t('inbox.body')} <span className="text-neutral-500 dark:text-neutral-400">{t('inbox.body_hint', { token: '{{contact.first_name}}' })}</span>
                                 </label>
                                 <textarea
                                     rows={4}
@@ -124,7 +124,7 @@ export default function CannedRepliesIndex({ cannedReplies }) {
                 {/* List */}
                 <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 divide-y divide-neutral-100 dark:divide-neutral-800">
                     {cannedReplies.length === 0 ? (
-                        <p className="p-8 text-center text-sm text-neutral-500">{t('inbox.no_canned_replies')}</p>
+                        <p className="p-8 text-center text-sm text-neutral-500 dark:text-neutral-400">{t('inbox.no_canned_replies')}</p>
                     ) : (
                         cannedReplies.map(reply => (
                             <div key={reply.id} className="flex items-start gap-4 px-5 py-4">
@@ -135,10 +135,10 @@ export default function CannedRepliesIndex({ cannedReplies }) {
                                     <p className="text-sm text-neutral-700 dark:text-neutral-300 line-clamp-2">{reply.body}</p>
                                 </div>
                                 <div className="flex items-center gap-1.5 shrink-0">
-                                    <button onClick={() => openEdit(reply)} className="rounded p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
+                                    <button onClick={() => openEdit(reply)} aria-label={t('inbox.edit_canned_reply')} className="rounded p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
                                         <Pencil className="h-3.5 w-3.5" />
                                     </button>
-                                    <button onClick={() => destroy(reply)} className="rounded p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 text-neutral-400 hover:text-red-500 transition">
+                                    <button onClick={() => destroy(reply)} aria-label={t('common.delete', { defaultValue: 'Delete' })} className="rounded p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 text-neutral-500 dark:text-neutral-400 hover:text-red-500 transition">
                                         <Trash2 className="h-3.5 w-3.5" />
                                     </button>
                                 </div>

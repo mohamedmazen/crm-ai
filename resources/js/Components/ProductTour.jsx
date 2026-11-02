@@ -87,7 +87,7 @@ export default function ProductTour({ show = false }) {
                 {/* Close */}
                 <button
                     onClick={dismiss}
-                    className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-400 hover:text-neutral-600 transition"
+                    className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-neutral-600 transition"
                     aria-label={t('ui.close_tour')}
                 >
                     <X className="h-4 w-4" />
@@ -114,11 +114,11 @@ export default function ProductTour({ show = false }) {
                     <button
                         onClick={prev}
                         disabled={step === 0}
-                        className="flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 disabled:opacity-30 transition"
+                        className="flex items-center gap-1 text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300 disabled:opacity-30 transition"
                     >
                         <ChevronLeft className="h-4 w-4" /> {t('common.back')}
                     </button>
-                    <span className="text-xs text-neutral-400">{step + 1} / {TOUR_STEPS.length}</span>
+                    <span className="text-xs text-neutral-500 dark:text-neutral-400">{step + 1} / {TOUR_STEPS.length}</span>
                     <button
                         onClick={next}
                         className="flex items-center gap-1 text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 transition"

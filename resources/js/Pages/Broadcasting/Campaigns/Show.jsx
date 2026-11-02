@@ -96,7 +96,8 @@ export default function CampaignShow({ campaign, sample = [], reportUrl }) {
                 <div className="flex flex-wrap items-center gap-3">
                     <Link
                         href={route('client.campaigns.index')}
-                        className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition"
+                        aria-label={t('common.back')}
+                        className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition"
                     >
                         <ArrowLeft className="h-5 w-5" />
                     </Link>
@@ -130,7 +131,7 @@ export default function CampaignShow({ campaign, sample = [], reportUrl }) {
                         {campaign.status === 'draft' && (
                             <button
                                 onClick={handleLaunch}
-                                className="flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700 transition"
+                                className="flex items-center gap-1.5 rounded-lg bg-green-700 px-3 py-2 text-sm font-medium text-white hover:bg-green-800 transition"
                             >
                                 <Play className="h-4 w-4" /> {t('campaign.launch')}
                             </button>
@@ -146,7 +147,7 @@ export default function CampaignShow({ campaign, sample = [], reportUrl }) {
                         {campaign.status === 'paused' && (
                             <button
                                 onClick={handleLaunch}
-                                className="flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700 transition"
+                                className="flex items-center gap-1.5 rounded-lg bg-green-700 px-3 py-2 text-sm font-medium text-white hover:bg-green-800 transition"
                             >
                                 <Play className="h-4 w-4" /> {t('campaign.resume')}
                             </button>
@@ -188,7 +189,7 @@ export default function CampaignShow({ campaign, sample = [], reportUrl }) {
                                             </span>
                                             <span className="font-medium text-neutral-900 dark:text-neutral-100">
                                                 {m.value}{' '}
-                                                <span className="text-neutral-400 font-normal">
+                                                <span className="text-neutral-500 dark:text-neutral-400 font-normal">
                                                     ({pct}%)
                                                 </span>
                                             </span>
@@ -215,7 +216,7 @@ export default function CampaignShow({ campaign, sample = [], reportUrl }) {
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm">
                                 <thead>
-                                    <tr className="border-b border-neutral-200 dark:border-neutral-700 text-left text-xs text-neutral-500">
+                                    <tr className="border-b border-neutral-200 dark:border-neutral-700 text-left text-xs text-neutral-500 dark:text-neutral-400">
                                         <th className="pb-2">{t('campaign.col_contact')}</th>
                                         <th className="pb-2">{t('campaign.col_status')}</th>
                                         <th className="pb-2">{t('campaign.col_last_update')}</th>
@@ -235,7 +236,7 @@ export default function CampaignShow({ campaign, sample = [], reportUrl }) {
                                             <tr key={r.id}>
                                                 <td className="py-2 text-neutral-800 dark:text-neutral-200">
                                                     <div>{name}</div>
-                                                    <div className="text-xs text-neutral-400">
+                                                    <div className="text-xs text-neutral-500 dark:text-neutral-400">
                                                         {c.phone_e164 || c.email}
                                                     </div>
                                                 </td>
@@ -253,7 +254,7 @@ export default function CampaignShow({ campaign, sample = [], reportUrl }) {
                                                         </div>
                                                     )}
                                                 </td>
-                                                <td className="py-2 text-neutral-500 text-xs">
+                                                <td className="py-2 text-neutral-500 dark:text-neutral-400 text-xs">
                                                     {last ? formatInTz(last, userTz) : '—'}
                                                 </td>
                                             </tr>

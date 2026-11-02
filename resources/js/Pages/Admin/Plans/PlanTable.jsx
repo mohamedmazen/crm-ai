@@ -86,7 +86,7 @@ function PlanRow({ plan, index, total, onEdit, onDuplicate, onToggleEnabled, onD
                         type="button"
                         disabled={index === 0}
                         onClick={() => onMoveUp(index)}
-                        className="p-0.5 rounded text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-700 disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="p-0.5 rounded text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-700 disabled:opacity-30 disabled:cursor-not-allowed"
                         aria-label={t('admin.move_up')}
                     >
                         <ChevronUp className="h-4 w-4" />
@@ -95,7 +95,7 @@ function PlanRow({ plan, index, total, onEdit, onDuplicate, onToggleEnabled, onD
                         type="button"
                         disabled={index === total - 1}
                         onClick={() => onMoveDown(index)}
-                        className="p-0.5 rounded text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-700 disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="p-0.5 rounded text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-700 disabled:opacity-30 disabled:cursor-not-allowed"
                         aria-label={t('admin.move_down')}
                     >
                         <ChevronDown className="h-4 w-4" />
@@ -127,7 +127,7 @@ function PlanRow({ plan, index, total, onEdit, onDuplicate, onToggleEnabled, onD
                     <Dropdown.Trigger>
                         <button
                             type="button"
-                            className="p-2 rounded-lg text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 transition"
+                            className="p-2 rounded-lg text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 transition"
                             aria-label={t('admin.plan_actions')}
                         >
                             <MoreVertical className="h-4 w-4" />
@@ -158,7 +158,7 @@ function PlanRow({ plan, index, total, onEdit, onDuplicate, onToggleEnabled, onD
                         <Dropdown.Divider />
                         <Dropdown.Item
                             onClick={() => onDelete(plan)}
-                            className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                            className="text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
                         >
                             <Trash2 className="h-4 w-4 mr-2 inline" />
                             {t('admin.delete_plan')}

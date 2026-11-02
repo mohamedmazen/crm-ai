@@ -1,4 +1,5 @@
 import { usePage } from '@inertiajs/react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChannelBrandIcon } from '@/Components/BrandIcons';
 import {
@@ -6,7 +7,7 @@ import {
     Layers, Webhook, Key, BookOpen, Image, Radio, Inbox, Bot, Database,
     Zap, Share2, MapPin, Tag, LifeBuoy, ExternalLink, Mail, MessageSquare,
     ShoppingBag, KanbanSquare, SlidersHorizontal, CheckSquare, Building2, Copy, Calendar, BarChart3, Phone, Receipt,
-    ShieldCheck, Sparkles,
+    ShieldCheck, Sparkles, Bell,
 } from 'lucide-react';
 
 const iconClass = 'h-4 w-4';
@@ -17,12 +18,18 @@ function safeRoute(name, ...args) {
 }
 
 /**
- * Single source of truth for the client-panel sidebar navigation.
+ * Single source of truth for the client-panel navigation.
  *
- * Both ClientLayout and InboxLayout consume this so the sidebar is identical on
- * every client page. Previously each layout kept its own copy and they drifted —
- * the inbox sidebar was missing whole groups (Social Media, Automations, Leads)
- * and items. Keep all nav changes here only.
+ * The sidebar is organised into a small, fixed set of top-level **areas**
+ * (Phase 2 — navigation reorganisation). Every screen lives under one of them,
+ * so the default view is short and predictable; each area's sub-nav is only
+ * expanded when the area is active. Both ClientLayout and InboxLayout consume
+ * this so the two never drift — keep every nav change here only.
+ *
+ * `planFeatures` gates items: gated items that the plan does not include are
+ * removed from `items` and returned in `lockedItems`, which the sidebar
+ * collapses into a single compact "Upgrade" affordance instead of dozens of
+ * locked rows.
  */
 export default function useClientNav() {
     const { auth, branding, plan_features } = usePage().props;
@@ -32,156 +39,148 @@ export default function useClientNav() {
     const isClientAdmin = user?.client_role === 'administrator';
     const planFeatures = plan_features ?? {};
 
-    // Items that declare a feature stay visible but carry a lock badge when the
-    // plan does not include them, so the sidebar doubles as an upgrade surface.
-    const gateItem = (item) => (
-        item.feature && !planFeatures[item.feature] ? { ...item, locked: true } : item
-    );
+    return useMemo(() => {
+        const item = (label, href, icon, activePattern, feature) => ({
+            label,
+            href,
+            icon,
+            activePattern,
+            feature,
+        });
 
-    const accountItems = [
-        { label: t('nav.dashboard'), href: safeRoute('client.dashboard'), icon: <LayoutDashboard className={iconClass} />, activePattern: 'client.dashboard' },
-    ];
+        // ---- Inbox -------------------------------------------------------
+        const inboxItems = [
+            item(t('nav.inbox'), safeRoute('client.inbox.index'), <Inbox className={iconClass} />, ['client.inbox.index', 'client.inbox.show']),
+            item(t('nav.channel_setup'), safeRoute('client.inbox.setup'), <SlidersHorizontal className={iconClass} />, 'client.inbox.setup*'),
+            item(t('nav.canned_replies') || 'Canned Replies', safeRoute('client.inbox.canned-replies.index'), <MessageSquare className={iconClass} />, 'client.inbox.canned-replies.*'),
+            item(t('nav.labels') || 'Labels', safeRoute('client.inbox.labels.index'), <Tag className={iconClass} />, 'client.inbox.labels.*'),
+        ];
 
-    const accountSettingsItems = [
-        { label: t('nav.workspaces'), href: safeRoute('client.workspaces.index'), icon: <Layers className={iconClass} />,   activePattern: 'client.workspaces.*' },
-        { label: t('nav.custom_fields') || 'Custom Fields', href: safeRoute('client.custom-fields.index'), icon: <SlidersHorizontal className={iconClass} />, activePattern: 'client.custom-fields.*', feature: 'custom_fields' },
-        { label: t('nav.settings'),   href: safeRoute('client.settings.index'),   icon: <Settings className={iconClass} />, activePattern: 'client.settings.index' },
-    ];
+        // ---- Contacts ----------------------------------------------------
+        const contactsItems = [
+            item(t('nav.contacts'), safeRoute('client.contacts.index'), <Users className={iconClass} />, 'client.contacts.*'),
+            item(t('nav.segments'), safeRoute('client.segments.index'), <Tag className={iconClass} />, 'client.segments.*'),
+        ];
 
-    if (isClientAdmin) {
-        accountSettingsItems.push(
-            { label: t('nav.team'),      href: safeRoute('client.team.index'),      icon: <Users className={iconClass} />,    activePattern: 'client.team.*' },
-            { label: t('nav.audit_log'), href: safeRoute('client.audit-log.index'), icon: <FileText className={iconClass} />, activePattern: 'client.audit-log.*' },
-            { label: t('nav.gdpr'),      href: safeRoute('client.settings.gdpr'),  icon: <ShieldCheck className={iconClass} />, activePattern: 'client.settings.gdpr*' },
-        );
-    }
+        // ---- Sales -------------------------------------------------------
+        const salesItems = [
+            item(t('nav.lead_scraper'), safeRoute('client.leads.index'), <MapPin className={iconClass} />, ['client.leads.index', 'client.leads.show']),
+            item(t('nav.lead_pipeline'), safeRoute('client.leads.pipeline.index'), <KanbanSquare className={iconClass} />, 'client.leads.pipeline.*'),
+            item(t('nav.companies') || 'Companies', safeRoute('client.leads.companies.index'), <Building2 className={iconClass} />, 'client.leads.companies.*', 'companies'),
+            item(t('nav.pipelines') || 'Pipelines', safeRoute('client.leads.pipelines.index'), <SlidersHorizontal className={iconClass} />, 'client.leads.pipelines.*', 'multi_pipeline'),
+            item(t('nav.duplicates') || 'Duplicates', safeRoute('client.leads.duplicates.index'), <Copy className={iconClass} />, 'client.leads.duplicates.*', 'duplicates'),
+            item(t('nav.tasks') || 'Tasks', safeRoute('client.tasks.index'), <CheckSquare className={iconClass} />, 'client.tasks.*', 'tasks'),
+            item(t('nav.quotes') || 'Quotes', safeRoute('client.sales.quotes.index'), <FileText className={iconClass} />, 'client.sales.quotes.*', 'quotes'),
+            item(t('nav.invoices') || 'Invoices', safeRoute('client.sales.invoices.index'), <Receipt className={iconClass} />, 'client.sales.invoices.*', 'quotes'),
+            item(t('nav.sales_products') || 'Products', safeRoute('client.sales.products.index'), <Package className={iconClass} />, 'client.sales.products.*', 'quotes'),
+            item(t('nav.sequences') || 'Sequences', safeRoute('client.sales.sequences.index'), <Mail className={iconClass} />, 'client.sales.sequences.*', 'sequences'),
+            item(t('nav.calls') || 'Call Log', safeRoute('client.sales.calls.index'), <Phone className={iconClass} />, 'client.sales.calls.*', 'call_logs'),
+            item(t('nav.ai_sdr') || 'AI SDR', safeRoute('client.sales.ai-sdr.index'), <Sparkles className={iconClass} />, 'client.sales.ai-sdr.*', 'ai_sdr'),
+            item(t('nav.orders'), safeRoute('client.ecommerce.orders.index'), <ShoppingBag className={iconClass} />, 'client.ecommerce.orders.*'),
+            item(t('nav.products'), safeRoute('client.ecommerce.products.index'), <Tag className={iconClass} />, 'client.ecommerce.products.*'),
+            item(t('nav.stores'), safeRoute('client.ecommerce.stores.index'), <ShoppingBag className={iconClass} />, 'client.ecommerce.stores.*'),
+        ];
 
-    const billingItems = [
-        { label: t('nav.subscription'), href: safeRoute('client.subscription.show'), icon: <CreditCard className={iconClass} />, activePattern: 'client.subscription.*' },
-        { label: t('nav.billing'),      href: safeRoute('client.billing.index'),     icon: <CreditCard className={iconClass} />, activePattern: 'client.billing.*' },
-        { label: t('nav.plans'),        href: safeRoute('client.pricing'),            icon: <Package className={iconClass} />,    activePattern: 'client.pricing' },
-    ];
+        // ---- Marketing ---------------------------------------------------
+        const marketingItems = [
+            item(t('nav.campaigns'), safeRoute('client.campaigns.index'), <Radio className={iconClass} />, 'client.campaigns.*'),
+            item(t('nav.templates'), safeRoute('client.whatsapp.templates.index'), whatsappNavIcon, 'client.whatsapp.templates.*'),
+            item(t('nav.auto_replies'), safeRoute('client.whatsapp.auto-replies.index'), whatsappNavIcon, 'client.whatsapp.auto-replies.*'),
+            item(t('nav.chat_widget'), safeRoute('client.whatsapp.widget.index'), whatsappNavIcon, 'client.whatsapp.widget.*'),
+            item(t('nav.sms_gateways'), safeRoute('client.sms-gateways.index'), <MessageSquare className={iconClass} />, 'client.sms-gateways.*'),
+            item(t('nav.email_server'), safeRoute('client.email-server.index'), <Mail className={iconClass} />, 'client.email-server.*'),
+            item(t('nav.post_composer'), safeRoute('client.social.composer'), <FileText className={iconClass} />, 'client.social.composer'),
+            item(t('nav.posts'), safeRoute('client.social.posts.index'), <Radio className={iconClass} />, 'client.social.posts.*'),
+            item(t('nav.calendar'), safeRoute('client.social.calendar'), <Calendar className={iconClass} />, 'client.social.calendar'),
+            item(t('nav.social_accounts'), safeRoute('client.social.accounts.index'), <Share2 className={iconClass} />, 'client.social.accounts.*'),
+            item(t('nav.forms') || 'Forms', safeRoute('client.sales.forms.index'), <FileText className={iconClass} />, 'client.sales.forms.*', 'forms'),
+            item(t('nav.booking') || 'Booking Pages', safeRoute('client.sales.booking.index'), <Calendar className={iconClass} />, 'client.sales.booking.*', 'booking'),
+            item(t('nav.lead_sources') || 'Lead Sources', safeRoute('client.sales.lead-sources.index'), <Radio className={iconClass} />, 'client.sales.lead-sources.*', 'lead_sources'),
+        ];
 
-    const developerItems = [
-        { label: t('nav.api_tokens'),    href: safeRoute('client.api-tokens.index'), icon: <Key className={iconClass} />,     activePattern: 'client.api-tokens.*' },
-        { label: t('nav.webhooks'),      href: safeRoute('client.webhooks.index'),    icon: <Webhook className={iconClass} />,  activePattern: 'client.webhooks.*' },
-        { label: t('nav.api_docs'),      href: safeRoute('client.api-docs'),          icon: <BookOpen className={iconClass} />, activePattern: 'client.api-docs' },
-        { label: t('nav.media_library'), href: safeRoute('client.media.index'),       icon: <Image className={iconClass} />,   activePattern: 'client.media.*' },
-    ];
+        // ---- Automation --------------------------------------------------
+        const automationItems = [
+            item(t('nav.automations'), safeRoute('client.automations.index'), <Zap className={iconClass} />, 'client.automations.*'),
+        ];
 
-    const supportItems = [
-        { label: t('nav.support_tickets'), href: safeRoute('client.support.index'), icon: <LifeBuoy className={iconClass} />,   activePattern: 'client.support.*' },
-    ];
+        // ---- Reports -----------------------------------------------------
+        const reportsItems = [
+            item(t('nav.sales_reports'), safeRoute('client.reports.sales.volume'), <BarChart3 className={iconClass} />, 'client.reports.sales.*', 'sales_reports'),
+            item(t('nav.reports_inbox'), safeRoute('client.reports.inbox.index'), <Inbox className={iconClass} />, 'client.reports.inbox.*'),
+            item(t('nav.campaigns'), safeRoute('client.reports.campaigns.index'), <Radio className={iconClass} />, 'client.reports.campaigns.*'),
+            item(t('nav.automations'), safeRoute('client.reports.automations.index'), <Zap className={iconClass} />, 'client.reports.automations.*'),
+            item(t('nav.ai_usage'), safeRoute('client.reports.ai.index'), <Bot className={iconClass} />, 'client.reports.ai.*'),
+            item(t('nav.social'), safeRoute('client.reports.social.index'), <Share2 className={iconClass} />, 'client.reports.social.*'),
+        ];
 
-    if (docsUrl) {
-        supportItems.push({ label: t('nav.help_docs'), href: docsUrl, icon: <ExternalLink className={iconClass} />, external: true });
-    }
+        // ---- Settings (everything administrative lives here) -------------
+        const settingsItems = [
+            item(t('nav.settings'), safeRoute('client.settings.index'), <Settings className={iconClass} />, 'client.settings.index'),
+            item(t('nav.workspaces'), safeRoute('client.workspaces.index'), <Layers className={iconClass} />, 'client.workspaces.*'),
+            item(t('nav.notifications') || 'Notifications', safeRoute('client.notifications.index'), <Bell className={iconClass} />, 'client.notifications.*'),
+            item(t('nav.media_library'), safeRoute('client.media.index'), <Image className={iconClass} />, 'client.media.*'),
+            item(t('nav.custom_fields'), safeRoute('client.custom-fields.index'), <SlidersHorizontal className={iconClass} />, 'client.custom-fields.*', 'custom_fields'),
+            item(t('nav.subscription'), safeRoute('client.subscription.show'), <CreditCard className={iconClass} />, 'client.subscription.*'),
+            item(t('nav.billing'), safeRoute('client.billing.index'), <CreditCard className={iconClass} />, 'client.billing.*'),
+            item(t('nav.plans'), safeRoute('client.pricing'), <Package className={iconClass} />, 'client.pricing'),
+            item(t('nav.api_tokens'), safeRoute('client.api-tokens.index'), <Key className={iconClass} />, 'client.api-tokens.*'),
+            item(t('nav.webhooks'), safeRoute('client.webhooks.index'), <Webhook className={iconClass} />, 'client.webhooks.*'),
+            item(t('nav.api_docs'), safeRoute('client.api-docs'), <BookOpen className={iconClass} />, 'client.api-docs'),
+            item(t('nav.support_tickets'), safeRoute('client.support.index'), <LifeBuoy className={iconClass} />, 'client.support.*'),
+            item(t('nav.chatbots'), safeRoute('client.ai.chatbots.index'), <Bot className={iconClass} />, 'client.ai.chatbots.*'),
+            item(t('nav.knowledge_bases'), safeRoute('client.ai.knowledge-bases.index'), <Database className={iconClass} />, 'client.ai.knowledge-bases.*'),
+            item(t('nav.ai_providers'), safeRoute('client.ai.providers.index'), <Bot className={iconClass} />, 'client.ai.providers.*'),
+        ];
 
-    const contactsItems = [
-        { label: t('nav.contacts'),  href: safeRoute('client.contacts.index'),  icon: <Users className={iconClass} />,  activePattern: 'client.contacts.*' },
-        { label: t('nav.segments'),  href: safeRoute('client.segments.index'),  icon: <Tag className={iconClass} />,    activePattern: 'client.segments.*' },
-    ];
+        if (isClientAdmin) {
+            settingsItems.push(
+                item(t('nav.team'), safeRoute('client.team.index'), <Users className={iconClass} />, 'client.team.*'),
+                item(t('nav.audit_log'), safeRoute('client.audit-log.index'), <FileText className={iconClass} />, 'client.audit-log.*'),
+                item(t('nav.gdpr'), safeRoute('client.settings.gdpr'), <ShieldCheck className={iconClass} />, 'client.settings.gdpr*'),
+            );
+        }
 
-    const messagingItems = [
-        { label: t('nav.templates'),     href: safeRoute('client.whatsapp.templates.index'),     icon: whatsappNavIcon, activePattern: 'client.whatsapp.templates.*' },
-        { label: t('nav.auto_replies'),  href: safeRoute('client.whatsapp.auto-replies.index'),  icon: whatsappNavIcon, activePattern: 'client.whatsapp.auto-replies.*' },
-        { label: t('nav.chat_widget'),   href: safeRoute('client.whatsapp.widget.index'),         icon: whatsappNavIcon, activePattern: 'client.whatsapp.widget.*' },
-    ];
+        if (docsUrl) {
+            settingsItems.push({
+                label: t('nav.help_docs'),
+                href: docsUrl,
+                icon: <ExternalLink className={iconClass} />,
+                external: true,
+            });
+        }
 
-    const broadcastItems = [
-        { label: t('nav.campaigns'),    href: safeRoute('client.campaigns.index'),    icon: <Radio className={iconClass} />,        activePattern: 'client.campaigns.*' },
-        { label: t('nav.sms_gateways'), href: safeRoute('client.sms-gateways.index'), icon: <MessageSquare className={iconClass} />, activePattern: 'client.sms-gateways.*' },
-        { label: t('nav.email_server'), href: safeRoute('client.email-server.index'), icon: <Mail className={iconClass} />,          activePattern: 'client.email-server.*' },
-    ];
+        const areas = [
+            { key: 'inbox', label: t('nav.group_inbox'), icon: <Inbox className="h-5 w-5" />, items: inboxItems },
+            { key: 'contacts', label: t('nav.group_contacts'), icon: <Users className="h-5 w-5" />, items: contactsItems },
+            { key: 'sales', label: t('nav.group_sales'), icon: <KanbanSquare className="h-5 w-5" />, items: salesItems },
+            { key: 'marketing', label: t('nav.area_marketing') || 'Marketing', icon: <Radio className="h-5 w-5" />, items: marketingItems },
+            { key: 'automation', label: t('nav.group_automations'), icon: <Zap className="h-5 w-5" />, items: automationItems },
+            { key: 'reports', label: t('nav.group_reports'), icon: <BarChart3 className="h-5 w-5" />, items: reportsItems },
+            { key: 'settings', label: t('nav.settings'), icon: <Settings className="h-5 w-5" />, items: settingsItems },
+        ];
 
-    const inboxItems = [
-        { label: t('nav.inbox'),         href: safeRoute('client.inbox.index'), icon: <Inbox className={iconClass} />, activePattern: 'client.inbox.index' },
-        { label: t('nav.channel_setup'), href: safeRoute('client.inbox.setup'), icon: <Inbox className={iconClass} />, activePattern: 'client.inbox.setup' },
-    ];
-
-    const aiItems = [
-        { label: t('nav.chatbots'),        href: safeRoute('client.ai.chatbots.index'),        icon: <Bot className={iconClass} />,      activePattern: 'client.ai.chatbots.*' },
-        { label: t('nav.knowledge_bases'), href: safeRoute('client.ai.knowledge-bases.index'), icon: <Database className={iconClass} />, activePattern: 'client.ai.knowledge-bases.*' },
-        { label: t('nav.ai_providers'),    href: safeRoute('client.ai.providers.index'),        icon: <Bot className={iconClass} />,      activePattern: 'client.ai.providers.*' },
-        { label: t('nav.ai_sdr') || 'AI SDR', href: safeRoute('client.sales.ai-sdr.index'),    icon: <Sparkles className={iconClass} />, activePattern: 'client.sales.ai-sdr.*', feature: 'ai_sdr' },
-    ];
-
-    const socialItems = [
-        { label: t('nav.post_composer'),   href: safeRoute('client.social.composer'),        icon: <FileText className={iconClass} />,       activePattern: 'client.social.composer' },
-        { label: t('nav.posts'),           href: safeRoute('client.social.posts.index'),     icon: <Radio className={iconClass} />,           activePattern: 'client.social.posts.*' },
-        { label: t('nav.calendar'),        href: safeRoute('client.social.calendar'),         icon: <LayoutDashboard className={iconClass} />, activePattern: 'client.social.calendar' },
-        { label: t('nav.social_accounts'), href: safeRoute('client.social.accounts.index'),  icon: <Share2 className={iconClass} />,          activePattern: 'client.social.accounts.*' },
-    ];
-
-    const captureItems = [
-        { label: t('nav.forms') || 'Forms', href: safeRoute('client.sales.forms.index'), icon: <FileText className={iconClass} />, activePattern: 'client.sales.forms.*', feature: 'forms' },
-        { label: t('nav.booking') || 'Booking Pages', href: safeRoute('client.sales.booking.index'), icon: <Calendar className={iconClass} />, activePattern: 'client.sales.booking.*', feature: 'booking' },
-        { label: t('nav.lead_sources') || 'Lead Sources', href: safeRoute('client.sales.lead-sources.index'), icon: <Radio className={iconClass} />, activePattern: 'client.sales.lead-sources.*', feature: 'lead_sources' },
-    ];
-
-    const salesItems = [
-        { label: t('nav.sequences') || 'Sequences', href: safeRoute('client.sales.sequences.index'), icon: <Mail className={iconClass} />, activePattern: 'client.sales.sequences.*', feature: 'sequences' },
-        { label: t('nav.quotes') || 'Quotes', href: safeRoute('client.sales.quotes.index'), icon: <FileText className={iconClass} />, activePattern: 'client.sales.quotes.*', feature: 'quotes' },
-        { label: t('nav.invoices') || 'Invoices', href: safeRoute('client.sales.invoices.index'), icon: <Receipt className={iconClass} />, activePattern: 'client.sales.invoices.*', feature: 'quotes' },
-        { label: t('nav.sales_products') || 'Products', href: safeRoute('client.sales.products.index'), icon: <Package className={iconClass} />, activePattern: 'client.sales.products.*', feature: 'quotes' },
-        { label: t('nav.calls') || 'Call Log', href: safeRoute('client.sales.calls.index'), icon: <Phone className={iconClass} />, activePattern: 'client.sales.calls.*', feature: 'call_logs' },
-    ];
-
-    const leadsItems = [
-        { label: t('nav.tasks') || 'Tasks', href: safeRoute('client.tasks.index'), icon: <CheckSquare className={iconClass} />, activePattern: 'client.tasks.*', feature: 'tasks' },
-        { label: t('nav.companies') || 'Companies', href: safeRoute('client.leads.companies.index'), icon: <Building2 className={iconClass} />, activePattern: 'client.leads.companies.*', feature: 'companies' },
-        { label: t('nav.lead_scraper'),  href: safeRoute('client.leads.index'),          icon: <MapPin className={iconClass} />,     activePattern: 'client.leads.index' },
-        { label: t('nav.lead_pipeline'), href: safeRoute('client.leads.pipeline.index'), icon: <KanbanSquare className={iconClass} />, activePattern: 'client.leads.pipeline.*' },
-        { label: t('nav.pipelines') || 'Pipelines', href: safeRoute('client.leads.pipelines.index'), icon: <SlidersHorizontal className={iconClass} />, activePattern: 'client.leads.pipelines.*', feature: 'multi_pipeline' },
-        { label: t('nav.duplicates') || 'Duplicates', href: safeRoute('client.leads.duplicates.index'), icon: <Copy className={iconClass} />, activePattern: 'client.leads.duplicates.*', feature: 'duplicates' },
-    ];
-
-    const automationItems = [
-        { label: t('nav.automations'), href: safeRoute('client.automations.index'), icon: <Zap className={iconClass} />, activePattern: 'client.automations.*' },
-    ];
-
-    const ecommerceItems = [
-        { label: t('nav.orders'),   href: safeRoute('client.ecommerce.orders.index'),   icon: <Package className={iconClass} />,     activePattern: 'client.ecommerce.orders.*' },
-        { label: t('nav.products'), href: safeRoute('client.ecommerce.products.index'), icon: <Tag className={iconClass} />,         activePattern: 'client.ecommerce.products.*' },
-        { label: t('nav.stores'),   href: safeRoute('client.ecommerce.stores.index'),   icon: <ShoppingBag className={iconClass} />, activePattern: 'client.ecommerce.stores.*' },
-    ];
-
-    const reportsItems = [
-        { label: t('nav.sales_reports'),      href: safeRoute('client.reports.sales.volume'),      icon: <BarChart3 className={iconClass} />, activePattern: 'client.reports.sales.*', feature: 'sales_reports' },
-        { label: t('nav.reports_inbox'),       href: safeRoute('client.reports.inbox.index'),       icon: <Inbox className={iconClass} />,  activePattern: 'client.reports.inbox.*' },
-        { label: t('nav.campaigns'),           href: safeRoute('client.reports.campaigns.index'),   icon: <Radio className={iconClass} />,  activePattern: 'client.reports.campaigns.*' },
-        { label: t('nav.automations'),         href: safeRoute('client.reports.automations.index'), icon: <Zap className={iconClass} />,    activePattern: 'client.reports.automations.*' },
-        { label: t('nav.ai_usage'),            href: safeRoute('client.reports.ai.index'),          icon: <Bot className={iconClass} />,    activePattern: 'client.reports.ai.*' },
-        { label: t('nav.social'),              href: safeRoute('client.reports.social.index'),      icon: <Share2 className={iconClass} />, activePattern: 'client.reports.social.*' },
-    ];
-
-    // Group order: daily operations first, then growth tools, periodic review, then account-adjacent config (usage-frequency–based).
-    const groups = [
-        { type: 'group', label: t('nav.group_account'),      items: accountItems },
-        { type: 'group', label: t('nav.group_inbox'),         items: inboxItems },
-        { type: 'group', label: t('nav.group_social_media'),  items: socialItems },
-        { type: 'group', label: t('nav.group_messaging'),     items: messagingItems },
-        { type: 'group', label: t('nav.group_contacts'),      items: contactsItems },
-        { type: 'group', label: t('nav.group_broadcasting'),  items: broadcastItems },
-        { type: 'group', label: t('nav.group_automations'),   items: automationItems },
-        { type: 'group', label: t('nav.group_ecommerce'),    items: ecommerceItems },
-        { type: 'group', label: t('nav.group_ai'),            items: aiItems },
-        { type: 'group', label: t('nav.group_capture'),       items: captureItems },
-        { type: 'group', label: t('nav.group_sales'),         items: salesItems },
-        { type: 'group', label: t('nav.group_leads'),         items: leadsItems },
-        { type: 'group', label: t('nav.group_reports'),       items: reportsItems },
-        { type: 'group', label: t('nav.group_support'),       items: supportItems },
-        { type: 'group', label: t('nav.group_billing'),       items: billingItems },
-        { type: 'group', label: t('nav.group_developer'),     items: developerItems },
-        { type: 'group', label: t('nav.group_account'),       items: accountSettingsItems },
-    ];
-
-    // Gate individual items first, then drop a whole section when every item in
-    // it is unavailable on the current plan — an all-locked section is noise.
-    return groups
-        .map((group) => ({
-            ...group,
-            items: group.items.map(gateItem),
-        }))
-        .filter((group) => group.items.some((item) => !item.locked));
+        // Split gated items: available ones stay in the sub-nav, the rest are
+        // collapsed into a single per-area "Upgrade" row.
+        return {
+            home: {
+                key: 'home',
+                label: t('nav.dashboard'),
+                href: safeRoute('client.dashboard'),
+                icon: <LayoutDashboard className="h-5 w-5" />,
+                activePattern: 'client.dashboard',
+            },
+            areas: areas.map((area) => {
+                const available = [];
+                const locked = [];
+                area.items.forEach((navItem) => {
+                    if (navItem.feature && !planFeatures[navItem.feature]) {
+                        locked.push(navItem);
+                    } else {
+                        available.push(navItem);
+                    }
+                });
+                return { ...area, items: available, lockedItems: locked };
+            }),
+        };
+    }, [t, planFeatures, isClientAdmin, docsUrl]);
 }

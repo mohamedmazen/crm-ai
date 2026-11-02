@@ -131,7 +131,7 @@ export default function LandingLayout({ children }) {
                                     <button
                                         type="button"
                                         className="hidden sm:flex items-center gap-1.5 rounded-soft px-2.5 py-1.5 text-sm text-white/70 hover:text-white hover:bg-white/10 transition duration-150"
-                                        aria-label={t('topbar.language')}
+                                        aria-label={`${t('topbar.language')}: ${currentLocale.toUpperCase()}`}
                                     >
                                         <Globe className="h-4 w-4" />
                                         <span>{currentLocale.toUpperCase()}</span>
@@ -305,7 +305,7 @@ export default function LandingLayout({ children }) {
 
                         {/* Company */}
                         <div>
-                            <h4 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-4">{t('landing_page_admin.footer_company', { defaultValue: 'Company' })}</h4>
+                            <h3 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-4">{t('landing_page_admin.footer_company', { defaultValue: 'Company' })}</h3>
                             <ul className="space-y-2.5">
                                 {[
                                     { label: t('landing_page_admin.footer_about', { defaultValue: 'About' }), href: '/about' },
@@ -322,7 +322,7 @@ export default function LandingLayout({ children }) {
 
                         {/* Legal */}
                         <div>
-                            <h4 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-4">{t('landing_page_admin.footer_legal', { defaultValue: 'Legal' })}</h4>
+                            <h3 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-4">{t('landing_page_admin.footer_legal', { defaultValue: 'Legal' })}</h3>
                             <ul className="space-y-2.5">
                                 {[
                                     { label: t('landing_page_admin.footer_privacy', { defaultValue: 'Privacy Policy' }), href: '/p/privacy' },
@@ -339,7 +339,7 @@ export default function LandingLayout({ children }) {
 
                         {/* Product */}
                         <div>
-                            <h4 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-4">{t('landing_page_admin.footer_product', { defaultValue: 'Product' })}</h4>
+                            <h3 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-4">{t('landing_page_admin.footer_product', { defaultValue: 'Product' })}</h3>
                             <ul className="space-y-2.5">
                                 {[
                                     { label: t('nav.features'), href: '/#features' },
@@ -356,13 +356,13 @@ export default function LandingLayout({ children }) {
                     </div>
 
                     <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-                        <p className="text-xs text-neutral-500">
+                        <p className="text-xs text-neutral-400">
                             &copy; {new Date().getFullYear()} {appName}. {t('nav.all_rights_reserved')}
                         </p>
                         <button
                             type="button"
                             onClick={handleThemeToggle}
-                            className="text-xs text-neutral-500 hover:text-neutral-300 flex items-center gap-1.5 transition"
+                            className="text-xs text-neutral-400 hover:text-neutral-300 flex items-center gap-1.5 transition"
                         >
                             {theme === 'dark' ? <SunIcon className="h-3.5 w-3.5" /> : <MoonIcon className="h-3.5 w-3.5" />}
                             {theme === 'dark' ? t('nav.light_mode') : t('nav.dark_mode')}

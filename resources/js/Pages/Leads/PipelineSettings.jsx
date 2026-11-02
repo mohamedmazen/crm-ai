@@ -82,6 +82,7 @@ export default function PipelineSettings({ pipelines, closeReasons }) {
                         <Button
                             variant="secondary"
                             onClick={() => router.visit(route('client.leads.pipeline.index'))}
+                            aria-label={t('common.back') || 'Back'}
                             className="p-2"
                         >
                             <ArrowLeft className="h-4 w-4" />
@@ -107,7 +108,7 @@ export default function PipelineSettings({ pipelines, closeReasons }) {
                 <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
                     <div className="flex items-center justify-between pb-4 border-b border-neutral-100 dark:border-neutral-800">
                         <div className="flex items-center gap-2">
-                            <KanbanSquare className="h-5 w-5 text-brand-600" />
+                            <KanbanSquare className="h-5 w-5 text-brand-600 dark:text-brand-400" />
                             <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
                                 {t('leads.pipelines') || 'Sales Pipelines'}
                             </h2>
@@ -128,7 +129,7 @@ export default function PipelineSettings({ pipelines, closeReasons }) {
                                             {pipeline.name}
                                         </h3>
                                         {pipeline.is_default && (
-                                            <span className="inline-flex items-center gap-1 rounded bg-brand-50 px-2 py-0.5 text-[11px] font-medium text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
+                                            <span className="inline-flex items-center gap-1 rounded bg-brand-50 px-2 py-0.5 text-2xs font-medium text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
                                                 <Check className="h-3 w-3" />
                                                 {t('common.default') || 'Default'}
                                             </span>
@@ -144,6 +145,7 @@ export default function PipelineSettings({ pipelines, closeReasons }) {
                                         <select
                                             value={pipeline.assignment_mode || 'manual'}
                                             onChange={(e) => handleUpdateAssignmentMode(pipeline, e.target.value)}
+                                            aria-label={t('leads.routing_mode') || 'Lead Routing'}
                                             className="rounded-soft border-soft bg-white py-0.5 px-2 text-xs font-medium dark:bg-neutral-800 dark:text-neutral-200 focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
                                         >
                                             <option value="manual">{t('leads.mode_manual') || 'Manual'}</option>
@@ -166,7 +168,8 @@ export default function PipelineSettings({ pipelines, closeReasons }) {
                                         <button
                                             type="button"
                                             onClick={() => handleDeletePipeline(pipeline)}
-                                            className="rounded p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-red-600 dark:hover:bg-neutral-800"
+                                            aria-label={t('common.delete') || 'Delete'}
+                                            className="rounded p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-red-600 dark:hover:bg-neutral-800"
                                             title={t('common.delete') || 'Delete'}
                                         >
                                             <Trash2 className="h-4 w-4" />
@@ -190,7 +193,7 @@ export default function PipelineSettings({ pipelines, closeReasons }) {
                                 type="checkbox"
                                 checked={isDefaultPipeline}
                                 onChange={(e) => setIsDefaultPipeline(e.target.checked)}
-                                className="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
+                                className="rounded border-neutral-300 text-brand-600 dark:text-brand-400 focus:ring-brand-500"
                             />
                             {t('leads.set_as_default') || 'Set as default'}
                         </label>
@@ -215,7 +218,7 @@ export default function PipelineSettings({ pipelines, closeReasons }) {
                     <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Won Reasons */}
                         <div>
-                            <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium text-sm mb-3">
+                            <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-medium text-sm mb-3">
                                 <Trophy className="h-4 w-4" />
                                 <span>{t('leads.won_reasons') || 'Won Reasons'}</span>
                             </div>
@@ -264,6 +267,7 @@ export default function PipelineSettings({ pipelines, closeReasons }) {
                         <select
                             value={newReasonType}
                             onChange={(e) => setNewReasonType(e.target.value)}
+                            aria-label={t('leads.reason_type') || 'Reason type'}
                             className="rounded-soft border-soft bg-white px-3 py-2 text-sm dark:bg-neutral-800 dark:text-neutral-100"
                         >
                             <option value="won">{t('leads.won') || 'Won Reason'}</option>

@@ -94,11 +94,11 @@ function AddCurrencyRow() {
         <tr className="align-top bg-neutral-50/60 dark:bg-neutral-800/30">
             <td className="py-3 pr-4">
                 <input value={data.code} onChange={(e) => setData('code', e.target.value.toUpperCase())} placeholder="USD" maxLength={10} className={`${inputCls} w-20 uppercase`} />
-                {errors.code && <div className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.code}</div>}
+                {errors.code && <div className="mt-1 text-xs text-red-700 dark:text-red-400">{errors.code}</div>}
             </td>
             <td className="py-3 pr-4">
                 <input value={data.symbol} onChange={(e) => setData('symbol', e.target.value)} placeholder="$" className={`${inputCls} w-16`} />
-                {errors.symbol && <div className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.symbol}</div>}
+                {errors.symbol && <div className="mt-1 text-xs text-red-700 dark:text-red-400">{errors.symbol}</div>}
             </td>
             <td className="py-3 pr-4"><input type="number" value={data.decimals} onChange={(e) => setData('decimals', parseInt(e.target.value, 10) || 0)} className={`${inputCls} w-14`} /></td>
             <td className="py-3 pr-4"><input type="number" step="any" value={data.exchange_rate} onChange={(e) => setData('exchange_rate', e.target.value)} placeholder="1" className={`${inputCls} w-20`} /></td>

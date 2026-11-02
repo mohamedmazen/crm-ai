@@ -130,7 +130,7 @@ export default function AdminAdminsIndex({ admins, roles, filters = {}, flash })
                                                 {a.roles?.map((r) => (
                                                     <Badge key={r.id} variant="default" className="text-xs">{r.key}</Badge>
                                                 ))}
-                                                {(!a.roles || a.roles.length === 0) && <span className="text-neutral-400">—</span>}
+                                                {(!a.roles || a.roles.length === 0) && <span className="text-neutral-500 dark:text-neutral-400">—</span>}
                                             </div>
                                         </td>
                                         <td className="py-3 pr-4">
@@ -145,7 +145,7 @@ export default function AdminAdminsIndex({ admins, roles, filters = {}, flash })
                                                         <button
                                                             type="button"
                                                             onClick={() => toggleStatus(a)}
-                                                            className="rounded-soft p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
+                                                            className="rounded-soft p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
                                                             title={a.status === STATUS_ACTIVE ? t('admin.deactivate') : t('admin.activate')}
                                                         >
                                                             {a.status === STATUS_ACTIVE ? <Lock className="h-4 w-4" /> : <Unlock className="h-4 w-4" />}
@@ -153,7 +153,7 @@ export default function AdminAdminsIndex({ admins, roles, filters = {}, flash })
                                                         <button
                                                             type="button"
                                                             onClick={() => openEdit(a)}
-                                                            className="rounded-soft p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
+                                                            className="rounded-soft p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
                                                             title={t('common.edit')}
                                                         >
                                                             <Pencil className="h-4 w-4" />

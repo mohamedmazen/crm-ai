@@ -61,7 +61,7 @@ export default function WorkspacesIndex({ workspaces = [] }) {
 
                 {/* Workspace list */}
                 <div className="space-y-3">
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
                         {t('workspaces.your_workspaces', { count: workspaces.length })}
                     </h3>
 
@@ -69,12 +69,12 @@ export default function WorkspacesIndex({ workspaces = [] }) {
                         <Card>
                             <Card.Body className="py-10 text-center">
                                 <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-neutral-100 dark:bg-neutral-800">
-                                    <svg className="h-6 w-6 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                    <svg className="h-6 w-6 text-neutral-500 dark:text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h6c.621 0 1.125.504 1.125 1.125v3.75c0 .621-.504 1.125-1.125 1.125h-6a1.125 1.125 0 01-1.125-1.125v-3.75zM14.25 8.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v8.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-8.25zM3.75 16.125c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-2.25z" />
                                     </svg>
                                 </div>
                                 <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('workspaces.none_yet')}</p>
-                                <p className="mt-1 text-sm text-neutral-400">{t('workspaces.create_first')}</p>
+                                <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">{t('workspaces.create_first')}</p>
                             </Card.Body>
                         </Card>
                     ) : (
@@ -94,7 +94,7 @@ export default function WorkspacesIndex({ workspaces = [] }) {
                                                 <WorkspaceAvatar name={w.name} />
                                                 <div>
                                                     <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{w.name}</p>
-                                                    <p className="text-xs text-neutral-400 dark:text-neutral-500">
+                                                    <p className="text-xs text-neutral-500 dark:text-neutral-400">
                                                         {w.is_owner ? t('workspaces.owner') : t('workspaces.member')}
                                                     </p>
                                                 </div>
@@ -133,7 +133,7 @@ export default function WorkspacesIndex({ workspaces = [] }) {
                             </div>
                             <div>
                                 <h3 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">{t('workspaces.create_new')}</h3>
-                                <p className="mt-0.5 text-xs text-neutral-400 dark:text-neutral-500">{t('workspaces.create_new_desc')}</p>
+                                <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">{t('workspaces.create_new_desc')}</p>
                             </div>
                         </div>
 

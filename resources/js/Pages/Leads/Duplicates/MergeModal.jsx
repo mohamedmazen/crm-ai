@@ -113,7 +113,7 @@ export default function MergeModal({ group, show, onClose }) {
                     <button
                         type="button"
                         onClick={onClose}
-                        className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
+                        className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
                     >
                         &times;
                     </button>
@@ -123,7 +123,7 @@ export default function MergeModal({ group, show, onClose }) {
                 <div className="space-y-3">
                     <label className="block text-xs font-bold text-neutral-800 dark:text-neutral-200">
                         {t('duplicates.step_choose_primary') || '1. Choose Primary Record'}
-                        <span className="ml-1 text-[11px] font-normal text-neutral-500">
+                        <span className="ml-1 text-2xs font-normal text-neutral-500 dark:text-neutral-400">
                             ({t('duplicates.primary_explanation') || 'Secondary records will be merged into this lead and removed.'})
                         </span>
                     </label>
@@ -147,7 +147,7 @@ export default function MergeModal({ group, show, onClose }) {
                                                 <span className="font-semibold text-sm text-neutral-900 dark:text-neutral-100 truncate">
                                                     {lead.name}
                                                 </span>
-                                                <span className="font-mono text-[10px] text-neutral-400">#{lead.id}</span>
+                                                <span className="font-mono text-3xs text-neutral-500 dark:text-neutral-400">#{lead.id}</span>
                                             </div>
                                             <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate mt-0.5">
                                                 {lead.phone || lead.email || '—'}
@@ -166,7 +166,7 @@ export default function MergeModal({ group, show, onClose }) {
                                         </div>
                                     </div>
 
-                                    <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-neutral-500 dark:text-neutral-400 border-t border-soft/60 pt-2">
+                                    <div className="mt-3 flex flex-wrap items-center gap-2 text-2xs text-neutral-500 dark:text-neutral-400 border-t border-soft/60 pt-2">
                                         <span>{lead.stage?.name || 'No Stage'}</span>
                                         <span>•</span>
                                         <span>${Number(lead.deal_value || 0).toLocaleString()}</span>
@@ -199,7 +199,7 @@ export default function MergeModal({ group, show, onClose }) {
                                             name="merge_name"
                                             checked={selectedFields.name === val}
                                             onChange={() => setSelectedFields((prev) => ({ ...prev, name: val }))}
-                                            className="text-brand-600 focus:ring-brand-500 h-3.5 w-3.5"
+                                            className="text-brand-600 dark:text-brand-400 focus:ring-brand-500 h-3.5 w-3.5"
                                         />
                                         <span className="text-neutral-800 dark:text-neutral-200 font-medium">{val}</span>
                                     </label>
@@ -220,7 +220,7 @@ export default function MergeModal({ group, show, onClose }) {
                                             name="merge_phone"
                                             checked={selectedFields.phone === val}
                                             onChange={() => setSelectedFields((prev) => ({ ...prev, phone: val }))}
-                                            className="text-brand-600 focus:ring-brand-500 h-3.5 w-3.5"
+                                            className="text-brand-600 dark:text-brand-400 focus:ring-brand-500 h-3.5 w-3.5"
                                         />
                                         <span className="text-neutral-800 dark:text-neutral-200 font-medium">{val}</span>
                                     </label>
@@ -241,7 +241,7 @@ export default function MergeModal({ group, show, onClose }) {
                                             name="merge_email"
                                             checked={selectedFields.email === val}
                                             onChange={() => setSelectedFields((prev) => ({ ...prev, email: val }))}
-                                            className="text-brand-600 focus:ring-brand-500 h-3.5 w-3.5"
+                                            className="text-brand-600 dark:text-brand-400 focus:ring-brand-500 h-3.5 w-3.5"
                                         />
                                         <span className="text-neutral-800 dark:text-neutral-200 font-medium">{val}</span>
                                     </label>
@@ -262,7 +262,7 @@ export default function MergeModal({ group, show, onClose }) {
                                             name="merge_deal_value"
                                             checked={selectedFields.deal_value === val}
                                             onChange={() => setSelectedFields((prev) => ({ ...prev, deal_value: val }))}
-                                            className="text-brand-600 focus:ring-brand-500 h-3.5 w-3.5"
+                                            className="text-brand-600 dark:text-brand-400 focus:ring-brand-500 h-3.5 w-3.5"
                                         />
                                         <span className="text-neutral-800 dark:text-neutral-200 font-medium">${Number(val).toLocaleString()}</span>
                                     </label>
@@ -274,7 +274,7 @@ export default function MergeModal({ group, show, onClose }) {
 
                 {/* Safe Preservation Notice */}
                 <div className="flex items-start gap-3 rounded-xl bg-emerald-50/70 p-3.5 text-xs text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800/40">
-                    <ShieldCheck className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                    <ShieldCheck className="h-5 w-5 shrink-0 text-emerald-700 dark:text-emerald-400" />
                     <div>
                         <span className="font-bold">{t('duplicates.safe_merge_title') || 'Lossless Merge Guarantee'}: </span>
                         {t('duplicates.safe_merge_body') || 'All logged activities, scheduled tasks, tags, custom fields, and stage history from the secondary records will be automatically moved to the primary lead before secondary records are removed.'}

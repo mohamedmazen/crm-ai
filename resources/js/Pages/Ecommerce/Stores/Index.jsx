@@ -2,6 +2,7 @@ import { Head, useForm, usePage, router } from '@inertiajs/react';
 import ClientLayout from '@/Layouts/ClientLayout';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { readableTextColor } from '@/lib/contrast';
 import {
     Eye, EyeOff, CheckCircle, AlertCircle, Clock, Trash2, RefreshCw,
     PlugZap, Copy, Check, ShoppingBag, Store,
@@ -50,26 +51,27 @@ function StatusBadge({ store }) {
     const { t } = useTranslation();
     if (store.status === 'connected') {
         return (
-            <span className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
+            <span className="flex items-center gap-1 text-xs text-green-700 dark:text-green-400">
                 <CheckCircle className="h-3.5 w-3.5" /> {t('ecommerce.connected') || 'Connected'}
             </span>
         );
     }
     if (store.status === 'error') {
         return (
-            <span className="flex items-center gap-1 text-xs text-red-600 dark:text-red-400">
+            <span className="flex items-center gap-1 text-xs text-red-700 dark:text-red-400">
                 <AlertCircle className="h-3.5 w-3.5" /> {t('ecommerce.error') || 'Error'}
             </span>
         );
     }
     return (
-        <span className="flex items-center gap-1 text-xs text-neutral-400">
+        <span className="flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-400">
             <Clock className="h-3.5 w-3.5" /> {t('ecommerce.pending') || 'Pending'}
         </span>
     );
 }
 
 function CopyField({ value }) {
+    const { t } = useTranslation();
     const [copied, setCopied] = useState(false);
     const copy = () => {
         navigator.clipboard?.writeText(value);
@@ -78,8 +80,8 @@ function CopyField({ value }) {
     };
     return (
         <div className="flex items-center gap-2 rounded-lg bg-neutral-50 dark:bg-neutral-800 px-3 py-2">
-            <code className="flex-1 truncate text-[11px] text-neutral-500 dark:text-neutral-400">{value}</code>
-            <button type="button" onClick={copy} className="text-neutral-400 hover:text-neutral-600 shrink-0">
+            <code className="flex-1 truncate text-2xs text-neutral-500 dark:text-neutral-400">{value}</code>
+            <button type="button" onClick={copy} aria-label={t('common.copy', { defaultValue: 'Copy' })} className="inline-flex h-6 w-6 items-center justify-center text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 shrink-0">
                 {copied ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
             </button>
         </div>
@@ -109,31 +111,31 @@ function ConnectedStoreCard({ store }) {
         <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-5 space-y-3">
             <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0" style={{ backgroundColor: meta.color ?? '#6b7280' }}>
-                        <Icon className="h-5 w-5 text-white" />
+                    <div className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0" style={{ backgroundColor: meta.color ?? '#6b7280', color: readableTextColor(meta.color ?? '#6b7280') }}>
+                        <Icon className="h-5 w-5" />
                     </div>
                     <div className="min-w-0">
                         <h3 className="font-semibold text-sm text-neutral-900 dark:text-neutral-100 truncate">{store.name}</h3>
-                        <p className="text-xs text-neutral-400 truncate">{store.domain}</p>
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate">{store.domain}</p>
                     </div>
                 </div>
                 <StatusBadge store={store} />
             </div>
 
             {store.last_test_message && (
-                <p className={`text-xs ${store.last_test_status === 'ok' ? 'text-neutral-400' : 'text-red-500'}`}>
+                <p className={`text-xs ${store.last_test_status === 'ok' ? 'text-neutral-500 dark:text-neutral-400' : 'text-red-500'}`}>
                     {store.last_test_message}
                 </p>
             )}
 
-            <div className="text-xs text-neutral-400 space-y-1">
+            <div className="text-xs text-neutral-500 dark:text-neutral-400 space-y-1">
                 <div>{t('ecommerce.customers_synced') || 'Customers synced'}: {store.customers_synced_at ? new Date(store.customers_synced_at).toLocaleString() : '—'}</div>
                 <div>{t('ecommerce.orders_synced') || 'Orders synced'}: {store.orders_synced_at ? new Date(store.orders_synced_at).toLocaleString() : '—'}</div>
                 <div>{t('ecommerce.products_synced') || 'Products synced'}: {store.products_synced_at ? new Date(store.products_synced_at).toLocaleString() : '—'}</div>
             </div>
 
             <div>
-                <p className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 mb-1">{t('ecommerce.webhook_url') || 'Webhook URL'}</p>
+                <p className="text-2xs font-medium text-neutral-500 dark:text-neutral-400 mb-1">{t('ecommerce.webhook_url') || 'Webhook URL'}</p>
                 <CopyField value={store.webhook_url} />
             </div>
 
@@ -158,7 +160,8 @@ function ConnectedStoreCard({ store }) {
                 <button
                     type="button"
                     onClick={disconnect}
-                    className="rounded-lg border border-neutral-200 dark:border-neutral-700 px-3 py-2 text-neutral-500 hover:text-red-500 hover:border-red-300 transition"
+                    aria-label={t('ecommerce.disconnect', { defaultValue: 'Disconnect store' })}
+                    className="inline-flex items-center justify-center rounded-lg border border-neutral-200 dark:border-neutral-700 px-3 py-2 text-neutral-500 dark:text-neutral-400 hover:text-red-500 hover:border-red-300 transition"
                 >
                     <Trash2 className="h-4 w-4" />
                 </button>
@@ -200,8 +203,8 @@ function OAuthConnect({ platform, meta, oauthAvailable }) {
             <button
                 type="button"
                 onClick={start}
-                className="w-full rounded-lg py-2 text-sm font-medium text-white transition"
-                style={{ backgroundColor: meta.color ?? '#4f46e5' }}
+                className="w-full rounded-lg py-2 text-sm font-medium transition"
+                style={{ backgroundColor: meta.color ?? '#4f46e5', color: readableTextColor(meta.color ?? '#4f46e5') }}
             >
                 {(t('ecommerce.connect_with') || 'Connect with')} {platform === 'shopify' ? 'Shopify' : 'WooCommerce'}
             </button>
@@ -241,7 +244,7 @@ function ConnectForm({ platforms, oauth = {} }) {
     return (
         <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-5 space-y-4">
             <div className="flex items-center gap-2">
-                <PlugZap className="h-5 w-5 text-brand-600" />
+                <PlugZap className="h-5 w-5 text-brand-600 dark:text-brand-400" />
                 <h3 className="font-semibold text-sm text-neutral-900 dark:text-neutral-100">{t('ecommerce.connect_store') || 'Connect a store'}</h3>
             </div>
 
@@ -254,7 +257,7 @@ function ConnectForm({ platforms, oauth = {} }) {
                             key={p.platform}
                             type="button"
                             onClick={() => changePlatform(p.platform)}
-                            className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition ${active ? 'border-brand-500 bg-brand-50 text-brand-700 dark:bg-brand-900/20' : 'border-neutral-200 dark:border-neutral-700 text-neutral-500'}`}
+                            className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition ${active ? 'border-brand-500 bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-300' : 'border-neutral-200 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400'}`}
                         >
                             <PIcon className="h-4 w-4" /> {p.label}
                         </button>
@@ -265,7 +268,7 @@ function ConnectForm({ platforms, oauth = {} }) {
             <OAuthConnect platform={platform} meta={meta} oauthAvailable={oauthAvailable} />
 
             {oauthAvailable && (
-                <div className="flex items-center gap-2 text-xs text-neutral-400">
+                <div className="flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400">
                     <span className="flex-1 border-t border-neutral-200 dark:border-neutral-700" />
                     {t('ecommerce.or_manual') || 'or enter API credentials'}
                     <span className="flex-1 border-t border-neutral-200 dark:border-neutral-700" />
@@ -274,8 +277,9 @@ function ConnectForm({ platforms, oauth = {} }) {
 
             <form onSubmit={submit} className="space-y-3">
                 <div>
-                    <label className="text-xs font-medium text-neutral-500 dark:text-neutral-400">{t('ecommerce.store_name') || 'Store name'}</label>
+                    <label htmlFor="ecommerce-store-name" className="text-xs font-medium text-neutral-500 dark:text-neutral-400">{t('ecommerce.store_name') || 'Store name'}</label>
                     <input
+                        id="ecommerce-store-name"
                         type="text"
                         value={data.name}
                         onChange={e => setData('name', e.target.value)}
@@ -285,8 +289,9 @@ function ConnectForm({ platforms, oauth = {} }) {
                 </div>
 
                 <div>
-                    <label className="text-xs font-medium text-neutral-500 dark:text-neutral-400">{meta.domainLabel || 'Domain'} *</label>
+                    <label htmlFor="ecommerce-store-domain" className="text-xs font-medium text-neutral-500 dark:text-neutral-400">{meta.domainLabel || 'Domain'} *</label>
                     <input
+                        id="ecommerce-store-domain"
                         type="text"
                         value={data.domain}
                         onChange={e => setData('domain', e.target.value)}
@@ -298,11 +303,12 @@ function ConnectForm({ platforms, oauth = {} }) {
 
                 {(current?.fields ?? []).map(field => (
                     <div key={field.key}>
-                        <label className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+                        <label htmlFor={`ecommerce-cred-${field.key}`} className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
                             {field.label}{field.required && ' *'}
                         </label>
                         <div className="relative mt-1">
                             <input
+                                id={`ecommerce-cred-${field.key}`}
                                 type={field.type === 'password' && !showSecrets[field.key] ? 'password' : 'text'}
                                 value={data.credentials[field.key] ?? ''}
                                 onChange={e => setData('credentials', { ...data.credentials, [field.key]: e.target.value })}
@@ -312,7 +318,10 @@ function ConnectForm({ platforms, oauth = {} }) {
                                 <button
                                     type="button"
                                     onClick={() => setShowSecrets(s => ({ ...s, [field.key]: !s[field.key] }))}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
+                                    aria-label={showSecrets[field.key]
+                                        ? t('common.hide', { defaultValue: 'Hide' })
+                                        : t('common.show', { defaultValue: 'Show' })}
+                                    className="absolute right-1 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center text-neutral-500 dark:text-neutral-400 hover:text-neutral-600"
                                 >
                                     {showSecrets[field.key] ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                 </button>
@@ -338,7 +347,7 @@ function ConnectForm({ platforms, oauth = {} }) {
                     <ol className="space-y-1">
                         {meta.guide.map((step, i) => (
                             <li key={i} className="flex gap-2 text-xs text-blue-700 dark:text-blue-400">
-                                <span className="shrink-0 font-medium text-blue-500">{i + 1}.</span>
+                                <span className="shrink-0 font-medium text-blue-700 dark:text-blue-400">{i + 1}.</span>
                                 <span>{step}</span>
                             </li>
                         ))}
@@ -375,7 +384,7 @@ export default function EcommerceStoresIndex({ stores = [], platforms = [], oaut
                 <div className="grid gap-4 lg:grid-cols-3">
                     <div className="lg:col-span-2 grid gap-4 sm:grid-cols-2 content-start">
                         {stores.length === 0 && (
-                            <p className="text-sm text-neutral-400 sm:col-span-2">{t('ecommerce.no_stores') || 'No stores connected yet.'}</p>
+                            <p className="text-sm text-neutral-500 dark:text-neutral-400 sm:col-span-2">{t('ecommerce.no_stores') || 'No stores connected yet.'}</p>
                         )}
                         {stores.map(s => <ConnectedStoreCard key={s.id} store={s} />)}
                     </div>

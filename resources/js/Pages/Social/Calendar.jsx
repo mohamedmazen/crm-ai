@@ -11,7 +11,7 @@ const STATUS_COLORS = {
     published:  'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300',
     publishing: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300',
     failed:     'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',
-    draft:      'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400',
+    draft:      'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400',
 };
 
 const STATUS_OPTIONS = [
@@ -61,7 +61,7 @@ function ProfilePicker({ accounts, value, onChange }) {
                         <div className="relative shrink-0">
                             {selected.picture_url
                                 ? <img src={selected.picture_url} alt={selected.name} className="h-4 w-4 rounded-full object-cover" />
-                                : <span className="flex h-4 w-4 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-700 text-[8px] font-bold text-neutral-500">
+                                : <span className="flex h-4 w-4 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-700 text-3xs font-bold text-neutral-500 dark:text-neutral-300">
                                     {selected.name?.[0]?.toUpperCase() ?? '?'}
                                   </span>
                             }
@@ -74,7 +74,7 @@ function ProfilePicker({ accounts, value, onChange }) {
                 ) : (
                     <span>{t('social.all_profiles')}</span>
                 )}
-                <ChevronDown className={`h-3 w-3 ml-auto shrink-0 text-neutral-400 transition-transform ${open ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`h-3 w-3 ml-auto shrink-0 text-neutral-500 dark:text-neutral-400 transition-transform ${open ? 'rotate-180' : ''}`} />
             </button>
 
             {open && (
@@ -82,9 +82,9 @@ function ProfilePicker({ accounts, value, onChange }) {
                     <ul className="max-h-64 overflow-y-auto py-1">
                         <li>
                             <button type="button" onClick={() => { onChange(''); setOpen(false); }}
-                                className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs text-left hover:bg-neutral-50 dark:hover:bg-neutral-800 transition ${!value ? 'text-brand-600 font-semibold' : 'text-neutral-700 dark:text-neutral-300'}`}>
+                                className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs text-left hover:bg-neutral-50 dark:hover:bg-neutral-800 transition ${!value ? 'text-brand-600 dark:text-brand-400 font-semibold' : 'text-neutral-700 dark:text-neutral-300'}`}>
                                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-700 shrink-0">
-                                    <Filter className="h-3 w-3 text-neutral-400" />
+                                    <Filter className="h-3 w-3 text-neutral-500 dark:text-neutral-400" />
                                 </span>
                                 {t('social.all_profiles')}
                             </button>
@@ -96,7 +96,7 @@ function ProfilePicker({ accounts, value, onChange }) {
                                     <div className="relative shrink-0">
                                         {acc.picture_url
                                             ? <img src={acc.picture_url} alt={acc.name} className="h-5 w-5 rounded-full object-cover" />
-                                            : <span className="flex h-5 w-5 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-700 text-[9px] font-bold text-neutral-500">
+                                            : <span className="flex h-5 w-5 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-700 text-3xs font-bold text-neutral-500 dark:text-neutral-300">
                                                 {acc.name?.[0]?.toUpperCase() ?? '?'}
                                               </span>
                                         }
@@ -214,6 +214,7 @@ export default function SocialCalendar({ posts, month, accounts = [], filters = 
                     <select
                         value={localFilters.status}
                         onChange={e => applyFilter({ status: e.target.value })}
+                        aria-label={t('social.filter_status', { defaultValue: 'Filter by status' })}
                         className="rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 text-xs px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-brand-500"
                     >
                         {STATUS_OPTIONS.map(opt => (
@@ -225,6 +226,7 @@ export default function SocialCalendar({ posts, month, accounts = [], filters = 
                     <select
                         value={localFilters.network}
                         onChange={e => applyFilter({ network: e.target.value, account_id: '' })}
+                        aria-label={t('social.all_networks')}
                         className="rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 text-xs px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-brand-500"
                     >
                         <option value="">{t('social.all_networks')}</option>
@@ -244,7 +246,7 @@ export default function SocialCalendar({ posts, month, accounts = [], filters = 
                     {hasActiveFilters && (
                         <button
                             onClick={clearFilters}
-                            className="flex items-center gap-1 rounded-lg border border-neutral-200 dark:border-neutral-700 px-2.5 py-1.5 text-xs text-neutral-500 hover:text-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition"
+                            className="flex items-center gap-1 rounded-lg border border-neutral-200 dark:border-neutral-700 px-2.5 py-1.5 text-xs text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition"
                         >
                             <X className="h-3 w-3" /> {t('social.clear')}
                         </button>
@@ -253,11 +255,11 @@ export default function SocialCalendar({ posts, month, accounts = [], filters = 
 
                 {/* Month navigation */}
                 <div className="flex items-center gap-3">
-                    <Link href={buildUrl(fmtMonth(prevMonth), localFilters)} className="rounded p-1 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
+                    <Link href={buildUrl(fmtMonth(prevMonth), localFilters)} aria-label={t('social.prev_month', { defaultValue: 'Previous month' })} className="rounded p-1 text-neutral-600 dark:text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
                         <ChevronLeft className="h-5 w-5" />
                     </Link>
                     <span className="font-semibold text-neutral-900 dark:text-neutral-100">{t(MONTH_KEYS[monthIdx - 1])} {year}</span>
-                    <Link href={buildUrl(fmtMonth(nextMonth), localFilters)} className="rounded p-1 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
+                    <Link href={buildUrl(fmtMonth(nextMonth), localFilters)} aria-label={t('social.next_month', { defaultValue: 'Next month' })} className="rounded p-1 text-neutral-600 dark:text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
                         <ChevronRight className="h-5 w-5" />
                     </Link>
                     {hasActiveFilters && (
@@ -286,7 +288,7 @@ export default function SocialCalendar({ posts, month, accounts = [], filters = 
                                                     key={post.id}
                                                     href={route('client.social.posts.index')}
                                                     title={post.title ?? post.status}
-                                                    className={`block rounded px-1.5 py-0.5 text-xs mb-0.5 truncate hover:opacity-80 transition ${STATUS_COLORS[post.status] ?? ''}`}
+                                                    className={`block rounded px-1.5 py-1 text-xs mb-0.5 truncate hover:opacity-80 transition ${STATUS_COLORS[post.status] ?? ''}`}
                                                 >
                                                     {post.title ?? t('social.post_fallback')}
                                                 </Link>

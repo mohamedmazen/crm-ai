@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 function OptInBadge({ label, active }) {
     return (
-        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${active ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'}`}>
+        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${active ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400'}`}>
             {active ? '✓' : '✗'} {label}
         </span>
     );
@@ -109,13 +109,13 @@ function AvatarUploader({ contact }) {
                     <button
                         type="button"
                         onClick={handleDelete}
-                        className="flex items-center gap-1.5 rounded-lg border border-red-200 dark:border-red-800 px-3 py-1.5 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
+                        className="flex items-center gap-1.5 rounded-lg border border-red-200 dark:border-red-800 px-3 py-1.5 text-xs text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
                     >
                         <Trash2 className="h-3.5 w-3.5" /> {t('common.remove')}
                     </button>
                 )}
             </div>
-            <p className="text-xs text-neutral-400">{t('contacts_page.avatar_hint')}</p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('contacts_page.avatar_hint')}</p>
             {contact.avatar_url && contact.avatar_url.startsWith('http') && !contact.avatar_url.includes('/storage/') && (
                 <p className="text-xs text-blue-500 dark:text-blue-400">{t('contacts_page.avatar_synced')}</p>
             )}
@@ -147,7 +147,7 @@ export default function ContactShow({ contact, staticSegments = [] }) {
             <Head title={`${contact.first_name ?? ''} ${contact.last_name ?? ''} · ${t('contacts_page.contact_alt')}`} />
             <div className="max-w-3xl space-y-6">
                 <div className="flex items-center gap-3">
-                    <a href={route('client.contacts.index')} className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
+                    <a href={route('client.contacts.index')} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
                         <ArrowLeft className="h-5 w-5" />
                     </a>
                     <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
@@ -226,9 +226,9 @@ export default function ContactShow({ contact, staticSegments = [] }) {
                         <div className="space-y-3">
                             {contact.conversations.map(conv => (
                                 <div key={conv.id} className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-4">
-                                    <div className="flex items-center justify-between text-xs text-neutral-400 mb-2">
+                                    <div className="flex items-center justify-between text-xs text-neutral-500 dark:text-neutral-400 mb-2">
                                         <span className="capitalize font-medium text-neutral-600 dark:text-neutral-300">{conv.channel_account?.channel ?? t('contacts_page.unknown_channel')}</span>
-                                        <span className={`rounded-full px-2 py-0.5 font-medium ${conv.status === 'open' ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400'}`}>{conv.status}</span>
+                                        <span className={`rounded-full px-2 py-0.5 font-medium ${conv.status === 'open' ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300'}`}>{conv.status}</span>
                                     </div>
                                     {conv.messages?.map(msg => (
                                         <div key={msg.id} className={`text-sm p-2 rounded-lg mb-1 max-w-xs ${msg.direction === 'in' ? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200' : 'ml-auto bg-brand-600 text-white'}`}>

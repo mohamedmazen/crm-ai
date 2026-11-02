@@ -34,10 +34,10 @@ export default function StatTile({
     const good = deltaGoodWhen === 'up' ? positive : !positive;
 
     const deltaColor = !hasDelta
-        ? 'text-neutral-400'
+        ? 'text-neutral-500 dark:text-neutral-400'
         : good
-            ? 'text-emerald-600 dark:text-emerald-400'
-            : 'text-red-600 dark:text-red-400';
+            ? 'text-emerald-700 dark:text-emerald-400'
+            : 'text-red-700 dark:text-red-400';
     const sparkColor = !hasDelta ? '#9ca3af' : good ? '#10b981' : '#ef4444';
 
     const body = (
@@ -64,7 +64,7 @@ export default function StatTile({
                                 {positive ? '↑' : '↓'} {Math.abs(delta).toFixed(1)}%
                             </span>
                         )}
-                        {hint && <span className="truncate text-xs text-neutral-400">{hint}</span>}
+                        {hint && <span className="truncate text-xs text-neutral-500 dark:text-neutral-400">{hint}</span>}
                     </div>
                 </div>
 

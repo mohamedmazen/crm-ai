@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { Head } from '@inertiajs/react';
 import { CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { readableTextColor } from '@/lib/contrast';
 
 export default function PublicForm({ form, fields = [] }) {
     const settings = form.settings || {};
     const primaryColor = settings.primary_color || '#6366f1';
+    const primaryTextColor = readableTextColor(primaryColor);
     const buttonText = settings.button_text || 'Submit';
     const showTitle = settings.show_title ?? true;
     const spamProtection = form.spam_protection || 'none';
@@ -193,7 +195,7 @@ export default function PublicForm({ form, fields = [] }) {
             <div className="w-full max-w-lg rounded-2xl border border-neutral-200/80 bg-white p-6 sm:p-8 shadow-sm">
                 {submitted ? (
                     <div className="py-12 text-center space-y-4">
-                        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
                             <CheckCircle2 className="h-10 w-10" />
                         </div>
                         <h2 className="text-2xl font-bold text-neutral-900">
@@ -220,7 +222,7 @@ export default function PublicForm({ form, fields = [] }) {
                         <div className="space-y-4">
                             {fields.map((field) => (
                                 <div key={field.id || field.field_key} className="space-y-1">
-                                    <label className="block text-xs font-semibold text-neutral-700">
+                                    <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-400">
                                         {field.label}
                                         {field.required && <span className="text-red-500 ml-1">*</span>}
                                     </label>
@@ -232,7 +234,7 @@ export default function PublicForm({ form, fields = [] }) {
                                             placeholder={field.placeholder || ''}
                                             value={formData[field.field_key] || ''}
                                             onChange={(e) => handleChange(field.field_key, e.target.value)}
-                                            className="w-full rounded-xl border border-neutral-300 p-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                                            className="w-full rounded-xl border border-neutral-300 p-2.5 text-sm text-neutral-900 placeholder:text-neutral-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                                         />
                                     ) : field.type === 'select' ? (
                                         <select
@@ -254,9 +256,9 @@ export default function PublicForm({ form, fields = [] }) {
                                                 required={Boolean(field.required)}
                                                 checked={Boolean(formData[field.field_key])}
                                                 onChange={(e) => handleChange(field.field_key, e.target.checked)}
-                                                className="rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4"
+                                                className="rounded text-indigo-700 dark:text-indigo-400 focus:ring-indigo-500 h-4 w-4"
                                             />
-                                            <label htmlFor={`field_${field.field_key}`} className="text-xs text-neutral-600">
+                                            <label htmlFor={`field_${field.field_key}`} className="text-xs text-neutral-600 dark:text-neutral-400">
                                                 {field.placeholder || field.label}
                                             </label>
                                         </div>
@@ -267,12 +269,12 @@ export default function PublicForm({ form, fields = [] }) {
                                             placeholder={field.placeholder || ''}
                                             value={formData[field.field_key] || ''}
                                             onChange={(e) => handleChange(field.field_key, e.target.value)}
-                                            className="w-full rounded-xl border border-neutral-300 p-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                                            className="w-full rounded-xl border border-neutral-300 p-2.5 text-sm text-neutral-900 placeholder:text-neutral-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                                         />
                                     )}
 
                                     {fieldErrors[field.field_key] && (
-                                        <p className="text-[11px] text-red-500 mt-1">
+                                        <p className="text-2xs text-red-500 mt-1">
                                             {fieldErrors[field.field_key]}
                                         </p>
                                     )}
@@ -290,8 +292,8 @@ export default function PublicForm({ form, fields = [] }) {
                             <button
                                 type="submit"
                                 disabled={submitting}
-                                style={{ backgroundColor: primaryColor }}
-                                className="w-full rounded-xl py-3 text-sm font-bold text-white shadow-sm transition-all hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+                                style={{ backgroundColor: primaryColor, color: primaryTextColor }}
+                                className="w-full rounded-xl py-3 text-sm font-bold shadow-sm transition-all hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
                             >
                                 {submitting ? (
                                     <>

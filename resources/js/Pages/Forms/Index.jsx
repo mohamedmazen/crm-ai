@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 import ClientLayout from '@/Layouts/ClientLayout';
+import PageHeader from '@/Components/PageHeader';
 import Button from '@/Components/ui/Button';
 import Modal from '@/Components/ui/Modal';
 import {
@@ -68,46 +69,37 @@ export default function FormsIndex({
 
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 space-y-6">
                 {/* Header */}
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <div className="flex items-center gap-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600 dark:bg-brand-950/60 dark:text-brand-400">
-                                <FileText className="h-5 w-5" />
-                            </div>
-                            <div>
-                                <h1 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
-                                    {t('forms.title') || 'Lead Capture Forms'}
-                                    {!usage.unlimited && (
-                                        <span className="text-xs font-normal text-neutral-500">
-                                            ({usage.current} / {usage.limit} {t('common.used') || 'used'})
-                                        </span>
-                                    )}
-                                </h1>
-                                <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                                    {t('forms.subtitle') || 'Create high-converting lead capture forms, embed them anywhere, and auto-route submissions into your pipeline.'}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
+                <PageHeader
+                    icon={FileText}
+                    title={
+                        <>
+                            {t('forms.title') || 'Lead Capture Forms'}
+                            {!usage.unlimited && (
+                                <span className="ms-2 align-middle text-xs font-normal text-neutral-500 dark:text-neutral-400">
+                                    ({usage.current} / {usage.limit} {t('common.used') || 'used'})
+                                </span>
+                            )}
+                        </>
+                    }
+                    description={t('forms.subtitle') || 'Create high-converting lead capture forms, embed them anywhere, and auto-route submissions into your pipeline.'}
+                    actions={
                         <Button onClick={() => setShowCreateModal(true)} className="inline-flex items-center gap-2">
                             <Plus className="h-4 w-4" />
                             {t('forms.new_form') || 'New Form'}
                         </Button>
-                    </div>
-                </div>
+                    }
+                />
 
                 {/* Forms Table */}
                 <div className="overflow-hidden rounded-2xl border border-soft bg-white shadow-xs dark:bg-neutral-900">
                     {forms.data.length === 0 ? (
                         <div className="py-16 text-center">
-                            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-neutral-100 text-neutral-400 dark:bg-neutral-800">
+                            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-neutral-100 text-neutral-600 dark:text-neutral-400 dark:bg-neutral-800">
                                 <FileText className="h-7 w-7" />
                             </div>
-                            <h3 className="mt-4 text-base font-bold text-neutral-900 dark:text-neutral-100">
+                            <h2 className="mt-4 text-base font-bold text-neutral-900 dark:text-neutral-100">
                                 {t('forms.empty_title') || 'No forms created yet'}
-                            </h3>
+                            </h2>
                             <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400 max-w-sm mx-auto">
                                 {t('forms.empty_subtitle') || 'Build your first web form to capture inbound leads from your website, campaigns, or social landing pages.'}
                             </p>
@@ -151,7 +143,7 @@ export default function FormsIndex({
                                                             href={form.public_url}
                                                             target="_blank"
                                                             rel="noreferrer"
-                                                            className="inline-flex items-center gap-1 font-mono text-[11px] text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400"
+                                                            className="inline-flex items-center gap-1 font-mono text-2xs text-neutral-500 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400"
                                                         >
                                                             /f/{form.slug}
                                                             <ArrowUpRight className="h-2.5 w-2.5" />
@@ -162,11 +154,11 @@ export default function FormsIndex({
 
                                             <td className="px-4 py-4 text-xs text-neutral-600 dark:text-neutral-300">
                                                 <div className="flex items-center gap-1.5 font-medium">
-                                                    <Layers className="h-3 w-3 text-neutral-400" />
+                                                    <Layers className="h-3 w-3 text-neutral-500 dark:text-neutral-400" />
                                                     {form.pipeline?.name || 'Default Pipeline'}
                                                 </div>
                                                 {form.stage?.name && (
-                                                    <div className="text-[11px] text-neutral-400 ps-4">
+                                                    <div className="text-2xs text-neutral-500 dark:text-neutral-400 ps-4">
                                                         &rarr; {form.stage.name}
                                                     </div>
                                                 )}
@@ -187,7 +179,7 @@ export default function FormsIndex({
                                             </td>
 
                                             <td className="px-4 py-4">
-                                                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold capitalize ${
+                                                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-2xs font-semibold capitalize ${
                                                     form.status === 'published'
                                                         ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
                                                         : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400'
@@ -200,14 +192,14 @@ export default function FormsIndex({
                                                 <div className="flex items-center justify-end gap-1">
                                                     <Link
                                                         href={route('client.sales.forms.builder', form.id)}
-                                                        className="rounded-lg p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
+                                                        className="rounded-lg p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-neutral-800 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
                                                         title={t('forms.builder') || 'Visual Builder'}
                                                     >
                                                         <Sliders className="h-4 w-4" />
                                                     </Link>
                                                     <Link
                                                         href={route('client.sales.forms.analytics', form.id)}
-                                                        className="rounded-lg p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
+                                                        className="rounded-lg p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-neutral-800 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
                                                         title={t('forms.analytics') || 'Analytics & Submissions'}
                                                     >
                                                         <BarChart2 className="h-4 w-4" />
@@ -215,7 +207,7 @@ export default function FormsIndex({
                                                     <button
                                                         type="button"
                                                         onClick={() => setSelectedEmbedForm(form)}
-                                                        className="rounded-lg p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
+                                                        className="rounded-lg p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-neutral-800 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
                                                         title={t('forms.embed_share') || 'Share & Embed'}
                                                     >
                                                         <Code className="h-4 w-4" />
@@ -224,7 +216,7 @@ export default function FormsIndex({
                                                         href={form.public_url}
                                                         target="_blank"
                                                         rel="noreferrer"
-                                                        className="rounded-lg p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
+                                                        className="rounded-lg p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-neutral-800 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
                                                         title={t('forms.view_public') || 'Open Form'}
                                                     >
                                                         <ExternalLink className="h-4 w-4" />
@@ -232,7 +224,7 @@ export default function FormsIndex({
                                                     <button
                                                         type="button"
                                                         onClick={() => setDeletingForm(form)}
-                                                        className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400"
+                                                        className="rounded-lg p-1.5 text-neutral-500 dark:text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400"
                                                         title={t('common.delete') || 'Delete'}
                                                     >
                                                         <Trash2 className="h-4 w-4" />
@@ -259,7 +251,7 @@ export default function FormsIndex({
                         <button
                             type="button"
                             onClick={() => setShowCreateModal(false)}
-                            className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
+                            className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
                         >
                             &times;
                         </button>
@@ -337,7 +329,7 @@ export default function FormsIndex({
                         <button
                             type="button"
                             onClick={() => setSelectedEmbedForm(null)}
-                            className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
+                            className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
                         >
                             &times;
                         </button>
@@ -362,7 +354,7 @@ export default function FormsIndex({
                                         variant="secondary"
                                         onClick={() => copyToClipboard(selectedEmbedForm.public_url)}
                                     >
-                                        {copied ? <Check className="h-4 w-4 text-emerald-600" /> : <Copy className="h-4 w-4" />}
+                                        {copied ? <Check className="h-4 w-4 text-emerald-700 dark:text-emerald-400" /> : <Copy className="h-4 w-4" />}
                                     </Button>
                                 </div>
                             </div>
@@ -384,7 +376,7 @@ export default function FormsIndex({
                                         variant="secondary"
                                         onClick={() => copyToClipboard(selectedEmbedForm.embed_code)}
                                     >
-                                        {copied ? <Check className="h-4 w-4 text-emerald-600" /> : <Copy className="h-4 w-4" />}
+                                        {copied ? <Check className="h-4 w-4 text-emerald-700 dark:text-emerald-400" /> : <Copy className="h-4 w-4" />}
                                     </Button>
                                 </div>
                             </div>
@@ -406,7 +398,7 @@ export default function FormsIndex({
                                         variant="secondary"
                                         onClick={() => copyToClipboard(`<script src="${window.location.origin}/f/${selectedEmbedForm.slug}/embed.js"></script>`)}
                                     >
-                                        {copied ? <Check className="h-4 w-4 text-emerald-600" /> : <Copy className="h-4 w-4" />}
+                                        {copied ? <Check className="h-4 w-4 text-emerald-700 dark:text-emerald-400" /> : <Copy className="h-4 w-4" />}
                                     </Button>
                                 </div>
                             </div>
@@ -424,7 +416,7 @@ export default function FormsIndex({
             {/* Delete Modal */}
             <Modal show={!!deletingForm} onClose={() => setDeletingForm(null)} maxWidth="sm">
                 <div className="p-6">
-                    <div className="flex items-center gap-3 text-red-600 dark:text-red-400">
+                    <div className="flex items-center gap-3 text-red-700 dark:text-red-400">
                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-950/50">
                             <Trash2 className="h-5 w-5" />
                         </div>

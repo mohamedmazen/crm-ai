@@ -37,7 +37,7 @@ export default function SocialReportIndex({ postsByNetwork, postsByStatus, recen
                     </div>
                     <div className="flex items-center gap-2">
                         <DatePicker value={from} onChange={setFrom} className="w-40" />
-                        <span className="text-gray-500">—</span>
+                        <span className="text-gray-500 dark:text-gray-400">—</span>
                         <DatePicker value={to} onChange={setTo} className="w-40" />
                         <button onClick={applyRange} className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-500">{t('reports.apply')}</button>
                     </div>
@@ -46,7 +46,7 @@ export default function SocialReportIndex({ postsByNetwork, postsByStatus, recen
                 {/* Charts */}
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                     <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-                        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.posts_by_network')}</h3>
+                        <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.posts_by_network')}</h2>
                         {postsByNetwork.length > 0 ? (
                             <BarChart data={postsByNetwork} xKey="name" yKeys={['value']} labels={{ value: t('reports.series_posts') }} height={240} />
                         ) : (
@@ -54,7 +54,7 @@ export default function SocialReportIndex({ postsByNetwork, postsByStatus, recen
                         )}
                     </div>
                     <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-                        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.status_breakdown')}</h3>
+                        <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.status_breakdown')}</h2>
                         {postsByStatus.length > 0 ? (
                             <DonutChart data={postsByStatus} nameKey="name" valueKey="value" height={240} />
                         ) : (
@@ -65,16 +65,16 @@ export default function SocialReportIndex({ postsByNetwork, postsByStatus, recen
 
                 {/* Recent posts */}
                 <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-                    <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.recent_posts')}</h3>
+                    <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.recent_posts')}</h2>
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b border-gray-200 dark:border-gray-700">
-                                    <th className="pb-2 text-left text-xs text-gray-500">{t('reports.col_title')}</th>
-                                    <th className="pb-2 text-left text-xs text-gray-500">{t('reports.col_status')}</th>
-                                    <th className="pb-2 text-left text-xs text-gray-500">{t('reports.col_scheduled')}</th>
-                                    <th className="pb-2 text-left text-xs text-gray-500">{t('reports.col_published')}</th>
-                                    <th className="pb-2 text-left text-xs text-gray-500">{t('reports.col_link')}</th>
+                                    <th className="pb-2 text-left text-xs text-gray-500 dark:text-gray-400">{t('reports.col_title')}</th>
+                                    <th className="pb-2 text-left text-xs text-gray-500 dark:text-gray-400">{t('reports.col_status')}</th>
+                                    <th className="pb-2 text-left text-xs text-gray-500 dark:text-gray-400">{t('reports.col_scheduled')}</th>
+                                    <th className="pb-2 text-left text-xs text-gray-500 dark:text-gray-400">{t('reports.col_published')}</th>
+                                    <th className="pb-2 text-left text-xs text-gray-500 dark:text-gray-400">{t('reports.col_link')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">
@@ -86,11 +86,11 @@ export default function SocialReportIndex({ postsByNetwork, postsByStatus, recen
                                                 {post.status}
                                             </span>
                                         </td>
-                                        <td className="py-2 text-gray-500 text-xs">{post.scheduled_at ? formatInTz(post.scheduled_at, userTz) : '—'}</td>
-                                        <td className="py-2 text-gray-500 text-xs">{post.published_at ? formatInTz(post.published_at, userTz) : '—'}</td>
+                                        <td className="py-2 text-gray-500 dark:text-gray-400 text-xs">{post.scheduled_at ? formatInTz(post.scheduled_at, userTz) : '—'}</td>
+                                        <td className="py-2 text-gray-500 dark:text-gray-400 text-xs">{post.published_at ? formatInTz(post.published_at, userTz) : '—'}</td>
                                         <td className="py-2">
                                             {post.post_url ? (
-                                                <a href={post.post_url} target="_blank" rel="noopener noreferrer" className="text-indigo-500 hover:text-indigo-600">
+                                                <a href={post.post_url} target="_blank" rel="noopener noreferrer" aria-label={t('reports.open_post', { defaultValue: 'Open post' })} className="text-indigo-700 dark:text-indigo-400 hover:text-indigo-600">
                                                     <ExternalLink className="h-3.5 w-3.5" />
                                                 </a>
                                             ) : '—'}

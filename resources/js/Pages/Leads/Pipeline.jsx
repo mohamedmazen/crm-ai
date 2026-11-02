@@ -1,6 +1,9 @@
 import { Head, router, usePage } from '@inertiajs/react';
 import ClientLayout from '@/Layouts/ClientLayout';
 import Button from '@/Components/ui/Button';
+import Spinner from '@/Components/ui/Spinner';
+import useInertiaLoading from '@/hooks/useInertiaLoading';
+import { formatCurrency } from '@/Utils/format';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, SlidersHorizontal, RefreshCw, Search, LayoutGrid, AlarmClock } from 'lucide-react';
@@ -66,6 +69,7 @@ export default function Pipeline({
     const { t } = useTranslation();
     const { props } = usePage();
     const flash = props.flash ?? {};
+    const boardLoading = useInertiaLoading();
 
     // Mirrored locally so a drag repaints instantly instead of waiting on the round trip.
     const [board, setBoard] = useState(stages);
@@ -235,6 +239,7 @@ export default function Pipeline({
                                 <select
                                     value={activePipelineId}
                                     onChange={(e) => applyFilter({ pipeline_id: e.target.value })}
+                                    aria-label={t('leads.pipeline') || 'Pipeline'}
                                     className="rounded-soft border-soft bg-white py-1 px-3 text-sm font-medium shadow-sm dark:bg-neutral-900 dark:text-neutral-100 focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
                                 >
                                     {pipelines.map((p) => (
@@ -247,21 +252,22 @@ export default function Pipeline({
                         </div>
 
                         <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-neutral-500 dark:text-neutral-400">
+                            {boardLoading && <Spinner size="sm" className="text-brand-600 dark:text-brand-400" />}
                             <span>{t('leads.pipeline_summary', { total: totals.all, hot: totals.hot })}</span>
                             {(boardDealValue > 0 || boardWeightedValue > 0) && (
                                 <>
                                     <span>•</span>
                                     <span>
                                         {t('leads.total_pipeline_value') || 'Pipeline Value'}:{' '}
-                                        <strong className="text-emerald-600 dark:text-emerald-400 font-semibold">
-                                            ${Number(boardDealValue).toLocaleString()}
+                                        <strong className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                                            {formatCurrency(boardDealValue, 'USD', { maximumFractionDigits: 0 })}
                                         </strong>
                                     </span>
                                     <span>•</span>
                                     <span>
                                         {t('leads.weighted_value') || 'Weighted'}:{' '}
                                         <strong className="text-brand-600 dark:text-brand-400 font-semibold">
-                                            ${Number(boardWeightedValue).toLocaleString()}
+                                            {formatCurrency(boardWeightedValue, 'USD', { maximumFractionDigits: 0 })}
                                         </strong>
                                     </span>
                                 </>
@@ -304,7 +310,7 @@ export default function Pipeline({
 
                 <div className="flex flex-wrap items-center gap-2">
                     <form onSubmit={submitSearch} className="relative">
-                        <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                        <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500 dark:text-neutral-400" />
                         <input
                             type="search"
                             value={search}
@@ -322,7 +328,7 @@ export default function Pipeline({
                             aria-pressed={!filters.band && !filters.due}
                             className={`rounded-soft px-2.5 py-1 text-xs font-medium transition-colors ${
                                 !filters.band && !filters.due
-                                    ? 'bg-brand-500 text-white'
+                                    ? 'bg-brand-600 text-white'
                                     : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300'
                             }`}
                         >
@@ -336,7 +342,7 @@ export default function Pipeline({
                                 aria-pressed={filters.band === band}
                                 className={`rounded-soft px-2.5 py-1 text-xs font-medium transition-colors ${
                                     filters.band === band
-                                        ? 'bg-brand-500 text-white'
+                                        ? 'bg-brand-600 text-white'
                                         : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300'
                                 }`}
                             >
@@ -365,6 +371,7 @@ export default function Pipeline({
                         <select
                             value={filters.assigned ?? ''}
                             onChange={(e) => applyFilter({ assigned: e.target.value || undefined })}
+                            aria-label={t('leads.all_assignees') || 'All Assignees'}
                             className="rounded-soft border-soft bg-white py-1 px-2.5 text-xs font-medium text-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
                         >
                             <option value="">{t('leads.all_assignees') || 'All Assignees'}</option>
@@ -391,7 +398,13 @@ export default function Pipeline({
                     onDragEnd={handleDragEnd}
                     onDragCancel={() => setActiveLead(null)}
                 >
-                    <div className="flex gap-4 overflow-x-auto pb-4">
+                    <div
+                        className={[
+                            'flex gap-4 overflow-x-auto pb-4 transition-opacity',
+                            boardLoading ? 'opacity-60' : 'opacity-100',
+                        ].join(' ')}
+                        aria-busy={boardLoading || undefined}
+                    >
                         {board.map((stage) => (
                             <StageColumn
                                 key={stage.id}

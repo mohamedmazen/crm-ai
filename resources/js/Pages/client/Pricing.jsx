@@ -67,16 +67,16 @@ export default function Pricing({
                         <button
                             type="button"
                             onClick={() => setBillingCycle('month')}
-                            className={`rounded-soft px-3 py-1.5 text-sm font-medium transition ${billingCycle === 'month' ? 'bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-soft' : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100'}`}
+                            className={`rounded-soft px-3 py-1.5 text-sm font-medium transition ${billingCycle === 'month' ? 'bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-soft' : 'text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-neutral-100'}`}
                         >
                             {t('pricing.monthly')}
                         </button>
                         <button
                             type="button"
                             onClick={() => setBillingCycle('year')}
-                            className={`rounded-soft px-3 py-1.5 text-sm font-medium transition ${billingCycle === 'year' ? 'bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-soft' : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100'}`}
+                            className={`rounded-soft px-3 py-1.5 text-sm font-medium transition ${billingCycle === 'year' ? 'bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-soft' : 'text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-neutral-100'}`}
                         >
-                            {t('pricing.yearly')} <span className="text-xs text-green-600 dark:text-green-400 ml-0.5">{t('pricing.save_15')}</span>
+                            {t('pricing.yearly')} <span className="text-xs text-green-700 dark:text-green-400 ml-0.5">{t('pricing.save_15')}</span>
                         </button>
                     </div>
                 </div>
@@ -121,7 +121,7 @@ export default function Pricing({
                                             {isFree ? t('pricing.free') : (priceDisplay ?? '—')}
                                         </span>
                                         {! isFree && (
-                                            <span className="ml-1 text-sm text-neutral-500">/ {billingCycle === 'year' ? t('pricing.per_year') : t('pricing.per_month')}</span>
+                                            <span className="ml-1 text-sm text-neutral-500 dark:text-neutral-400">/ {billingCycle === 'year' ? t('pricing.per_year') : t('pricing.per_month')}</span>
                                         )}
                                     </div>
                                     {plan.trial_days > 0 && (

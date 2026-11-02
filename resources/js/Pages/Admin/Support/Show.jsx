@@ -8,14 +8,14 @@ const STATUS_VALUES = ['open', 'in_progress', 'closed'];
 const STATUS_CLS = {
     open:        'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800',
     in_progress: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800',
-    closed:      'bg-neutral-100 text-neutral-500 border-neutral-200 dark:bg-neutral-700/50 dark:text-neutral-400 dark:border-neutral-600',
+    closed:      'bg-neutral-100 text-neutral-600 border-neutral-200 dark:bg-neutral-700/50 dark:text-neutral-400 dark:border-neutral-600',
 };
 
 const PRIORITY_STYLES = {
-    urgent: 'text-red-600 dark:text-red-400 font-semibold',
-    high:   'text-orange-500 dark:text-orange-400 font-medium',
+    urgent: 'text-red-700 dark:text-red-400 font-semibold',
+    high:   'text-orange-700 dark:text-orange-400 font-medium',
     normal: 'text-neutral-600 dark:text-neutral-400',
-    low:    'text-neutral-400 dark:text-neutral-500',
+    low:    'text-neutral-500 dark:text-neutral-400',
 };
 
 function Avatar({ name, staff = false }) {
@@ -53,7 +53,7 @@ export default function AdminSupportShow({ ticket }) {
             <div className="space-y-5 max-w-5xl">
                 {/* Header */}
                 <div className="flex items-start gap-3">
-                    <Link href={route('admin.support.index')} className="mt-0.5 p-1.5 rounded-soft text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors flex-shrink-0">
+                    <Link href={route('admin.support.index')} className="mt-0.5 p-1.5 rounded-soft text-neutral-600 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors flex-shrink-0">
                         <ArrowLeft className="h-4 w-4" />
                     </Link>
                     <div className="min-w-0 flex-1">
@@ -63,7 +63,7 @@ export default function AdminSupportShow({ ticket }) {
                                 <div className="flex flex-wrap items-center gap-2 mt-1">
                                     <span className={`text-xs border px-2 py-0.5 rounded-full font-medium ${currentStatus.cls}`}>{currentStatus.label}</span>
                                     <span className={`text-xs capitalize font-medium ${PRIORITY_STYLES[ticket.priority] ?? ''}`}>{ticket.priority} {t('support_tickets.priority_suffix')}</span>
-                                    <span className="text-xs text-neutral-400 dark:text-neutral-500">#{ticket.id}</span>
+                                    <span className="text-xs text-neutral-500 dark:text-neutral-400">#{ticket.id}</span>
                                 </div>
                             </div>
                             {/* Inline status buttons */}
@@ -104,7 +104,7 @@ export default function AdminSupportShow({ ticket }) {
                                 <div className="bg-white dark:bg-neutral-800/70 rounded-xl rounded-tl-sm border border-neutral-200 dark:border-neutral-700/50 p-4 shadow-soft">
                                     <div className="flex items-center justify-between mb-3 gap-2">
                                         <span className="text-sm font-semibold text-neutral-900 dark:text-white">{ticket.name}</span>
-                                        <span className="text-xs text-neutral-400 dark:text-neutral-500 flex-shrink-0">{formatTime(ticket.created_at)}</span>
+                                        <span className="text-xs text-neutral-500 dark:text-neutral-400 flex-shrink-0">{formatTime(ticket.created_at)}</span>
                                     </div>
                                     <p className="text-sm text-neutral-700 dark:text-neutral-300 whitespace-pre-wrap leading-relaxed">{ticket.message}</p>
                                 </div>
@@ -127,7 +127,7 @@ export default function AdminSupportShow({ ticket }) {
                                                     <span className="text-xs px-1.5 py-0.5 bg-brand-100 dark:bg-brand-900/50 text-brand-700 dark:text-brand-400 rounded font-medium">{t('support_tickets.support_label')}</span>
                                                 )}
                                             </div>
-                                            <span className="text-xs text-neutral-400 dark:text-neutral-500 flex-shrink-0">{formatTime(r.created_at)}</span>
+                                            <span className="text-xs text-neutral-500 dark:text-neutral-400 flex-shrink-0">{formatTime(r.created_at)}</span>
                                         </div>
                                         <p className="text-sm text-neutral-700 dark:text-neutral-300 whitespace-pre-wrap leading-relaxed">{r.message}</p>
                                     </div>
@@ -153,7 +153,7 @@ export default function AdminSupportShow({ ticket }) {
                                 {errors.message && <p className="text-red-500 text-xs">{errors.message}</p>}
                             </div>
                             <div className="px-4 pb-4 flex items-center justify-between">
-                                <p className="text-xs text-neutral-400 dark:text-neutral-500">{t('support_tickets.reply_visible')}</p>
+                                <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('support_tickets.reply_visible')}</p>
                                 <button
                                     type="submit"
                                     disabled={processing || !data.message.trim()}

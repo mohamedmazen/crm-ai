@@ -8,7 +8,7 @@ export default function KpiCard({ label, value, unit = '', delta, sparkline = []
 
     const color = delta === undefined || delta === null
         ? 'text-gray-500 dark:text-gray-400'
-        : isGood ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400';
+        : isGood ? 'text-emerald-700 dark:text-emerald-400' : 'text-red-700 dark:text-red-400';
 
     const sparkColor = delta === undefined || delta === null ? '#6b7280' : isGood ? '#10b981' : '#ef4444';
 

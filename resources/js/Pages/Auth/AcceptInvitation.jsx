@@ -23,7 +23,7 @@ export default function AcceptInvitation({ token, email, client }) {
             }
             icon={
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/40">
-                    <UserPlus className="h-7 w-7 text-green-600 dark:text-green-400" />
+                    <UserPlus className="h-7 w-7 text-green-700 dark:text-green-400" />
                 </div>
             }
         >

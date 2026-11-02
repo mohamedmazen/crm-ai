@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
+import PageHeader from '@/Components/PageHeader';
 import { useTranslation } from 'react-i18next';
 import {
     CreditCard,
@@ -37,12 +38,12 @@ function relativeDate(iso) {
 }
 
 const STATUS_TONE = {
-    active: 'text-emerald-600 dark:text-emerald-400',
-    succeeded: 'text-emerald-600 dark:text-emerald-400',
-    trialing: 'text-blue-600 dark:text-blue-400',
-    pending: 'text-amber-600 dark:text-amber-400',
-    failed: 'text-red-600 dark:text-red-400',
-    inactive: 'text-neutral-400',
+    active: 'text-emerald-700 dark:text-emerald-400',
+    succeeded: 'text-emerald-700 dark:text-emerald-400',
+    trialing: 'text-blue-700 dark:text-blue-400',
+    pending: 'text-amber-700 dark:text-amber-400',
+    failed: 'text-red-700 dark:text-red-400',
+    inactive: 'text-neutral-500 dark:text-neutral-400',
 };
 
 export default function AdminDashboard({ range = 30, stats = {}, charts = {}, tables = {}, warnings = [] }) {
@@ -147,13 +148,11 @@ export default function AdminDashboard({ range = 30, stats = {}, charts = {}, ta
                 )}
 
                 {/* Header + range filter */}
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex flex-col gap-1">
-                        <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">{t('admin.dashboard')}</h2>
-                        <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('admin.dashboard_overview')}</p>
-                    </div>
-                    <RangeFilter value={range} routeName="admin.dashboard" />
-                </div>
+                <PageHeader
+                    title={t('admin.dashboard')}
+                    description={t('admin.dashboard_overview')}
+                    actions={<RangeFilter value={range} routeName="admin.dashboard" />}
+                />
 
                 {/* KPI tiles */}
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
@@ -223,7 +222,7 @@ export default function AdminDashboard({ range = 30, stats = {}, charts = {}, ta
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm">
                                 <thead>
-                                    <tr className="border-b border-neutral-200 text-left text-xs text-neutral-500 dark:border-neutral-700">
+                                    <tr className="border-b border-neutral-200 text-left text-xs text-neutral-500 dark:text-neutral-400 dark:border-neutral-700">
                                         <th className="pb-2 font-medium">{t('common.name')}</th>
                                         <th className="pb-2 font-medium">{t('admin.users_count') || 'Users'}</th>
                                         <th className="pb-2 font-medium">{t('common.active')}</th>
@@ -235,15 +234,15 @@ export default function AdminDashboard({ range = 30, stats = {}, charts = {}, ta
                                         <tr key={c.id}>
                                             <td className="py-2">
                                                 <p className="font-medium text-neutral-800 dark:text-neutral-200">{c.name}</p>
-                                                <p className="truncate text-xs text-neutral-400">{c.email}</p>
+                                                <p className="truncate text-xs text-neutral-500 dark:text-neutral-400">{c.email}</p>
                                             </td>
                                             <td className="py-2 text-neutral-600 dark:text-neutral-400">{c.users_count}</td>
-                                            <td className={`py-2 capitalize ${STATUS_TONE[c.status] || 'text-neutral-500'}`}>{c.status}</td>
-                                            <td className="py-2 text-right text-neutral-500">{relativeDate(c.created_at)}</td>
+                                            <td className={`py-2 capitalize ${STATUS_TONE[c.status] || 'text-neutral-500 dark:text-neutral-400'}`}>{c.status}</td>
+                                            <td className="py-2 text-right text-neutral-500 dark:text-neutral-400">{relativeDate(c.created_at)}</td>
                                         </tr>
                                     ))}
                                     {(tables.recent_clients ?? []).length === 0 && (
-                                        <tr><td colSpan={4} className="py-6 text-center text-neutral-400">{t('admin.no_clients') || 'No clients yet'}</td></tr>
+                                        <tr><td colSpan={4} className="py-6 text-center text-neutral-500 dark:text-neutral-400">{t('admin.no_clients') || 'No clients yet'}</td></tr>
                                     )}
                                 </tbody>
                             </table>
@@ -261,7 +260,7 @@ export default function AdminDashboard({ range = 30, stats = {}, charts = {}, ta
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm">
                                 <thead>
-                                    <tr className="border-b border-neutral-200 text-left text-xs text-neutral-500 dark:border-neutral-700">
+                                    <tr className="border-b border-neutral-200 text-left text-xs text-neutral-500 dark:text-neutral-400 dark:border-neutral-700">
                                         <th className="pb-2 font-medium">{t('common.email')}</th>
                                         <th className="pb-2 font-medium">{t('admin.col_gateway')}</th>
                                         <th className="pb-2 font-medium">{t('common.active')}</th>
@@ -272,13 +271,13 @@ export default function AdminDashboard({ range = 30, stats = {}, charts = {}, ta
                                     {(tables.recent_payments ?? []).map((p) => (
                                         <tr key={p.id}>
                                             <td className="py-2 truncate text-neutral-700 dark:text-neutral-300">{p.user || '—'}</td>
-                                            <td className="py-2 capitalize text-neutral-500">{p.gateway || '—'}</td>
-                                            <td className={`py-2 capitalize ${STATUS_TONE[p.status] || 'text-neutral-500'}`}>{p.status}</td>
+                                            <td className="py-2 capitalize text-neutral-500 dark:text-neutral-400">{p.gateway || '—'}</td>
+                                            <td className={`py-2 capitalize ${STATUS_TONE[p.status] || 'text-neutral-500 dark:text-neutral-400'}`}>{p.status}</td>
                                             <td className="py-2 text-right font-medium text-neutral-800 dark:text-neutral-200">{fromCents(p.amount_cents)}</td>
                                         </tr>
                                     ))}
                                     {(tables.recent_payments ?? []).length === 0 && (
-                                        <tr><td colSpan={4} className="py-6 text-center text-neutral-400">{t('admin.no_payments') || 'No payments yet'}</td></tr>
+                                        <tr><td colSpan={4} className="py-6 text-center text-neutral-500 dark:text-neutral-400">{t('admin.no_payments') || 'No payments yet'}</td></tr>
                                     )}
                                 </tbody>
                             </table>
@@ -292,8 +291,8 @@ export default function AdminDashboard({ range = 30, stats = {}, charts = {}, ta
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b border-neutral-200 dark:border-neutral-700">
-                                    <th className="pb-2 text-left text-xs text-neutral-500">{t('admin.workspace')}</th>
-                                    <th className="pb-2 text-right text-xs text-neutral-500">{t('admin.ai_cost')}</th>
+                                    <th className="pb-2 text-left text-xs text-neutral-500 dark:text-neutral-400">{t('admin.workspace')}</th>
+                                    <th className="pb-2 text-right text-xs text-neutral-500 dark:text-neutral-400">{t('admin.ai_cost')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700/50">
@@ -304,7 +303,7 @@ export default function AdminDashboard({ range = 30, stats = {}, charts = {}, ta
                                     </tr>
                                 ))}
                                 {(charts.top_ai_workspaces ?? []).length === 0 && (
-                                    <tr><td colSpan={2} className="py-4 text-center text-neutral-400">{t('admin.no_ai_usage')}</td></tr>
+                                    <tr><td colSpan={2} className="py-4 text-center text-neutral-500 dark:text-neutral-400">{t('admin.no_ai_usage')}</td></tr>
                                 )}
                             </tbody>
                         </table>

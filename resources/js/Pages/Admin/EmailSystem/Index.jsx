@@ -81,7 +81,7 @@ export default function AdminEmailSystemIndex({ smtpConfigurations = [], emailTe
                                             <Card>
                                                 <Card.Body className="py-16 flex flex-col items-center gap-3 text-center">
                                                     <div className="h-12 w-12 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center">
-                                                        <Mail className="h-6 w-6 text-neutral-400 dark:text-neutral-500" />
+                                                        <Mail className="h-6 w-6 text-neutral-500 dark:text-neutral-400" />
                                                     </div>
                                                     <div>
                                                         <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('email_system.no_smtp')}</p>
@@ -134,7 +134,7 @@ export default function AdminEmailSystemIndex({ smtpConfigurations = [], emailTe
                                                             <td className="px-4 py-3">
                                                                 <p className="font-medium text-neutral-900 dark:text-neutral-100">{tmpl.name}</p>
                                                                 {tmpl.description && (
-                                                                    <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5">{tmpl.description}</p>
+                                                                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{tmpl.description}</p>
                                                                 )}
                                                             </td>
                                                             <td className="px-4 py-3">
@@ -149,7 +149,7 @@ export default function AdminEmailSystemIndex({ smtpConfigurations = [], emailTe
                                                                 <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
                                                                     tmpl.enabled
                                                                         ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
-                                                                        : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400'
+                                                                        : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300'
                                                                 }`}>
                                                                     <span className={`h-1.5 w-1.5 rounded-full ${tmpl.enabled ? 'bg-green-500' : 'bg-neutral-400'}`} />
                                                                     {tmpl.enabled ? t('admin.active') : t('admin.inactive')}
@@ -173,7 +173,7 @@ export default function AdminEmailSystemIndex({ smtpConfigurations = [], emailTe
                                             {emailTemplates.length === 0 && (
                                                 <div className="py-16 flex flex-col items-center gap-3 text-center">
                                                     <div className="h-12 w-12 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center">
-                                                        <Mail className="h-6 w-6 text-neutral-400 dark:text-neutral-500" />
+                                                        <Mail className="h-6 w-6 text-neutral-500 dark:text-neutral-400" />
                                                     </div>
                                                     <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('email_system.no_templates')}</p>
                                                 </div>
@@ -237,7 +237,7 @@ function SmtpCard({ config: c, onEdit, onDelete, onActivate }) {
                                 ? 'bg-green-100 dark:bg-green-900/40'
                                 : 'bg-neutral-100 dark:bg-neutral-800'
                         }`}>
-                            <Server className={`h-4 w-4 ${c.is_active ? 'text-green-600 dark:text-green-400' : 'text-neutral-500 dark:text-neutral-400'}`} />
+                            <Server className={`h-4 w-4 ${c.is_active ? 'text-green-700 dark:text-green-400' : 'text-neutral-500 dark:text-neutral-400'}`} />
                         </div>
                         <div className="min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
@@ -245,7 +245,7 @@ function SmtpCard({ config: c, onEdit, onDelete, onActivate }) {
                                 <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
                                     c.is_active
                                         ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
-                                        : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400'
+                                        : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300'
                                 }`}>
                                     <span className={`h-1.5 w-1.5 rounded-full ${c.is_active ? 'bg-green-500' : 'bg-neutral-400'}`} />
                                     {c.is_active ? t('admin.active') : t('admin.inactive')}
@@ -286,7 +286,7 @@ function SmtpCard({ config: c, onEdit, onDelete, onActivate }) {
                         { icon: Mail, label: t('email_server.from_name'), value: c.from_name },
                     ].map(({ icon: Icon, label, value }) => (
                         <div key={label} className="bg-white dark:bg-neutral-900 px-4 py-2.5">
-                            <p className="text-xs text-neutral-400 dark:text-neutral-500 mb-0.5">{label}</p>
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-0.5">{label}</p>
                             <p className="text-xs font-medium text-neutral-700 dark:text-neutral-300 truncate">{value}</p>
                         </div>
                     ))}
@@ -536,7 +536,7 @@ function EditTemplateModal({ show, template, onClose, onSaved }) {
                                             </button>
                                         ))}
                                     </div>
-                                    <p className="text-xs text-neutral-400 dark:text-neutral-500">{t('email_system.click_to_copy')}.</p>
+                                    <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('email_system.click_to_copy')}.</p>
                                 </div>
                             )}
                             <FormField label={`${t('email_system.col_subject')} *`}>
@@ -568,7 +568,7 @@ function EditTemplateModal({ show, template, onClose, onSaved }) {
                                 />
                                 <div>
                                     <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('admin.active')}</p>
-                                    <p className="text-xs text-neutral-400 dark:text-neutral-500">{t('common.enabled')}</p>
+                                    <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('common.enabled')}</p>
                                 </div>
                             </label>
                         </div>
@@ -635,11 +635,11 @@ function EditTemplateModal({ show, template, onClose, onSaved }) {
                             </>
                         )}
                         {testSuccess && (
-                            <span className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
+                            <span className="flex items-center gap-1 text-xs text-green-700 dark:text-green-400">
                                 <CheckCircle2 className="h-3.5 w-3.5" /> {t('email_system.sent_label')}
                             </span>
                         )}
-                        {testError && <span className="text-xs text-red-600 dark:text-red-400">{testError}</span>}
+                        {testError && <span className="text-xs text-red-700 dark:text-red-400">{testError}</span>}
                     </div>
                     <Button type="button" variant="outline" onClick={onClose}>{t('common.cancel')}</Button>
                     <Button type="submit" variant="primary" disabled={processing}>{t('common.save')}</Button>

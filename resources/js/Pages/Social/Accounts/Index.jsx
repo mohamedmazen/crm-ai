@@ -61,7 +61,7 @@ function ManualConnectModal({ network, label, onClose }) {
                             {t('social.manual_title', { network: label })}
                         </h3>
                         <button type="button" onClick={onClose}
-                            className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
+                            className="rounded-lg p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
                             <X className="h-4 w-4" />
                         </button>
                     </div>
@@ -186,7 +186,7 @@ export default function SocialAccountsIndex({ accounts }) {
                                     </span>
                                     <div className="min-w-0 flex-1">
                                         <p className="font-semibold text-sm text-neutral-900 dark:text-neutral-100">{net.label}</p>
-                                        <p className="text-xs text-neutral-400 truncate">{t(net.descriptionKey)}</p>
+                                        <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate">{t(net.descriptionKey)}</p>
                                     </div>
                                     {hasExpired && (
                                         <AlertCircle className="h-4 w-4 text-amber-500 shrink-0" title={t('social.token_expired')} />
@@ -207,7 +207,7 @@ export default function SocialAccountsIndex({ accounts }) {
                                                             className="h-7 w-7 rounded-full object-cover shrink-0"
                                                         />
                                                     ) : (
-                                                        <span className="h-7 w-7 rounded-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center shrink-0 text-xs font-bold text-neutral-500">
+                                                        <span className="h-7 w-7 rounded-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center shrink-0 text-xs font-bold text-neutral-500 dark:text-neutral-300">
                                                             {acct.name?.[0]?.toUpperCase() ?? '?'}
                                                         </span>
                                                     )}
@@ -218,7 +218,7 @@ export default function SocialAccountsIndex({ accounts }) {
                                                         {expired ? (
                                                             <p className="text-xs text-amber-500">{t('social.token_expired')}</p>
                                                         ) : (
-                                                            <p className="text-xs text-green-500">{t('common.active')}</p>
+                                                            <p className="text-xs text-green-700 dark:text-green-400">{t('common.active')}</p>
                                                         )}
                                                     </div>
                                                     <button
@@ -255,7 +255,7 @@ export default function SocialAccountsIndex({ accounts }) {
                                         <button
                                             type="button"
                                             onClick={() => setManualNet(net)}
-                                            className="flex w-full items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-neutral-400 dark:text-neutral-500 hover:text-brand-600 dark:hover:text-brand-400 transition"
+                                            className="flex w-full items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-neutral-500 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition"
                                         >
                                             <KeyRound className="h-3 w-3" /> {t('social.manual_setup')}
                                         </button>
@@ -270,7 +270,7 @@ export default function SocialAccountsIndex({ accounts }) {
                     <div className="rounded-xl border-2 border-dashed border-neutral-200 dark:border-neutral-700 p-10 text-center">
                         <Share2 className="h-8 w-8 mx-auto text-neutral-300 dark:text-neutral-600 mb-3" />
                         <p className="font-medium text-neutral-700 dark:text-neutral-300">{t('social.no_accounts_yet')}</p>
-                        <p className="text-sm text-neutral-400 mt-1">{t('social.no_accounts_yet_hint')}</p>
+                        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">{t('social.no_accounts_yet_hint')}</p>
                     </div>
                 )}
             </div>

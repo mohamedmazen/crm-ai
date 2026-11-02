@@ -18,6 +18,13 @@ export default {
                 // the admin's font setting (see app.blade.php).
                 sans: ['var(--font-sans)', ...defaultTheme.fontFamily.sans],
             },
+            // Two sub-`xs` steps for dense UI chrome (badges, table meta, chart
+            // axis labels). Defined here so new code never needs `text-[11px]`
+            // style arbitrary values, which drift between 8px and 15px.
+            fontSize: {
+                '3xs': ['0.625rem', { lineHeight: '0.875rem' }],
+                '2xs': ['0.6875rem', { lineHeight: '1rem' }],
+            },
             // WhatsMine palette — brand (forest-green #467235), accent (amber
             // #FFBF00 / light-yellow #FFF78D), secondary (dark-green #283F24).
             // Source of truth: ./.branding

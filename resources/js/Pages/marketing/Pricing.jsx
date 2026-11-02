@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 function Badge({ text }) {
     if (!text) return null;
     return (
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-500/15 text-brand-500 text-xs font-semibold px-3 py-1 border border-brand-500/30">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-500/15 text-brand-700 dark:text-brand-300 text-xs font-semibold px-3 py-1 border border-brand-500/30">
             <span className="h-1.5 w-1.5 rounded-full bg-brand-500 inline-block" />
             {text}
         </span>
@@ -84,7 +84,7 @@ export default function Pricing({ landing = {}, plans = [], canRegister }) {
                             className={`rounded-lg px-5 py-2 text-sm font-semibold transition-all flex items-center gap-2 ${yearly ? 'bg-white text-neutral-900 shadow' : 'text-white/70 hover:text-white'}`}
                         >
                             {t('welcome.yearly')}
-                            <span className="rounded-full text-xs px-1.5 py-0.5 font-bold" style={{ background: 'rgb(var(--brand-500))', color: '#ffffff' }}>-20%</span>
+                            <span className="rounded-full text-xs px-1.5 py-0.5 font-bold" style={{ background: 'rgb(var(--brand-600))', color: '#ffffff' }}>-20%</span>
                         </button>
                     </div>
                 </div>
@@ -111,11 +111,11 @@ export default function Pricing({ landing = {}, plans = [], canRegister }) {
                                     >
                                         {plan.is_featured && (
                                             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                                                <span className="rounded-full text-xs font-bold px-3 py-1 shadow" style={{ background: 'rgb(var(--brand-500))', color: '#ffffff' }}>{t('welcome.most_popular')}</span>
+                                                <span className="rounded-full text-xs font-bold px-3 py-1 shadow" style={{ background: 'rgb(var(--brand-600))', color: '#ffffff' }}>{t('welcome.most_popular')}</span>
                                             </div>
                                         )}
                                         <div>
-                                            <h3 className={`text-lg font-bold ${plan.is_featured ? 'text-white' : 'text-neutral-900 dark:text-white'}`}>{plan.name}</h3>
+                                            <h2 className={`text-lg font-bold ${plan.is_featured ? 'text-white' : 'text-neutral-900 dark:text-white'}`}>{plan.name}</h2>
                                             {plan.description && (
                                                 <p className={`mt-1 text-sm ${plan.is_featured ? 'text-neutral-400' : 'text-neutral-500 dark:text-neutral-400'}`}>{plan.description}</p>
                                             )}
@@ -125,10 +125,10 @@ export default function Pricing({ landing = {}, plans = [], canRegister }) {
                                                 {price === 0 ? t('welcome.free') : `$${parseFloat(price).toFixed(0)}`}
                                             </span>
                                             {price > 0 && (
-                                                <span className={`text-sm ml-1 ${plan.is_featured ? 'text-neutral-400' : 'text-neutral-400'}`}>{yearly ? t('welcome.per_year') : t('welcome.per_month')}</span>
+                                                <span className={`text-sm ml-1 ${plan.is_featured ? 'text-neutral-400' : 'text-neutral-500 dark:text-neutral-400'}`}>{yearly ? t('welcome.per_year') : t('welcome.per_month')}</span>
                                             )}
                                             {plan.trial_days > 0 && (
-                                                <p className={`text-xs mt-1 ${plan.is_featured ? 'text-neutral-400' : 'text-neutral-400 dark:text-neutral-500'}`}>
+                                                <p className={`text-xs mt-1 ${plan.is_featured ? 'text-neutral-400' : 'text-neutral-500 dark:text-neutral-400'}`}>
                                                     {t('pricing.trial_days', { days: plan.trial_days })}
                                                 </p>
                                             )}
@@ -151,7 +151,7 @@ export default function Pricing({ landing = {}, plans = [], canRegister }) {
                                                 className={`block text-center rounded-xl py-3 text-sm font-bold transition-all duration-200 ${
                                                     plan.is_featured ? 'text-white hover:opacity-90' : 'border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:border-brand-500/50 hover:text-brand-600 dark:hover:text-brand-500'
                                                 }`}
-                                                style={plan.is_featured ? { background: 'rgb(var(--brand-500))' } : {}}
+                                                style={plan.is_featured ? { background: 'rgb(var(--brand-600))' } : {}}
                                             >
                                                 {price === 0 ? t('welcome.get_started_free') : t('welcome.upgrade')}
                                             </Link>
@@ -185,7 +185,7 @@ export default function Pricing({ landing = {}, plans = [], canRegister }) {
                                     <StarRating />
                                     <blockquote className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed flex-1">&ldquo;{t.text}&rdquo;</blockquote>
                                     <div className="flex items-center gap-3 pt-2 border-t border-neutral-100 dark:border-neutral-800">
-                                        <div className="h-9 w-9 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0" style={{ background: 'rgb(var(--brand-500))' }}>
+                                        <div className="h-9 w-9 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0" style={{ background: 'rgb(var(--brand-600))' }}>
                                             {t.name.charAt(0)}
                                         </div>
                                         <div>
@@ -216,7 +216,7 @@ export default function Pricing({ landing = {}, plans = [], canRegister }) {
                                         onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
                                     >
                                         <span className="font-medium text-neutral-900 dark:text-white text-sm">{faq.q}</span>
-                                        <svg className={`h-5 w-5 flex-shrink-0 text-neutral-400 transition-transform duration-200 ${openFaq === idx ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                        <svg className={`h-5 w-5 flex-shrink-0 text-neutral-500 dark:text-neutral-400 transition-transform duration-200 ${openFaq === idx ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                                         </svg>
                                     </button>
@@ -242,7 +242,7 @@ export default function Pricing({ landing = {}, plans = [], canRegister }) {
                             <Link
                                 href={route('register')}
                                 className="inline-flex items-center gap-2 rounded-xl px-7 py-3.5 text-base font-bold text-white shadow-lg transition-all duration-200 hover:opacity-90"
-                                style={{ background: 'rgb(var(--brand-500))' }}
+                                style={{ background: 'rgb(var(--brand-600))' }}
                             >
                                 {t('pricing.start_free_trial')}
                                 <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>

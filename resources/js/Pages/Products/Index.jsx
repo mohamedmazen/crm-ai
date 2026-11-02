@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 import ClientLayout from '@/Layouts/ClientLayout';
+import PageHeader from '@/Components/PageHeader';
 import Button from '@/Components/ui/Button';
 import Modal from '@/Components/ui/Modal';
 import { Package, Plus, Search, Pencil, Trash2, CheckCircle2, Archive } from 'lucide-react';
@@ -112,26 +113,21 @@ export default function ProductsIndex({ products = { data: [], links: [], last_p
                     </div>
                 )}
 
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600 dark:bg-brand-950/60 dark:text-brand-400">
-                            <Package className="h-5 w-5" />
-                        </div>
-                        <div>
-                            <h1 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">{t('products.title')}</h1>
-                            <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('products.subtitle')}</p>
-                        </div>
-                    </div>
-
-                    <Button onClick={openCreate} className="inline-flex items-center gap-2">
-                        <Plus className="h-4 w-4" />
-                        {t('products.new')}
-                    </Button>
-                </div>
+                <PageHeader
+                    icon={Package}
+                    title={t('products.title')}
+                    description={t('products.subtitle')}
+                    actions={
+                        <Button onClick={openCreate} className="inline-flex items-center gap-2">
+                            <Plus className="h-4 w-4" />
+                            {t('products.new')}
+                        </Button>
+                    }
+                />
 
                 <form onSubmit={applyFilters} className="flex flex-wrap items-center gap-2">
                     <div className="relative min-w-[220px] flex-1">
-                        <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                        <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500 dark:text-neutral-400" />
                         <input
                             type="search"
                             value={query}
@@ -144,6 +140,7 @@ export default function ProductsIndex({ products = { data: [], links: [], last_p
                     <select
                         value={status}
                         onChange={(event) => setStatus(event.target.value)}
+                        aria-label={t('products.filter_status', { defaultValue: 'Filter by status' })}
                         className="rounded-lg border-soft bg-white px-3 py-2 text-sm dark:bg-neutral-900 dark:text-neutral-100"
                     >
                         <option value="">{t('products.all_statuses')}</option>
@@ -157,10 +154,10 @@ export default function ProductsIndex({ products = { data: [], links: [], last_p
                 <div className="overflow-hidden rounded-2xl border border-soft bg-white shadow-xs dark:bg-neutral-900">
                     {products.data.length === 0 ? (
                         <div className="py-16 text-center">
-                            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-neutral-100 text-neutral-400 dark:bg-neutral-800">
+                            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-neutral-100 text-neutral-600 dark:text-neutral-400 dark:bg-neutral-800">
                                 <Package className="h-7 w-7" />
                             </div>
-                            <h3 className="mt-4 text-base font-bold text-neutral-900 dark:text-neutral-100">{t('products.empty_title')}</h3>
+                            <h2 className="mt-4 text-base font-bold text-neutral-900 dark:text-neutral-100">{t('products.empty_title')}</h2>
                             <p className="mx-auto mt-1 max-w-sm text-sm text-neutral-500 dark:text-neutral-400">{t('products.empty_subtitle')}</p>
                         </div>
                     ) : (
@@ -183,17 +180,17 @@ export default function ProductsIndex({ products = { data: [], links: [], last_p
                                             <td className="px-5 py-4">
                                                 <div className="font-medium text-neutral-900 dark:text-neutral-100">{product.name}</div>
                                                 {product.description && (
-                                                    <div className="mt-0.5 line-clamp-1 text-xs text-neutral-400">{product.description}</div>
+                                                    <div className="mt-0.5 line-clamp-1 text-xs text-neutral-500 dark:text-neutral-400">{product.description}</div>
                                                 )}
                                             </td>
-                                            <td className="px-4 py-4 font-mono text-xs text-neutral-500">{product.sku || '—'}</td>
+                                            <td className="px-4 py-4 font-mono text-xs text-neutral-500 dark:text-neutral-400">{product.sku || '—'}</td>
                                             <td className="px-4 py-4 text-end tabular-nums text-neutral-700 dark:text-neutral-200">
                                                 {money(product.price, product.currency || defaultCurrency)}
                                             </td>
-                                            <td className="px-4 py-4 text-end tabular-nums text-neutral-500">{Number(product.tax_rate || 0)}%</td>
-                                            <td className="px-4 py-4 text-neutral-500">{product.unit || '—'}</td>
+                                            <td className="px-4 py-4 text-end tabular-nums text-neutral-500 dark:text-neutral-400">{Number(product.tax_rate || 0)}%</td>
+                                            <td className="px-4 py-4 text-neutral-500 dark:text-neutral-400">{product.unit || '—'}</td>
                                             <td className="px-4 py-4">
-                                                <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${statusStyles[product.status] || statusStyles.archived}`}>
+                                                <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-2xs font-semibold ${statusStyles[product.status] || statusStyles.archived}`}>
                                                     {product.status === 'archived' && <Archive className="h-3 w-3" />}
                                                     {t(`products.status_${product.status}`)}
                                                 </span>
@@ -203,7 +200,7 @@ export default function ProductsIndex({ products = { data: [], links: [], last_p
                                                     <button
                                                         type="button"
                                                         onClick={() => openEdit(product)}
-                                                        className="rounded-lg p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-brand-600 dark:hover:bg-neutral-800"
+                                                        className="rounded-lg p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-brand-600 dark:hover:bg-neutral-800"
                                                         title={t('common.edit')}
                                                     >
                                                         <Pencil className="h-4 w-4" />
@@ -211,7 +208,7 @@ export default function ProductsIndex({ products = { data: [], links: [], last_p
                                                     <button
                                                         type="button"
                                                         onClick={() => setDeleting(product)}
-                                                        className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30"
+                                                        className="rounded-lg p-1.5 text-neutral-500 dark:text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30"
                                                         title={t('common.delete')}
                                                     >
                                                         <Trash2 className="h-4 w-4" />
@@ -250,7 +247,7 @@ export default function ProductsIndex({ products = { data: [], links: [], last_p
                         <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">
                             {editing ? t('products.edit') : t('products.new')}
                         </h2>
-                        <button type="button" onClick={() => setShowForm(false)} className="text-neutral-400 hover:text-neutral-600">&times;</button>
+                        <button type="button" onClick={() => setShowForm(false)} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600">&times;</button>
                     </div>
 
                     <div className="grid gap-3 sm:grid-cols-2">
@@ -262,7 +259,7 @@ export default function ProductsIndex({ products = { data: [], links: [], last_p
                                 className="mt-1 w-full rounded-lg border-soft bg-white p-2.5 text-sm dark:bg-neutral-800 dark:text-neutral-100"
                                 placeholder={t('products.name_placeholder')}
                             />
-                            {form.errors.name && <p className="mt-1 text-xs text-red-600">{form.errors.name}</p>}
+                            {form.errors.name && <p className="mt-1 text-xs text-red-700 dark:text-red-400">{form.errors.name}</p>}
                         </div>
 
                         <div>
@@ -273,7 +270,7 @@ export default function ProductsIndex({ products = { data: [], links: [], last_p
                                 className="mt-1 w-full rounded-lg border-soft bg-white p-2.5 text-sm dark:bg-neutral-800 dark:text-neutral-100"
                                 placeholder="SKU-001"
                             />
-                            {form.errors.sku && <p className="mt-1 text-xs text-red-600">{form.errors.sku}</p>}
+                            {form.errors.sku && <p className="mt-1 text-xs text-red-700 dark:text-red-400">{form.errors.sku}</p>}
                         </div>
 
                         <div>
@@ -296,7 +293,7 @@ export default function ProductsIndex({ products = { data: [], links: [], last_p
                                 onChange={(event) => form.setData('price', event.target.value)}
                                 className="mt-1 w-full rounded-lg border-soft bg-white p-2.5 text-sm dark:bg-neutral-800 dark:text-neutral-100"
                             />
-                            {form.errors.price && <p className="mt-1 text-xs text-red-600">{form.errors.price}</p>}
+                            {form.errors.price && <p className="mt-1 text-xs text-red-700 dark:text-red-400">{form.errors.price}</p>}
                         </div>
 
                         <div>

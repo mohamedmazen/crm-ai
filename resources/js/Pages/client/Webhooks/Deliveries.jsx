@@ -12,12 +12,12 @@ export default function WebhookDeliveries({ endpoint, deliveries }) {
             <Head title={t('webhook.deliveries_title')} />
             <div className="space-y-6 max-w-4xl">
                 <div className="flex items-center gap-3">
-                    <Link href={route('client.webhooks.index')} className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+                    <Link href={route('client.webhooks.index')} aria-label={t('common.back')} className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200">
                         <ArrowLeft className="h-5 w-5" />
                     </Link>
                     <div>
                         <h1 className="text-xl font-bold text-gray-900 dark:text-white">{t('webhook.deliveries_heading')}</h1>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 font-mono truncate">{endpoint.url}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-300 font-mono truncate">{endpoint.url}</p>
                     </div>
                 </div>
 
@@ -25,11 +25,11 @@ export default function WebhookDeliveries({ endpoint, deliveries }) {
                     <table className="w-full text-sm">
                         <thead className="bg-gray-50 dark:bg-gray-700">
                             <tr>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">{t('webhook.col_status')}</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">{t('webhook.col_event')}</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">{t('webhook.col_http')}</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">{t('webhook.col_attempts')}</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">{t('webhook.col_date')}</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300">{t('webhook.col_status')}</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300">{t('webhook.col_event')}</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300">{t('webhook.col_http')}</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300">{t('webhook.col_attempts')}</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300">{t('webhook.col_date')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
@@ -37,19 +37,19 @@ export default function WebhookDeliveries({ endpoint, deliveries }) {
                                 <tr key={d.id}>
                                     <td className="px-4 py-3">
                                         {d.response_status >= 200 && d.response_status < 300
-                                            ? <span className="inline-flex items-center gap-1 text-green-600 text-xs"><Check className="h-3.5 w-3.5" /> {t('webhook.status_ok')}</span>
-                                            : <span className="inline-flex items-center gap-1 text-red-500 text-xs"><X className="h-3.5 w-3.5" /> {t('webhook.status_failed')}</span>
+                                            ? <span className="inline-flex items-center gap-1 text-green-700 dark:text-green-400 text-xs"><Check className="h-3.5 w-3.5" /> {t('webhook.status_ok')}</span>
+                                            : <span className="inline-flex items-center gap-1 text-red-600 dark:text-red-400 text-xs"><X className="h-3.5 w-3.5" /> {t('webhook.status_failed')}</span>
                                         }
                                     </td>
                                     <td className="px-4 py-3"><code className="text-xs">{d.event}</code></td>
-                                    <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{d.response_status ?? '—'}</td>
-                                    <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{d.attempts}</td>
-                                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400 text-xs">{formatInTz(d.created_at, userTz)}</td>
+                                    <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{d.response_status ?? '—'}</td>
+                                    <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{d.attempts}</td>
+                                    <td className="px-4 py-3 text-gray-500 dark:text-gray-300 text-xs">{formatInTz(d.created_at, userTz)}</td>
                                 </tr>
                             ))}
                             {!deliveries.data?.length && (
                                 <tr>
-                                    <td colSpan={5} className="px-4 py-8 text-center text-gray-400 dark:text-gray-500">{t('webhook.no_deliveries')}</td>
+                                    <td colSpan={5} className="px-4 py-8 text-center text-gray-500 dark:text-gray-300">{t('webhook.no_deliveries')}</td>
                                 </tr>
                             )}
                         </tbody>

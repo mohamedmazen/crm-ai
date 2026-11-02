@@ -232,3 +232,8 @@ Route::middleware('throttle:30,1')->group(function () use ($healthSnapshot) {
         }
     })->name('healthz.queue');
 });
+
+// Component gallery for manual visual regression (Phase 4). Local/testing only.
+if (app()->environment(['local', 'testing'])) {
+    Route::get('/dev/ui', fn () => \Inertia\Inertia::render('Dev/UiKit'))->name('dev.ui');
+}

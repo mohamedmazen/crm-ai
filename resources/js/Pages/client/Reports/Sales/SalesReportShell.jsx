@@ -1,6 +1,8 @@
 import ClientLayout from '@/Layouts/ClientLayout';
 import { KpiCard } from '@/Components/Charts';
 import { DatePicker } from '@/Components/ui';
+import Spinner from '@/Components/ui/Spinner';
+import useInertiaLoading from '@/hooks/useInertiaLoading';
 import { Head, Link, router } from '@inertiajs/react';
 import { CalendarClock, Download } from 'lucide-react';
 import { useState } from 'react';
@@ -39,7 +41,7 @@ function Filters({ routeName, filters, pipelines, agents, sources }) {
     return (
         <div className="flex flex-wrap items-end gap-2 rounded-xl border border-neutral-200 bg-white p-3 dark:border-neutral-700 dark:bg-neutral-900">
             <DatePicker value={from} onChange={setFrom} className="w-40" />
-            <span className="pb-2 text-neutral-400">—</span>
+            <span className="pb-2 text-neutral-500 dark:text-neutral-400">—</span>
             <DatePicker value={to} onChange={setTo} className="w-40" />
 
             <select value={pipelineId} onChange={(e) => setPipelineId(e.target.value)} className={selectClass} aria-label={t('reports.sales_pipeline')}>
@@ -66,7 +68,7 @@ function Filters({ routeName, filters, pipelines, agents, sources }) {
             <button
                 type="button"
                 onClick={apply}
-                className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-500"
+                className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-700"
             >
                 {t('reports.apply')}
             </button>
@@ -145,6 +147,7 @@ export default function SalesReportShell({
     children,
 }) {
     const { t } = useTranslation();
+    const loading = useInertiaLoading();
 
     const exportParams = { report: exportReport };
 
@@ -161,7 +164,10 @@ export default function SalesReportShell({
             <div className="space-y-6">
                 <div className="flex flex-wrap items-end justify-between gap-4">
                     <div>
-                        <h1 className="text-xl font-bold text-neutral-900 dark:text-white">{title}</h1>
+                        <h1 className="flex items-center gap-2 text-xl font-bold text-neutral-900 dark:text-white">
+                            {title}
+                            {loading && <Spinner size="sm" className="text-brand-600 dark:text-brand-400" />}
+                        </h1>
                         <p className="text-sm text-neutral-500 dark:text-neutral-400">{subtitle}</p>
                     </div>
                     <a
@@ -184,7 +190,9 @@ export default function SalesReportShell({
                 <Filters routeName={routeName} filters={filters} pipelines={pipelines} agents={agents} sources={sources} />
                 <SummaryCards summary={summary} items={summaryItems} />
 
-                {children}
+                <div aria-busy={loading || undefined} className={loading ? 'opacity-60 transition-opacity' : 'transition-opacity'}>
+                    {children}
+                </div>
             </div>
         </ClientLayout>
     );

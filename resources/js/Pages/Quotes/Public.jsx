@@ -77,7 +77,7 @@ export default function PublicQuote({ quote = {}, pdfUrl = '', accepted = false 
                         </div>
 
                         <div className="text-start sm:text-end">
-                            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${statusStyles[quote.status] || statusStyles.draft}`}>
+                            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-2xs font-semibold ${statusStyles[quote.status] || statusStyles.draft}`}>
                                 {t(`quotes.status_${quote.status}`)}
                             </span>
                             <div className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
@@ -89,7 +89,7 @@ export default function PublicQuote({ quote = {}, pdfUrl = '', accepted = false 
                     <div className="overflow-x-auto">
                         <table className="w-full text-start text-sm">
                             <thead>
-                                <tr className="border-b border-neutral-100 bg-neutral-50/70 text-xs font-medium text-neutral-500 dark:border-neutral-800 dark:bg-neutral-800/50">
+                                <tr className="border-b border-neutral-100 bg-neutral-50/70 text-xs font-medium text-neutral-500 dark:text-neutral-400 dark:border-neutral-800 dark:bg-neutral-800/50">
                                     <th className="px-6 py-3 text-start">{t('quotes.item_description')}</th>
                                     <th className="px-4 py-3 text-end">{t('quotes.item_qty')}</th>
                                     <th className="px-4 py-3 text-end">{t('quotes.item_price')}</th>
@@ -103,7 +103,7 @@ export default function PublicQuote({ quote = {}, pdfUrl = '', accepted = false 
                                         <td className="px-6 py-4">{item.description}</td>
                                         <td className="px-4 py-4 text-end tabular-nums text-neutral-600 dark:text-neutral-300">{lineQuantity(item.quantity)}</td>
                                         <td className="px-4 py-4 text-end tabular-nums text-neutral-600 dark:text-neutral-300">{money(item.unit_price)}</td>
-                                        <td className="px-4 py-4 text-end tabular-nums text-neutral-500">{Number(item.tax_rate || 0)}%</td>
+                                        <td className="px-4 py-4 text-end tabular-nums text-neutral-500 dark:text-neutral-400">{Number(item.tax_rate || 0)}%</td>
                                         <td className="px-6 py-4 text-end tabular-nums font-medium">{money(item.total)}</td>
                                     </tr>
                                 ))}
@@ -114,17 +114,17 @@ export default function PublicQuote({ quote = {}, pdfUrl = '', accepted = false 
                     <div className="flex justify-end border-t border-neutral-100 p-6 dark:border-neutral-800">
                         <dl className="w-full max-w-xs space-y-2 text-sm">
                             <div className="flex justify-between">
-                                <dt className="text-neutral-500">{t('quotes.subtotal')}</dt>
+                                <dt className="text-neutral-500 dark:text-neutral-400">{t('quotes.subtotal')}</dt>
                                 <dd className="tabular-nums">{money(quote.subtotal)}</dd>
                             </div>
                             {Number(quote.discount_value) > 0 && (
                                 <div className="flex justify-between">
-                                    <dt className="text-neutral-500">{t('quotes.discount')}</dt>
+                                    <dt className="text-neutral-500 dark:text-neutral-400">{t('quotes.discount')}</dt>
                                     <dd className="tabular-nums">-{money(quote.discount_value)}{quote.discount_type === 'percent' ? '%' : ''}</dd>
                                 </div>
                             )}
                             <div className="flex justify-between">
-                                <dt className="text-neutral-500">{t('quotes.tax')}</dt>
+                                <dt className="text-neutral-500 dark:text-neutral-400">{t('quotes.tax')}</dt>
                                 <dd className="tabular-nums">{money(quote.tax_total)}</dd>
                             </div>
                             <div className="flex justify-between border-t border-neutral-200 pt-2 text-lg font-bold dark:border-neutral-700">
@@ -138,13 +138,13 @@ export default function PublicQuote({ quote = {}, pdfUrl = '', accepted = false 
                         <div className="space-y-4 border-t border-neutral-100 p-6 text-sm dark:border-neutral-800">
                             {quote.notes && (
                                 <div>
-                                    <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">{t('quotes.notes')}</h2>
+                                    <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">{t('quotes.notes')}</h2>
                                     <p className="mt-1 whitespace-pre-line text-neutral-600 dark:text-neutral-300">{quote.notes}</p>
                                 </div>
                             )}
                             {quote.terms && (
                                 <div>
-                                    <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">{t('quotes.terms')}</h2>
+                                    <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">{t('quotes.terms')}</h2>
                                     <p className="mt-1 whitespace-pre-line text-neutral-600 dark:text-neutral-300">{quote.terms}</p>
                                 </div>
                             )}
@@ -191,7 +191,7 @@ export default function PublicQuote({ quote = {}, pdfUrl = '', accepted = false 
                     </div>
                 </div>
 
-                <p className="flex items-center justify-center gap-1.5 text-center text-xs text-neutral-400">
+                <p className="flex items-center justify-center gap-1.5 text-center text-xs text-neutral-500 dark:text-neutral-400">
                     <ShieldCheck className="h-3.5 w-3.5" />
                     {t('quotes.public_footer', { app: quote.workspace?.name || '' })}
                 </p>

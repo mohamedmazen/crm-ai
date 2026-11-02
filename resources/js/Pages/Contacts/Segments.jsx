@@ -21,7 +21,7 @@ function RuleRow({ condition, onChange, onRemove }) {
             {!['is_null', 'is_not_null'].includes(condition.operator) && (
                 <input type="text" value={condition.value ?? ''} onChange={e => onChange({ ...condition, value: e.target.value })} placeholder={t('contacts_page.seg_rule_value')} className="rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 px-2 py-1 text-sm w-40" />
             )}
-            <button type="button" onClick={onRemove} className="text-neutral-400 hover:text-red-500 ml-auto"><Trash2 className="h-4 w-4" /></button>
+            <button type="button" onClick={onRemove} aria-label={t('contacts_page.seg_remove_rule', { defaultValue: 'Remove rule' })} className="inline-flex h-6 w-6 items-center justify-center text-neutral-500 dark:text-neutral-400 hover:text-red-500 ml-auto"><Trash2 className="h-4 w-4" /></button>
         </div>
     );
 }
@@ -91,11 +91,11 @@ export default function ContactsSegments({ segments }) {
                             <div className="flex gap-2 mt-auto pt-2 border-t border-neutral-100 dark:border-neutral-800">
                                 <a href={route('client.contacts.index', { segment: seg.id })} className="flex-1 text-center text-xs font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400">{t('contacts_page.seg_view_contacts')}</a>
                                 {seg.type === 'static' && (
-                                    <a href={route('client.segments.contacts', seg.id)} className="flex items-center gap-1 text-xs font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 px-1" title={t('contacts_page.seg_add_contacts')}>
+                                    <a href={route('client.segments.contacts', seg.id)} className="flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-700 dark:text-emerald-400 px-1" title={t('contacts_page.seg_add_contacts')}>
                                         <UserPlus className="h-4 w-4" />
                                     </a>
                                 )}
-                                <button type="button" onClick={() => handleDelete(seg.id)} className="text-neutral-400 hover:text-red-500 transition"><Trash2 className="h-4 w-4" /></button>
+                                <button type="button" onClick={() => handleDelete(seg.id)} aria-label={t('contacts_page.seg_delete', { defaultValue: 'Delete segment' })} className="inline-flex h-6 w-6 items-center justify-center text-neutral-500 dark:text-neutral-400 hover:text-red-500 transition"><Trash2 className="h-4 w-4" /></button>
                             </div>
                         </div>
                     ))}

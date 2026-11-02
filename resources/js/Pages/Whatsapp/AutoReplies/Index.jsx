@@ -65,7 +65,7 @@ function RuleForm({ data, setData, errors, onSubmit, onCancel, processing, submi
             {data.trigger_type === 'keyword' && (
                 <div>
                     <label className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
-                        {t('whatsapp.auto_replies_keywords')} <span className="text-neutral-400 font-normal">{t('whatsapp.auto_replies_keywords_hint')}</span>
+                        {t('whatsapp.auto_replies_keywords')} <span className="text-neutral-500 dark:text-neutral-400 font-normal">{t('whatsapp.auto_replies_keywords_hint')}</span>
                     </label>
                     <input
                         type="text"
@@ -191,7 +191,7 @@ function RuleForm({ data, setData, errors, onSubmit, onCancel, processing, submi
                     type="checkbox"
                     checked={data.enabled}
                     onChange={e => setData('enabled', e.target.checked)}
-                    className="rounded border-neutral-300 dark:border-neutral-600 text-brand-600"
+                    className="rounded border-neutral-300 dark:border-neutral-600 text-brand-600 dark:text-brand-400"
                 />
                 <span className="text-sm text-neutral-700 dark:text-neutral-300">{t('common.enabled')}</span>
             </label>
@@ -316,7 +316,7 @@ export default function WhatsappAutoRepliesIndex({ rules }) {
                                     {rule.keywords?.length > 0 && (
                                         <span className="text-sm text-neutral-600 dark:text-neutral-400">
                                             <strong>{rule.keywords.slice(0, 3).join(', ')}{rule.keywords.length > 3 ? '…' : ''}</strong>
-                                            <span className="text-neutral-400 ml-1">({MATCH_MODE_LABEL_KEYS[rule.match_mode] ? t(MATCH_MODE_LABEL_KEYS[rule.match_mode]) : rule.match_mode})</span>
+                                            <span className="text-neutral-500 dark:text-neutral-400 ml-1">({MATCH_MODE_LABEL_KEYS[rule.match_mode] ? t(MATCH_MODE_LABEL_KEYS[rule.match_mode]) : rule.match_mode})</span>
                                         </span>
                                     )}
                                     <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
@@ -327,7 +327,7 @@ export default function WhatsappAutoRepliesIndex({ rules }) {
                                         → {RESPONSE_KIND_LABEL_KEYS[rule.response_kind] ? t(RESPONSE_KIND_LABEL_KEYS[rule.response_kind]) : rule.response_kind}
                                     </span>
                                     {rule.priority > 0 && (
-                                        <span className="text-[11px] text-neutral-400">{t('whatsapp.auto_replies_priority_badge', { n: rule.priority })}</span>
+                                        <span className="text-2xs text-neutral-500 dark:text-neutral-400">{t('whatsapp.auto_replies_priority_badge', { n: rule.priority })}</span>
                                     )}
                                 </div>
                                 {rule.payload_json?.text && (
@@ -346,7 +346,7 @@ export default function WhatsappAutoRepliesIndex({ rules }) {
                                     type="button"
                                     onClick={() => openEdit(rule)}
                                     title={t('whatsapp.auto_replies_edit_tooltip')}
-                                    className="text-neutral-400 hover:text-brand-600 transition"
+                                    className="text-neutral-500 dark:text-neutral-400 hover:text-brand-600 transition"
                                 >
                                     <Pencil className="h-4 w-4" />
                                 </button>
@@ -354,7 +354,7 @@ export default function WhatsappAutoRepliesIndex({ rules }) {
                                     type="button"
                                     onClick={() => handleToggle(rule)}
                                     title={rule.enabled ? t('whatsapp.auto_replies_disable') : t('whatsapp.auto_replies_enable')}
-                                    className="text-neutral-400 hover:text-brand-600 transition"
+                                    className="text-neutral-500 dark:text-neutral-400 hover:text-brand-600 transition"
                                 >
                                     {rule.enabled
                                         ? <ToggleRight className="h-5 w-5 text-green-500" />
@@ -365,7 +365,7 @@ export default function WhatsappAutoRepliesIndex({ rules }) {
                                     type="button"
                                     onClick={() => handleDelete(rule.id)}
                                     title={t('whatsapp.auto_replies_delete_tooltip')}
-                                    className="text-neutral-400 hover:text-red-500 transition"
+                                    className="text-neutral-500 dark:text-neutral-400 hover:text-red-500 transition"
                                 >
                                     <Trash2 className="h-4 w-4" />
                                 </button>
@@ -390,7 +390,7 @@ export default function WhatsappAutoRepliesIndex({ rules }) {
                     <div className="w-full max-w-md rounded-xl bg-white dark:bg-neutral-900 p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
                         <div className="flex items-center justify-between">
                             <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{t('whatsapp.auto_replies_new_rule')}</h3>
-                            <button type="button" onClick={() => setShowCreate(false)} className="text-neutral-400 hover:text-neutral-600">
+                            <button type="button" onClick={() => setShowCreate(false)} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600">
                                 <X className="h-5 w-5" />
                             </button>
                         </div>
@@ -413,7 +413,7 @@ export default function WhatsappAutoRepliesIndex({ rules }) {
                     <div className="w-full max-w-md rounded-xl bg-white dark:bg-neutral-900 p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
                         <div className="flex items-center justify-between">
                             <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{t('whatsapp.auto_replies_edit_rule')}</h3>
-                            <button type="button" onClick={() => setEditingRule(null)} className="text-neutral-400 hover:text-neutral-600">
+                            <button type="button" onClick={() => setEditingRule(null)} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600">
                                 <X className="h-5 w-5" />
                             </button>
                         </div>

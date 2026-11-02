@@ -188,27 +188,28 @@ export default function ContactsBulkImport({ tags, segments }) {
 
                 <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-5 space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('contacts_page.bulk_choose_file')}</label>
+                        <label htmlFor="bulk-file-input" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('contacts_page.bulk_choose_file')}</label>
                         <input
+                            id="bulk-file-input"
                             ref={fileRef}
                             type="file"
                             accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                             onChange={onFile}
                             className="mt-1 block w-full text-sm text-neutral-600 dark:text-neutral-400 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-brand-900/30 dark:file:text-brand-200"
                         />
-                        <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                        <p className="mt-2 text-sm text-red-700 dark:text-red-400">
                             <Trans
                                 i18nKey="contacts_page.bulk_file_hint"
                                 components={{
                                     b: <strong />,
                                     code: <code className="rounded bg-neutral-100 dark:bg-neutral-800 px-1" />,
                                     sample: (
-                                        <button type="button" onClick={downloadSample} className="font-medium text-brand-600 underline hover:text-brand-700" />
+                                        <button type="button" onClick={downloadSample} className="font-medium text-brand-600 dark:text-brand-400 underline hover:text-brand-700" />
                                     ),
                                 }}
                             />
                         </p>
-                        {parsingError && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{parsingError}</p>}
+                        {parsingError && <p className="mt-2 text-sm text-red-700 dark:text-red-400">{parsingError}</p>}
                     </div>
 
                     <div className="overflow-hidden rounded-lg border border-neutral-200 dark:border-neutral-700">

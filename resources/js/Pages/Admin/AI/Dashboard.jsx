@@ -8,7 +8,7 @@ const PROVIDER_LABELS = { openai: 'OpenAI', anthropic: 'Anthropic', gemini: 'Goo
 const PROVIDER_COLORS = { openai: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400', anthropic: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400', gemini: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' };
 
 function StatCard({ icon: Icon, label, value, sub, color = 'brand' }) {
-    const colors = { brand: 'text-brand-600', green: 'text-green-600', red: 'text-red-600', yellow: 'text-yellow-600', blue: 'text-blue-600' };
+    const colors = { brand: 'text-brand-600 dark:text-brand-400', green: 'text-green-700 dark:text-green-400', red: 'text-red-700 dark:text-red-400', yellow: 'text-yellow-700 dark:text-yellow-400', blue: 'text-blue-700 dark:text-blue-400' };
     return (
         <Card className="p-5">
             <div className="flex items-start gap-3">
@@ -84,7 +84,7 @@ export default function AiDashboard({ providerStats = {}, configuredWorkspaces =
                                         </div>
                                         {configured
                                             ? <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${PROVIDER_COLORS[p]}`}>{t('ai_dashboard.workspace_count', { count })}</span>
-                                            : <span className="text-xs text-neutral-400 dark:text-neutral-500">{t('ai_dashboard.not_configured')}</span>}
+                                            : <span className="text-xs text-neutral-500 dark:text-neutral-400">{t('ai_dashboard.not_configured')}</span>}
                                     </div>
                                 );
                             })}
@@ -118,7 +118,7 @@ export default function AiDashboard({ providerStats = {}, configuredWorkspaces =
                     <Card className="p-5 space-y-4">
                         <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2"><BookOpen className="h-4 w-4" /> {t('ai_dashboard.document_status')}</h3>
                         {docTotal === 0 ? (
-                            <p className="text-sm text-neutral-400 dark:text-neutral-500">{t('ai_dashboard.no_documents')}</p>
+                            <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('ai_dashboard.no_documents')}</p>
                         ) : (
                             <div className="space-y-2">
                                 {Object.entries({
@@ -161,7 +161,7 @@ export default function AiDashboard({ providerStats = {}, configuredWorkspaces =
                                             {d.date}: {Number(d.tokens).toLocaleString()} tokens
                                         </div>
                                         <div className="w-full bg-brand-500 rounded-t opacity-80 hover:opacity-100 transition-opacity" style={{ height: `${height}px` }} />
-                                        <span className="text-[9px] text-neutral-400 rotate-45 origin-left hidden sm:block">{d.date.slice(5)}</span>
+                                        <span className="text-3xs text-neutral-500 dark:text-neutral-400 rotate-45 origin-left hidden sm:block">{d.date.slice(5)}</span>
                                     </div>
                                 );
                             })}

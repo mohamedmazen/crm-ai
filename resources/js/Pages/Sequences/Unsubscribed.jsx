@@ -11,7 +11,7 @@ export default function Unsubscribed({ sequenceName }) {
 
             <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4 dark:bg-neutral-950">
                 <div className="w-full max-w-md rounded-2xl border border-soft bg-white p-8 text-center shadow-sm dark:bg-neutral-900">
-                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400">
+                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400">
                         <CheckCircle2 className="h-7 w-7" />
                     </div>
 

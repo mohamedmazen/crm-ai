@@ -29,14 +29,14 @@ function Field({ label, name, value, onChange, type = 'text', hint }) {
                     <button
                         type="button"
                         onClick={() => setShow((v) => !v)}
-                        className="absolute inset-y-0 right-2 flex items-center text-neutral-400 hover:text-neutral-600"
+                        className="absolute inset-y-0 right-2 flex items-center text-neutral-500 dark:text-neutral-400 hover:text-neutral-600"
                         tabIndex={-1}
                     >
                         {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                 )}
             </div>
-            {hint && <p className="mt-1 text-xs text-neutral-400">{hint}</p>}
+            {hint && <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">{hint}</p>}
         </div>
     );
 }
@@ -118,7 +118,7 @@ export default function PusherSettingsIndex({ settings = {}, configured = false,
                             <div className="flex items-center justify-between pb-3 border-b border-neutral-200 dark:border-neutral-700">
                                 <div>
                                     <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{t('pusher.enable_pusher')}</p>
-                                    <p className="text-xs text-neutral-400">{t('pusher.enable_pusher_desc')}</p>
+                                    <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('pusher.enable_pusher_desc')}</p>
                                 </div>
                                 <button
                                     type="button"
@@ -164,7 +164,7 @@ export default function PusherSettingsIndex({ settings = {}, configured = false,
                             </div>
 
                             {Object.keys(errors).length > 0 && (
-                                <ul className="text-sm text-red-600 dark:text-red-400 space-y-0.5">
+                                <ul className="text-sm text-red-700 dark:text-red-400 space-y-0.5">
                                     {Object.values(errors).map((e, i) => <li key={i}>{e}</li>)}
                                 </ul>
                             )}
@@ -187,7 +187,7 @@ export default function PusherSettingsIndex({ settings = {}, configured = false,
                             </div>
 
                             {testState && testState !== 'loading' && (
-                                <div className={`flex items-center gap-2 text-sm mt-2 ${testState === 'ok' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                                <div className={`flex items-center gap-2 text-sm mt-2 ${testState === 'ok' ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}`}>
                                     {testState === 'ok'
                                         ? <CheckCircle className="h-4 w-4 flex-shrink-0" />
                                         : <XCircle className="h-4 w-4 flex-shrink-0" />

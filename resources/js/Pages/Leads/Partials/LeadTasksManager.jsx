@@ -80,7 +80,7 @@ export default function LeadTasksManager({ lead, tasks = [], teamMembers = [] })
             {/* Quick Add Task Form */}
             <form onSubmit={handleCreateTask} className="rounded-xl border border-neutral-200 bg-neutral-50/60 p-4 dark:border-neutral-800 dark:bg-neutral-800/30">
                 <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3 flex items-center gap-2">
-                    <CheckSquare className="h-4 w-4 text-brand-600" />
+                    <CheckSquare className="h-4 w-4 text-brand-600 dark:text-brand-400" />
                     {t('leads.add_task') || 'Add Follow-up Task'}
                 </h3>
 
@@ -186,7 +186,7 @@ export default function LeadTasksManager({ lead, tasks = [], teamMembers = [] })
                                         <button
                                             type="button"
                                             onClick={() => handleToggleTask(task)}
-                                            className="mt-0.5 text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 focus:outline-none"
+                                            className="mt-0.5 text-neutral-500 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 focus:outline-none"
                                             title={task.is_completed ? (t('leads.mark_incomplete') || 'Mark incomplete') : (t('leads.mark_complete') || 'Mark complete')}
                                         >
                                             {task.is_completed ? (
@@ -197,22 +197,22 @@ export default function LeadTasksManager({ lead, tasks = [], teamMembers = [] })
                                         </button>
 
                                         <div className="min-w-0">
-                                            <p className={`text-sm font-medium ${task.is_completed ? 'line-through text-neutral-400 dark:text-neutral-500' : 'text-neutral-900 dark:text-neutral-100'}`}>
+                                            <p className={`text-sm font-medium ${task.is_completed ? 'line-through text-neutral-500 dark:text-neutral-400' : 'text-neutral-900 dark:text-neutral-100'}`}>
                                                 {task.title}
                                             </p>
 
                                             <div className="mt-1 flex flex-wrap items-center gap-2 text-xs">
-                                                <span className="inline-flex items-center gap-1 rounded bg-neutral-100 px-1.5 py-0.5 text-[11px] text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
+                                                <span className="inline-flex items-center gap-1 rounded bg-neutral-100 px-1.5 py-0.5 text-2xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
                                                     <Icon className="h-3 w-3" />
                                                     {task.type}
                                                 </span>
 
-                                                <span className={`inline-flex items-center rounded border px-1.5 py-0.2 text-[10px] font-medium uppercase ${PRIORITY_BADGES[task.priority] || PRIORITY_BADGES.medium}`}>
+                                                <span className={`inline-flex items-center rounded border px-1.5 py-0.2 text-3xs font-medium uppercase ${PRIORITY_BADGES[task.priority] || PRIORITY_BADGES.medium}`}>
                                                     {task.priority}
                                                 </span>
 
                                                 {task.due_at && (
-                                                    <span className={`inline-flex items-center gap-1 text-[11px] font-medium ${isOverdue ? 'text-red-600 dark:text-red-400 font-semibold' : 'text-neutral-500 dark:text-neutral-400'}`}>
+                                                    <span className={`inline-flex items-center gap-1 text-2xs font-medium ${isOverdue ? 'text-red-700 dark:text-red-400 font-semibold' : 'text-neutral-500 dark:text-neutral-400'}`}>
                                                         {isOverdue && <AlertCircle className="h-3 w-3 text-red-500" />}
                                                         <Clock className="h-3 w-3" />
                                                         {new Date(task.due_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
@@ -220,7 +220,7 @@ export default function LeadTasksManager({ lead, tasks = [], teamMembers = [] })
                                                 )}
 
                                                 {task.assigned_user && (
-                                                    <span className="inline-flex items-center gap-1 text-[11px] text-neutral-500 dark:text-neutral-400">
+                                                    <span className="inline-flex items-center gap-1 text-2xs text-neutral-500 dark:text-neutral-400">
                                                         <User className="h-3 w-3" />
                                                         {task.assigned_user.name}
                                                     </span>
@@ -232,7 +232,7 @@ export default function LeadTasksManager({ lead, tasks = [], teamMembers = [] })
                                     <button
                                         type="button"
                                         onClick={() => handleDeleteTask(task)}
-                                        className="rounded p-1 text-neutral-400 hover:bg-neutral-100 hover:text-red-600 dark:hover:bg-neutral-800"
+                                        className="rounded p-1 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-red-600 dark:hover:bg-neutral-800"
                                         title={t('common.delete') || 'Delete'}
                                     >
                                         <Trash2 className="h-4 w-4" />

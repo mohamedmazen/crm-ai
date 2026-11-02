@@ -10,7 +10,7 @@ const variantClasses = {
     ghost:
         'bg-transparent text-neutral-700 border-transparent hover:bg-neutral-100 active:bg-neutral-200 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:active:bg-neutral-700',
     danger:
-        'bg-coral-500 text-white border-transparent shadow-soft hover:bg-coral-600 hover:shadow-soft-md active:shadow-inner dark:bg-coral-600 dark:hover:bg-coral-500',
+        'bg-coral-600 text-white border-transparent shadow-soft hover:bg-coral-700 hover:shadow-soft-md active:shadow-inner dark:bg-coral-600 dark:hover:bg-coral-700',
     outline:
         'bg-transparent text-neutral-700 border-neutral-300 hover:bg-neutral-50 active:bg-neutral-100 dark:text-neutral-300 dark:border-neutral-600 dark:hover:bg-neutral-800 dark:active:bg-neutral-700',
 };

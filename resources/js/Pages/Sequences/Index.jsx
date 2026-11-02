@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 import ClientLayout from '@/Layouts/ClientLayout';
+import PageHeader from '@/Components/PageHeader';
 import Button from '@/Components/ui/Button';
 import Modal from '@/Components/ui/Modal';
 import {
@@ -61,41 +62,36 @@ export default function SequencesIndex({
             <Head title={t('sequences.title') || 'Sequences'} />
 
             <div className="mx-auto max-w-7xl px-4 py-6 space-y-6 sm:px-6 lg:px-8">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600 dark:bg-brand-950/60 dark:text-brand-400">
-                            <Mail className="h-5 w-5" />
-                        </div>
-                        <div>
-                            <h1 className="flex items-center gap-2 text-xl font-bold text-neutral-900 dark:text-neutral-100">
-                                {t('sequences.title') || 'Sequences'}
-                                {!usage.unlimited && (
-                                    <span className="text-xs font-normal text-neutral-500">
-                                        ({usage.current} / {usage.limit} {t('common.used') || 'used'})
-                                    </span>
-                                )}
-                            </h1>
-                            <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                                {t('sequences.subtitle') || 'Automated email and WhatsApp follow-up sequences that stop when a lead replies or converts.'}
-                            </p>
-                        </div>
-                    </div>
-
-                    <Button onClick={() => setShowCreate(true)} className="inline-flex items-center gap-2">
-                        <Plus className="h-4 w-4" />
-                        {t('sequences.new') || 'New Sequence'}
-                    </Button>
-                </div>
+                <PageHeader
+                    icon={Mail}
+                    title={
+                        <>
+                            {t('sequences.title') || 'Sequences'}
+                            {!usage.unlimited && (
+                                <span className="ms-2 align-middle text-xs font-normal text-neutral-500 dark:text-neutral-400">
+                                    ({usage.current} / {usage.limit} {t('common.used') || 'used'})
+                                </span>
+                            )}
+                        </>
+                    }
+                    description={t('sequences.subtitle') || 'Automated email and WhatsApp follow-up sequences that stop when a lead replies or converts.'}
+                    actions={
+                        <Button onClick={() => setShowCreate(true)} className="inline-flex items-center gap-2">
+                            <Plus className="h-4 w-4" />
+                            {t('sequences.new') || 'New Sequence'}
+                        </Button>
+                    }
+                />
 
                 <div className="overflow-hidden rounded-2xl border border-soft bg-white shadow-xs dark:bg-neutral-900">
                     {sequences.data.length === 0 ? (
                         <div className="py-16 text-center">
-                            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-neutral-100 text-neutral-400 dark:bg-neutral-800">
+                            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-neutral-100 text-neutral-600 dark:text-neutral-400 dark:bg-neutral-800">
                                 <Mail className="h-7 w-7" />
                             </div>
-                            <h3 className="mt-4 text-base font-bold text-neutral-900 dark:text-neutral-100">
+                            <h2 className="mt-4 text-base font-bold text-neutral-900 dark:text-neutral-100">
                                 {t('sequences.empty_title') || 'No sequences yet'}
-                            </h3>
+                            </h2>
                             <p className="mx-auto mt-1 max-w-sm text-sm text-neutral-500 dark:text-neutral-400">
                                 {t('sequences.empty_subtitle') || 'Build a multi-step follow-up once and let it run for every lead you enroll.'}
                             </p>
@@ -143,7 +139,7 @@ export default function SequencesIndex({
                                                 {sequence.enrollments_count}
                                             </td>
                                             <td className="px-4 py-4">
-                                                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold capitalize ${statusStyles[sequence.status] || statusStyles.draft}`}>
+                                                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-2xs font-semibold capitalize ${statusStyles[sequence.status] || statusStyles.draft}`}>
                                                     {sequence.status}
                                                 </span>
                                             </td>
@@ -151,7 +147,7 @@ export default function SequencesIndex({
                                                 <div className="flex items-center justify-end gap-1">
                                                     <Link
                                                         href={route('client.sales.sequences.builder', sequence.id)}
-                                                        className="rounded-lg p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
+                                                        className="rounded-lg p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-neutral-800 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
                                                         title={t('sequences.edit') || 'Edit sequence'}
                                                     >
                                                         <Sliders className="h-4 w-4" />
@@ -161,7 +157,7 @@ export default function SequencesIndex({
                                                         <button
                                                             type="button"
                                                             onClick={() => setStatus(sequence, 'paused')}
-                                                            className="rounded-lg p-1.5 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30"
+                                                            className="rounded-lg p-1.5 text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/30"
                                                             title={t('sequences.pause') || 'Pause'}
                                                         >
                                                             <Pause className="h-4 w-4" />
@@ -170,7 +166,7 @@ export default function SequencesIndex({
                                                         <button
                                                             type="button"
                                                             onClick={() => setStatus(sequence, 'active')}
-                                                            className="rounded-lg p-1.5 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30"
+                                                            className="rounded-lg p-1.5 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30"
                                                             title={t('sequences.activate') || 'Activate'}
                                                         >
                                                             <Play className="h-4 w-4" />
@@ -180,7 +176,7 @@ export default function SequencesIndex({
                                                     <button
                                                         type="button"
                                                         onClick={() => setDeleting(sequence)}
-                                                        className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400"
+                                                        className="rounded-lg p-1.5 text-neutral-500 dark:text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400"
                                                         title={t('common.delete') || 'Delete'}
                                                     >
                                                         <Trash2 className="h-4 w-4" />
@@ -219,7 +215,7 @@ export default function SequencesIndex({
                         <button
                             type="button"
                             onClick={() => setShowCreate(false)}
-                            className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
+                            className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
                         >
                             &times;
                         </button>

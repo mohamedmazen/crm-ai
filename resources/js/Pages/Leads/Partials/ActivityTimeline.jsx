@@ -55,7 +55,7 @@ export default function ActivityTimeline({ activities }) {
 
     if (!activities?.length) {
         return (
-            <p className="py-6 text-center text-sm text-neutral-400 dark:text-neutral-600">
+            <p className="py-6 text-center text-sm text-neutral-500 dark:text-neutral-600">
                 {t('leads.no_activity_yet')}
             </p>
         );
@@ -89,7 +89,7 @@ export default function ActivityTimeline({ activities }) {
 
             {activities.map((a) => {
                 const Icon = ICONS[a.type] ?? StickyNote;
-                const tone = TONES[a.type] ?? 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400';
+                const tone = TONES[a.type] ?? 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400';
 
                 return (
                     <li key={a.id} className="relative">
@@ -110,7 +110,7 @@ export default function ActivityTimeline({ activities }) {
                             <p className="mt-0.5 whitespace-pre-wrap text-sm text-neutral-600 dark:text-neutral-400">{a.body}</p>
                         )}
 
-                        <p className="mt-0.5 flex items-center gap-1 text-xs text-neutral-400 dark:text-neutral-500">
+                        <p className="mt-0.5 flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-400">
                             <Clock className="h-3 w-3" aria-hidden="true" />
                             <time dateTime={a.occurred_at} title={new Date(a.occurred_at).toLocaleString()}>
                                 {relative(a.occurred_at)}

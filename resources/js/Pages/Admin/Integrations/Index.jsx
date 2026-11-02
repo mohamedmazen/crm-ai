@@ -313,7 +313,7 @@ const SETUP_GUIDES = {
 
 function PermBadge({ p }) {
     return (
-        <span className="inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-mono font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+        <span className="inline-flex items-center rounded px-1.5 py-0.5 text-3xs font-mono font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
             {p}
         </span>
     );
@@ -337,14 +337,14 @@ function SetupGuide({ provider }) {
                 <div className="mt-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/40 px-3 py-2.5 space-y-3">
                     <div>
                         <p className="text-xs font-semibold text-blue-800 dark:text-blue-300">{guide.title}</p>
-                        {guide.subtitle && <p className="text-[10px] text-blue-600 dark:text-blue-400 mt-0.5">{guide.subtitle}</p>}
+                        {guide.subtitle && <p className="text-3xs text-blue-700 dark:text-blue-400 mt-0.5">{guide.subtitle}</p>}
                     </div>
                     {hasSections ? (
                         <div className="space-y-3">
                             {guide.sections.map((sec, si) => (
                                 <div key={si} className="space-y-1.5">
-                                    <p className="text-[10px] font-bold uppercase tracking-wider text-blue-700 dark:text-blue-400 border-b border-blue-200 dark:border-blue-800 pb-0.5">{sec.heading}</p>
-                                    {sec.note && <p className="text-[10px] italic text-blue-600 dark:text-blue-400">{sec.note}</p>}
+                                    <p className="text-3xs font-bold uppercase tracking-wider text-blue-700 dark:text-blue-400 border-b border-blue-200 dark:border-blue-800 pb-0.5">{sec.heading}</p>
+                                    {sec.note && <p className="text-3xs italic text-blue-700 dark:text-blue-400">{sec.note}</p>}
                                     {sec.steps && (
                                         <ol className="space-y-1">
                                             {sec.steps.map((s, i) => (
@@ -363,7 +363,7 @@ function SetupGuide({ provider }) {
                                     {sec.webhookFields && (
                                         <div className="flex flex-wrap gap-1 pt-0.5">
                                             {sec.webhookFields.map(f => (
-                                                <span key={f} className="inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-mono font-medium bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">{f}</span>
+                                                <span key={f} className="inline-flex items-center rounded px-1.5 py-0.5 text-3xs font-mono font-medium bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">{f}</span>
                                             ))}
                                         </div>
                                     )}
@@ -394,14 +394,14 @@ function SetupGuide({ provider }) {
                         <div className="flex flex-wrap gap-3 pt-1 border-t border-blue-200 dark:border-blue-800">
                             {guide.links.map(l => (
                                 <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer"
-                                    className="text-[10px] font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                                    className="text-3xs font-medium text-blue-700 dark:text-blue-400 hover:underline">
                                     {l.label} →
                                 </a>
                             ))}
                         </div>
                     ) : guide.link ? (
                         <a href={guide.link} target="_blank" rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline mt-1">
+                            className="inline-flex items-center gap-1 text-xs font-medium text-blue-700 dark:text-blue-400 hover:underline mt-1">
                             {guide.linkLabel} →
                         </a>
                     ) : null}
@@ -425,7 +425,7 @@ const CATEGORY_LABEL_KEYS = {
 const STATUS_ICONS = {
     ok:       <CheckCircle className="h-4 w-4 text-green-500" />,
     fail:     <XCircle className="h-4 w-4 text-red-500" />,
-    untested: <Clock className="h-4 w-4 text-neutral-400" />,
+    untested: <Clock className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />,
 };
 
 const BRAND = {
@@ -521,7 +521,7 @@ function ProviderCard({ item, onTest, onSetDefault, testing, settingDefault }) {
                         )}
                     </div>
                 </div>
-                <span className={`shrink-0 text-xs px-2 py-0.5 rounded-full font-medium ${item.configured ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'}`}>
+                <span className={`shrink-0 text-xs px-2 py-0.5 rounded-full font-medium ${item.configured ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400'}`}>
                     {item.configured ? t('integrations.configured') : t('integrations.not_set')}
                 </span>
             </div>
@@ -533,11 +533,11 @@ function ProviderCard({ item, onTest, onSetDefault, testing, settingDefault }) {
 
             <div className="flex items-center gap-2 text-xs">
                 {item.enabled
-                    ? <span className="flex items-center gap-1 text-green-600 dark:text-green-400"><ToggleRight className="h-4 w-4" /> {t('integrations.enabled')}</span>
-                    : <span className="flex items-center gap-1 text-neutral-400"><ToggleLeft className="h-4 w-4" /> {t('integrations.disabled')}</span>
+                    ? <span className="flex items-center gap-1 text-green-700 dark:text-green-400"><ToggleRight className="h-4 w-4" /> {t('integrations.enabled')}</span>
+                    : <span className="flex items-center gap-1 text-neutral-500 dark:text-neutral-400"><ToggleLeft className="h-4 w-4" /> {t('integrations.disabled')}</span>
                 }
                 <span className="text-neutral-300 dark:text-neutral-600">·</span>
-                <span className="text-neutral-400">{item.mode === 'test' ? t('integrations.test_mode') : t('integrations.live_mode')}</span>
+                <span className="text-neutral-500 dark:text-neutral-400">{item.mode === 'test' ? t('integrations.test_mode') : t('integrations.live_mode')}</span>
             </div>
 
             <SetupGuide provider={item.provider} />
@@ -643,7 +643,7 @@ export default function IntegrationsIndex({ grouped }) {
 
                 {sortedCategories.map(category => (
                     <div key={category}>
-                        <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
+                        <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
                             {CATEGORY_LABEL_KEYS[category] ? t(CATEGORY_LABEL_KEYS[category]) : category}
                         </h3>
                         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

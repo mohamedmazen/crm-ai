@@ -137,7 +137,7 @@ export default function EmailEditor({
                         className={`-mb-px inline-flex items-center gap-1.5 border-b-2 px-3 py-2 text-sm font-medium transition ${
                             activeTab === id
                                 ? 'border-brand-600 text-brand-600 dark:text-brand-400'
-                                : 'border-transparent text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'
+                                : 'border-transparent text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300'
                         }`}
                     >
                         <Icon className="h-3.5 w-3.5" />
@@ -153,7 +153,7 @@ export default function EmailEditor({
                         className={`mb-1 ml-auto inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition ${
                             showPreview
                                 ? 'bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400'
-                                : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'
+                                : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300'
                         }`}
                     >
                         <Eye className="h-3.5 w-3.5" />
@@ -175,7 +175,7 @@ export default function EmailEditor({
                         <div>
                             <div className="mb-1 flex items-center justify-between gap-2">
                                 <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                                    {t('email_editor.email_body')} <span className="font-normal text-neutral-400">(HTML)</span>
+                                    {t('email_editor.email_body')} <span className="font-normal text-neutral-500 dark:text-neutral-400">(HTML)</span>
                                 </label>
                                 <TokenPickerInline tokens={contactTokens} onPick={insertTokenAtCursor} />
                             </div>
@@ -201,7 +201,7 @@ export default function EmailEditor({
                         </div>
                         <div
                             className="prose prose-sm max-h-[500px] max-w-none overflow-auto p-4 dark:prose-invert"
-                            dangerouslySetInnerHTML={{ __html: body || `<p class="text-neutral-400">${t('email_editor.nothing_to_preview')}</p>` }}
+                            dangerouslySetInnerHTML={{ __html: body || `<p class="text-neutral-500 dark:text-neutral-400">${t('email_editor.nothing_to_preview')}</p>` }}
                         />
                     </div>
                 )}
@@ -270,7 +270,7 @@ function TemplatePicker({ onSelect }) {
                         <div className="flex items-center justify-between gap-2 px-3 py-2">
                             <div>
                                 <div className="text-sm font-medium text-neutral-800 dark:text-neutral-200">{tpl.name}</div>
-                                <div className="text-xs text-neutral-500">{tpl.category}</div>
+                                <div className="text-xs text-neutral-500 dark:text-neutral-400">{tpl.category}</div>
                             </div>
                             <button
                                 type="button"
@@ -368,7 +368,7 @@ function AiGeneratePanel({ campaignName, onGenerated }) {
                 {loading ? t('email_editor.generating') : t('email_editor.generate_email')}
             </button>
 
-            <p className="text-center text-xs text-neutral-400">
+            <p className="text-center text-xs text-neutral-500 dark:text-neutral-400">
                 {t('email_editor.ai_footer_note')}
             </p>
         </div>
@@ -429,7 +429,7 @@ function SubjectImprover({ subject, body, onPick }) {
                         <button
                             type="button"
                             onClick={() => setOpen(false)}
-                            className="text-lg leading-none text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
+                            className="text-lg leading-none text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
                         >
                             ×
                         </button>
@@ -437,7 +437,7 @@ function SubjectImprover({ subject, body, onPick }) {
 
                     <div className="space-y-2 p-3">
                         {loading && (
-                            <div className="flex items-center justify-center gap-2 py-6 text-sm text-neutral-400">
+                            <div className="flex items-center justify-center gap-2 py-6 text-sm text-neutral-500 dark:text-neutral-400">
                                 <Loader2 className="h-4 w-4 animate-spin" />
                                 {t('email_editor.generating_suggestions')}
                             </div>
@@ -463,7 +463,7 @@ function SubjectImprover({ subject, body, onPick }) {
                                         {t('email_editor.use')} →
                                     </span>
                                 </div>
-                                <div className="mt-1 text-xs text-neutral-400">{t('email_editor.char_count', { count: s.length })}</div>
+                                <div className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">{t('email_editor.char_count', { count: s.length })}</div>
                             </button>
                         ))}
                     </div>
@@ -504,7 +504,7 @@ function TokenPickerInline({ tokens, onPick }) {
                             className="flex w-full items-center justify-between px-3 py-1.5 text-left text-xs hover:bg-neutral-50 dark:hover:bg-neutral-700"
                         >
                             <span>{token.label}</span>
-                            <span className="font-mono text-neutral-400">{token.key}</span>
+                            <span className="font-mono text-neutral-500 dark:text-neutral-400">{token.key}</span>
                         </button>
                     ))}
                 </div>

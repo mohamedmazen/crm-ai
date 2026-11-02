@@ -8,7 +8,7 @@ const STATUS_ICONS = {
     failed:    <XCircle className="h-4 w-4 text-red-500" />,
     running:   <Clock className="h-4 w-4 text-blue-500" />,
     pending:   <Clock className="h-4 w-4 text-yellow-500" />,
-    cancelled: <SkipForward className="h-4 w-4 text-neutral-400" />,
+    cancelled: <SkipForward className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />,
 };
 
 const LOG_COLORS = {
@@ -24,7 +24,7 @@ export default function AutomationRuns({ automation, runs }) {
             <Head title={`${t('automation.runs')} · ${automation.name}`} />
             <div className="space-y-5 max-w-4xl">
                 <div className="flex items-center gap-3">
-                    <Link href={route('client.automations.index')} className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
+                    <Link href={route('client.automations.index')} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
                         <ArrowLeft className="h-5 w-5" />
                     </Link>
                     <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">{automation.name} — {t('automation.runs')}</h2>
@@ -36,8 +36,8 @@ export default function AutomationRuns({ automation, runs }) {
                             <div className="flex items-center gap-3">
                                 {STATUS_ICONS[run.status]}
                                 <span className="font-medium text-neutral-900 dark:text-neutral-100 text-sm">{t('automation.run_number', { id: run.id })}</span>
-                                <span className="text-xs text-neutral-400">{run.started_at}</span>
-                                {run.error && <span className="ml-auto text-xs text-red-600 dark:text-red-400">{run.error}</span>}
+                                <span className="text-xs text-neutral-500 dark:text-neutral-400">{run.started_at}</span>
+                                {run.error && <span className="ml-auto text-xs text-red-700 dark:text-red-400">{run.error}</span>}
                             </div>
                             {run.logs?.length > 0 && (
                                 <div className="space-y-1">
@@ -52,7 +52,7 @@ export default function AutomationRuns({ automation, runs }) {
                         </div>
                     ))}
                     {runs.data.length === 0 && (
-                        <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 py-10 text-center text-neutral-400">
+                        <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 py-10 text-center text-neutral-500 dark:text-neutral-400">
                             {t('automation.no_runs_yet')}
                         </div>
                     )}

@@ -31,7 +31,7 @@ export default function AiReportIndex({ kpis, tokensByDay, tokensByModel, topCha
                             onChange={setFrom}
                             className="w-40"
                         />
-                        <span className="text-gray-500">—</span>
+                        <span className="text-gray-500 dark:text-gray-400">—</span>
                         <DatePicker
                             value={to}
                             onChange={setTo}
@@ -57,7 +57,7 @@ export default function AiReportIndex({ kpis, tokensByDay, tokensByModel, topCha
                 {/* Charts */}
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
                     <div className="lg:col-span-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-                        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.tokens_per_day')}</h3>
+                        <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.tokens_per_day')}</h2>
                         <BarChart
                             data={tokensByDay}
                             xKey="date"
@@ -68,7 +68,7 @@ export default function AiReportIndex({ kpis, tokensByDay, tokensByModel, topCha
                         />
                     </div>
                     <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-                        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.tokens_by_model')}</h3>
+                        <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.tokens_by_model')}</h2>
                         {tokensByModel.length > 0 ? (
                             <DonutChart data={tokensByModel} nameKey="name" valueKey="value" height={280} />
                         ) : (
@@ -79,15 +79,15 @@ export default function AiReportIndex({ kpis, tokensByDay, tokensByModel, topCha
 
                 {/* Top chatbots table */}
                 <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-                    <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.top_chatbots')}</h3>
+                    <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.top_chatbots')}</h2>
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b border-gray-200 dark:border-gray-700">
-                                    <th className="pb-2 text-left text-xs text-gray-500">{t('reports.col_chatbot')}</th>
-                                    <th className="pb-2 text-right text-xs text-gray-500">{t('reports.col_runs')}</th>
-                                    <th className="pb-2 text-right text-xs text-gray-500">{t('reports.col_tokens')}</th>
-                                    <th className="pb-2 text-right text-xs text-gray-500">{t('reports.col_avg_latency')}</th>
+                                    <th className="pb-2 text-left text-xs text-gray-500 dark:text-gray-400">{t('reports.col_chatbot')}</th>
+                                    <th className="pb-2 text-right text-xs text-gray-500 dark:text-gray-400">{t('reports.col_runs')}</th>
+                                    <th className="pb-2 text-right text-xs text-gray-500 dark:text-gray-400">{t('reports.col_tokens')}</th>
+                                    <th className="pb-2 text-right text-xs text-gray-500 dark:text-gray-400">{t('reports.col_avg_latency')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">

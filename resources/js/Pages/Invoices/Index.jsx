@@ -2,8 +2,11 @@ import { useState } from 'react';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 import ClientLayout from '@/Layouts/ClientLayout';
+import PageHeader from '@/Components/PageHeader';
 import Button from '@/Components/ui/Button';
 import Modal from '@/Components/ui/Modal';
+import { TableSkeleton } from '@/Components/ui/Skeleton';
+import useInertiaLoading from '@/hooks/useInertiaLoading';
 import { Receipt, Plus, Search, Eye, FileDown, Trash2, CheckCircle2, AlertTriangle } from 'lucide-react';
 
 const statusStyles = {
@@ -12,7 +15,7 @@ const statusStyles = {
     viewed: 'bg-sky-100 text-sky-800 dark:bg-sky-950/60 dark:text-sky-300',
     paid: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300',
     overdue: 'bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-300',
-    cancelled: 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-500',
+    cancelled: 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-600',
 };
 
 function money(value, currency) {
@@ -35,6 +38,7 @@ export default function InvoicesIndex({
 }) {
     const { t } = useTranslation();
     const { flash } = usePage().props;
+    const loading = useInertiaLoading();
 
     const [query, setQuery] = useState(filters.q || '');
     const [status, setStatus] = useState(filters.status || '');
@@ -110,35 +114,30 @@ export default function InvoicesIndex({
                     </div>
                 )}
 
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600 dark:bg-brand-950/60 dark:text-brand-400">
-                            <Receipt className="h-5 w-5" />
-                        </div>
-                        <div>
-                            <h1 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">{t('invoices.title')}</h1>
-                            <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('invoices.subtitle')}</p>
-                        </div>
-                    </div>
-
-                    <Button onClick={openCreate} className="inline-flex items-center gap-2">
-                        <Plus className="h-4 w-4" />
-                        {t('invoices.new')}
-                    </Button>
-                </div>
+                <PageHeader
+                    icon={Receipt}
+                    title={t('invoices.title')}
+                    description={t('invoices.subtitle')}
+                    actions={
+                        <Button onClick={openCreate} className="inline-flex items-center gap-2">
+                            <Plus className="h-4 w-4" />
+                            {t('invoices.new')}
+                        </Button>
+                    }
+                />
 
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     {statCards.map(({ label, value, danger }) => (
                         <div key={label} className="rounded-2xl border border-soft bg-white p-4 dark:bg-neutral-900">
                             <div className="text-xs font-medium text-neutral-500 dark:text-neutral-400">{label}</div>
-                            <div className={`mt-1 text-2xl font-bold tabular-nums ${danger ? 'text-red-600 dark:text-red-400' : 'text-neutral-900 dark:text-neutral-100'}`}>{value}</div>
+                            <div className={`mt-1 text-2xl font-bold tabular-nums ${danger ? 'text-red-700 dark:text-red-400' : 'text-neutral-900 dark:text-neutral-100'}`}>{value}</div>
                         </div>
                     ))}
                 </div>
 
                 <form onSubmit={applyFilters} className="flex flex-wrap items-center gap-2">
                     <div className="relative min-w-[220px] flex-1">
-                        <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                        <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500 dark:text-neutral-400" />
                         <input
                             type="search"
                             value={query}
@@ -151,6 +150,7 @@ export default function InvoicesIndex({
                     <select
                         value={status}
                         onChange={(event) => setStatus(event.target.value)}
+                        aria-label={t('invoices.filter_status', { defaultValue: 'Filter by status' })}
                         className="rounded-lg border-soft bg-white px-3 py-2 text-sm dark:bg-neutral-900 dark:text-neutral-100"
                     >
                         <option value="">{t('invoices.all_statuses')}</option>
@@ -162,13 +162,15 @@ export default function InvoicesIndex({
                     <Button type="submit" variant="secondary">{t('common.filter')}</Button>
                 </form>
 
-                <div className="overflow-hidden rounded-2xl border border-soft bg-white shadow-xs dark:bg-neutral-900">
-                    {invoices.data.length === 0 ? (
+                <div className="overflow-hidden rounded-2xl border border-soft bg-white shadow-xs dark:bg-neutral-900" aria-busy={loading || undefined}>
+                    {loading ? (
+                        <TableSkeleton rows={6} columns={6} />
+                    ) : invoices.data.length === 0 ? (
                         <div className="py-16 text-center">
-                            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-neutral-100 text-neutral-400 dark:bg-neutral-800">
+                            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-neutral-100 text-neutral-600 dark:text-neutral-400 dark:bg-neutral-800">
                                 <Receipt className="h-7 w-7" />
                             </div>
-                            <h3 className="mt-4 text-base font-bold text-neutral-900 dark:text-neutral-100">{t('invoices.empty_title')}</h3>
+                            <h2 className="mt-4 text-base font-bold text-neutral-900 dark:text-neutral-100">{t('invoices.empty_title')}</h2>
                             <p className="mx-auto mt-1 max-w-sm text-sm text-neutral-500 dark:text-neutral-400">{t('invoices.empty_subtitle')}</p>
                         </div>
                     ) : (
@@ -192,32 +194,32 @@ export default function InvoicesIndex({
                                                     {invoice.number}
                                                 </Link>
                                                 {invoice.quote && (
-                                                    <div className="text-[11px] text-neutral-400">{t('invoices.from_quote', { number: invoice.quote.number })}</div>
+                                                    <div className="text-2xs text-neutral-500 dark:text-neutral-400">{t('invoices.from_quote', { number: invoice.quote.number })}</div>
                                                 )}
                                             </td>
                                             <td className="px-4 py-4">
                                                 <div className="text-neutral-700 dark:text-neutral-200">{invoice.company?.name || invoice.lead?.name || '—'}</div>
-                                                {invoice.lead?.email && <div className="text-[11px] text-neutral-400">{invoice.lead.email}</div>}
+                                                {invoice.lead?.email && <div className="text-2xs text-neutral-500 dark:text-neutral-400">{invoice.lead.email}</div>}
                                             </td>
                                             <td className="px-4 py-4 text-end tabular-nums font-medium text-neutral-900 dark:text-neutral-100">
                                                 {money(invoice.total, invoice.currency || defaultCurrency)}
                                             </td>
                                             <td className="px-4 py-4">
-                                                <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${statusStyles[invoice.status] || statusStyles.draft}`}>
+                                                <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-2xs font-semibold ${statusStyles[invoice.status] || statusStyles.draft}`}>
                                                     {invoice.status === 'overdue' && <AlertTriangle className="h-3 w-3" />}
                                                     {t(`invoices.status_${invoice.status}`)}
                                                 </span>
                                             </td>
-                                            <td className="px-4 py-4 text-neutral-500">{formatDate(invoice.due_date)}</td>
+                                            <td className="px-4 py-4 text-neutral-500 dark:text-neutral-400">{formatDate(invoice.due_date)}</td>
                                             <td className="px-5 py-4">
                                                 <div className="flex items-center justify-end gap-1">
-                                                    <Link href={route('client.sales.invoices.show', invoice.id)} className="rounded-lg p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-brand-600 dark:hover:bg-neutral-800" title={t('common.view')}>
+                                                    <Link href={route('client.sales.invoices.show', invoice.id)} className="rounded-lg p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-brand-600 dark:hover:bg-neutral-800" title={t('common.view')}>
                                                         <Eye className="h-4 w-4" />
                                                     </Link>
-                                                    <a href={route('client.sales.invoices.pdf', invoice.id)} className="rounded-lg p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-brand-600 dark:hover:bg-neutral-800" title={t('invoices.pdf')}>
+                                                    <a href={route('client.sales.invoices.pdf', invoice.id)} className="rounded-lg p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-brand-600 dark:hover:bg-neutral-800" title={t('invoices.pdf')}>
                                                         <FileDown className="h-4 w-4" />
                                                     </a>
-                                                    <button type="button" onClick={() => setDeleting(invoice)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30" title={t('common.delete')}>
+                                                    <button type="button" onClick={() => setDeleting(invoice)} className="rounded-lg p-1.5 text-neutral-500 dark:text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30" title={t('common.delete')}>
                                                         <Trash2 className="h-4 w-4" />
                                                     </button>
                                                 </div>
@@ -252,7 +254,7 @@ export default function InvoicesIndex({
                 <form onSubmit={submit} className="space-y-4 p-6">
                     <div className="flex items-center justify-between border-b border-soft pb-4">
                         <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">{t('invoices.new')}</h2>
-                        <button type="button" onClick={() => setShowForm(false)} className="text-neutral-400 hover:text-neutral-600">&times;</button>
+                        <button type="button" onClick={() => setShowForm(false)} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600">&times;</button>
                     </div>
 
                     <div className="grid gap-3 sm:grid-cols-2">
@@ -277,7 +279,7 @@ export default function InvoicesIndex({
                                     <option key={lead.id} value={lead.id}>{lead.name}{lead.email ? ` · ${lead.email}` : ''}</option>
                                 ))}
                             </select>
-                            {form.errors.lead_id && <p className="mt-1 text-xs text-red-600">{form.errors.lead_id}</p>}
+                            {form.errors.lead_id && <p className="mt-1 text-xs text-red-700 dark:text-red-400">{form.errors.lead_id}</p>}
                         </div>
 
                         <div>
@@ -304,7 +306,7 @@ export default function InvoicesIndex({
                                 onChange={(event) => form.setData('subtotal', event.target.value)}
                                 className="mt-1 w-full rounded-lg border-soft bg-white p-2.5 text-sm dark:bg-neutral-800 dark:text-neutral-100"
                             />
-                            {form.errors.subtotal && <p className="mt-1 text-xs text-red-600">{form.errors.subtotal}</p>}
+                            {form.errors.subtotal && <p className="mt-1 text-xs text-red-700 dark:text-red-400">{form.errors.subtotal}</p>}
                         </div>
 
                         <div>

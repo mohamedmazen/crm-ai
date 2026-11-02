@@ -24,14 +24,14 @@ export default function StageColumn({ stage, onOpenLead, onEditStage }) {
             <div className="mb-2 flex items-center justify-between gap-2 px-1">
                 <div className="flex min-w-0 items-center gap-2">
                     <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${STAGE_COLORS[stage.color] ?? STAGE_COLORS.neutral}`} />
-                    <h3 className="truncate text-sm font-semibold text-neutral-800 dark:text-neutral-200">{stage.name}</h3>
+                    <h2 className="truncate text-sm font-semibold text-neutral-800 dark:text-neutral-200">{stage.name}</h2>
                     {stage.is_won && <Trophy className="h-3.5 w-3.5 shrink-0 text-emerald-500" aria-label={t('leads.stage_won')} />}
                     {stage.is_lost && <XCircle className="h-3.5 w-3.5 shrink-0 text-coral-500" aria-label={t('leads.stage_lost')} />}
-                    <span className="shrink-0 rounded-full bg-neutral-100 px-1.5 text-xs text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
+                    <span className="shrink-0 rounded-full bg-neutral-100 px-1.5 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
                         {stage.total ?? stage.leads.length}
                     </span>
                     {stage.totalValue > 0 && (
-                        <span className="shrink-0 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                        <span className="shrink-0 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
                             ${Number(stage.totalValue).toLocaleString()}
                         </span>
                     )}
@@ -39,7 +39,7 @@ export default function StageColumn({ stage, onOpenLead, onEditStage }) {
                 <button
                     type="button"
                     onClick={() => onEditStage(stage)}
-                    className="shrink-0 rounded p-1 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200"
+                    className="shrink-0 rounded p-1 text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200"
                     aria-label={t('leads.edit_stage_named', { name: stage.name })}
                 >
                     <Pencil className="h-3.5 w-3.5" />
@@ -63,7 +63,7 @@ export default function StageColumn({ stage, onOpenLead, onEditStage }) {
                 </SortableContext>
 
                 {stage.leads.length === 0 && (
-                    <p className="py-6 text-center text-xs text-neutral-400 dark:text-neutral-600">
+                    <p className="py-6 text-center text-xs text-neutral-500 dark:text-neutral-600">
                         {t('leads.stage_empty')}
                     </p>
                 )}
@@ -71,7 +71,7 @@ export default function StageColumn({ stage, onOpenLead, onEditStage }) {
                 {/* Say so when the column is truncated, rather than quietly showing
                     a slice as if it were everything. */}
                 {truncated > 0 && (
-                    <p className="pt-1 text-center text-xs text-neutral-400 dark:text-neutral-500">
+                    <p className="pt-1 text-center text-xs text-neutral-500 dark:text-neutral-400">
                         {t('leads.more_in_stage', { count: truncated })}
                     </p>
                 )}

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 import ClientLayout from '@/Layouts/ClientLayout';
+import PageHeader from '@/Components/PageHeader';
 import Button from '@/Components/ui/Button';
 import Modal from '@/Components/ui/Modal';
 import { FileText, Plus, Search, Pencil, Trash2, CheckCircle2, Eye, FileDown } from 'lucide-react';
@@ -63,24 +64,19 @@ export default function QuotesIndex({ quotes = { data: [], links: [], last_page:
                     </div>
                 )}
 
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600 dark:bg-brand-950/60 dark:text-brand-400">
-                            <FileText className="h-5 w-5" />
-                        </div>
-                        <div>
-                            <h1 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">{t('quotes.title')}</h1>
-                            <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('quotes.subtitle')}</p>
-                        </div>
-                    </div>
-
-                    <Link href={route('client.sales.quotes.create')}>
-                        <Button className="inline-flex items-center gap-2">
-                            <Plus className="h-4 w-4" />
-                            {t('quotes.new')}
-                        </Button>
-                    </Link>
-                </div>
+                <PageHeader
+                    icon={FileText}
+                    title={t('quotes.title')}
+                    description={t('quotes.subtitle')}
+                    actions={
+                        <Link href={route('client.sales.quotes.create')}>
+                            <Button className="inline-flex items-center gap-2">
+                                <Plus className="h-4 w-4" />
+                                {t('quotes.new')}
+                            </Button>
+                        </Link>
+                    }
+                />
 
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     {statCards.map(({ label, value }) => (
@@ -93,7 +89,7 @@ export default function QuotesIndex({ quotes = { data: [], links: [], last_page:
 
                 <form onSubmit={applyFilters} className="flex flex-wrap items-center gap-2">
                     <div className="relative min-w-[220px] flex-1">
-                        <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                        <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500 dark:text-neutral-400" />
                         <input
                             type="search"
                             value={query}
@@ -106,6 +102,7 @@ export default function QuotesIndex({ quotes = { data: [], links: [], last_page:
                     <select
                         value={status}
                         onChange={(event) => setStatus(event.target.value)}
+                        aria-label={t('quotes.filter_status', { defaultValue: 'Filter by status' })}
                         className="rounded-lg border-soft bg-white px-3 py-2 text-sm dark:bg-neutral-900 dark:text-neutral-100"
                     >
                         <option value="">{t('quotes.all_statuses')}</option>
@@ -120,10 +117,10 @@ export default function QuotesIndex({ quotes = { data: [], links: [], last_page:
                 <div className="overflow-hidden rounded-2xl border border-soft bg-white shadow-xs dark:bg-neutral-900">
                     {quotes.data.length === 0 ? (
                         <div className="py-16 text-center">
-                            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-neutral-100 text-neutral-400 dark:bg-neutral-800">
+                            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-neutral-100 text-neutral-600 dark:text-neutral-400 dark:bg-neutral-800">
                                 <FileText className="h-7 w-7" />
                             </div>
-                            <h3 className="mt-4 text-base font-bold text-neutral-900 dark:text-neutral-100">{t('quotes.empty_title')}</h3>
+                            <h2 className="mt-4 text-base font-bold text-neutral-900 dark:text-neutral-100">{t('quotes.empty_title')}</h2>
                             <p className="mx-auto mt-1 max-w-sm text-sm text-neutral-500 dark:text-neutral-400">{t('quotes.empty_subtitle')}</p>
                         </div>
                     ) : (
@@ -148,37 +145,37 @@ export default function QuotesIndex({ quotes = { data: [], links: [], last_page:
                                                     {quote.number}
                                                 </Link>
                                                 {quote.invoice && (
-                                                    <div className="text-[11px] text-neutral-400">{t('quotes.invoiced_as', { number: quote.invoice.number })}</div>
+                                                    <div className="text-2xs text-neutral-500 dark:text-neutral-400">{t('quotes.invoiced_as', { number: quote.invoice.number })}</div>
                                                 )}
                                             </td>
                                             <td className="px-4 py-4">
                                                 <div className="text-neutral-700 dark:text-neutral-200">{quote.company?.name || quote.lead?.name || '—'}</div>
-                                                {quote.lead?.email && <div className="text-[11px] text-neutral-400">{quote.lead.email}</div>}
+                                                {quote.lead?.email && <div className="text-2xs text-neutral-500 dark:text-neutral-400">{quote.lead.email}</div>}
                                             </td>
-                                            <td className="px-4 py-4 text-center tabular-nums text-neutral-500">{quote.items_count ?? 0}</td>
+                                            <td className="px-4 py-4 text-center tabular-nums text-neutral-500 dark:text-neutral-400">{quote.items_count ?? 0}</td>
                                             <td className="px-4 py-4 text-end tabular-nums font-medium text-neutral-900 dark:text-neutral-100">
                                                 {money(quote.total, quote.currency || defaultCurrency)}
                                             </td>
                                             <td className="px-4 py-4">
-                                                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${statusStyles[quote.status] || statusStyles.draft}`}>
+                                                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-2xs font-semibold ${statusStyles[quote.status] || statusStyles.draft}`}>
                                                     {t(`quotes.status_${quote.status}`)}
                                                 </span>
                                             </td>
-                                            <td className="px-4 py-4 text-neutral-500">
+                                            <td className="px-4 py-4 text-neutral-500 dark:text-neutral-400">
                                                 {quote.valid_until ? new Date(quote.valid_until).toLocaleDateString() : '—'}
                                             </td>
                                             <td className="px-5 py-4">
                                                 <div className="flex items-center justify-end gap-1">
-                                                    <Link href={route('client.sales.quotes.show', quote.id)} className="rounded-lg p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-brand-600 dark:hover:bg-neutral-800" title={t('common.view')}>
+                                                    <Link href={route('client.sales.quotes.show', quote.id)} className="rounded-lg p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-brand-600 dark:hover:bg-neutral-800" title={t('common.view')}>
                                                         <Eye className="h-4 w-4" />
                                                     </Link>
-                                                    <Link href={route('client.sales.quotes.edit', quote.id)} className="rounded-lg p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-brand-600 dark:hover:bg-neutral-800" title={t('common.edit')}>
+                                                    <Link href={route('client.sales.quotes.edit', quote.id)} className="rounded-lg p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-brand-600 dark:hover:bg-neutral-800" title={t('common.edit')}>
                                                         <Pencil className="h-4 w-4" />
                                                     </Link>
-                                                    <a href={route('client.sales.quotes.pdf', quote.id)} className="rounded-lg p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-brand-600 dark:hover:bg-neutral-800" title={t('quotes.pdf')}>
+                                                    <a href={route('client.sales.quotes.pdf', quote.id)} className="rounded-lg p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-brand-600 dark:hover:bg-neutral-800" title={t('quotes.pdf')}>
                                                         <FileDown className="h-4 w-4" />
                                                     </a>
-                                                    <button type="button" onClick={() => setDeleting(quote)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30" title={t('common.delete')}>
+                                                    <button type="button" onClick={() => setDeleting(quote)} className="rounded-lg p-1.5 text-neutral-500 dark:text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30" title={t('common.delete')}>
                                                         <Trash2 className="h-4 w-4" />
                                                     </button>
                                                 </div>

@@ -1,6 +1,9 @@
 import ClientLayout from '@/Layouts/ClientLayout';
+import PageHeader from '@/Components/PageHeader';
 import ProductTour from '@/Components/ProductTour';
+import OnboardingChecklist from '@/Components/OnboardingChecklist';
 import { Head, Link, usePage } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
     Package,
@@ -59,19 +62,19 @@ const STEP_ROUTES = {
 };
 
 const CONV_TONE = {
-    open: 'text-emerald-600 dark:text-emerald-400',
-    pending: 'text-amber-600 dark:text-amber-400',
-    resolved: 'text-neutral-400',
-    snoozed: 'text-blue-600 dark:text-blue-400',
+    open: 'text-emerald-700 dark:text-emerald-400',
+    pending: 'text-amber-700 dark:text-amber-400',
+    resolved: 'text-neutral-500 dark:text-neutral-400',
+    snoozed: 'text-blue-700 dark:text-blue-400',
 };
 
 const CAMPAIGN_TONE = {
-    completed: 'text-emerald-600 dark:text-emerald-400',
-    sending: 'text-blue-600 dark:text-blue-400',
-    queued: 'text-amber-600 dark:text-amber-400',
-    paused: 'text-amber-600 dark:text-amber-400',
-    draft: 'text-neutral-400',
-    failed: 'text-red-600 dark:text-red-400',
+    completed: 'text-emerald-700 dark:text-emerald-400',
+    sending: 'text-blue-700 dark:text-blue-400',
+    queued: 'text-amber-700 dark:text-amber-400',
+    paused: 'text-amber-700 dark:text-amber-400',
+    draft: 'text-neutral-500 dark:text-neutral-400',
+    failed: 'text-red-700 dark:text-red-400',
 };
 
 export default function Dashboard({
@@ -92,7 +95,76 @@ export default function Dashboard({
     const { t } = useTranslation();
     const { first_run = false } = usePage().props;
     const { team_members_count = 0, team_members_limit = 0 } = usage;
-    const s = stats ?? {};
+
+    const [checklistDismissed, setChecklistDismissed] = useState(() =>
+        typeof window !== 'undefined' && window.localStorage.getItem('crm.onboarding.dismissed') === '1');
+    const [sampleEnabled, setSampleEnabled] = useState(() =>
+        typeof window !== 'undefined' && window.localStorage.getItem('crm.onboarding.sample') === '1');
+
+    useEffect(() => {
+        if (typeof window === 'undefined') {
+            return;
+        }
+        window.localStorage.setItem('crm.onboarding.sample', sampleEnabled ? '1' : '0');
+    }, [sampleEnabled]);
+
+    const realStats = stats ?? {};
+    const isEmptyWorkspace =
+        hasWorkspace &&
+        !!stats &&
+        (realStats.contacts_total ?? 0) === 0 &&
+        (realStats.messages_out ?? 0) === 0 &&
+        (realStats.conversations_new ?? 0) === 0;
+
+    // "Preview with sample data" values. Purely client-side and clearly
+    // labelled — nothing here is persisted to the workspace.
+    const SAMPLE_STATS = {
+        messages_out: 128,
+        messages_in: 96,
+        conversations_open: 12,
+        conversations_new: 8,
+        contacts_total: 240,
+        contacts_new: 18,
+        campaigns_total: 3,
+        automations_active: 2,
+        ai_runs: 45,
+        ai_cost_cents: 1234,
+        messages_out_delta: 12,
+    };
+    const showSample = sampleEnabled && isEmptyWorkspace;
+    const s = showSample ? { ...realStats, ...SAMPLE_STATS } : realStats;
+
+    const showChecklist = hasWorkspace && (first_run || isEmptyWorkspace) && !checklistDismissed;
+    const checklistSteps = [
+        {
+            key: 'channel',
+            title: t('onboarding_checklist.step_channel', { defaultValue: 'Connect a channel' }),
+            description: t('onboarding_checklist.step_channel_desc', { defaultValue: 'WhatsApp, Instagram, Messenger, SMS or email.' }),
+            done: (realStats.messages_in ?? 0) > 0 || (realStats.conversations_new ?? 0) > 0,
+            href: route('client.whatsapp.setup'),
+        },
+        {
+            key: 'contacts',
+            title: t('onboarding_checklist.step_contacts', { defaultValue: 'Import your contacts' }),
+            description: t('onboarding_checklist.step_contacts_desc', { defaultValue: 'Upload a CSV or bring contacts over from your old CRM.' }),
+            done: (realStats.contacts_total ?? 0) > 0,
+            href: route('client.contacts.bulk-import'),
+        },
+        {
+            key: 'automation',
+            title: t('onboarding_checklist.step_automation', { defaultValue: 'Launch your first automation' }),
+            description: t('onboarding_checklist.step_automation_desc', { defaultValue: 'Welcome new leads and follow up automatically.' }),
+            done: (realStats.automations_active ?? 0) > 0,
+            href: route('client.automations.index'),
+        },
+    ];
+
+    const dismissChecklist = () => {
+        setChecklistDismissed(true);
+        if (typeof window !== 'undefined') {
+            window.localStorage.setItem('crm.onboarding.dismissed', '1');
+        }
+    };
 
     const membersLabel = team_members_limit ? `${team_members_count} / ${team_members_limit}` : `${team_members_count}`;
     const membersPct = team_members_limit ? Math.min(100, Math.round((team_members_count / team_members_limit) * 100)) : null;
@@ -166,6 +238,31 @@ export default function Dashboard({
         },
     ];
 
+    // Plain-language insights synthesised from the current period's numbers, so the
+    // dashboard reads as a summary rather than a wall of charts.
+    const insights = [];
+    if (hasWorkspace && stats) {
+        const delta = s.messages_out_delta;
+        if (delta != null && Number(delta) !== 0) {
+            insights.push(t(Number(delta) > 0 ? 'client.insight_messages_up' : 'client.insight_messages_down', {
+                percent: Math.abs(Number(delta)),
+                defaultValue: 'Messages sent changed {{percent}}% vs the previous period.',
+            }));
+        }
+        if ((s.contacts_new ?? 0) > 0) {
+            insights.push(t('client.insight_new_contacts', { count: s.contacts_new }));
+        }
+        if ((s.conversations_open ?? 0) > 0) {
+            insights.push(t('client.insight_open_conversations', { count: s.conversations_open }));
+        }
+        if ((s.automations_active ?? 0) > 0) {
+            insights.push(t('client.insight_active_automations', { count: s.automations_active }));
+        }
+        if ((s.ai_runs ?? 0) > 0) {
+            insights.push(t('client.insight_ai_runs', { count: s.ai_runs, cost: fromCents(s.ai_cost_cents) }));
+        }
+    }
+
     return (
         <ClientLayout title={t('client.dashboard') || 'Dashboard'}>
             <ProductTour show={first_run} />
@@ -173,15 +270,34 @@ export default function Dashboard({
 
             <div className="space-y-6">
                 {/* Header + range filter */}
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">{t('client.dashboard') || 'Dashboard'}</h1>
-                        <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-                            {t('client.dashboard_subtitle') || 'Overview of your plan and usage'}
-                        </p>
+                <PageHeader
+                    title={t('client.dashboard') || 'Dashboard'}
+                    description={t('client.dashboard_subtitle') || 'Overview of your plan and usage'}
+                    actions={hasWorkspace ? <RangeFilter value={range} routeName="client.dashboard" /> : undefined}
+                />
+
+                {/* Empty-workspace onboarding checklist (Phase 4) */}
+                {showChecklist && (
+                    <OnboardingChecklist
+                        steps={checklistSteps}
+                        sampleEnabled={sampleEnabled}
+                        onToggleSample={setSampleEnabled}
+                        onDismiss={dismissChecklist}
+                    />
+                )}
+
+                {/* Sample-data banner — always visible while the preview is on */}
+                {showSample && (
+                    <div
+                        role="status"
+                        className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-800 dark:border-amber-700 dark:bg-amber-900/20 dark:text-amber-200"
+                    >
+                        <span>{t('onboarding_checklist.sample_banner', { defaultValue: 'Sample data is shown for preview only — not saved to your workspace.' })}</span>
+                        <button type="button" onClick={() => setSampleEnabled(false)} className="font-medium underline">
+                            {t('onboarding_checklist.sample_off', { defaultValue: 'Turn off' })}
+                        </button>
                     </div>
-                    {hasWorkspace && <RangeFilter value={range} routeName="client.dashboard" />}
-                </div>
+                )}
 
                 {/* Onboarding next-step nudge */}
                 {onboardingNextStep && onboardingPercent < 100 && (
@@ -238,6 +354,24 @@ export default function Dashboard({
                     </div>
                 )}
 
+                {/* Textual insights */}
+                {insights.length > 0 && (
+                    <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-soft dark:border-neutral-700/50 dark:bg-neutral-800/70 sm:p-5">
+                        <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-neutral-600 dark:text-neutral-300">
+                            <Sparkles className="h-4 w-4 text-brand-500" aria-hidden />
+                            {t('client.insights') || 'Insights'}
+                        </h2>
+                        <ul className="space-y-1.5">
+                            {insights.map((line, i) => (
+                                <li key={i} className="flex items-start gap-2 text-sm text-neutral-700 dark:text-neutral-300">
+                                    <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-500" aria-hidden />
+                                    {line}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+
                 {/* Current plan */}
                 <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-soft dark:border-neutral-700/50 dark:bg-neutral-800/70 sm:p-5">
                     <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-neutral-600 dark:text-neutral-300">
@@ -254,7 +388,7 @@ export default function Dashboard({
                                     {renewsAt && ` · ${t('client.renews') || 'Renews'} ${formatDate(renewsAt)}`}
                                 </p>
                                 {managedByAdmin && (
-                                    <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
+                                    <p className="mt-1 text-xs text-amber-700 dark:text-amber-400">
                                         {t('client.managed_by_admin') || 'Managed by your organization admin'}
                                     </p>
                                 )}
@@ -262,7 +396,7 @@ export default function Dashboard({
                             {!managedByAdmin && (
                                 <Link
                                     href={route('client.pricing')}
-                                    className="inline-flex items-center gap-2 rounded-soft bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-soft transition-all duration-150 hover:bg-brand-600"
+                                    className="inline-flex items-center gap-2 rounded-soft bg-brand-600 px-4 py-2 text-sm font-medium text-white shadow-soft transition-all duration-150 hover:bg-brand-700"
                                 >
                                     {t('client.upgrade_plan') || 'Upgrade plan'}
                                     <ArrowRightCircle className="h-4 w-4" />
@@ -274,7 +408,7 @@ export default function Dashboard({
                             <p className="text-neutral-500 dark:text-neutral-400">{t('client.no_plan') || 'No active plan'}</p>
                             <Link
                                 href={route('client.pricing')}
-                                className="inline-flex items-center gap-2 rounded-soft bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-soft transition-all duration-150 hover:bg-brand-600"
+                                className="inline-flex items-center gap-2 rounded-soft bg-brand-600 px-4 py-2 text-sm font-medium text-white shadow-soft transition-all duration-150 hover:bg-brand-700"
                             >
                                 {t('client.view_plans') || 'View plans'}
                                 <ArrowRightCircle className="h-4 w-4" />
@@ -356,18 +490,18 @@ export default function Dashboard({
                                         <li key={c.id} className="flex items-center justify-between gap-2 py-2">
                                             <div className="min-w-0">
                                                 <p className="truncate text-sm font-medium text-neutral-800 dark:text-neutral-200">{c.contact}</p>
-                                                <p className={`text-xs capitalize ${CONV_TONE[c.status] || 'text-neutral-400'}`}>{c.status}</p>
+                                                <p className={`text-xs capitalize ${CONV_TONE[c.status] || 'text-neutral-500 dark:text-neutral-400'}`}>{c.status}</p>
                                             </div>
                                             <div className="flex flex-shrink-0 items-center gap-2">
                                                 {c.unread > 0 && (
-                                                    <span className="rounded-full bg-brand-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">{c.unread}</span>
+                                                    <span className="rounded-full bg-brand-600 px-1.5 py-0.5 text-3xs font-semibold text-white">{c.unread}</span>
                                                 )}
-                                                <span className="text-xs text-neutral-400">{relTime(c.last_message_at)}</span>
+                                                <span className="text-xs text-neutral-500 dark:text-neutral-400">{relTime(c.last_message_at)}</span>
                                             </div>
                                         </li>
                                     ))}
                                     {(tables.recent_conversations ?? []).length === 0 && (
-                                        <li className="py-6 text-center text-sm text-neutral-400">{t('client.no_conversations') || 'No conversations yet'}</li>
+                                        <li className="py-6 text-center text-sm text-neutral-500 dark:text-neutral-400">{t('client.no_conversations') || 'No conversations yet'}</li>
                                     )}
                                 </ul>
                             </WidgetCard>
@@ -385,13 +519,13 @@ export default function Dashboard({
                                         <li key={c.id} className="flex items-center justify-between gap-2 py-2">
                                             <div className="min-w-0">
                                                 <p className="truncate text-sm font-medium text-neutral-800 dark:text-neutral-200">{c.name}</p>
-                                                <p className="text-xs capitalize text-neutral-400">{c.channel} · {c.recipients} {t('client.recipients') || 'recipients'}</p>
+                                                <p className="text-xs capitalize text-neutral-500 dark:text-neutral-400">{c.channel} · {c.recipients} {t('client.recipients') || 'recipients'}</p>
                                             </div>
-                                            <span className={`flex-shrink-0 text-xs font-medium capitalize ${CAMPAIGN_TONE[c.status] || 'text-neutral-400'}`}>{c.status}</span>
+                                            <span className={`flex-shrink-0 text-xs font-medium capitalize ${CAMPAIGN_TONE[c.status] || 'text-neutral-500 dark:text-neutral-400'}`}>{c.status}</span>
                                         </li>
                                     ))}
                                     {(tables.recent_campaigns ?? []).length === 0 && (
-                                        <li className="py-6 text-center text-sm text-neutral-400">{t('client.no_campaigns') || 'No campaigns yet'}</li>
+                                        <li className="py-6 text-center text-sm text-neutral-500 dark:text-neutral-400">{t('client.no_campaigns') || 'No campaigns yet'}</li>
                                     )}
                                 </ul>
                             </WidgetCard>
@@ -406,13 +540,13 @@ export default function Dashboard({
                                                     {a.handled} {t('client.handled') || 'handled'}
                                                 </span>
                                                 {a.avg_first_response_min != null && (
-                                                    <span className="text-neutral-400">~{a.avg_first_response_min}m</span>
+                                                    <span className="text-neutral-500 dark:text-neutral-400">~{a.avg_first_response_min}m</span>
                                                 )}
                                             </div>
                                         </li>
                                     ))}
                                     {(tables.agent_leaderboard ?? []).length === 0 && (
-                                        <li className="py-6 text-center text-sm text-neutral-400">{t('client.no_agents') || 'No assigned conversations yet'}</li>
+                                        <li className="py-6 text-center text-sm text-neutral-500 dark:text-neutral-400">{t('client.no_agents') || 'No assigned conversations yet'}</li>
                                     )}
                                 </ul>
                             </WidgetCard>

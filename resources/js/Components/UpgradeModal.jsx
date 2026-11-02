@@ -20,7 +20,7 @@ export default function UpgradeModal() {
             <div className="bg-white dark:bg-neutral-900 rounded-2xl shadow-soft-xl border border-neutral-200 dark:border-neutral-800 max-w-md w-full p-6">
                 <div className="flex items-start gap-4 mb-4">
                     <div className="flex-shrink-0 w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
-                        <svg className="w-6 h-6 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-6 h-6 text-amber-700 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                         </svg>
                     </div>
@@ -36,7 +36,7 @@ export default function UpgradeModal() {
                     </div>
                     <button
                         onClick={() => setOpen(false)}
-                        className="flex-shrink-0 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition"
+                        className="flex-shrink-0 text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition"
                         aria-label={t('common.dismiss')}
                     >
                         <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
@@ -52,7 +52,7 @@ export default function UpgradeModal() {
                 <div className="flex gap-3">
                     <Link
                         href={route('client.pricing')}
-                        className="flex-1 inline-flex justify-center items-center px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium rounded-soft transition-all duration-150 shadow-soft"
+                        className="flex-1 inline-flex justify-center items-center px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium rounded-soft transition-all duration-150 shadow-soft"
                         onClick={() => setOpen(false)}
                     >
                         {t('ui.view_plans')}

@@ -73,7 +73,7 @@ export default function OnboardingWizard({ progress }) {
                                 {!step.completed && (
                                     <div className="flex items-center gap-2">
                                         {href && (
-                                            <Link href={href} className="flex items-center gap-1 text-sm text-indigo-600 dark:text-indigo-400 hover:underline">
+                                            <Link href={href} className="flex items-center gap-1 text-sm text-indigo-700 dark:text-indigo-400 hover:underline">
                                                 {t('client.go') || 'Go'} <ArrowRight className="h-3.5 w-3.5" />
                                             </Link>
                                         )}

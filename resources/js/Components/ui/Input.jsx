@@ -1,3 +1,5 @@
+import { useId } from 'react';
+
 /**
  * Text input with soft border and subtle focus ring.
  */
@@ -10,7 +12,8 @@ export default function Input({
     id,
     ...props
 }) {
-    const inputId = id || props.name;
+    const generatedId = useId();
+    const inputId = id || props.name || generatedId;
     return (
         <div className="w-full">
             {label && (
@@ -25,7 +28,7 @@ export default function Input({
                 id={inputId}
                 type={type}
                 className={[
-                    'w-full rounded-soft border bg-white dark:bg-neutral-800 px-3 py-2 text-neutral-900 dark:text-neutral-100 shadow-inner transition duration-150 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:outline-none focus:ring-2',
+                    'w-full rounded-soft border bg-white dark:bg-neutral-800 px-3 py-2 text-neutral-900 dark:text-neutral-100 shadow-inner transition duration-150 placeholder:text-neutral-500 dark:placeholder:text-neutral-500 focus:outline-none focus:ring-2',
                     // border-soft's color utility outranks border-red-500 in the
                     // compiled CSS, so it must be omitted entirely on error.
                     error
@@ -36,7 +39,7 @@ export default function Input({
                 {...props}
             />
             {error && (
-                <p className="mt-1.5 text-sm text-red-500 dark:text-red-400">{error}</p>
+                <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">{error}</p>
             )}
             {hint && !error && (
                 <p className="mt-1.5 text-sm text-neutral-500 dark:text-neutral-400">{hint}</p>

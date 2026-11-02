@@ -1,3 +1,5 @@
+import { useId } from 'react';
+
 /**
  * Select with soft border and consistent styling.
  */
@@ -10,7 +12,8 @@ export default function Select({
     id,
     ...props
 }) {
-    const selectId = id || props.name;
+    const generatedId = useId();
+    const selectId = id || props.name || generatedId;
     return (
         <div className="w-full">
             {label && (
@@ -44,7 +47,7 @@ export default function Select({
                 )}
             </select>
             {error && (
-                <p className="mt-1.5 text-sm text-red-500 dark:text-red-400">{error}</p>
+                <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">{error}</p>
             )}
         </div>
     );

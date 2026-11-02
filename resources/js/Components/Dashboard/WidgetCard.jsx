@@ -28,7 +28,7 @@ export default function WidgetCard({ title, subtitle, action, children, classNam
 /** Centered empty-state used inside WidgetCard bodies. */
 export function EmptyState({ children, className = '' }) {
     return (
-        <p className={`py-10 text-center text-sm text-neutral-400 dark:text-neutral-500 ${className}`}>
+        <p className={`py-10 text-center text-sm text-neutral-500 dark:text-neutral-400 ${className}`}>
             {children}
         </p>
     );

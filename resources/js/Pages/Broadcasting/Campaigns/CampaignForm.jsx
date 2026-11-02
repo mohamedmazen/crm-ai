@@ -43,7 +43,7 @@ const inputClass =
 function FieldError({ message }) {
     if (!message) return null;
     return (
-        <p className="mt-1 flex items-center gap-1 text-xs text-red-600 dark:text-red-400">
+        <p className="mt-1 flex items-center gap-1 text-xs text-red-700 dark:text-red-400">
             <AlertCircle className="h-3.5 w-3.5" />
             {message}
         </p>
@@ -528,8 +528,8 @@ export default function CampaignForm({
                                         i === step
                                             ? 'bg-brand-600 text-white ring-2 ring-brand-400 ring-offset-1'
                                             : i < step
-                                              ? 'bg-brand-500 text-white'
-                                              : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-500 hover:bg-neutral-300 dark:hover:bg-neutral-600'
+                                              ? 'bg-brand-600 text-white'
+                                              : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-300 hover:bg-neutral-300 dark:hover:bg-neutral-600'
                                     }`}
                                 >
                                     {i < step ? <CheckCircle2 className="h-4 w-4" /> : i + 1}
@@ -542,7 +542,7 @@ export default function CampaignForm({
                                             ? 'text-neutral-900 dark:text-neutral-100 font-medium'
                                             : i < step
                                               ? 'text-brand-600 dark:text-brand-400 hover:underline'
-                                              : 'text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300'
+                                              : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300'
                                     }`}
                                 >
                                     {t(stepDef.labelKey)}
@@ -623,17 +623,17 @@ export default function CampaignForm({
 
                         {/* Draft save indicator */}
                         {draftStatus === 'saving' && (
-                            <span className="flex items-center gap-1.5 text-xs text-neutral-400 dark:text-neutral-500">
+                            <span className="flex items-center gap-1.5 text-xs text-neutral-500 dark:text-neutral-400">
                                 <Loader2 className="h-3.5 w-3.5 animate-spin" /> {t('campaign.saving_draft')}
                             </span>
                         )}
                         {draftStatus === 'saved' && (
-                            <span className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
+                            <span className="flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400">
                                 <Save className="h-3.5 w-3.5" /> {t('campaign.draft_saved')}
                             </span>
                         )}
                         {draftStatus === 'error' && (
-                            <span className="flex items-center gap-1.5 text-xs text-red-500 dark:text-red-400">
+                            <span className="flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
                                 <AlertCircle className="h-3.5 w-3.5" /> {t('campaign.draft_save_failed')}
                             </span>
                         )}
@@ -805,7 +805,7 @@ function ChannelStep({ data, setData, errors, whatsappPhoneNumbers = [] }) {
                     </div>
                     <div>
                         <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
-                            {t('campaign.reply_to')} <span className="font-normal text-neutral-400">({t('common.optional')})</span>
+                            {t('campaign.reply_to')} <span className="font-normal text-neutral-500 dark:text-neutral-400">({t('common.optional')})</span>
                         </label>
                         <input
                             type="email"
@@ -934,12 +934,12 @@ function AudienceStep({ data, setData, segments, tags, preview, errors }) {
             <div className="mt-4 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/40 p-3">
                 <div className="flex items-center gap-2 text-sm font-medium text-neutral-700 dark:text-neutral-200">
                     <Users className="h-4 w-4" /> {t('campaign.audience_preview')}
-                    {preview.loading && <Loader2 className="h-3.5 w-3.5 animate-spin text-neutral-400" />}
+                    {preview.loading && <Loader2 className="h-3.5 w-3.5 animate-spin text-neutral-500 dark:text-neutral-400" />}
                 </div>
                 {preview.error ? (
-                    <p className="mt-2 text-xs text-red-600 dark:text-red-400">{preview.error}</p>
+                    <p className="mt-2 text-xs text-red-700 dark:text-red-400">{preview.error}</p>
                 ) : data.audience_type === 'csv' ? (
-                    <p className="mt-2 text-xs text-neutral-500">
+                    <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
                         {t('campaign.csv_no_preview')}
                     </p>
                 ) : (
@@ -947,14 +947,14 @@ function AudienceStep({ data, setData, segments, tags, preview, errors }) {
                         <p className="mt-2 text-sm text-neutral-700 dark:text-neutral-200">
                             <span className="font-semibold">{preview.matched.toLocaleString()}</span> {t('campaign.contacts_match')}{' '}
                             <span className="text-neutral-500 dark:text-neutral-400">
-                                <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                                <span className="font-semibold text-emerald-700 dark:text-emerald-400">
                                     {preview.deliverable.toLocaleString()}
                                 </span>{' '}
                                 {t('campaign.opted_in_for', { channel: channelLabel })}
                             </span>
                         </p>
                         {preview.sample.length > 0 && (
-                            <div className="mt-2 text-xs text-neutral-500">
+                            <div className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
                                 {t('campaign.sample')}: {preview.sample
                                     .map((c) => `${c.first_name ?? ''} ${c.last_name ?? ''}`.trim() || c.phone_e164 || c.email)
                                     .join(', ')}
@@ -1040,7 +1040,7 @@ function ContentStep({
                                     key={`${section.section}-${section.sub_type}-${section.button_index ?? 'x'}`}
                                     className="rounded-lg border border-neutral-200 dark:border-neutral-700 p-3 space-y-3"
                                 >
-                                    <div className="text-xs uppercase tracking-wider font-semibold text-neutral-500">
+                                    <div className="text-xs uppercase tracking-wider font-semibold text-neutral-500 dark:text-neutral-400">
                                         {t(`campaign.section_${section.section}`, section.section)}
                                         {section.sub_type ? ` · ${section.sub_type}` : ''}
                                         {section.button_index != null ? ` · ${t('campaign.button_n', { n: section.button_index + 1 })}` : ''}
@@ -1093,13 +1093,13 @@ function ContentStep({
                         campaignName={campaignName}
                     />
                     {errors['payload_json.subject'] && (
-                        <p className="mt-1 flex items-center gap-1 text-xs text-red-600 dark:text-red-400">
+                        <p className="mt-1 flex items-center gap-1 text-xs text-red-700 dark:text-red-400">
                             <AlertCircle className="h-3.5 w-3.5" />
                             {errors['payload_json.subject']}
                         </p>
                     )}
                     {errors['payload_json.body'] && (
-                        <p className="mt-1 flex items-center gap-1 text-xs text-red-600 dark:text-red-400">
+                        <p className="mt-1 flex items-center gap-1 text-xs text-red-700 dark:text-red-400">
                             <AlertCircle className="h-3.5 w-3.5" />
                             {errors['payload_json.body']}
                         </p>
@@ -1160,7 +1160,7 @@ function ScheduleStep({ data, setData, errors }) {
                         <span className="font-mono">{localPreview}</span>
                     </div>
                     {browserPreview && (
-                        <div className="mt-0.5 text-[11px] text-blue-700 dark:text-blue-300">
+                        <div className="mt-0.5 text-2xs text-blue-700 dark:text-blue-300">
                             <Trans
                                 i18nKey="campaign.which_is_browser"
                                 values={{ time: browserPreview }}
@@ -1252,7 +1252,7 @@ function ReviewStep({
                                 </span>
                             )}
                             {!data.payload_json.track_opens && !data.payload_json.track_clicks && (
-                                <span className="text-neutral-400">{t('campaign.disabled')}</span>
+                                <span className="text-neutral-500 dark:text-neutral-400">{t('campaign.disabled')}</span>
                             )}
                         </dd>
                     </div>
@@ -1278,7 +1278,7 @@ function ReviewStep({
                                 className={inputClass}
                             />
                             {testTo.phone_e164 && !testTo.phone_e164.startsWith('+') && !/^01[3-9]\d{8}$/.test(testTo.phone_e164) && (
-                                <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
+                                <p className="mt-1 text-xs text-amber-700 dark:text-amber-400">
                                     {t('campaign.intl_number_hint')}
                                 </p>
                             )}
@@ -1304,8 +1304,8 @@ function ReviewStep({
                         <p
                             className={`text-xs ${
                                 testTo.result.ok
-                                    ? 'text-emerald-600 dark:text-emerald-400'
-                                    : 'text-red-600 dark:text-red-400'
+                                    ? 'text-emerald-700 dark:text-emerald-400'
+                                    : 'text-red-700 dark:text-red-400'
                             } flex items-center gap-1`}
                         >
                             {testTo.result.ok ? <CheckCircle2 className="h-3.5 w-3.5" /> : <AlertCircle className="h-3.5 w-3.5" />}
@@ -1335,7 +1335,7 @@ function SearchableSelect({ label, items, value, onChange, placeholder, emptyHin
         <div className="relative">
             <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{label}</label>
             <div className="mt-1 relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500 dark:text-neutral-400" />
                 <input
                     type="text"
                     value={open ? q : selected?.label ?? ''}
@@ -1355,7 +1355,7 @@ function SearchableSelect({ label, items, value, onChange, placeholder, emptyHin
             {open && (
                 <div className="absolute z-20 mt-1 max-h-56 w-full overflow-auto rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 shadow-lg">
                     {filtered.length === 0 ? (
-                        <p className="px-3 py-2 text-xs text-neutral-500">{emptyHint}</p>
+                        <p className="px-3 py-2 text-xs text-neutral-500 dark:text-neutral-400">{emptyHint}</p>
                     ) : (
                         filtered.map((i) => (
                             <button
@@ -1373,7 +1373,7 @@ function SearchableSelect({ label, items, value, onChange, placeholder, emptyHin
                                 }`}
                             >
                                 <span>{i.label}</span>
-                                {i.meta && <span className="text-xs text-neutral-400">{i.meta}</span>}
+                                {i.meta && <span className="text-xs text-neutral-500 dark:text-neutral-400">{i.meta}</span>}
                             </button>
                         ))
                     )}
@@ -1441,7 +1441,7 @@ function TokenPicker({ tokens, onPick }) {
                             className="flex w-full items-center justify-between px-3 py-1.5 text-left text-xs hover:bg-neutral-50 dark:hover:bg-neutral-700"
                         >
                             <span>{token.label}</span>
-                            <span className="font-mono text-neutral-400">{token.key}</span>
+                            <span className="font-mono text-neutral-500 dark:text-neutral-400">{token.key}</span>
                         </button>
                     ))}
                 </div>
@@ -1496,7 +1496,7 @@ function SlotInput({ slot, label, mediaKind, contactTokens, onChange }) {
                             className={`rounded-md px-2 py-0.5 text-xs ${
                                 slot.kind === 'static'
                                     ? 'bg-brand-100 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300'
-                                    : 'text-neutral-500'
+                                    : 'text-neutral-500 dark:text-neutral-400'
                             }`}
                         >
                             {t('campaign.slot_static')}
@@ -1507,7 +1507,7 @@ function SlotInput({ slot, label, mediaKind, contactTokens, onChange }) {
                             className={`rounded-md px-2 py-0.5 text-xs ${
                                 slot.kind === 'variable'
                                     ? 'bg-brand-100 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300'
-                                    : 'text-neutral-500'
+                                    : 'text-neutral-500 dark:text-neutral-400'
                             }`}
                         >
                             {t('campaign.slot_variable')}
@@ -1593,7 +1593,7 @@ function MediaSlotInput({ slot, label, mediaKind, onChange }) {
                         className={`flex items-center gap-1.5 rounded-md px-3 py-1 text-xs font-medium transition ${
                             tab === key
                                 ? 'bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm'
-                                : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'
+                                : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300'
                         }`}
                     >
                         <Icon className="h-3.5 w-3.5" /> {text}
@@ -1614,7 +1614,7 @@ function MediaSlotInput({ slot, label, mediaKind, onChange }) {
                         {uploading ? t('campaign.uploading') : t('campaign.upload_media', { media: t(`campaign.media_${mediaKind}`, mediaKind) })}
                     </button>
                     {error && (
-                        <p className="flex items-center gap-1 text-xs text-red-600 dark:text-red-400">
+                        <p className="flex items-center gap-1 text-xs text-red-700 dark:text-red-400">
                             <AlertCircle className="h-3.5 w-3.5" /> {error}
                         </p>
                     )}
@@ -1630,7 +1630,7 @@ function MediaSlotInput({ slot, label, mediaKind, onChange }) {
             )}
 
             {slot.value && !uploading && (
-                <div className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400">
+                <div className="flex items-center gap-2 text-xs text-emerald-700 dark:text-emerald-400">
                     <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
                     <a href={slot.value} target="_blank" rel="noreferrer" className="truncate underline">
                         {mediaKind === 'image' ? t('campaign.image_set') : mediaKind === 'video' ? t('campaign.video_set') : t('campaign.file_set')}
@@ -1671,7 +1671,7 @@ function PreviewPane({ data, selectedTemplate, slots, contactTokens, audiencePre
     } else if (data.channel === 'email') {
         content = (
             <div className="space-y-2">
-                <div className="text-xs uppercase tracking-wide text-neutral-500">{t('campaign.subject')}</div>
+                <div className="text-xs uppercase tracking-wide text-neutral-500 dark:text-neutral-400">{t('campaign.subject')}</div>
                 <div className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                     {data.payload_json.subject || '—'}
                 </div>
@@ -1690,7 +1690,7 @@ function PreviewPane({ data, selectedTemplate, slots, contactTokens, audiencePre
                     <Eye className="h-4 w-4" /> {t('campaign.live_preview')}
                 </div>
                 <div className="mt-3">{content}</div>
-                <p className="mt-3 text-xs text-neutral-500">
+                <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400">
                     <Trans
                         i18nKey="campaign.variables_hint"
                         components={{ field: <span className="font-mono" /> }}
@@ -1701,7 +1701,7 @@ function PreviewPane({ data, selectedTemplate, slots, contactTokens, audiencePre
             <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-4 space-y-1 text-xs">
                 <div className="font-medium text-neutral-700 dark:text-neutral-200">{t('campaign.at_a_glance')}</div>
                 <div className="flex justify-between">
-                    <span className="text-neutral-500">{t('campaign.col_channel')}</span>
+                    <span className="text-neutral-500 dark:text-neutral-400">{t('campaign.col_channel')}</span>
                     <span className="font-medium text-neutral-800 dark:text-neutral-100">
                         {CHANNEL_META[data.channel]?.label ?? data.channel}
                     </span>
@@ -1710,7 +1710,7 @@ function PreviewPane({ data, selectedTemplate, slots, contactTokens, audiencePre
                     const p = whatsappPhoneNumbers.find((n) => n.phone_number_id === data.whatsapp_phone_number_id);
                     return p ? (
                         <div className="flex justify-between gap-3">
-                            <span className="text-neutral-500">{t('campaign.from')}</span>
+                            <span className="text-neutral-500 dark:text-neutral-400">{t('campaign.from')}</span>
                             <span className="text-right font-medium text-neutral-800 dark:text-neutral-100">
                                 {p.display_phone}
                             </span>
@@ -1719,7 +1719,7 @@ function PreviewPane({ data, selectedTemplate, slots, contactTokens, audiencePre
                 })()}
                 {data.channel === 'email' && data.payload_json?.from_email && (
                     <div className="flex justify-between gap-3">
-                        <span className="text-neutral-500">{t('campaign.from')}</span>
+                        <span className="text-neutral-500 dark:text-neutral-400">{t('campaign.from')}</span>
                         <span className="text-right font-medium text-neutral-800 dark:text-neutral-100 truncate max-w-[10rem]">
                             {data.payload_json.from_name
                                 ? `${data.payload_json.from_name} <${data.payload_json.from_email}>`
@@ -1728,20 +1728,20 @@ function PreviewPane({ data, selectedTemplate, slots, contactTokens, audiencePre
                     </div>
                 )}
                 <div className="flex justify-between">
-                    <span className="text-neutral-500">{t('campaign.audience')}</span>
+                    <span className="text-neutral-500 dark:text-neutral-400">{t('campaign.audience')}</span>
                     <span className="font-medium text-neutral-800 dark:text-neutral-100">
                         {data.audience_type}
                     </span>
                 </div>
                 <div className="flex justify-between">
-                    <span className="text-neutral-500">{t('campaign.reachable')}</span>
-                    <span className="font-medium text-emerald-600 dark:text-emerald-400">
+                    <span className="text-neutral-500 dark:text-neutral-400">{t('campaign.reachable')}</span>
+                    <span className="font-medium text-emerald-700 dark:text-emerald-400">
                         {audiencePreview.deliverable.toLocaleString()}
                     </span>
                 </div>
                 {data.schedule_at && (
                     <div className="flex justify-between gap-3">
-                        <span className="text-neutral-500">{t('campaign.step_schedule')}</span>
+                        <span className="text-neutral-500 dark:text-neutral-400">{t('campaign.step_schedule')}</span>
                         <span className="text-right font-medium text-neutral-800 dark:text-neutral-100">
                             {formatInTz(
                                 tzLocalToUtcIso(data.schedule_at, data.timezone),

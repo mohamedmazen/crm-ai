@@ -128,11 +128,11 @@ export default function AdminRolesPermissionsIndex({ roles = [], permissions = [
                                                         <td className="py-3 pr-4">
                                                             {canManageRoles && !r.is_system && (
                                                                 <div className="flex gap-1">
-                                                                    <button type="button" onClick={() => openEditRole(r)} className="rounded-soft p-1.5 text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800" title={t('admin.edit_role')}><Pencil className="h-4 w-4" /></button>
+                                                                    <button type="button" onClick={() => openEditRole(r)} className="rounded-soft p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800" title={t('admin.edit_role')}><Pencil className="h-4 w-4" /></button>
                                                                     <button type="button" onClick={() => setDeleteRoleConfirm(r)} className="rounded-soft p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20" title={t('admin.delete_role')}><Trash2 className="h-4 w-4" /></button>
                                                                 </div>
                                                             )}
-                                                            {r.is_system && <span className="text-xs text-neutral-400">{t('admin.system_role_badge')}</span>}
+                                                            {r.is_system && <span className="text-xs text-neutral-500 dark:text-neutral-400">{t('admin.system_role_badge')}</span>}
                                                         </td>
                                                     </tr>
                                                 ))}
@@ -175,7 +175,7 @@ export default function AdminRolesPermissionsIndex({ roles = [], permissions = [
                                                         <td className="py-3 pr-4">
                                                             {canManageRoles && (
                                                                 <div className="flex gap-1">
-                                                                    <button type="button" onClick={() => openEditPermission(p)} className="rounded-soft p-1.5 text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800" title={t('admin.edit_permission')}><Pencil className="h-4 w-4" /></button>
+                                                                    <button type="button" onClick={() => openEditPermission(p)} className="rounded-soft p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800" title={t('admin.edit_permission')}><Pencil className="h-4 w-4" /></button>
                                                                     <button type="button" onClick={() => setDeletePermConfirm(p)} className="rounded-soft p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20" title={t('admin.delete_permission')}><Trash2 className="h-4 w-4" /></button>
                                                                 </div>
                                                             )}

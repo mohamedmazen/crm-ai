@@ -132,7 +132,7 @@
     </style>
 </head>
 <body>
-    <a href="{{ url('/') }}" class="brand" aria-label="{{ $appName }}">
+    <a href="{{ url('/') }}" class="brand">
         @if ($logoUrl)
             <img src="{{ $logoUrl }}" alt="{{ $appName }}">
         @else

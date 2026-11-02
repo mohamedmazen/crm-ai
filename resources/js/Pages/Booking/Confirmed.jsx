@@ -58,12 +58,12 @@ export default function BookingConfirmed({
 
                     {booking.meet_link && (
                         <div className="pt-2 border-t border-zinc-200/60 dark:border-zinc-700/60 flex items-center justify-between">
-                            <span className="text-xs text-zinc-500">Google Meet</span>
+                            <span className="text-xs text-zinc-500 dark:text-zinc-400">Google Meet</span>
                             <a
                                 href={booking.meet_link}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+                                className="text-xs font-semibold text-indigo-700 dark:text-indigo-400 hover:underline flex items-center gap-1"
                             >
                                 <Video className="h-3.5 w-3.5" />
                                 Join Meeting

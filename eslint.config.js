@@ -65,6 +65,64 @@ export default [
             'react-hooks/purity': 'warn',
             'react/no-unescaped-entities': 'warn',
             'no-empty': 'warn',
+            // Design-system guardrails (Phase 5).
+            // Arbitrary pixel font sizes bypass the type scale and break
+            // consistent Arabic/Latin sizing — fail the build on new ones.
+            'no-restricted-syntax': [
+                'error',
+                {
+                    selector: 'Literal[value=/text-\\[\\d+px\\]/]',
+                    message: 'Use the Tailwind type scale (text-xs/sm/base/lg/xl) instead of arbitrary pixel font sizes.',
+                },
+                {
+                    selector: 'TemplateElement[value.raw=/text-\\[\\d+px\\]/]',
+                    message: 'Use the Tailwind type scale (text-xs/sm/base/lg/xl) instead of arbitrary pixel font sizes.',
+                },
+            ],
+            // Data lists should go through the shared DataTable. Legacy screens
+            // are grandfathered as warnings; the migrated list screens below
+            // escalate this to an error.
+            'react/forbid-elements': [
+                'warn',
+                {
+                    forbid: [
+                        {
+                            element: 'table',
+                            message: 'Use the shared DataTable (resources/js/Components/DataTable.jsx) for data lists.',
+                        },
+                    ],
+                },
+            ],
+        },
+    },
+    {
+        // Phase 3 migrated these lists to DataTable — a raw <table> here would
+        // be a regression, so it fails lint instead of warning.
+        files: [
+            'resources/js/Pages/Ecommerce/Orders/Index.jsx',
+            'resources/js/Pages/Broadcasting/Campaigns/Index.jsx',
+            'resources/js/Pages/Contacts/Index.jsx',
+            'resources/js/Pages/Leads/Index.jsx',
+        ],
+        rules: {
+            'react/forbid-elements': [
+                'error',
+                {
+                    forbid: [
+                        {
+                            element: 'table',
+                            message: 'Use the shared DataTable (resources/js/Components/DataTable.jsx) instead of a raw <table>.',
+                        },
+                    ],
+                },
+            ],
+        },
+    },
+    {
+        // DataTable is the one place allowed to render <table>.
+        files: ['resources/js/Components/DataTable.jsx'],
+        rules: {
+            'react/forbid-elements': 'off',
         },
     },
     {

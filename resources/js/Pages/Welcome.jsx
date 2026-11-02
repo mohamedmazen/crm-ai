@@ -132,7 +132,7 @@ const CHANNEL_STYLES = {
 function Badge({ text }) {
     if (!text) return null;
     return (
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-500/20 text-brand-300 text-xs font-semibold px-3 py-1 border border-brand-500/30">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-500/20 text-brand-700 dark:text-brand-300 text-xs font-semibold px-3 py-1 border border-brand-500/30">
             <span className="h-1.5 w-1.5 rounded-full bg-brand-400 inline-block" />
             {text}
         </span>
@@ -187,7 +187,7 @@ function HeroSection({ landing, canLogin, canRegister, auth }) {
                         <Link
                             href={route('client.dashboard')}
                             className="inline-flex items-center gap-2 rounded-xl px-7 py-3.5 text-base font-bold text-white shadow-lg transition-all duration-200 hover:opacity-90"
-                            style={{ background: 'rgb(var(--brand-500))' }}
+                            style={{ background: 'rgb(var(--brand-600))' }}
                         >
                             {t('welcome.goToDashboard')}
                         </Link>
@@ -197,7 +197,7 @@ function HeroSection({ landing, canLogin, canRegister, auth }) {
                                 <Link
                                     href={route('register')}
                                     className="inline-flex items-center gap-2 rounded-xl px-7 py-3.5 text-base font-bold text-white shadow-lg transition-all duration-200 hover:opacity-90"
-                                    style={{ background: 'rgb(var(--brand-500))' }}
+                                    style={{ background: 'rgb(var(--brand-600))' }}
                                 >
                                     {s('hero_cta_primary')}
                                 </Link>
@@ -254,7 +254,7 @@ function TrustedBySection({ landing }) {
         <section className="border-y border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 py-6 overflow-hidden">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 {heading && (
-                    <p className="text-center text-xs font-medium text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-5">
+                    <p className="text-center text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-widest mb-5">
                         {heading}
                     </p>
                 )}
@@ -262,7 +262,7 @@ function TrustedBySection({ landing }) {
                     {brands.map((brand, idx) => (
                         <span
                             key={idx}
-                            className="text-lg font-bold text-neutral-300 dark:text-neutral-600 tracking-tight select-none hover:text-neutral-400 dark:hover:text-neutral-500 transition-colors"
+                            className="text-lg font-bold text-neutral-500 dark:text-neutral-400 tracking-tight select-none hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors"
                         >
                             {brand}
                         </span>
@@ -376,7 +376,7 @@ function FeaturesSection({ landing }) {
                             />
 
                             <div className="relative">
-                                <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-500 ring-1 ring-inset ring-brand-500/15 transition-all duration-300 group-hover:bg-brand-500 group-hover:text-white group-hover:ring-brand-500 group-hover:shadow-lg group-hover:shadow-brand-500/30">
+                                <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand-600/10 text-brand-600 dark:text-brand-500 ring-1 ring-inset ring-brand-500/15 transition-all duration-300 group-hover:bg-brand-700 group-hover:text-white group-hover:ring-brand-500 group-hover:shadow-lg group-hover:shadow-brand-500/30">
                                     <FeatureIcon name={feat.icon} className="h-6 w-6" />
                                 </div>
                                 <h3 className="text-base font-semibold text-neutral-900 dark:text-white mb-2 transition-colors group-hover:text-brand-600 dark:group-hover:text-brand-500">{feat.title}</h3>
@@ -422,7 +422,7 @@ function HowItWorksSection({ landing, canRegister }) {
                             <div key={idx} className="relative text-center">
                                 <div
                                     className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full font-bold text-xl shadow-lg ring-4 ring-white dark:ring-neutral-950 text-white"
-                                    style={{ background: 'rgb(var(--brand-500))', boxShadow: '0 8px 24px rgb(var(--brand-400) / 0.3)' }}
+                                    style={{ background: 'rgb(var(--brand-600))', boxShadow: '0 8px 24px rgb(var(--brand-400) / 0.3)' }}
                                 >
                                     {idx + 1}
                                 </div>
@@ -438,7 +438,7 @@ function HowItWorksSection({ landing, canRegister }) {
                         <Link
                             href={route('register')}
                             className="inline-flex items-center gap-2 rounded-xl px-7 py-3.5 text-base font-bold text-white shadow-lg transition-all duration-200 hover:opacity-90"
-                            style={{ background: 'rgb(var(--brand-500))' }}
+                            style={{ background: 'rgb(var(--brand-600))' }}
                         >
                             {t('welcome.get_started_free')}
                             <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
@@ -472,16 +472,16 @@ function PricingSection({ plans }) {
                     <div className="mt-8 inline-flex items-center gap-1 rounded-xl bg-neutral-100 dark:bg-neutral-800 p-1">
                         <button
                             onClick={() => setYearly(false)}
-                            className={`rounded-lg px-5 py-2 text-sm font-semibold transition-all ${!yearly ? 'bg-white dark:bg-neutral-700 shadow-sm text-neutral-900 dark:text-white' : 'text-neutral-500 dark:text-neutral-400'}`}
+                            className={`rounded-lg px-5 py-2 text-sm font-semibold transition-all ${!yearly ? 'bg-white dark:bg-neutral-700 shadow-sm text-neutral-900 dark:text-white' : 'text-neutral-600 dark:text-neutral-300'}`}
                         >
                             {t('welcome.monthly')}
                         </button>
                         <button
                             onClick={() => setYearly(true)}
-                            className={`rounded-lg px-5 py-2 text-sm font-semibold transition-all ${yearly ? 'bg-white dark:bg-neutral-700 shadow-sm text-neutral-900 dark:text-white' : 'text-neutral-500 dark:text-neutral-400'}`}
+                            className={`rounded-lg px-5 py-2 text-sm font-semibold transition-all ${yearly ? 'bg-white dark:bg-neutral-700 shadow-sm text-neutral-900 dark:text-white' : 'text-neutral-600 dark:text-neutral-300'}`}
                         >
                             {t('welcome.yearly')}
-                            <span className="ml-1.5 rounded-full bg-brand-500/20 text-brand-600 dark:text-brand-500 text-xs px-1.5 py-0.5 font-bold">-20%</span>
+                            <span className="ml-1.5 rounded-full bg-brand-500/20 text-brand-700 dark:text-brand-300 text-xs px-1.5 py-0.5 font-bold">-20%</span>
                         </button>
                     </div>
                 </div>
@@ -500,7 +500,7 @@ function PricingSection({ plans }) {
                             >
                                 {plan.is_featured && (
                                     <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                                        <span className="rounded-full text-xs font-bold px-3 py-1 shadow" style={{ background: 'rgb(var(--brand-500))', color: '#ffffff' }}>{t('welcome.most_popular')}</span>
+                                        <span className="rounded-full text-xs font-bold px-3 py-1 shadow" style={{ background: 'rgb(var(--brand-600))', color: '#ffffff' }}>{t('welcome.most_popular')}</span>
                                     </div>
                                 )}
 
@@ -516,10 +516,10 @@ function PricingSection({ plans }) {
                                         {price === 0 ? t('welcome.free') : `$${parseFloat(price).toFixed(0)}`}
                                     </span>
                                     {price > 0 && (
-                                        <span className={`text-sm ml-1 ${plan.is_featured ? 'text-neutral-400' : 'text-neutral-400'}`}>{yearly ? t('welcome.per_year') : t('welcome.per_month')}</span>
+                                        <span className={`text-sm ml-1 ${plan.is_featured ? 'text-neutral-400' : 'text-neutral-500 dark:text-neutral-400'}`}>{yearly ? t('welcome.per_year') : t('welcome.per_month')}</span>
                                     )}
                                     {plan.trial_days > 0 && (
-                                        <p className={`text-xs mt-1 ${plan.is_featured ? 'text-neutral-400' : 'text-neutral-400 dark:text-neutral-500'}`}>
+                                        <p className={`text-xs mt-1 ${plan.is_featured ? 'text-neutral-400' : 'text-neutral-500 dark:text-neutral-400'}`}>
                                             {t('pricing.trial_days', { days: plan.trial_days })}
                                         </p>
                                     )}
@@ -545,7 +545,7 @@ function PricingSection({ plans }) {
                                             ? 'text-white hover:opacity-90'
                                             : 'border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:border-brand-500/50 hover:text-brand-600 dark:hover:text-brand-500'
                                     }`}
-                                    style={plan.is_featured ? { background: 'rgb(var(--brand-500))' } : {}}
+                                    style={plan.is_featured ? { background: 'rgb(var(--brand-600))' } : {}}
                                 >
                                     {plan.is_featured ? t('welcome.get_started_plan') : t('welcome.upgrade')}
                                 </Link>
@@ -659,7 +659,7 @@ function TestimonialsSection({ landing }) {
                                 {t.avatar ? (
                                     <img src={t.avatar} alt={t.name} className="h-9 w-9 rounded-full object-cover" />
                                 ) : (
-                                    <div className="h-9 w-9 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0" style={{ background: 'rgb(var(--brand-500))' }}>
+                                    <div className="h-9 w-9 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0" style={{ background: 'rgb(var(--brand-600))' }}>
                                         {t.name.charAt(0)}
                                     </div>
                                 )}
@@ -715,7 +715,7 @@ function FaqSection({ landing }) {
                             >
                                 <span className="font-medium text-neutral-900 dark:text-white text-sm">{faq.q}</span>
                                 <svg
-                                    className={`h-5 w-5 flex-shrink-0 text-neutral-400 transition-transform duration-200 ${open === idx ? 'rotate-180' : ''}`}
+                                    className={`h-5 w-5 flex-shrink-0 text-neutral-500 dark:text-neutral-400 transition-transform duration-200 ${open === idx ? 'rotate-180' : ''}`}
                                     fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"
                                 >
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -774,7 +774,7 @@ function CtaSection({ landing, canRegister }) {
                             <Link
                                 href={route('register')}
                                 className="inline-flex items-center gap-2 rounded-xl px-7 py-3.5 text-base font-bold text-white shadow-lg transition-all duration-200 hover:opacity-90"
-                                style={{ background: 'rgb(var(--brand-500))' }}
+                                style={{ background: 'rgb(var(--brand-600))' }}
                             >
                                 {s('cta_primary')}
                                 <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>

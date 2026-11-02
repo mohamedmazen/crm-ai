@@ -73,7 +73,7 @@ function PlaygroundPanel({ chatbot }) {
                 <div className="w-2 h-2 rounded-full bg-green-500" />
                 <span className="text-xs font-medium text-neutral-600 dark:text-neutral-400">{chatbot.name} — {t('ai.playground')}</span>
                 {messages.length > 0 && (
-                    <button onClick={() => setMessages([])} className="ml-auto text-xs text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">{t('ai.clear')}</button>
+                    <button onClick={() => setMessages([])} className="ml-auto text-xs text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">{t('ai.clear')}</button>
                 )}
             </div>
 
@@ -81,7 +81,7 @@ function PlaygroundPanel({ chatbot }) {
                 {messages.length === 0 && !loading && (
                     <div className="flex flex-col items-center justify-center h-full text-center space-y-2">
                         <MessageSquare className="h-8 w-8 text-neutral-300 dark:text-neutral-600" />
-                        <p className="text-sm text-neutral-400 dark:text-neutral-500">{t('ai.playground_empty')}</p>
+                        <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('ai.playground_empty')}</p>
                     </div>
                 )}
                 {messages.map((m, i) => (
@@ -97,7 +97,7 @@ function PlaygroundPanel({ chatbot }) {
                 {loading && (
                     <div className="flex gap-2">
                         <div className="shrink-0 w-7 h-7 rounded-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center">
-                            <Bot className="h-3.5 w-3.5 text-neutral-500" />
+                            <Bot className="h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400" />
                         </div>
                         <div className="bg-white dark:bg-neutral-700 rounded-2xl rounded-tl-sm px-4 py-2.5 shadow-sm flex items-center gap-1">
                             <span className="w-1.5 h-1.5 rounded-full bg-neutral-400 animate-bounce [animation-delay:0ms]" />
@@ -172,11 +172,11 @@ function ChatbotCard({ chatbot, knowledgeBases }) {
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-semibold text-neutral-900 dark:text-neutral-100 truncate">{chatbot.name}</span>
-                        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${chatbot.enabled ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'}`}>
+                        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${chatbot.enabled ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400'}`}>
                             {chatbot.enabled ? t('common.active') : t('ai.disabled')}
                         </span>
                         {chatbot.tone && (
-                            <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${TONE_COLORS[chatbot.tone] ?? 'bg-neutral-100 text-neutral-500'}`}>
+                            <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${TONE_COLORS[chatbot.tone] ?? 'bg-neutral-100 text-neutral-600 dark:text-neutral-400'}`}>
                                 {t(`ai.tone_${chatbot.tone}`)}
                             </span>
                         )}
@@ -187,10 +187,10 @@ function ChatbotCard({ chatbot, knowledgeBases }) {
                                 <BookOpen className="h-3 w-3" /> {linkedKb.name}
                             </span>
                         ) : (
-                            <span className="text-xs text-neutral-400 dark:text-neutral-500 italic">{t('ai.no_knowledge_base')}</span>
+                            <span className="text-xs text-neutral-500 dark:text-neutral-400 italic">{t('ai.no_knowledge_base')}</span>
                         )}
                         {chatbot.system_prompt && (
-                            <span className="text-xs text-neutral-400 dark:text-neutral-500 truncate max-w-[180px]">"{chatbot.system_prompt}"</span>
+                            <span className="text-xs text-neutral-500 dark:text-neutral-400 truncate max-w-[180px]">"{chatbot.system_prompt}"</span>
                         )}
                     </div>
                 </div>
@@ -198,17 +198,17 @@ function ChatbotCard({ chatbot, knowledgeBases }) {
                 <div className="flex items-center gap-1 shrink-0">
                     <button
                         onClick={() => toggleTab('playground')}
-                        className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition ${tab === 'playground' ? 'bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400' : 'text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:text-neutral-700 dark:hover:text-neutral-300'}`}
+                        className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition ${tab === 'playground' ? 'bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400' : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:text-neutral-700 dark:hover:text-neutral-300'}`}
                     >
                         <Play className="h-3.5 w-3.5" /> {t('ai.test')}
                     </button>
                     <button
                         onClick={() => toggleTab('settings')}
-                        className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition ${tab === 'settings' ? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300' : 'text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:text-neutral-700 dark:hover:text-neutral-300'}`}
+                        className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition ${tab === 'settings' ? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300' : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:text-neutral-700 dark:hover:text-neutral-300'}`}
                     >
                         <Settings className="h-3.5 w-3.5" /> {t('ai.configure')}
                     </button>
-                    <button onClick={handleDelete} className="rounded-lg p-1.5 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition">
+                    <button onClick={handleDelete} aria-label={t('common.delete', { defaultValue: 'Delete' })} className="rounded-lg p-1.5 text-neutral-500 dark:text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition">
                         <Trash2 className="h-3.5 w-3.5" />
                     </button>
                 </div>
@@ -278,7 +278,7 @@ function ChatbotCard({ chatbot, knowledgeBases }) {
                                 placeholder={t('ai.fallback_reply_placeholder')}
                                 className="w-full rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 px-3 py-2 text-sm text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 transition"
                             />
-                            <p className="text-xs text-neutral-400 dark:text-neutral-500">{t('ai.fallback_reply_hint')}</p>
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('ai.fallback_reply_hint')}</p>
                         </div>
 
                         <div className="flex items-center gap-6">
@@ -360,8 +360,8 @@ export default function AiChatbotsIndex({ chatbots, knowledgeBases }) {
                     <div className="grid grid-cols-3 gap-3">
                         {[
                             { label: t('ai.stat_total_bots'), value: chatbots.length, icon: Bot, color: 'text-brand-600 dark:text-brand-400', bg: 'bg-brand-50 dark:bg-brand-900/20' },
-                            { label: t('common.active'), value: chatbots.filter(c => c.enabled).length, icon: Zap, color: 'text-green-600 dark:text-green-400', bg: 'bg-green-50 dark:bg-green-900/20' },
-                            { label: t('ai.stat_with_kb'), value: chatbots.filter(c => c.ai_kb_id).length, icon: BookOpen, color: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-50 dark:bg-purple-900/20' },
+                            { label: t('common.active'), value: chatbots.filter(c => c.enabled).length, icon: Zap, color: 'text-green-700 dark:text-green-400', bg: 'bg-green-50 dark:bg-green-900/20' },
+                            { label: t('ai.stat_with_kb'), value: chatbots.filter(c => c.ai_kb_id).length, icon: BookOpen, color: 'text-purple-700 dark:text-purple-400', bg: 'bg-purple-50 dark:bg-purple-900/20' },
                         ].map(stat => (
                             <div key={stat.label} className="rounded-xl border border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4 flex items-center gap-3">
                                 <div className={`w-9 h-9 rounded-lg ${stat.bg} flex items-center justify-center shrink-0`}>
@@ -410,7 +410,7 @@ export default function AiChatbotsIndex({ chatbots, knowledgeBases }) {
                                 </div>
                                 <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">{t('ai.new_chatbot')}</h3>
                             </div>
-                            <button onClick={() => setShowCreate(false)} className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition rounded-lg p-1 hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                            <button onClick={() => setShowCreate(false)} className="text-neutral-600 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition rounded-lg p-1 hover:bg-neutral-100 dark:hover:bg-neutral-800">
                                 <X className="h-4 w-4" />
                             </button>
                         </div>
@@ -430,7 +430,7 @@ export default function AiChatbotsIndex({ chatbots, knowledgeBases }) {
                                 {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
                             </div>
 
-                            <p className="text-xs text-neutral-400 dark:text-neutral-500">{t('ai.chatbot_create_hint')}</p>
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('ai.chatbot_create_hint')}</p>
 
                             <div className="flex gap-2 pt-1">
                                 <button

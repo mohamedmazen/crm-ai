@@ -1,42 +1,18 @@
 import { Link, usePage, router } from '@inertiajs/react';
 import { useOneSignal, isOnInboxOrDashboard, showBrowserNotification } from '@/hooks/useOneSignal';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Toaster, toast } from 'sonner';
 import Topbar from '@/Components/Topbar';
 import Sidebar from '@/Components/Sidebar';
+import AreaNav from '@/Components/AreaNav';
+import MobileTabBar from '@/Components/MobileTabBar';
+import CommandPalette from '@/Components/CommandPalette';
 import UpgradeModal from '@/Components/UpgradeModal';
 import CookieConsent from '@/Components/CookieConsent';
 import useClientNav from '@/Layouts/useClientNav';
-import { ChannelBrandIcon } from '@/Components/BrandIcons';
-import {
-    LayoutDashboard,
-    CreditCard,
-    Package,
-    FileText,
-    Users,
-    Settings,
-    Layers,
-    Webhook,
-    Key,
-    BookOpen,
-    Image,
-    Radio,
-    Inbox,
-    Bot,
-    Database,
-    Zap,
-    Share2,
-    MapPin,
-    Tag,
-    LifeBuoy,
-    ExternalLink,
-    Mail,
-    MessageSquare,
-} from 'lucide-react';
-
-const iconClass = 'h-4 w-4';
-const whatsappNavIcon = <ChannelBrandIcon channel="whatsapp" className={iconClass} />;
+import useNavPrefs from '@/hooks/useNavPrefs';
+import { LayoutDashboard, Users, Inbox, KanbanSquare } from 'lucide-react';
 
 function safeRoute(name, ...args) {
     try { return route(name, ...args); } catch { return '#'; }
@@ -70,7 +46,7 @@ function UsageBanner({ usage }) {
             </div>
             <button
                 onClick={() => setDismissed(true)}
-                className="flex-shrink-0 text-amber-600 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-200"
+                className="flex-shrink-0 text-amber-700 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-200"
                 aria-label={t('common.dismiss')}
             >
                 <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -85,7 +61,7 @@ function ClientLayoutFooter() {
     const { app_version: appVersion } = usePage().props;
     const v = typeof appVersion === 'string' && appVersion.trim() !== '' ? appVersion.trim() : '1.0.0';
     return (
-        <div className="rounded-soft px-3 py-2 text-xs text-neutral-400 dark:text-neutral-500 tabular-nums">
+        <div className="rounded-soft px-3 py-2 text-xs text-neutral-500 dark:text-neutral-400 tabular-nums">
             v{v}
         </div>
     );
@@ -97,7 +73,15 @@ export default function ClientLayout({ header, children, title }) {
     const { auth, impersonation, current_workspace_usage, unreadNotificationsCount, branding, onesignal } = usePage().props;
     const logoUrl = branding?.logo_url;
     const [unreadCount, setUnreadCount] = useState(unreadNotificationsCount ?? 0);
-    const clientNavGroups = useClientNav();
+    const { home: navHome, areas: navAreas } = useClientNav();
+    const { collapsed, toggleCollapsed } = useNavPrefs();
+
+    const mobileTabs = [
+        { label: t('nav.dashboard'), href: safeRoute('client.dashboard'), icon: <LayoutDashboard className="h-5 w-5" />, activePattern: 'client.dashboard' },
+        { label: t('nav.inbox'), href: safeRoute('client.inbox.index'), icon: <Inbox className="h-5 w-5" />, activePattern: ['client.inbox.index', 'client.inbox.show'] },
+        { label: t('nav.lead_pipeline'), href: safeRoute('client.leads.pipeline.index'), icon: <KanbanSquare className="h-5 w-5" />, activePattern: 'client.leads.pipeline.*' },
+        { label: t('nav.contacts'), href: safeRoute('client.contacts.index'), icon: <Users className="h-5 w-5" />, activePattern: 'client.contacts.*' },
+    ];
 
     // Initialise OneSignal SDK (registers SW, requests push permission)
     useOneSignal({ appId: onesignal?.app_id, enabled: onesignal?.enabled });
@@ -174,18 +158,19 @@ export default function ClientLayout({ header, children, title }) {
                 open={sidebarOpen}
                 onClose={() => setSidebarOpen(false)}
                 showCreateButton={false}
-                navGroups={clientNavGroups.map(group => ({
-                    ...group,
-                    items: group.items.map(item => ({
-                        ...item,
-                        key: item.activePattern || item.label,
-                        active: () => item.activePattern ? route().current(item.activePattern) : false,
-                    }))
-                }))}
-footer={<ClientLayoutFooter />}
+                home={navHome}
+                areas={navAreas}
+                collapsed={collapsed}
+                onToggleCollapsed={toggleCollapsed}
+                enableCollapse
+                enableSearch
+                enableFavorites
+                footer={<ClientLayoutFooter />}
             />
 
-            <div className="lg:pl-64 rtl:lg:pl-0 rtl:lg:pr-64">
+            <div className={[
+                collapsed ? 'lg:ps-16' : 'lg:ps-64',
+            ].join(' ')}>
                 <Topbar
                     showLogo={false}
                     title={title}
@@ -194,8 +179,9 @@ footer={<ClientLayoutFooter />}
                     showGlobalSearch
                 />
                 <UsageBanner usage={current_workspace_usage} />
+                <AreaNav areas={navAreas} />
 
-                <main className={`p-4 sm:p-6 lg:p-8 ${demoMode ? 'pb-16' : ''}`}>
+                <main className="p-4 pb-24 sm:p-6 lg:p-8">
                     {header && typeof header === 'object' && (
                         <div className="mb-6">
                             {header}
@@ -205,11 +191,15 @@ footer={<ClientLayoutFooter />}
                 </main>
             </div>
 
-            {/* Mobile menu button */}
+            <CommandPalette searchRoute={safeRoute('client.search')} nav={{ home: navHome, areas: navAreas }} />
+
+            <MobileTabBar items={mobileTabs} />
+
+            {/* Mobile menu button (opens the full sidebar) */}
             <button
                 type="button"
                 onClick={() => setSidebarOpen(true)}
-                className="fixed bottom-4 right-4 z-30 flex h-12 w-12 items-center justify-center rounded-soft-lg bg-white dark:bg-neutral-900 border border-soft border-gray-200 dark:border-neutral-800 shadow-soft-lg text-neutral-600 hover:bg-neutral-50 dark:text-neutral-400 dark:hover:bg-neutral-800 lg:hidden rtl:right-auto rtl:left-4"
+                className="fixed bottom-20 end-4 z-40 flex h-12 w-12 items-center justify-center rounded-soft-lg border border-soft border-gray-200 bg-white shadow-soft-lg text-neutral-600 hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 lg:hidden"
                 aria-label={t('open_menu')}
             >
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -222,7 +212,7 @@ footer={<ClientLayoutFooter />}
             <Toaster richColors position="top-right" />
             {/* Demo notice — pinned to the bottom of the viewport */}
             {demoMode && (
-                <div className="fixed inset-x-0 bottom-0 z-20 flex items-center justify-center gap-2 bg-amber-500/90 text-amber-950 px-4 py-2 text-sm font-medium pointer-events-none">
+                <div className="fixed inset-x-0 bottom-16 z-20 flex items-center justify-center gap-2 bg-amber-500/90 text-amber-950 px-4 py-2 text-sm font-medium pointer-events-none lg:bottom-0">
                     <span>{t('demo.banner') || 'Demo mode: changes are disabled.'}</span>
                 </div>
             )}

@@ -50,7 +50,7 @@ export default function CookieConsent() {
         >
             <div className="mx-auto flex max-w-3xl flex-col gap-3 rounded-soft-lg border border-neutral-200 bg-white p-4 shadow-soft-lg dark:border-neutral-700 dark:bg-neutral-900 sm:flex-row sm:items-center sm:gap-4">
                 <div className="flex flex-1 items-start gap-3">
-                    <Cookie className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" />
+                    <Cookie className="mt-0.5 h-5 w-5 shrink-0 text-brand-600 dark:text-brand-400" />
                     <div>
                         <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                             {t('cookie_consent.title') || 'We use cookies'}
@@ -82,7 +82,7 @@ export default function CookieConsent() {
                         type="button"
                         onClick={() => choose('essential')}
                         aria-label={t('common.dismiss') || 'Dismiss'}
-                        className="rounded-soft p-1.5 text-neutral-400 transition hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
+                        className="rounded-soft p-1.5 text-neutral-600 dark:text-neutral-400 transition hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
                     >
                         <X className="h-4 w-4" />
                     </button>

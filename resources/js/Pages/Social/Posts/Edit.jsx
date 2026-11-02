@@ -82,7 +82,7 @@ export default function EditPost({ post, accounts }) {
         draft: 'bg-neutral-100 text-neutral-600',
         scheduled: 'bg-blue-100 text-blue-700',
         failed: 'bg-red-100 text-red-700',
-    }[post.status] ?? 'bg-neutral-100 text-neutral-500';
+    }[post.status] ?? 'bg-neutral-100 text-neutral-600 dark:text-neutral-400';
 
     return (
         <ClientLayout title={t('social.edit_post_title')}>
@@ -92,12 +92,12 @@ export default function EditPost({ post, accounts }) {
                 {/* Header */}
                 <div className="flex items-center gap-3">
                     <Link href={route('client.social.posts.index')}
-                        className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
+                        className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
                         <ArrowLeft className="h-5 w-5" />
                     </Link>
                     <div className="flex-1 min-w-0">
                         <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">{t('social.edit_post_title')}</h2>
-                        <p className="text-sm text-neutral-400 mt-0.5">
+                        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">
                             {t('social.edit_post_subtitle')}
                         </p>
                     </div>
@@ -137,9 +137,9 @@ export default function EditPost({ post, accounts }) {
                                 );
                             })}
                             {accounts.length === 0 && (
-                                <p className="text-sm text-neutral-400">
+                                <p className="text-sm text-neutral-500 dark:text-neutral-400">
                                     {t('social.no_accounts_connected')}{' '}
-                                    <Link href={route('client.social.accounts.index')} className="text-brand-600 hover:underline">{t('social.add_one')}</Link>
+                                    <Link href={route('client.social.accounts.index')} className="text-brand-600 dark:text-brand-400 hover:underline">{t('social.add_one')}</Link>
                                 </p>
                             )}
                         </div>
@@ -153,7 +153,7 @@ export default function EditPost({ post, accounts }) {
                         {/* Title */}
                         <div>
                             <label className="block text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-1">
-                                {t('social.title_label')} <span className="text-neutral-400">({t('common.optional')})</span>
+                                {t('social.title_label')} <span className="text-neutral-500 dark:text-neutral-400">({t('common.optional')})</span>
                             </label>
                             <input
                                 type="text"
@@ -168,7 +168,7 @@ export default function EditPost({ post, accounts }) {
                         <div>
                             <div className="flex items-center justify-between mb-1">
                                 <label className="text-xs font-medium text-neutral-500 dark:text-neutral-400">{t('social.post_content')}</label>
-                                <span className={`text-xs ${data.body.length > minCharLimit ? 'text-red-500 font-medium' : 'text-neutral-400'}`}>
+                                <span className={`text-xs ${data.body.length > minCharLimit ? 'text-red-500 font-medium' : 'text-neutral-500 dark:text-neutral-400'}`}>
                                     {data.body.length} / {minCharLimit}
                                 </span>
                             </div>
@@ -189,7 +189,7 @@ export default function EditPost({ post, accounts }) {
                             <h3 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">{t('social.media')}</h3>
                             <button type="button"
                                 onClick={() => setData('media_urls', [...(data.media_urls ?? []), ''])}
-                                className="inline-flex items-center gap-1 text-xs font-medium text-brand-600 hover:text-brand-700">
+                                className="inline-flex items-center gap-1 text-xs font-medium text-brand-600 dark:text-brand-400 hover:text-brand-700">
                                 <Plus className="h-3.5 w-3.5" /> {t('social.add_media')}
                             </button>
                         </div>
@@ -210,21 +210,21 @@ export default function EditPost({ post, accounts }) {
                                 </div>
                                 <button type="button"
                                     onClick={() => setData('media_urls', (data.media_urls ?? []).filter((_, j) => j !== i))}
-                                    className="mt-7 shrink-0 text-neutral-400 hover:text-red-500 transition">
+                                    className="mt-7 shrink-0 text-neutral-500 dark:text-neutral-400 hover:text-red-500 transition">
                                     <Trash2 className="h-4 w-4" />
                                 </button>
                             </div>
                         ))}
                         {(data.media_urls ?? []).filter(Boolean).length === 0 && (
-                            <p className="text-xs text-neutral-400">{t('social.no_media_attached')}</p>
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('social.no_media_attached')}</p>
                         )}
                     </div>
 
                     {/* Schedule */}
                     <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-5 space-y-3">
                         <h3 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200 flex items-center gap-1.5">
-                            <Calendar className="h-4 w-4 text-neutral-400" /> {t('social.schedule')}
-                            <span className="text-xs font-normal text-neutral-400">{t('social.schedule_draft_hint')}</span>
+                            <Calendar className="h-4 w-4 text-neutral-500 dark:text-neutral-400" /> {t('social.schedule')}
+                            <span className="text-xs font-normal text-neutral-500 dark:text-neutral-400">{t('social.schedule_draft_hint')}</span>
                         </h3>
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                             <div>
@@ -244,7 +244,7 @@ export default function EditPost({ post, accounts }) {
                             </div>
                         </div>
                         {data.scheduled_at && (
-                            <p className="text-xs text-neutral-400 flex items-center gap-1">
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center gap-1">
                                 <Clock className="h-3 w-3" />
                                 {t('social.publishes_at', { time: formatInTz(tzLocalToUtcIso(data.scheduled_at, data.timezone), data.timezone) })}
                             </p>

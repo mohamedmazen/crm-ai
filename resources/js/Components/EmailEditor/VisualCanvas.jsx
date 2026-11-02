@@ -145,7 +145,7 @@ export default function VisualCanvas({ blocks, onChange, tokens = [] }) {
                 className="mx-auto max-w-[640px] rounded-xl border border-neutral-200 bg-white p-4 text-neutral-900 shadow-soft dark:border-neutral-700 sm:p-6"
             >
                 {blocks.length === 0 && (
-                    <div className="rounded-lg border-2 border-dashed border-neutral-300 p-10 text-center text-sm text-neutral-400">
+                    <div className="rounded-lg border-2 border-dashed border-neutral-300 p-10 text-center text-sm text-neutral-500 dark:text-neutral-400">
                         {t('email_editor.empty_canvas')}
                     </div>
                 )}
@@ -188,13 +188,13 @@ export default function VisualCanvas({ blocks, onChange, tokens = [] }) {
             {settings && settingsBlock && (
                 <FloatingPanel anchorEl={settings.anchorEl} onClose={() => setSettings(null)}>
                     <div className="mb-3 flex items-center justify-between">
-                        <span className="text-xs font-semibold uppercase tracking-wide text-neutral-400">
+                        <span className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
                             {t('email_editor.block_settings', { block: t(BLOCK_LABEL_KEYS[settingsBlock.type] ?? '', settingsBlock.type) })}
                         </span>
                         <button
                             type="button"
                             onClick={() => setSettings(null)}
-                            className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
+                            className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
                         >
                             <Plus className="h-4 w-4 rotate-45" />
                         </button>
@@ -256,7 +256,7 @@ function BlockRow({
                     onDragEnd={onDragEnd}
                     onClick={(e) => e.stopPropagation()}
                     title={t('email_editor.drag_to_reorder')}
-                    className="flex h-6 w-6 cursor-grab items-center justify-center rounded text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 active:cursor-grabbing dark:hover:bg-neutral-700"
+                    className="flex h-6 w-6 cursor-grab items-center justify-center rounded text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 active:cursor-grabbing dark:hover:bg-neutral-700"
                 >
                     <GripVertical className="h-3.5 w-3.5" />
                 </button>
@@ -292,8 +292,8 @@ function RowBtn({ title, danger, onClick, children }) {
             }}
             className={`flex h-6 w-6 items-center justify-center rounded transition ${
                 danger
-                    ? 'text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/40'
-                    : 'text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-700 dark:hover:text-neutral-200'
+                    ? 'text-neutral-500 dark:text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/40'
+                    : 'text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-700 dark:hover:text-neutral-200'
             }`}
         >
             {children}
@@ -329,7 +329,7 @@ function BlockContent({ block, autoFocus, onChange, onRequestSettings }) {
                     html={block.text}
                     placeholder={t('email_editor.text_placeholder')}
                     onChange={(val) => onChange({ text: val })}
-                    className="text-[15px] leading-relaxed text-neutral-700"
+                    className="text-base leading-relaxed text-neutral-700 dark:text-neutral-400"
                     style={{ textAlign: block.align }}
                 />
             );
@@ -369,7 +369,7 @@ function BlockContent({ block, autoFocus, onChange, onRequestSettings }) {
                         e.stopPropagation();
                         onRequestSettings(e.currentTarget);
                     }}
-                    className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-neutral-300 py-8 text-sm text-neutral-400 transition hover:border-brand-400 hover:text-brand-600"
+                    className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-neutral-300 py-8 text-sm text-neutral-500 dark:text-neutral-400 transition hover:border-brand-400 hover:text-brand-600"
                 >
                     <ImageIcon className="h-5 w-5" /> {t('email_editor.click_add_image')}
                 </button>
@@ -379,7 +379,7 @@ function BlockContent({ block, autoFocus, onChange, onRequestSettings }) {
         case 'spacer':
             return (
                 <div
-                    className="flex items-center justify-center rounded border border-dashed border-neutral-200 text-[10px] uppercase tracking-wide text-neutral-300"
+                    className="flex items-center justify-center rounded border border-dashed border-neutral-200 text-3xs uppercase tracking-wide text-neutral-300"
                     style={{ height: Math.max(16, Math.min(block.height ?? 24, 120)) }}
                 >
                     {t('email_editor.spacer_label', { height: block.height ?? 24 })}
@@ -409,7 +409,7 @@ function InsertZone({ onPick }) {
                     setOpen((o) => !o);
                 }}
                 title={t('email_editor.insert_block_here')}
-                className="absolute left-1/2 top-1/2 z-10 flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-brand-500 text-white opacity-0 shadow transition hover:bg-brand-600 group-hover/iz:opacity-100"
+                className="absolute left-1/2 top-1/2 z-10 flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-brand-600 text-white opacity-0 shadow transition hover:bg-brand-700 group-hover/iz:opacity-100"
             >
                 <Plus className="h-3 w-3" />
             </button>
@@ -452,7 +452,7 @@ function AddBar({ onAdd, onDragOver }) {
                     key={type}
                     type="button"
                     onClick={() => onAdd(type)}
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-neutral-300 px-3 py-1.5 text-xs font-medium text-neutral-600 transition hover:border-brand-400 hover:text-brand-600"
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-neutral-300 px-3 py-1.5 text-xs font-medium text-neutral-600 dark:text-neutral-400 transition hover:border-brand-400 hover:text-brand-600"
                 >
                     <Plus className="h-3.5 w-3.5" />
                     <Icon className="h-3.5 w-3.5" />
@@ -551,7 +551,7 @@ function AlignControl({ value = 'left', onChange }) {
                     className={`flex h-7 w-7 items-center justify-center rounded-md transition ${
                         value === v
                             ? 'bg-brand-100 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300'
-                            : 'text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-700'
+                            : 'text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700'
                     }`}
                 >
                     <Ico className="h-3.5 w-3.5" />
@@ -604,7 +604,7 @@ function BlockSettings({ block, onChange }) {
                                     className={`flex-1 rounded-md py-1 text-xs font-bold transition ${
                                         block.level === l
                                             ? 'bg-brand-100 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300'
-                                            : 'border border-neutral-300 text-neutral-500 hover:bg-neutral-100 dark:border-neutral-600 dark:hover:bg-neutral-700'
+                                            : 'border border-neutral-300 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:border-neutral-600 dark:hover:bg-neutral-700'
                                     }`}
                                 >
                                     H{l}

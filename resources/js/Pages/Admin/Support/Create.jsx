@@ -67,7 +67,7 @@ export default function AdminSupportCreate({ customers = [] }) {
             <div className="max-w-2xl space-y-6">
                 {/* Header */}
                 <div className="flex items-center gap-3">
-                    <Link href={route('admin.support.index')} className="p-1.5 rounded-soft text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors">
+                    <Link href={route('admin.support.index')} className="p-1.5 rounded-soft text-neutral-600 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors">
                         <ArrowLeft className="h-4 w-4" />
                     </Link>
                     <div>
@@ -87,23 +87,23 @@ export default function AdminSupportCreate({ customers = [] }) {
                                     onClick={() => setCustOpen(o => !o)}
                                     className="w-full flex items-center gap-2 border border-neutral-300 dark:border-neutral-600 rounded-soft-lg px-3 py-2.5 text-sm text-left bg-white dark:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 transition-colors"
                                 >
-                                    <span className={`flex-1 truncate ${linked ? 'text-neutral-900 dark:text-white' : 'text-neutral-400 dark:text-neutral-500'}`}>
+                                    <span className={`flex-1 truncate ${linked ? 'text-neutral-900 dark:text-white' : 'text-neutral-500 dark:text-neutral-400'}`}>
                                         {linked ? `${data.name} — ${data.email}` : t('support_tickets.customer_manual')}
                                     </span>
                                     {linked && (
                                         <X
-                                            className="h-4 w-4 text-neutral-400 hover:text-red-500 flex-shrink-0"
+                                            className="h-4 w-4 text-neutral-500 dark:text-neutral-400 hover:text-red-500 flex-shrink-0"
                                             onClick={(e) => { e.stopPropagation(); pickCustomer(null); }}
                                         />
                                     )}
-                                    <ChevronDown className="h-4 w-4 text-neutral-400 flex-shrink-0" />
+                                    <ChevronDown className="h-4 w-4 text-neutral-500 dark:text-neutral-400 flex-shrink-0" />
                                 </button>
 
                                 {custOpen && (
                                     <div className="absolute z-20 mt-1 w-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-soft-lg shadow-lg overflow-hidden">
                                         <div className="p-2 border-b border-neutral-100 dark:border-neutral-700">
                                             <div className="relative">
-                                                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 pointer-events-none" />
+                                                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500 dark:text-neutral-400 pointer-events-none" />
                                                 <input
                                                     type="text"
                                                     autoFocus
@@ -134,14 +134,14 @@ export default function AdminSupportCreate({ customers = [] }) {
                                                     >
                                                         <span className="flex-1 min-w-0">
                                                             <span className="block truncate text-neutral-900 dark:text-white">{c.name}</span>
-                                                            <span className="block truncate text-xs text-neutral-400 dark:text-neutral-500">{c.email}</span>
+                                                            <span className="block truncate text-xs text-neutral-500 dark:text-neutral-400">{c.email}</span>
                                                         </span>
                                                         {String(data.user_id) === String(c.id) && <Check className="h-4 w-4 text-brand-500 flex-shrink-0" />}
                                                     </button>
                                                 </li>
                                             ))}
                                             {filteredCustomers.length === 0 && (
-                                                <li className="px-3 py-3 text-sm text-center text-neutral-400 dark:text-neutral-500">
+                                                <li className="px-3 py-3 text-sm text-center text-neutral-500 dark:text-neutral-400">
                                                     {t('support_tickets.customer_no_results')}
                                                 </li>
                                             )}
@@ -220,7 +220,7 @@ export default function AdminSupportCreate({ customers = [] }) {
                                         <option key={p.value} value={p.value}>{p.label} — {p.desc}</option>
                                     ))}
                                 </select>
-                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 pointer-events-none" />
+                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500 dark:text-neutral-400 pointer-events-none" />
                             </div>
                             <div className="mt-2 grid grid-cols-4 gap-1.5">
                                 {priorityOptions.map(p => (
@@ -246,7 +246,7 @@ export default function AdminSupportCreate({ customers = [] }) {
                             <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
                                 {t('support_tickets.message_label')} <span className="text-red-500">*</span>
                             </label>
-                            <span className={`text-xs tabular-nums ${remaining < 200 ? 'text-orange-500' : 'text-neutral-400 dark:text-neutral-500'}`}>
+                            <span className={`text-xs tabular-nums ${remaining < 200 ? 'text-orange-700 dark:text-orange-400' : 'text-neutral-500 dark:text-neutral-400'}`}>
                                 {t('support_tickets.chars_left', { count: remaining })}
                             </span>
                         </div>

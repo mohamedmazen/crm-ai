@@ -58,11 +58,11 @@ export default function Pagination({
         const baseClass =
             'inline-flex items-center justify-center min-w-[2.25rem] h-9 px-2.5 text-sm font-medium rounded-soft transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900';
         const activeClass =
-            'bg-brand-500 text-white hover:bg-brand-600 dark:bg-brand-600 dark:hover:bg-brand-500 shadow-sm';
+            'bg-brand-600 text-white hover:bg-brand-700 dark:bg-brand-600 dark:hover:bg-brand-700 shadow-sm';
         const inactiveClass =
             'text-neutral-600 dark:text-neutral-400 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 hover:border-neutral-300 dark:hover:bg-neutral-700 dark:hover:border-neutral-600';
         const disabledClass =
-            'opacity-50 pointer-events-none cursor-not-allowed text-neutral-400 dark:text-neutral-500 border border-neutral-100 dark:border-neutral-800';
+            'pointer-events-none cursor-not-allowed text-neutral-500 dark:text-neutral-400 border border-neutral-100 dark:border-neutral-800';
 
         if (isDisabled || !link?.url) {
             return (

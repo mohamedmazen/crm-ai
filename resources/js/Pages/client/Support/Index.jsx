@@ -7,7 +7,7 @@ import { formatDateTz } from '@/Utils/datetime';
 const STATUS_STYLE_CLS = {
     open:        'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800',
     in_progress: 'bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800',
-    closed:      'bg-neutral-100 text-neutral-500 border border-neutral-200 dark:bg-neutral-700/50 dark:text-neutral-400 dark:border-neutral-600',
+    closed:      'bg-neutral-100 text-neutral-600 border border-neutral-200 dark:bg-neutral-700/50 dark:text-neutral-400 dark:border-neutral-600',
 };
 const STATUS_DOT = {
     open: 'bg-emerald-500',
@@ -16,10 +16,10 @@ const STATUS_DOT = {
 };
 
 const PRIORITY_STYLES = {
-    urgent: { cls: 'text-red-600 dark:text-red-400 font-semibold', dot: 'bg-red-500' },
-    high:   { cls: 'text-orange-500 dark:text-orange-400 font-medium', dot: 'bg-orange-500' },
+    urgent: { cls: 'text-red-700 dark:text-red-400 font-semibold', dot: 'bg-red-500' },
+    high:   { cls: 'text-orange-700 dark:text-orange-400 font-medium', dot: 'bg-orange-500' },
     normal: { cls: 'text-neutral-500 dark:text-neutral-400', dot: 'bg-neutral-400' },
-    low:    { cls: 'text-neutral-400 dark:text-neutral-500', dot: 'bg-neutral-300' },
+    low:    { cls: 'text-neutral-500 dark:text-neutral-400', dot: 'bg-neutral-300' },
 };
 
 function StatCard({ icon: Icon, label, value, iconCls }) {
@@ -78,9 +78,9 @@ export default function SupportIndex({ tickets, stats }) {
                 {stats && (
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         <StatCard icon={Tag}      label={t('support_tickets.total')}       value={stats.total}       iconCls="bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400" />
-                        <StatCard icon={LifeBuoy} label={t('support_tickets.open')}        value={stats.open}        iconCls="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400" />
-                        <StatCard icon={Clock}    label={t('support_tickets.in_progress')} value={stats.in_progress} iconCls="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" />
-                        <StatCard icon={XCircle}  label={t('support_tickets.closed')}      value={stats.closed}      iconCls="bg-neutral-100 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400" />
+                        <StatCard icon={LifeBuoy} label={t('support_tickets.open')}        value={stats.open}        iconCls="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400" />
+                        <StatCard icon={Clock}    label={t('support_tickets.in_progress')} value={stats.in_progress} iconCls="bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400" />
+                        <StatCard icon={XCircle}  label={t('support_tickets.closed')}      value={stats.closed}      iconCls="bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300" />
                     </div>
                 )}
 
@@ -108,7 +108,7 @@ export default function SupportIndex({ tickets, stats }) {
                                             <tr key={ticket.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/30 transition-colors">
                                                 <td className="px-4 py-3.5">
                                                     <div className="flex items-start gap-2">
-                                                        <span className="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5 tabular-nums">#{ticket.id}</span>
+                                                        <span className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 tabular-nums">#{ticket.id}</span>
                                                         <div>
                                                             <Link
                                                                 href={route('client.support.show', ticket.id)}
@@ -116,7 +116,7 @@ export default function SupportIndex({ tickets, stats }) {
                                                             >
                                                                 {ticket.subject}
                                                             </Link>
-                                                            <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5 md:hidden">
+                                                            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 md:hidden">
                                                                 {formatDateTz(ticket.created_at, userTz)}
                                                             </p>
                                                         </div>
@@ -140,7 +140,7 @@ export default function SupportIndex({ tickets, stats }) {
                                                         <span className="text-xs">{ticket.replies_count}</span>
                                                     </div>
                                                 </td>
-                                                <td className="px-4 py-3.5 text-xs text-neutral-400 dark:text-neutral-500 hidden md:table-cell tabular-nums">
+                                                <td className="px-4 py-3.5 text-xs text-neutral-500 dark:text-neutral-400 hidden md:table-cell tabular-nums">
                                                     {formatDateTz(ticket.created_at, userTz)}
                                                 </td>
                                             </tr>
@@ -169,10 +169,10 @@ export default function SupportIndex({ tickets, stats }) {
                     ) : (
                         <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
                             <div className="p-4 bg-neutral-100 dark:bg-neutral-700 rounded-full mb-4">
-                                <LifeBuoy className="h-8 w-8 text-neutral-400 dark:text-neutral-500" />
+                                <LifeBuoy className="h-8 w-8 text-neutral-500 dark:text-neutral-400" />
                             </div>
                             <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">{t('support_tickets.no_tickets_yet')}</h3>
-                            <p className="text-xs text-neutral-400 dark:text-neutral-500 mb-4">{t('support_tickets.no_tickets_desc')}</p>
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-4">{t('support_tickets.no_tickets_desc')}</p>
                             <Link
                                 href={route('client.support.create')}
                                 className="flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium rounded-soft-lg transition-colors"

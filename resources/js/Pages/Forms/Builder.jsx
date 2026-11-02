@@ -146,7 +146,7 @@ export default function FormBuilder({
                     <div className="flex items-center gap-3">
                         <Link
                             href={route('client.sales.forms.index')}
-                            className="rounded-lg p-2 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
+                            className="rounded-lg p-2 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
                         >
                             <ArrowLeft className="h-4 w-4" />
                         </Link>
@@ -155,7 +155,7 @@ export default function FormBuilder({
                                 <h1 className="text-lg font-bold text-neutral-900 dark:text-neutral-100 truncate">
                                     {name || 'Untitled Form'}
                                 </h1>
-                                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-3xs font-bold uppercase tracking-wider ${
                                     status === 'published'
                                         ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
                                         : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400'
@@ -163,7 +163,7 @@ export default function FormBuilder({
                                     {status}
                                 </span>
                             </div>
-                            <p className="text-xs text-neutral-400 font-mono">
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400 font-mono">
                                 {form.public_url}
                             </p>
                         </div>
@@ -220,7 +220,7 @@ export default function FormBuilder({
                         {/* Column 1: Field Palette (3 cols) */}
                         <div className="lg:col-span-3 space-y-4">
                             <div className="rounded-2xl border border-soft bg-white p-4 shadow-xs dark:bg-neutral-900">
-                                <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-3">
+                                <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-3">
                                     {t('forms.add_field') || 'Add Form Elements'}
                                 </h3>
                                 <div className="space-y-1.5">
@@ -232,7 +232,7 @@ export default function FormBuilder({
                                             className="flex w-full items-center justify-between rounded-xl border border-soft/80 bg-neutral-50/70 p-2.5 text-start text-xs font-medium text-neutral-800 transition-all hover:border-brand-500 hover:bg-brand-50/50 dark:border-neutral-800 dark:bg-neutral-800/60 dark:text-neutral-200 dark:hover:border-brand-500"
                                         >
                                             <span>{label}</span>
-                                            <Plus className="h-3.5 w-3.5 text-neutral-400" />
+                                            <Plus className="h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400" />
                                         </button>
                                     ))}
                                 </div>
@@ -240,7 +240,7 @@ export default function FormBuilder({
 
                             {/* Reorder List */}
                             <div className="rounded-2xl border border-soft bg-white p-4 shadow-xs dark:bg-neutral-900">
-                                <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">
+                                <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-2">
                                     {t('forms.field_order') || 'Field Hierarchy'} ({fields.length})
                                 </h3>
                                 <div className="space-y-1">
@@ -317,12 +317,12 @@ export default function FormBuilder({
                                                     disabled
                                                     placeholder={f.placeholder || ''}
                                                     rows="2"
-                                                    className="w-full rounded-lg border-soft bg-neutral-50 p-2 text-xs text-neutral-400 cursor-not-allowed dark:bg-neutral-800"
+                                                    className="w-full rounded-lg border-soft bg-neutral-50 p-2 text-xs text-neutral-500 dark:text-neutral-400 cursor-not-allowed dark:bg-neutral-800"
                                                 />
                                             ) : f.type === 'select' ? (
                                                 <select
                                                     disabled
-                                                    className="w-full rounded-lg border-soft bg-neutral-50 p-2 text-xs text-neutral-400 cursor-not-allowed dark:bg-neutral-800"
+                                                    className="w-full rounded-lg border-soft bg-neutral-50 p-2 text-xs text-neutral-500 dark:text-neutral-400 cursor-not-allowed dark:bg-neutral-800"
                                                 >
                                                     {(f.options || ['Option 1', 'Option 2']).map((opt, oi) => (
                                                         <option key={oi}>{opt}</option>
@@ -330,20 +330,20 @@ export default function FormBuilder({
                                                 </select>
                                             ) : f.type === 'checkbox' ? (
                                                 <div className="flex items-center gap-2">
-                                                    <input type="checkbox" disabled className="rounded text-brand-600" />
-                                                    <span className="text-xs text-neutral-500">{f.placeholder || f.label}</span>
+                                                    <input type="checkbox" disabled className="rounded text-brand-600 dark:text-brand-400" />
+                                                    <span className="text-xs text-neutral-500 dark:text-neutral-400">{f.placeholder || f.label}</span>
                                                 </div>
                                             ) : (
                                                 <input
                                                     type={f.type === 'number' ? 'number' : f.type === 'date' ? 'date' : 'text'}
                                                     disabled
                                                     placeholder={f.placeholder || ''}
-                                                    className="w-full rounded-lg border-soft bg-neutral-50 p-2 text-xs text-neutral-400 cursor-not-allowed dark:bg-neutral-800"
+                                                    className="w-full rounded-lg border-soft bg-neutral-50 p-2 text-xs text-neutral-500 dark:text-neutral-400 cursor-not-allowed dark:bg-neutral-800"
                                                 />
                                             )}
 
                                             {f.maps_to && (
-                                                <div className="mt-1 flex items-center gap-1 text-[10px] text-brand-600 dark:text-brand-400">
+                                                <div className="mt-1 flex items-center gap-1 text-3xs text-brand-600 dark:text-brand-400">
                                                     <span>&rarr; maps to: <strong className="font-mono">{f.maps_to}</strong></span>
                                                 </div>
                                             )}
@@ -370,7 +370,7 @@ export default function FormBuilder({
                                 <>
                                     <div className="flex items-center justify-between border-b border-soft pb-3">
                                         <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 flex items-center gap-1.5">
-                                            <Sliders className="h-4 w-4 text-brand-600" />
+                                            <Sliders className="h-4 w-4 text-brand-600 dark:text-brand-400" />
                                             {t('forms.field_settings') || 'Field Properties'}
                                         </h3>
                                         <button
@@ -460,7 +460,7 @@ export default function FormBuilder({
                                                 id="field_required"
                                                 checked={Boolean(activeField.required)}
                                                 onChange={(e) => handleUpdateField(selectedFieldIndex, 'required', e.target.checked)}
-                                                className="rounded text-brand-600 focus:ring-brand-500"
+                                                className="rounded text-brand-600 dark:text-brand-400 focus:ring-brand-500"
                                             />
                                             <label htmlFor="field_required" className="font-medium text-neutral-700 dark:text-neutral-300">
                                                 {t('forms.is_required') || 'Required Field'}
@@ -469,7 +469,7 @@ export default function FormBuilder({
                                     </div>
                                 </>
                             ) : (
-                                <p className="text-center text-xs text-neutral-400 py-6">
+                                <p className="text-center text-xs text-neutral-500 dark:text-neutral-400 py-6">
                                     {t('forms.select_field_hint') || 'Select a field from the preview or palette to configure properties.'}
                                 </p>
                             )}
@@ -592,7 +592,7 @@ export default function FormBuilder({
                                         name="thank_you_type"
                                         checked={thankYouType === 'message'}
                                         onChange={() => setThankYouType('message')}
-                                        className="text-brand-600 focus:ring-brand-500"
+                                        className="text-brand-600 dark:text-brand-400 focus:ring-brand-500"
                                     />
                                     <span>{t('forms.show_message') || 'Display Thank-You Message'}</span>
                                 </label>
@@ -602,7 +602,7 @@ export default function FormBuilder({
                                         name="thank_you_type"
                                         checked={thankYouType === 'redirect'}
                                         onChange={() => setThankYouType('redirect')}
-                                        className="text-brand-600 focus:ring-brand-500"
+                                        className="text-brand-600 dark:text-brand-400 focus:ring-brand-500"
                                     />
                                     <span>{t('forms.redirect_url') || 'Redirect to External URL'}</span>
                                 </label>
@@ -641,7 +641,7 @@ export default function FormBuilder({
                                 <option value="turnstile">{t('forms.spam_turnstile') || 'Cloudflare Turnstile'}</option>
                                 <option value="recaptcha">{t('forms.spam_recaptcha') || 'Google reCAPTCHA'}</option>
                             </select>
-                            <p className="mt-1 text-[11px] text-neutral-500 dark:text-neutral-400">
+                            <p className="mt-1 text-2xs text-neutral-500 dark:text-neutral-400">
                                 {t('forms.spam_protection_hint') || 'CAPTCHA provider keys are configured on the server.'}
                             </p>
                         </div>
@@ -681,7 +681,7 @@ export default function FormBuilder({
                                     id="show_title"
                                     checked={showTitle}
                                     onChange={(e) => setShowTitle(e.target.checked)}
-                                    className="rounded text-brand-600 focus:ring-brand-500"
+                                    className="rounded text-brand-600 dark:text-brand-400 focus:ring-brand-500"
                                 />
                                 <label htmlFor="show_title" className="font-medium text-neutral-700 dark:text-neutral-300">
                                     {t('forms.show_header') || 'Show Title in Form'}

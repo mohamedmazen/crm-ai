@@ -33,7 +33,7 @@ export default function CreateWidget() {
                 {/* Breadcrumb */}
                 <div className="flex items-center gap-2">
                     <Link href={route('client.whatsapp.widget.index')}
-                        className="flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 transition">
+                        className="flex items-center gap-1.5 text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition">
                         <ChevronLeft className="h-4 w-4" /> {t('whatsapp.widget_title')}
                     </Link>
                     <span className="text-neutral-300 dark:text-neutral-600">/</span>
@@ -123,7 +123,7 @@ export default function CreateWidget() {
                                                         <input type="radio" name="position" value={opt.v} checked={data.position === opt.v}
                                                             onChange={() => setData('position', opt.v)} className="sr-only" />
                                                         <span className={`text-sm font-semibold ${data.position === opt.v ? 'text-brand-700 dark:text-brand-400' : 'text-neutral-700 dark:text-neutral-300'}`}>{t(opt.l)}</span>
-                                                        <span className="text-xs text-neutral-500">{t(opt.d)}</span>
+                                                        <span className="text-xs text-neutral-500 dark:text-neutral-400">{t(opt.d)}</span>
                                                     </label>
                                                 ))}
                                             </div>
@@ -152,7 +152,7 @@ export default function CreateWidget() {
                             </div>
                             {/* Quick summary */}
                             <div className="rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-4 space-y-2">
-                                <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">{t('whatsapp.widget_summary')}</p>
+                                <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wide">{t('whatsapp.widget_summary')}</p>
                                 <dl className="space-y-1.5 text-xs">
                                     <SummaryRow label={t('whatsapp.widget_summary_phone')} value={data.display_phone || '—'} />
                                     <SummaryRow label={t('whatsapp.widget_summary_position')} value={data.position.replace('_', ' ')} />
@@ -190,7 +190,7 @@ function SectionHeader({ title, description }) {
     return (
         <div className="pb-3 border-b border-neutral-100 dark:border-neutral-800">
             <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">{title}</h2>
-            <p className="text-sm text-neutral-500 mt-0.5">{description}</p>
+            <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">{description}</p>
         </div>
     );
 }
@@ -198,7 +198,7 @@ function SectionHeader({ title, description }) {
 function SummaryRow({ label, value }) {
     return (
         <div className="flex justify-between gap-2">
-            <dt className="text-neutral-500">{label}</dt>
+            <dt className="text-neutral-500 dark:text-neutral-400">{label}</dt>
             <dd className="text-neutral-800 dark:text-neutral-200 font-medium capitalize truncate">{value}</dd>
         </div>
     );

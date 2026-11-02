@@ -85,13 +85,13 @@ function CreateSubscriptionModal({ show, onClose, plans }) {
                         {selectedUser ? (
                             <div className="flex items-center justify-between rounded-lg border border-neutral-300 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 px-3 py-2">
                                 <span className="text-sm text-neutral-900 dark:text-neutral-100">{selectedUser.name} ({selectedUser.email})</span>
-                                <button type="button" onClick={clearUser} className="p-0.5 text-neutral-400 hover:text-coral-600">
+                                <button type="button" onClick={clearUser} className="p-0.5 text-neutral-500 dark:text-neutral-400 hover:text-coral-600">
                                     <X className="h-4 w-4" />
                                 </button>
                             </div>
                         ) : (
                             <div className="relative">
-                                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500 dark:text-neutral-400" />
                                 <input
                                     type="text"
                                     value={query}
@@ -101,7 +101,7 @@ function CreateSubscriptionModal({ show, onClose, plans }) {
                                 />
                                 {(results.length > 0 || searching) && (
                                     <div className="absolute z-10 mt-1 w-full overflow-hidden rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 shadow-soft-lg">
-                                        {searching && <div className="px-3 py-2 text-sm text-neutral-400">{t('common.loading')}</div>}
+                                        {searching && <div className="px-3 py-2 text-sm text-neutral-500 dark:text-neutral-400">{t('common.loading')}</div>}
                                         {results.map(u => (
                                             <button
                                                 key={u.id}
@@ -117,7 +117,7 @@ function CreateSubscriptionModal({ show, onClose, plans }) {
                                 )}
                             </div>
                         )}
-                        {errors.user_id && <p className="text-coral-600 text-xs mt-1">{errors.user_id}</p>}
+                        {errors.user_id && <p className="text-coral-600 dark:text-coral-400 text-xs mt-1">{errors.user_id}</p>}
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -130,7 +130,7 @@ function CreateSubscriptionModal({ show, onClose, plans }) {
                             >
                                 {plans.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                             </select>
-                            {errors.plan_id && <p className="text-coral-600 text-xs mt-1">{errors.plan_id}</p>}
+                            {errors.plan_id && <p className="text-coral-600 dark:text-coral-400 text-xs mt-1">{errors.plan_id}</p>}
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('admin.subscriptions_billing_cycle')}</label>
@@ -162,7 +162,7 @@ function CreateSubscriptionModal({ show, onClose, plans }) {
                                     onChange={v => setData('trial_ends_at', v)}
                                     error={!!errors.trial_ends_at}
                                 />
-                                {errors.trial_ends_at && <p className="text-coral-600 text-xs mt-1">{errors.trial_ends_at}</p>}
+                                {errors.trial_ends_at && <p className="text-coral-600 dark:text-coral-400 text-xs mt-1">{errors.trial_ends_at}</p>}
                             </div>
                         )}
                         <div>
@@ -171,7 +171,7 @@ function CreateSubscriptionModal({ show, onClose, plans }) {
                                 value={data.starts_at}
                                 onChange={v => setData('starts_at', v)}
                             />
-                            <p className="text-xs text-neutral-400 mt-1">{t('admin.subscriptions_starts_at_hint')}</p>
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">{t('admin.subscriptions_starts_at_hint')}</p>
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('admin.subscriptions_ends_at')}</label>
@@ -179,7 +179,7 @@ function CreateSubscriptionModal({ show, onClose, plans }) {
                                 value={data.ends_at}
                                 onChange={v => setData('ends_at', v)}
                             />
-                            <p className="text-xs text-neutral-400 mt-1">{t('admin.subscriptions_ends_at_hint')}</p>
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">{t('admin.subscriptions_ends_at_hint')}</p>
                         </div>
                     </div>
                 </Modal.Body>

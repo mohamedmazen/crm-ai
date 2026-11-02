@@ -39,7 +39,7 @@ export default function Sessions({ sessions = [] }) {
                                             : 'border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/50'
                                     }`}
                                 >
-                                    <Monitor className="h-5 w-5 mt-0.5 text-neutral-400 shrink-0" />
+                                    <Monitor className="h-5 w-5 mt-0.5 text-neutral-500 dark:text-neutral-400 shrink-0" />
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200 truncate">
                                             {session.user_agent || t('profile.unknown_device')}
@@ -50,7 +50,7 @@ export default function Sessions({ sessions = [] }) {
                                             <span>·</span>
                                             <span>{session.last_active_at}</span>
                                             {session.is_current && (
-                                                <span className="text-blue-600 dark:text-blue-400 font-medium">{t('profile.this_device')}</span>
+                                                <span className="text-blue-700 dark:text-blue-400 font-medium">{t('profile.this_device')}</span>
                                             )}
                                         </div>
                                     </div>

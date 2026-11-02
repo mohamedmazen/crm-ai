@@ -135,7 +135,7 @@ export default function QuoteForm({
             <div className="mx-auto max-w-5xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <Link href={route('client.sales.quotes.index')} className="rounded-lg p-2 text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                        <Link href={route('client.sales.quotes.index')} className="rounded-lg p-2 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800">
                             <ArrowLeft className="h-4 w-4" />
                         </Link>
                         <div>
@@ -147,7 +147,7 @@ export default function QuoteForm({
                     </div>
 
                     {editing && (
-                        <span className="text-sm font-medium text-neutral-500">{quote.number}</span>
+                        <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400">{quote.number}</span>
                     )}
                 </div>
 
@@ -175,7 +175,7 @@ export default function QuoteForm({
                                         <option key={lead.id} value={lead.id}>{lead.name}{lead.email ? ` · ${lead.email}` : ''}</option>
                                     ))}
                                 </select>
-                                {form.errors.lead_id && <p className="mt-1 text-xs text-red-600">{form.errors.lead_id}</p>}
+                                {form.errors.lead_id && <p className="mt-1 text-xs text-red-700 dark:text-red-400">{form.errors.lead_id}</p>}
                             </div>
 
                             <div>
@@ -200,7 +200,7 @@ export default function QuoteForm({
                                     onChange={(event) => form.setData('valid_until', event.target.value)}
                                     className="mt-1 w-full rounded-lg border-soft bg-white p-2.5 text-sm dark:bg-neutral-800 dark:text-neutral-100"
                                 />
-                                {form.errors.valid_until && <p className="mt-1 text-xs text-red-600">{form.errors.valid_until}</p>}
+                                {form.errors.valid_until && <p className="mt-1 text-xs text-red-700 dark:text-red-400">{form.errors.valid_until}</p>}
                             </div>
 
                             <div>
@@ -226,14 +226,14 @@ export default function QuoteForm({
                             </Button>
                         </div>
 
-                        {form.errors.items && <p className="mb-2 text-xs text-red-600">{form.errors.items}</p>}
+                        {form.errors.items && <p className="mb-2 text-xs text-red-700 dark:text-red-400">{form.errors.items}</p>}
 
                         <div className="space-y-3">
                             {form.data.items.map((item, index) => (
                                 <div key={index} className="rounded-xl border border-neutral-100 p-3 dark:border-neutral-800">
                                     <div className="grid gap-2 sm:grid-cols-12">
                                         <div className="sm:col-span-4">
-                                            <label className="block text-[11px] font-medium text-neutral-500">{t('quotes.item_product')}</label>
+                                            <label className="block text-2xs font-medium text-neutral-500 dark:text-neutral-400">{t('quotes.item_product')}</label>
                                             <select
                                                 value={productChoice[index] ?? item.product_id ?? ''}
                                                 onChange={(event) => pickProduct(index, event.target.value)}
@@ -247,19 +247,19 @@ export default function QuoteForm({
                                         </div>
 
                                         <div className="sm:col-span-4">
-                                            <label className="block text-[11px] font-medium text-neutral-500">{t('quotes.item_description')} *</label>
+                                            <label className="block text-2xs font-medium text-neutral-500 dark:text-neutral-400">{t('quotes.item_description')} *</label>
                                             <input
                                                 value={item.description}
                                                 onChange={(event) => setItem(index, 'description', event.target.value)}
                                                 className="mt-1 w-full rounded-lg border-soft bg-white p-2 text-sm dark:bg-neutral-800 dark:text-neutral-100"
                                             />
                                             {form.errors[`items.${index}.description`] && (
-                                                <p className="mt-1 text-[11px] text-red-600">{form.errors[`items.${index}.description`]}</p>
+                                                <p className="mt-1 text-2xs text-red-700 dark:text-red-400">{form.errors[`items.${index}.description`]}</p>
                                             )}
                                         </div>
 
                                         <div className="sm:col-span-1">
-                                            <label className="block text-[11px] font-medium text-neutral-500">{t('quotes.item_qty')}</label>
+                                            <label className="block text-2xs font-medium text-neutral-500 dark:text-neutral-400">{t('quotes.item_qty')}</label>
                                             <input
                                                 type="number"
                                                 min="0.01"
@@ -271,7 +271,7 @@ export default function QuoteForm({
                                         </div>
 
                                         <div className="sm:col-span-1">
-                                            <label className="block text-[11px] font-medium text-neutral-500">{t('quotes.item_price')}</label>
+                                            <label className="block text-2xs font-medium text-neutral-500 dark:text-neutral-400">{t('quotes.item_price')}</label>
                                             <input
                                                 type="number"
                                                 min="0"
@@ -283,7 +283,7 @@ export default function QuoteForm({
                                         </div>
 
                                         <div className="sm:col-span-1">
-                                            <label className="block text-[11px] font-medium text-neutral-500">{t('quotes.item_tax')}</label>
+                                            <label className="block text-2xs font-medium text-neutral-500 dark:text-neutral-400">{t('quotes.item_tax')}</label>
                                             <input
                                                 type="number"
                                                 min="0"
@@ -300,7 +300,7 @@ export default function QuoteForm({
                                                 type="button"
                                                 onClick={() => removeItem(index)}
                                                 disabled={form.data.items.length === 1}
-                                                className="rounded-lg p-2 text-neutral-400 hover:bg-red-50 hover:text-red-600 disabled:opacity-30 dark:hover:bg-red-900/30"
+                                                className="rounded-lg p-2 text-neutral-500 dark:text-neutral-400 hover:bg-red-50 hover:text-red-600 disabled:opacity-30 dark:hover:bg-red-900/30"
                                                 title={t('quotes.remove_item')}
                                             >
                                                 <Trash2 className="h-4 w-4" />
@@ -336,7 +336,7 @@ export default function QuoteForm({
                                         className="w-1/2 rounded-lg border-soft bg-white p-2.5 text-sm disabled:opacity-40 dark:bg-neutral-800 dark:text-neutral-100"
                                     />
                                 </div>
-                                {form.errors.discount_value && <p className="mt-1 text-xs text-red-600">{form.errors.discount_value}</p>}
+                                {form.errors.discount_value && <p className="mt-1 text-xs text-red-700 dark:text-red-400">{form.errors.discount_value}</p>}
                             </div>
 
                             <div>
@@ -364,15 +364,15 @@ export default function QuoteForm({
                             <h2 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">{t('quotes.summary')}</h2>
                             <dl className="space-y-2 text-sm">
                                 <div className="flex justify-between">
-                                    <dt className="text-neutral-500">{t('quotes.subtotal')}</dt>
+                                    <dt className="text-neutral-500 dark:text-neutral-400">{t('quotes.subtotal')}</dt>
                                     <dd className="tabular-nums text-neutral-900 dark:text-neutral-100">{totals.subtotal}</dd>
                                 </div>
                                 <div className="flex justify-between">
-                                    <dt className="text-neutral-500">{t('quotes.discount')}</dt>
+                                    <dt className="text-neutral-500 dark:text-neutral-400">{t('quotes.discount')}</dt>
                                     <dd className="tabular-nums text-neutral-900 dark:text-neutral-100">-{totals.discount}</dd>
                                 </div>
                                 <div className="flex justify-between">
-                                    <dt className="text-neutral-500">{t('quotes.tax')}</dt>
+                                    <dt className="text-neutral-500 dark:text-neutral-400">{t('quotes.tax')}</dt>
                                     <dd className="tabular-nums text-neutral-900 dark:text-neutral-100">{totals.tax}</dd>
                                 </div>
                                 <div className="flex justify-between border-t border-soft pt-2 text-base font-bold">

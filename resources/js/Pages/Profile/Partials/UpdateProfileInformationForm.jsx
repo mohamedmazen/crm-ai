@@ -88,7 +88,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                         {processing ? t('common.saving') : t('profile.save_changes')}
                     </Button>
                     {saved && (
-                        <p className="text-sm text-green-600 dark:text-green-400">{t('profile.saved')}</p>
+                        <p className="text-sm text-green-700 dark:text-green-400">{t('profile.saved')}</p>
                     )}
                 </div>
             </form>

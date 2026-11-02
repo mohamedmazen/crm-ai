@@ -218,7 +218,7 @@ export default function CallsIndex({
 
                 <form onSubmit={applyFilters} className="flex flex-wrap items-center gap-2">
                     <div className="relative min-w-[220px] flex-1">
-                        <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                        <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500 dark:text-neutral-400" />
                         <input
                             type="search"
                             value={query}
@@ -231,6 +231,7 @@ export default function CallsIndex({
                     <select
                         value={status}
                         onChange={(event) => setStatus(event.target.value)}
+                        aria-label={t('calls.all_statuses') || 'All statuses'}
                         className="rounded-lg border-soft bg-white px-3 py-2 text-sm dark:bg-neutral-900 dark:text-neutral-100"
                     >
                         <option value="">{t('calls.all_statuses') || 'All statuses'}</option>
@@ -242,6 +243,7 @@ export default function CallsIndex({
                     <select
                         value={direction}
                         onChange={(event) => setDirection(event.target.value)}
+                        aria-label={t('calls.all_directions') || 'All directions'}
                         className="rounded-lg border-soft bg-white px-3 py-2 text-sm dark:bg-neutral-900 dark:text-neutral-100"
                     >
                         <option value="">{t('calls.all_directions') || 'All directions'}</option>
@@ -255,12 +257,12 @@ export default function CallsIndex({
                 <div className="overflow-hidden rounded-2xl border border-soft bg-white shadow-xs dark:bg-neutral-900">
                     {calls.data.length === 0 ? (
                         <div className="py-16 text-center">
-                            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-neutral-100 text-neutral-400 dark:bg-neutral-800">
+                            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-neutral-100 text-neutral-600 dark:text-neutral-400 dark:bg-neutral-800">
                                 <PhoneCall className="h-7 w-7" />
                             </div>
-                            <h3 className="mt-4 text-base font-bold text-neutral-900 dark:text-neutral-100">
+                            <h2 className="mt-4 text-base font-bold text-neutral-900 dark:text-neutral-100">
                                 {t('calls.empty_title') || 'No calls yet'}
-                            </h3>
+                            </h2>
                             <p className="mx-auto mt-1 max-w-sm text-sm text-neutral-500 dark:text-neutral-400">
                                 {t('calls.empty_subtitle') || 'Log a call manually, or connect your provider and call a lead in one click.'}
                             </p>
@@ -290,15 +292,15 @@ export default function CallsIndex({
                                                 {call.lead ? (
                                                     <div className="min-w-0">
                                                         <div className="truncate font-medium text-neutral-900 dark:text-neutral-100">{call.lead.name}</div>
-                                                        <div className="truncate text-[11px] text-neutral-400">{call.lead.phone}</div>
+                                                        <div className="truncate text-2xs text-neutral-500 dark:text-neutral-400">{call.lead.phone}</div>
                                                         {call.summary && (
-                                                            <p className="mt-0.5 line-clamp-2 max-w-xs text-[11px] text-neutral-500 dark:text-neutral-400">
+                                                            <p className="mt-0.5 line-clamp-2 max-w-xs text-2xs text-neutral-500 dark:text-neutral-400">
                                                                 {call.summary}
                                                             </p>
                                                         )}
                                                     </div>
                                                 ) : (
-                                                    <span className="text-neutral-400">—</span>
+                                                    <span className="text-neutral-500 dark:text-neutral-400">—</span>
                                                 )}
                                             </td>
                                             <td className="px-4 py-4">
@@ -318,7 +320,7 @@ export default function CallsIndex({
                                                 {durationLabel(call.duration_secs)}
                                             </td>
                                             <td className="px-4 py-4">
-                                                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold capitalize ${statusStyles[call.status] || statusStyles.no_answer}`}>
+                                                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-2xs font-semibold capitalize ${statusStyles[call.status] || statusStyles.no_answer}`}>
                                                     {call.status.replace('_', ' ')}
                                                 </span>
                                             </td>
@@ -344,7 +346,7 @@ export default function CallsIndex({
                                                             type="button"
                                                             onClick={() => setSummaryCall(call)}
                                                             className={`rounded-lg p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 ${
-                                                                call.summary ? 'text-brand-600 dark:text-brand-400' : 'text-neutral-500'
+                                                                call.summary ? 'text-brand-600 dark:text-brand-400' : 'text-neutral-500 dark:text-neutral-400'
                                                             }`}
                                                             title={t('calls.summary_title')}
                                                         >
@@ -358,7 +360,7 @@ export default function CallsIndex({
                                                                 setCallLeadId(call.lead.id);
                                                                 setShowCall(true);
                                                             }}
-                                                            className="rounded-lg p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-brand-600 dark:hover:bg-neutral-800"
+                                                            className="rounded-lg p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-brand-600 dark:hover:bg-neutral-800"
                                                             title={t('calls.call_lead') || 'Call lead'}
                                                         >
                                                             <PhoneCall className="h-4 w-4" />
@@ -367,7 +369,7 @@ export default function CallsIndex({
                                                     <button
                                                         type="button"
                                                         onClick={() => setDeleting(call)}
-                                                        className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400"
+                                                        className="rounded-lg p-1.5 text-neutral-500 dark:text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400"
                                                         title={t('common.delete') || 'Delete'}
                                                     >
                                                         <Trash2 className="h-4 w-4" />
@@ -410,7 +412,7 @@ export default function CallsIndex({
                             <Plus className="h-5 w-5 text-brand-600 dark:text-brand-400" />
                             {t('calls.log_call') || 'Log call'}
                         </h2>
-                        <button type="button" onClick={() => setShowLog(false)} className="text-neutral-400 hover:text-neutral-600">&times;</button>
+                        <button type="button" onClick={() => setShowLog(false)} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600">&times;</button>
                     </div>
 
                     <div>
@@ -427,7 +429,7 @@ export default function CallsIndex({
                                 <option key={lead.id} value={lead.id}>{lead.name} · {lead.phone}</option>
                             ))}
                         </select>
-                        {errors.lead_id && <p className="mt-1 text-xs text-red-600">{errors.lead_id}</p>}
+                        {errors.lead_id && <p className="mt-1 text-xs text-red-700 dark:text-red-400">{errors.lead_id}</p>}
                     </div>
 
                     <div className="grid gap-3 sm:grid-cols-2">
@@ -466,7 +468,7 @@ export default function CallsIndex({
                             {t('calls.duration_minutes') || 'Duration (minutes)'}
                         </label>
                         <div className="relative mt-1">
-                            <Clock className="pointer-events-none absolute start-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-400" />
+                            <Clock className="pointer-events-none absolute start-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-500 dark:text-neutral-400" />
                             <input
                                 type="number"
                                 min="0"
@@ -521,7 +523,7 @@ export default function CallsIndex({
                             <PhoneCall className="h-5 w-5 text-brand-600 dark:text-brand-400" />
                             {t('calls.call_lead') || 'Call lead'}
                         </h2>
-                        <button type="button" onClick={() => setShowCall(false)} className="text-neutral-400 hover:text-neutral-600">&times;</button>
+                        <button type="button" onClick={() => setShowCall(false)} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600">&times;</button>
                     </div>
 
                     {!provider.connected && (
@@ -544,7 +546,7 @@ export default function CallsIndex({
                                 <option key={lead.id} value={lead.id}>{lead.name} · {lead.phone}</option>
                             ))}
                         </select>
-                        {errors.lead_id && <p className="mt-1 text-xs text-red-600">{errors.lead_id}</p>}
+                        {errors.lead_id && <p className="mt-1 text-xs text-red-700 dark:text-red-400">{errors.lead_id}</p>}
                     </div>
 
                     <div className="flex justify-end gap-2 border-t border-soft pt-4">
@@ -567,7 +569,7 @@ export default function CallsIndex({
                             <Settings className="h-5 w-5 text-brand-600 dark:text-brand-400" />
                             {t('calls.provider_settings') || 'Call provider'}
                         </h2>
-                        <button type="button" onClick={() => setShowSettings(false)} className="text-neutral-400 hover:text-neutral-600">&times;</button>
+                        <button type="button" onClick={() => setShowSettings(false)} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600">&times;</button>
                     </div>
 
                     <p className="rounded-lg bg-neutral-50 p-3 text-xs text-neutral-600 dark:bg-neutral-800/60 dark:text-neutral-300">
@@ -587,7 +589,7 @@ export default function CallsIndex({
                                 <option key={value} value={value}>{value}</option>
                             ))}
                         </select>
-                        {settingsForm.errors.provider && <p className="mt-1 text-xs text-red-600">{settingsForm.errors.provider}</p>}
+                        {settingsForm.errors.provider && <p className="mt-1 text-xs text-red-700 dark:text-red-400">{settingsForm.errors.provider}</p>}
                     </div>
 
                     <div>
@@ -601,7 +603,7 @@ export default function CallsIndex({
                             placeholder="+15550001111"
                             className="mt-1 w-full rounded-lg border-soft bg-white p-2.5 text-sm dark:bg-neutral-800 dark:text-neutral-100"
                         />
-                        {settingsForm.errors.caller_id && <p className="mt-1 text-xs text-red-600">{settingsForm.errors.caller_id}</p>}
+                        {settingsForm.errors.caller_id && <p className="mt-1 text-xs text-red-700 dark:text-red-400">{settingsForm.errors.caller_id}</p>}
                     </div>
 
                     {activeFields.map((field) => {
@@ -623,8 +625,8 @@ export default function CallsIndex({
                                     autoComplete="off"
                                     className="mt-1 w-full rounded-lg border-soft bg-white p-2.5 text-sm dark:bg-neutral-800 dark:text-neutral-100"
                                 />
-                                {field.hint && <p className="mt-1 text-[11px] text-neutral-400">{field.hint}</p>}
-                                {settingsForm.errors[errorKey] && <p className="mt-1 text-xs text-red-600">{settingsForm.errors[errorKey]}</p>}
+                                {field.hint && <p className="mt-1 text-2xs text-neutral-500 dark:text-neutral-400">{field.hint}</p>}
+                                {settingsForm.errors[errorKey] && <p className="mt-1 text-xs text-red-700 dark:text-red-400">{settingsForm.errors[errorKey]}</p>}
                             </div>
                         );
                     })}
@@ -648,7 +650,7 @@ export default function CallsIndex({
                             <Sparkles className="h-5 w-5 text-brand-600 dark:text-brand-400" />
                             {t('calls.summary_title')}
                         </h2>
-                        <button type="button" onClick={() => setSummaryCall(null)} className="text-neutral-400 hover:text-neutral-600">&times;</button>
+                        <button type="button" onClick={() => setSummaryCall(null)} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600">&times;</button>
                     </div>
 
                     {summaryCall && (

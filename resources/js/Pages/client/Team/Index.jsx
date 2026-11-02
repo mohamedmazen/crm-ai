@@ -143,20 +143,20 @@ export default function TeamIndex({ users = [], client = {}, invitations = [] })
                         <table className="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700">
                             <thead className="bg-neutral-50 dark:bg-neutral-800">
                                 <tr>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 uppercase">
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">
                                         {t('client.name') || 'Name'}
                                     </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 uppercase">
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">
                                         {t('client.email') || 'Email'}
                                     </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 uppercase">
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">
                                         {t('client.role') || 'Role'}
                                     </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 uppercase">
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">
                                         {t('client.status') || 'Status'}
                                     </th>
                                     {(
-                                        <th className="px-4 py-3 text-right text-xs font-medium text-neutral-500 uppercase">
+                                        <th className="px-4 py-3 text-right text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">
                                             {t('client.actions') || 'Actions'}
                                         </th>
                                     )}
@@ -178,7 +178,7 @@ export default function TeamIndex({ users = [], client = {}, invitations = [] })
                                         </td>
                                         <td className="px-4 py-3">
                                             <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                                                u.status === STATUS_ACTIVE ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200' : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400'
+                                                u.status === STATUS_ACTIVE ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200' : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300'
                                             }`}>
                                                 {u.status}
                                             </span>
@@ -188,7 +188,7 @@ export default function TeamIndex({ users = [], client = {}, invitations = [] })
                                                 <button
                                                     type="button"
                                                     onClick={() => openEdit(u)}
-                                                    className="rounded p-1.5 text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-neutral-700 dark:hover:text-neutral-200 mr-1"
+                                                    className="rounded p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-neutral-700 dark:hover:text-neutral-200 mr-1"
                                                     aria-label={t('client.edit') || 'Edit'}
                                                 >
                                                     <Pencil className="h-4 w-4" />
@@ -196,7 +196,7 @@ export default function TeamIndex({ users = [], client = {}, invitations = [] })
                                                 <button
                                                     type="button"
                                                     onClick={() => setDeleteConfirm(u)}
-                                                    className="rounded p-1.5 text-neutral-500 hover:bg-coral-50 dark:hover:bg-coral-900/20 hover:text-coral-600"
+                                                    className="rounded p-1.5 text-neutral-500 dark:text-neutral-400 hover:bg-coral-50 dark:hover:bg-coral-900/20 hover:text-coral-600"
                                                     aria-label={t('client.remove') || 'Remove'}
                                                 >
                                                     <Trash2 className="h-4 w-4" />
@@ -209,7 +209,7 @@ export default function TeamIndex({ users = [], client = {}, invitations = [] })
                         </table>
                     ) : (
                         <div className="px-6 py-12 text-center text-neutral-500 dark:text-neutral-400">
-                            <Users className="mx-auto h-12 w-12 text-neutral-400 mb-3" />
+                            <Users className="mx-auto h-12 w-12 text-neutral-500 dark:text-neutral-400 mb-3" />
                             <p>{t('client.no_team_members') || 'No team members yet'}</p>
                             {(
                                 <Button variant="primary" onClick={openAdd} className="mt-3">
@@ -224,7 +224,7 @@ export default function TeamIndex({ users = [], client = {}, invitations = [] })
                 {invitations.length > 0 && (
                     <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800/50 overflow-hidden">
                         <div className="px-4 py-3 border-b border-neutral-100 dark:border-neutral-700">
-                            <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300">{t('team.pending_invitations')}</h3>
+                            <h2 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300">{t('team.pending_invitations')}</h2>
                         </div>
                         <ul className="divide-y divide-neutral-100 dark:divide-neutral-700">
                             {invitations.map(inv => (
@@ -235,7 +235,7 @@ export default function TeamIndex({ users = [], client = {}, invitations = [] })
                                     </div>
                                     <button
                                         onClick={() => revokeInvitation(inv.id)}
-                                        className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-400 hover:text-coral-500 transition"
+                                        className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-600 dark:text-neutral-400 hover:text-coral-500 transition"
                                         title={t('team.revoke_invitation')}
                                     >
                                         <X className="h-4 w-4" />
@@ -261,7 +261,7 @@ export default function TeamIndex({ users = [], client = {}, invitations = [] })
                                     required
                                     autoFocus
                                 />
-                                {inviteForm.errors.email && <p className="text-coral-600 text-xs mt-1">{inviteForm.errors.email}</p>}
+                                {inviteForm.errors.email && <p className="text-coral-600 dark:text-coral-400 text-xs mt-1">{inviteForm.errors.email}</p>}
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('client.role') || 'Role'}</label>
@@ -294,17 +294,17 @@ export default function TeamIndex({ users = [], client = {}, invitations = [] })
                                 <div>
                                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('client.name') || 'Name'}</label>
                                     <input type="text" value={addForm.data.name} onChange={e => addForm.setData('name', e.target.value)} className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm" required />
-                                    {addForm.errors.name && <p className="text-coral-600 text-xs mt-1">{addForm.errors.name}</p>}
+                                    {addForm.errors.name && <p className="text-coral-600 dark:text-coral-400 text-xs mt-1">{addForm.errors.name}</p>}
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('client.email') || 'Email'}</label>
                                     <input type="email" value={addForm.data.email} onChange={e => addForm.setData('email', e.target.value)} className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm" required />
-                                    {addForm.errors.email && <p className="text-coral-600 text-xs mt-1">{addForm.errors.email}</p>}
+                                    {addForm.errors.email && <p className="text-coral-600 dark:text-coral-400 text-xs mt-1">{addForm.errors.email}</p>}
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('client.password') || 'Password'}</label>
                                     <input type="password" value={addForm.data.password} onChange={e => addForm.setData('password', e.target.value)} className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm" required />
-                                    {addForm.errors.password && <p className="text-coral-600 text-xs mt-1">{addForm.errors.password}</p>}
+                                    {addForm.errors.password && <p className="text-coral-600 dark:text-coral-400 text-xs mt-1">{addForm.errors.password}</p>}
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('client.password_confirmation') || 'Confirm password'}</label>
@@ -334,17 +334,17 @@ export default function TeamIndex({ users = [], client = {}, invitations = [] })
                                 <div>
                                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('client.name') || 'Name'}</label>
                                     <input type="text" value={editForm.data.name} onChange={e => editForm.setData('name', e.target.value)} className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm" required />
-                                    {editForm.errors.name && <p className="text-coral-600 text-xs mt-1">{editForm.errors.name}</p>}
+                                    {editForm.errors.name && <p className="text-coral-600 dark:text-coral-400 text-xs mt-1">{editForm.errors.name}</p>}
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('client.email') || 'Email'}</label>
                                     <input type="email" value={editForm.data.email} onChange={e => editForm.setData('email', e.target.value)} className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm" required />
-                                    {editForm.errors.email && <p className="text-coral-600 text-xs mt-1">{editForm.errors.email}</p>}
+                                    {editForm.errors.email && <p className="text-coral-600 dark:text-coral-400 text-xs mt-1">{editForm.errors.email}</p>}
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('team.password_leave_blank')}</label>
                                     <input type="password" value={editForm.data.password} onChange={e => editForm.setData('password', e.target.value)} className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm" />
-                                    {editForm.errors.password && <p className="text-coral-600 text-xs mt-1">{editForm.errors.password}</p>}
+                                    {editForm.errors.password && <p className="text-coral-600 dark:text-coral-400 text-xs mt-1">{editForm.errors.password}</p>}
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('client.role') || 'Role'}</label>

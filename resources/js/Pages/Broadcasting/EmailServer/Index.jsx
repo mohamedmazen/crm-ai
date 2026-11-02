@@ -65,14 +65,14 @@ function SmtpSetupGuide() {
                 onClick={() => setOpen(v => !v)}
                 className="flex items-center gap-2 w-full text-left"
             >
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 shrink-0">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 shrink-0">
                     <BookOpen className="h-4 w-4" />
                 </div>
                 <div className="flex-1">
                     <span className="font-semibold text-sm text-neutral-900 dark:text-neutral-100">{t('email_server.setup_guide')}</span>
                     <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{t('email_server.setup_guide_desc')}</p>
                 </div>
-                {open ? <ChevronUp className="h-4 w-4 text-neutral-400" /> : <ChevronDown className="h-4 w-4 text-neutral-400" />}
+                {open ? <ChevronUp className="h-4 w-4 text-neutral-500 dark:text-neutral-400" /> : <ChevronDown className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />}
             </button>
             {open && (
                 <div className="mt-4 space-y-3">
@@ -107,7 +107,7 @@ function SmtpSetupGuide() {
                                 href={SMTP_GUIDES[activeTab].link}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline pt-1"
+                                className="inline-flex items-center gap-1 text-xs font-medium text-blue-700 dark:text-blue-400 hover:underline pt-1"
                             >
                                 {SMTP_GUIDES[activeTab].linkLabel} →
                             </a>
@@ -121,13 +121,13 @@ function SmtpSetupGuide() {
 
 function FieldRow({ label, error, children }) {
     return (
-        <div>
-            <label className="block text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-1">
+        <label className="block">
+            <span className="block text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-1">
                 {label}
-            </label>
+            </span>
             {children}
             {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
-        </div>
+        </label>
     );
 }
 
@@ -241,7 +241,7 @@ export default function EmailServerIndex({ config, domainVerification }) {
                         <div className="flex flex-wrap items-center justify-between gap-3">
                             <div className="flex items-center gap-2">
                                 {verification.verified
-                                    ? <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                                    ? <CheckCircle className="h-5 w-5 text-green-700 dark:text-green-400" />
                                     : <AlertCircle className="h-5 w-5 text-amber-500" />}
                                 <div>
                                     <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
@@ -286,7 +286,7 @@ export default function EmailServerIndex({ config, domainVerification }) {
                 {/* SMTP Form */}
                 <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-6">
                     <div className="flex items-center gap-2 mb-5">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 shrink-0">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 shrink-0">
                             <Mail className="h-4 w-4" />
                         </div>
                         <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">
@@ -356,7 +356,8 @@ export default function EmailServerIndex({ config, domainVerification }) {
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(s => !s)}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
+                                    aria-label={showPassword ? t('common.hide', { defaultValue: 'Hide' }) : t('common.show', { defaultValue: 'Show' })}
+                                    className="absolute right-1 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
                                 >
                                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                 </button>
@@ -408,7 +409,7 @@ export default function EmailServerIndex({ config, domainVerification }) {
                                 <button
                                     type="button"
                                     onClick={handleDelete}
-                                    className="flex items-center gap-1.5 rounded-lg border border-neutral-200 dark:border-neutral-700 px-3 py-2 text-sm text-neutral-500 hover:text-red-500 hover:border-red-300 dark:hover:border-red-700 transition"
+                                    className="flex items-center gap-1.5 rounded-lg border border-neutral-200 dark:border-neutral-700 px-3 py-2 text-sm text-neutral-500 dark:text-neutral-400 hover:text-red-500 hover:border-red-300 dark:hover:border-red-700 transition"
                                 >
                                     <Trash2 className="h-4 w-4" />
                                     {t('email_server.remove')}
@@ -424,7 +425,7 @@ export default function EmailServerIndex({ config, domainVerification }) {
                 {/* Test Email */}
                 <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-6">
                     <div className="flex items-center gap-2 mb-4">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 shrink-0">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 shrink-0">
                             <Send className="h-4 w-4" />
                         </div>
                         <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">{t('email_server.send_test_title')}</h3>

@@ -101,7 +101,7 @@ function AdminLayoutFooter() {
                         {adminUser.name && (
                             <p className="text-xs font-medium text-neutral-700 dark:text-neutral-200 truncate">{adminUser.name}</p>
                         )}
-                        <p className="text-xs text-neutral-400 dark:text-neutral-500 truncate" title={adminUser.email}>
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate" title={adminUser.email}>
                             {adminUser.email}
                         </p>
                     </div>
@@ -111,13 +111,13 @@ function AdminLayoutFooter() {
                 href={route('admin.logout')}
                 method="post"
                 as="button"
-                className="flex items-center gap-2 w-full text-left rtl:text-right rounded-soft px-3 py-2 text-sm text-neutral-500 hover:bg-red-50 hover:text-red-600 dark:text-neutral-400 dark:hover:bg-red-950/40 dark:hover:text-red-400 transition duration-150"
+                className="flex items-center gap-2 w-full text-start rounded-soft px-3 py-2 text-sm text-neutral-500 hover:bg-red-50 hover:text-red-600 dark:text-neutral-400 dark:hover:bg-red-950/40 dark:hover:text-red-400 transition duration-150"
             >
                 <LogOut className="h-4 w-4 flex-shrink-0" />
                 {t('nav.logout')}
             </Link>
             {appVersion && (
-                <p className="px-3 pt-1 text-center text-[11px] text-neutral-400 dark:text-neutral-600">
+                <p className="px-3 pt-1 text-center text-2xs text-neutral-500 dark:text-neutral-600">
                     v{appVersion}
                 </p>
             )}
@@ -148,7 +148,7 @@ export default function AdminLayout({ title = 'Admin', header, children }) {
                 footer={<AdminLayoutFooter />}
             />
 
-            <div className="lg:pl-64 rtl:lg:pl-0 rtl:lg:pr-64">
+            <div className="lg:ps-64">
                 <Topbar
                     showLogo={false}
                     title={title}
@@ -171,7 +171,7 @@ export default function AdminLayout({ title = 'Admin', header, children }) {
             <button
                 type="button"
                 onClick={() => setSidebarOpen(true)}
-                className="fixed bottom-4 right-4 z-30 flex h-12 w-12 items-center justify-center rounded-soft-lg bg-white dark:bg-neutral-900 border border-soft border-gray-200 dark:border-neutral-800 shadow-soft-lg text-neutral-600 hover:bg-neutral-50 dark:text-neutral-400 dark:hover:bg-neutral-800 lg:hidden rtl:right-auto rtl:left-4"
+                className="fixed bottom-4 end-4 z-30 flex h-12 w-12 items-center justify-center rounded-soft-lg bg-white dark:bg-neutral-900 border border-soft border-gray-200 dark:border-neutral-800 shadow-soft-lg text-neutral-600 hover:bg-neutral-50 dark:text-neutral-400 dark:hover:bg-neutral-800 lg:hidden"
                 aria-label={t('open_menu')}
             >
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

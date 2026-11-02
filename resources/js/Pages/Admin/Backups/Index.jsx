@@ -127,7 +127,7 @@ export default function BackupIndex({ backups = [], disk, databaseDriver, canCre
                                                 <td className="py-3 pr-4 font-mono text-xs text-neutral-700 dark:text-neutral-300 break-all">
                                                     {backup.name}
                                                     {checks[backup.name] && (
-                                                        <span className={`ml-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${checks[backup.name].valid ? 'bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-300' : 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300'}`}>
+                                                        <span className={`ml-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-3xs font-semibold ${checks[backup.name].valid ? 'bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-300' : 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300'}`}>
                                                             {checks[backup.name].valid ? <ShieldCheck className="h-3 w-3" /> : <ShieldAlert className="h-3 w-3" />}
                                                             {checks[backup.name].valid ? (t('backup.verified') || 'Verified') : (t('backup.invalid') || 'Problem')}
                                                         </span>
@@ -156,7 +156,7 @@ export default function BackupIndex({ backups = [], disk, databaseDriver, canCre
                                                         type="button"
                                                         onClick={() => deleteBackup(backup.name)}
                                                         disabled={deleting === backup.name}
-                                                        className="ml-2 inline-flex items-center gap-1 rounded-soft px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 disabled:opacity-60 transition"
+                                                        className="ml-2 inline-flex items-center gap-1 rounded-soft px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 disabled:opacity-60 transition"
                                                     >
                                                         <Trash2 className="h-3.5 w-3.5" />
                                                         {t('common.delete') || 'Delete'}

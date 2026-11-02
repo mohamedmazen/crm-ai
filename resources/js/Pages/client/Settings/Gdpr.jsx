@@ -59,7 +59,7 @@ export default function GdprIndex({ requests = [], retentionDays = 7, graceDays 
             <div className="max-w-3xl space-y-6">
                 <div>
                     <h2 className="flex items-center gap-2 text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-                        <ShieldCheck className="h-5 w-5 text-brand-600" />
+                        <ShieldCheck className="h-5 w-5 text-brand-600 dark:text-brand-400" />
                         {t('gdpr.title') || 'Privacy & GDPR'}
                     </h2>
                     <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
@@ -83,7 +83,7 @@ export default function GdprIndex({ requests = [], retentionDays = 7, graceDays 
                 <Card>
                     <Card.Body className="space-y-3">
                         <div className="flex items-start gap-3">
-                            <FileDown className="mt-0.5 h-5 w-5 text-brand-600" />
+                            <FileDown className="mt-0.5 h-5 w-5 text-brand-600 dark:text-brand-400" />
                             <div className="flex-1">
                                 <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">
                                     {t('gdpr.dpa_title') || 'Data Processing Agreement'}
@@ -106,7 +106,7 @@ export default function GdprIndex({ requests = [], retentionDays = 7, graceDays 
                 <Card>
                     <Card.Body className="space-y-4">
                         <div className="flex items-start gap-3">
-                            <UserX className="mt-0.5 h-5 w-5 text-brand-600" />
+                            <UserX className="mt-0.5 h-5 w-5 text-brand-600 dark:text-brand-400" />
                             <div>
                                 <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">
                                     {t('gdpr.erasure_title') || 'Right to erasure'}
@@ -187,7 +187,7 @@ export default function GdprIndex({ requests = [], retentionDays = 7, graceDays 
                                                             type="button"
                                                             onClick={() => cancelRequest(request.id)}
                                                             disabled={cancelling === request.id}
-                                                            className="text-xs font-medium text-red-600 hover:underline disabled:opacity-60"
+                                                            className="text-xs font-medium text-red-700 dark:text-red-400 hover:underline disabled:opacity-60"
                                                         >
                                                             {t('gdpr.cancel') || 'Cancel request'}
                                                         </button>
@@ -205,7 +205,7 @@ export default function GdprIndex({ requests = [], retentionDays = 7, graceDays 
                 <Card>
                     <Card.Body className="space-y-4">
                         <div className="flex items-start gap-3">
-                            <Database className="mt-0.5 h-5 w-5 text-brand-600" />
+                            <Database className="mt-0.5 h-5 w-5 text-brand-600 dark:text-brand-400" />
                             <div>
                                 <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">
                                     {t('gdpr.retention_title') || 'Data retention'}
@@ -217,10 +217,11 @@ export default function GdprIndex({ requests = [], retentionDays = 7, graceDays 
                         </div>
                         <form onSubmit={saveRetention} className="flex flex-wrap items-end gap-3">
                             <div className="space-y-1">
-                                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                                <label htmlFor="gdpr-retention-days" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
                                     {t('gdpr.retention_days') || 'Keep export archives for (days)'}
                                 </label>
                                 <input
+                                    id="gdpr-retention-days"
                                     type="number"
                                     min="0"
                                     max="365"

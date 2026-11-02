@@ -51,16 +51,16 @@ export default function ClientAuditLogIndex({ logs, filters = {} }) {
                             <table className="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700">
                                 <thead className="bg-neutral-50 dark:bg-neutral-800">
                                     <tr>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 uppercase">
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">
                                             {t('client.date') || 'Date'}
                                         </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 uppercase">
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">
                                             {t('client.user') || 'User'}
                                         </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 uppercase">
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">
                                             {t('client.action') || 'Action'}
                                         </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 uppercase">
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">
                                             {t('client.details') || 'Details'}
                                         </th>
                                     </tr>
@@ -89,7 +89,7 @@ export default function ClientAuditLogIndex({ logs, filters = {} }) {
                         </div>
                     ) : (
                         <div className="px-6 py-12 text-center text-neutral-500 dark:text-neutral-400">
-                            <FileText className="mx-auto h-12 w-12 text-neutral-400 mb-3" />
+                            <FileText className="mx-auto h-12 w-12 text-neutral-500 dark:text-neutral-400 mb-3" />
                             <p>{t('client.no_audit_entries') || 'No audit entries yet'}</p>
                         </div>
                     )}

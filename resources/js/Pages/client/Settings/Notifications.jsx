@@ -148,12 +148,12 @@ export default function NotificationSettings({ preferences = {} }) {
                     ))}
                 </div>
 
-                <p className="text-xs text-neutral-400 dark:text-neutral-500">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">
                     {t('settings.push_permission_hint')}
                 </p>
 
                 {pushError && (
-                    <p className="text-xs text-red-600 dark:text-red-400">
+                    <p className="text-xs text-red-700 dark:text-red-400">
                         {pushError}
                     </p>
                 )}

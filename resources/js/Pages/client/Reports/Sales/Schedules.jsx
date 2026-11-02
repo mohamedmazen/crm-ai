@@ -139,7 +139,7 @@ export default function Schedules({
                     className="space-y-4 rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-900"
                 >
                     <div className="flex items-center gap-2">
-                        <CalendarClock className="h-4 w-4 text-brand-600" />
+                        <CalendarClock className="h-4 w-4 text-brand-600 dark:text-brand-400" />
                         <h2 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                             {editingId ? t('reports.sales_schedules_edit') : t('reports.sales_schedules_new')}
                         </h2>
@@ -222,12 +222,12 @@ export default function Schedules({
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b border-neutral-200 dark:border-neutral-700">
-                                    <th className="pb-2 text-left text-xs text-neutral-500">{t('reports.sales_schedule_report')}</th>
-                                    <th className="pb-2 text-left text-xs text-neutral-500">{t('reports.sales_schedule_frequency')}</th>
-                                    <th className="pb-2 text-left text-xs text-neutral-500">{t('reports.sales_schedule_recipients')}</th>
-                                    <th className="pb-2 text-left text-xs text-neutral-500">{t('reports.sales_schedule_filters')}</th>
-                                    <th className="pb-2 text-left text-xs text-neutral-500">{t('reports.sales_schedule_next_run')}</th>
-                                    <th className="pb-2 text-right text-xs text-neutral-500">{t('reports.sales_schedule_actions')}</th>
+                                    <th className="pb-2 text-left text-xs text-neutral-500 dark:text-neutral-400">{t('reports.sales_schedule_report')}</th>
+                                    <th className="pb-2 text-left text-xs text-neutral-500 dark:text-neutral-400">{t('reports.sales_schedule_frequency')}</th>
+                                    <th className="pb-2 text-left text-xs text-neutral-500 dark:text-neutral-400">{t('reports.sales_schedule_recipients')}</th>
+                                    <th className="pb-2 text-left text-xs text-neutral-500 dark:text-neutral-400">{t('reports.sales_schedule_filters')}</th>
+                                    <th className="pb-2 text-left text-xs text-neutral-500 dark:text-neutral-400">{t('reports.sales_schedule_next_run')}</th>
+                                    <th className="pb-2 text-right text-xs text-neutral-500 dark:text-neutral-400">{t('reports.sales_schedule_actions')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700/50">
@@ -243,7 +243,7 @@ export default function Schedules({
                                                 <button
                                                     type="button"
                                                     onClick={() => startEdit(schedule)}
-                                                    className="rounded-lg p-1.5 text-neutral-500 transition hover:bg-neutral-100 hover:text-brand-600 dark:hover:bg-neutral-800"
+                                                    className="rounded-lg p-1.5 text-neutral-600 dark:text-neutral-400 transition hover:bg-neutral-100 hover:text-brand-600 dark:hover:bg-neutral-800"
                                                     aria-label={t('reports.sales_schedules_edit')}
                                                 >
                                                     <Pencil className="h-4 w-4" />
@@ -251,7 +251,7 @@ export default function Schedules({
                                                 <button
                                                     type="button"
                                                     onClick={() => remove(schedule)}
-                                                    className="rounded-lg p-1.5 text-neutral-500 transition hover:bg-coral-50 hover:text-coral-600 dark:hover:bg-neutral-800"
+                                                    className="rounded-lg p-1.5 text-neutral-500 dark:text-neutral-400 transition hover:bg-coral-50 hover:text-coral-600 dark:hover:bg-neutral-800"
                                                     aria-label={t('reports.sales_schedule_delete')}
                                                 >
                                                     <Trash2 className="h-4 w-4" />
@@ -262,7 +262,7 @@ export default function Schedules({
                                 ))}
                                 {schedules.length === 0 && (
                                     <tr>
-                                        <td colSpan={6} className="py-6 text-center text-neutral-400">
+                                        <td colSpan={6} className="py-6 text-center text-neutral-500 dark:text-neutral-400">
                                             {t('reports.sales_schedule_none')}
                                         </td>
                                     </tr>

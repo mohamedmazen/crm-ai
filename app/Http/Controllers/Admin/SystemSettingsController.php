@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\SystemSetting;
 use App\Services\StorageManager;
+use App\Support\BrandPalette;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -90,12 +91,39 @@ class SystemSettingsController extends Controller
         ]);
 
         $this->validateAllowlistEntries($validated['security_ip_allowlist'] ?? null);
+        $this->validateBrandColors($validated);
 
         foreach ($validated as $key => $value) {
             SystemSetting::set($key, $value, false, 'general');
         }
 
         return back()->with('success', __('General settings saved.'));
+    }
+
+    /**
+     * Reject brand colours that cannot carry white text. The palette pins the
+     * picked hex to the 600 stop and every primary button/badge paints white on
+     * it, so a light pick would ship unreadable UI.
+     *
+     * @param  array<string, mixed>  $validated
+     */
+    private function validateBrandColors(array $validated): void
+    {
+        foreach (['primary_color', 'secondary_color'] as $key) {
+            $hex = $validated[$key] ?? null;
+
+            if (! BrandPalette::isValidHex($hex)) {
+                continue;
+            }
+
+            if (! BrandPalette::meetsContrast($hex, '#ffffff')) {
+                throw ValidationException::withMessages([
+                    $key => __('":color" is too light for white text (needs 4.5:1 contrast). Pick a darker shade.', [
+                        'color' => $hex,
+                    ]),
+                ]);
+            }
+        }
     }
 
     /**

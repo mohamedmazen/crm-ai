@@ -148,7 +148,7 @@ export default function LeadCallsPanel({ lead, calls = [], aiEnabled = false }) 
                                     : <PhoneOutgoing className="h-3.5 w-3.5 text-emerald-500" />}
                                 {call.direction === 'inbound' ? call.from_number : call.to_number || '—'}
                             </span>
-                            <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-medium capitalize text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
+                            <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-2xs font-medium capitalize text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
                                 {call.status.replace('_', ' ')}
                             </span>
                             <span className="text-xs tabular-nums text-neutral-500 dark:text-neutral-400">
@@ -165,7 +165,7 @@ export default function LeadCallsPanel({ lead, calls = [], aiEnabled = false }) 
                                     {t('calls.play')}
                                 </a>
                             )}
-                            <span className="ms-auto text-[11px] text-neutral-400">
+                            <span className="ms-auto text-2xs text-neutral-500 dark:text-neutral-400">
                                 {call.created_at ? new Date(call.created_at).toLocaleString() : '—'}
                                 {call.user ? ` · ${call.user.name}` : ''}
                             </span>

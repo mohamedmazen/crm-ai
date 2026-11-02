@@ -22,7 +22,7 @@ export default function IntegrationsAuditLog({ logs }) {
             <Head title={`${t('integrations.audit_log_head')} · ${t('head.admin')}`} />
             <div className="space-y-6">
                 <div className="flex items-center gap-3">
-                    <a href={route('admin.integrations.index')} className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
+                    <a href={route('admin.integrations.index')} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
                         <ArrowLeft className="h-5 w-5" />
                     </a>
                     <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">{t('integrations.audit_log_heading')}</h2>
@@ -66,14 +66,14 @@ export default function IntegrationsAuditLog({ logs }) {
                                     <td className="px-4 py-3 text-xs text-neutral-500 dark:text-neutral-400 font-mono">
                                         {log.diff_json?.length ? log.diff_json.join(', ') : '—'}
                                     </td>
-                                    <td className="px-4 py-3 text-neutral-400 dark:text-neutral-500 text-xs whitespace-nowrap">
+                                    <td className="px-4 py-3 text-neutral-500 dark:text-neutral-400 text-xs whitespace-nowrap">
                                         {log.ip}
                                     </td>
                                 </tr>
                             ))}
                             {logs.data.length === 0 && (
                                 <tr>
-                                    <td colSpan={6} className="px-4 py-8 text-center text-neutral-400">{t('integrations.no_audit_entries')}</td>
+                                    <td colSpan={6} className="px-4 py-8 text-center text-neutral-500 dark:text-neutral-400">{t('integrations.no_audit_entries')}</td>
                                 </tr>
                             )}
                         </tbody>
@@ -87,7 +87,7 @@ export default function IntegrationsAuditLog({ logs }) {
                             <a
                                 key={i}
                                 href={link.url ?? '#'}
-                                className={`px-3 py-1.5 rounded text-sm border ${link.active ? 'bg-brand-600 text-white border-brand-600' : 'border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800'} ${!link.url ? 'opacity-40 pointer-events-none' : ''}`}
+                                className={`px-3 py-1.5 rounded text-sm border ${link.active ? 'bg-brand-600 text-white border-brand-600' : link.url ? 'border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800' : 'border-neutral-200 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400 pointer-events-none'}`}
                                 dangerouslySetInnerHTML={{ __html: link.label }}
                             />
                         ))}

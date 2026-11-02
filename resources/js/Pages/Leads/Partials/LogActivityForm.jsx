@@ -59,7 +59,7 @@ export default function LogActivityForm({ lead, stages, types, outcomes, onLogge
                             aria-pressed={active}
                             className={`inline-flex items-center gap-1 rounded-soft px-2 py-1 text-xs font-medium transition-colors ${
                                 active
-                                    ? 'bg-brand-500 text-white'
+                                    ? 'bg-brand-600 text-white'
                                     : 'bg-white text-neutral-600 hover:bg-neutral-100 dark:bg-neutral-800 dark:text-neutral-300'
                             }`}
                         >
@@ -94,7 +94,7 @@ export default function LogActivityForm({ lead, stages, types, outcomes, onLogge
                             className={`rounded-soft border px-2 py-0.5 text-xs transition-colors ${
                                 data.outcome === outcome
                                     ? 'border-brand-400 bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300'
-                                    : 'border-soft text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800'
+                                    : 'border-soft text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800'
                             }`}
                         >
                             {t(`leads.outcome_${outcome}`)}
@@ -156,7 +156,7 @@ export default function LogActivityForm({ lead, stages, types, outcomes, onLogge
                             <option key={s.id} value={s.id}>{s.name}</option>
                         ))}
                     </select>
-                    <p className="mt-1 text-xs text-neutral-400 dark:text-neutral-500">{t('leads.move_with_log_hint')}</p>
+                    <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">{t('leads.move_with_log_hint')}</p>
                 </div>
             </div>
 

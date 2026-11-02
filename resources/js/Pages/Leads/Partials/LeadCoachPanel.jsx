@@ -52,7 +52,7 @@ export default function LeadCoachPanel({ leadId }) {
                     {t('leads.coach_intro_body')}
                 </p>
 
-                {error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
+                {error && <p className="mt-2 text-xs text-red-700 dark:text-red-400">{error}</p>}
 
                 <div className="mt-4 flex justify-center">
                     <Button size="sm" onClick={load} disabled={loading}>
@@ -76,7 +76,7 @@ export default function LeadCoachPanel({ leadId }) {
                         {t('leads.coach_next_step')}
                     </h3>
                     {advice.channel && (
-                        <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-[11px] font-medium text-brand-700 shadow-sm dark:bg-neutral-900 dark:text-brand-300">
+                        <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-2xs font-medium text-brand-700 shadow-sm dark:bg-neutral-900 dark:text-brand-300">
                             {t(`leads.coach_channel_${advice.channel}`)}
                         </span>
                     )}
@@ -88,7 +88,7 @@ export default function LeadCoachPanel({ leadId }) {
                     <p className="mt-2 text-xs text-neutral-600 dark:text-neutral-300">{advice.why}</p>
                 )}
                 {advice.at_risk && (
-                    <p className="mt-2 text-[11px] font-medium text-amber-700 dark:text-amber-400">
+                    <p className="mt-2 text-2xs font-medium text-amber-700 dark:text-amber-400">
                         {t('leads.coach_at_risk_note')}
                     </p>
                 )}
@@ -97,13 +97,13 @@ export default function LeadCoachPanel({ leadId }) {
             {advice.reply && (
                 <div className="rounded-xl border border-soft p-4">
                     <div className="flex items-center justify-between gap-3">
-                        <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                        <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
                             {t('leads.coach_reply')}
                         </h3>
                         <button
                             type="button"
                             onClick={copyReply}
-                            className="inline-flex items-center gap-1 text-[11px] font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400"
+                            className="inline-flex items-center gap-1 text-2xs font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400"
                         >
                             {copied ? (
                                 <Check className="h-3 w-3" aria-hidden="true" />
@@ -121,14 +121,14 @@ export default function LeadCoachPanel({ leadId }) {
 
             {advice.score_reason && (
                 <div>
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
                         {t('leads.coach_score_reason')}
                     </h3>
                     <p className="mt-1 text-xs text-neutral-600 dark:text-neutral-300">{advice.score_reason}</p>
                 </div>
             )}
 
-            {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
+            {error && <p className="text-xs text-red-700 dark:text-red-400">{error}</p>}
 
             <div className="flex justify-end">
                 <Button variant="secondary" size="sm" onClick={load} disabled={loading}>

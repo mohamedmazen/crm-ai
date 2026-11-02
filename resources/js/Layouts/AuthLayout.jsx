@@ -129,7 +129,7 @@ function LeftPane({ variant }) {
                         {SOCIAL_PROOF.map(({ value, labelKey }) => (
                             <div key={labelKey} className="text-center">
                                 <p className="text-lg font-bold text-white">{value}</p>
-                                <p className="text-xs text-neutral-400">{t(labelKey)}</p>
+                                <p className="text-xs text-neutral-300/80">{t(labelKey)}</p>
                             </div>
                         ))}
                     </div>
@@ -144,7 +144,7 @@ function LeftPane({ variant }) {
                             <div className="h-7 w-7 rounded-full bg-brand-500/30 flex items-center justify-center text-xs font-bold text-brand-300">S</div>
                             <div>
                                 <p className="text-xs font-semibold text-white">{t('auth.testimonial_author')}</p>
-                                <p className="text-xs text-neutral-500">{t('auth.testimonial_role')}</p>
+                                <p className="text-xs text-neutral-300/80">{t('auth.testimonial_role')}</p>
                             </div>
                         </div>
                     </div>
@@ -152,7 +152,7 @@ function LeftPane({ variant }) {
             </div>
 
             {/* Footer */}
-            <p className="relative text-xs text-neutral-500">
+            <p className="relative text-xs text-neutral-300/80">
                 &copy; {new Date().getFullYear()} {appName}. {t('nav.all_rights_reserved')}
             </p>
         </div>
@@ -166,7 +166,7 @@ function ThemeToggle() {
         <button
             type="button"
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-soft text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 transition"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-soft text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 transition"
             aria-label={t('topbar.switch_theme')}
         >
             {theme === 'dark'

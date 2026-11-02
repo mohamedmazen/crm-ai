@@ -41,7 +41,7 @@ function CouponForm({ coupon = null, onClose }) {
                         placeholder={t('coupons.code_placeholder')}
                         required
                     />
-                    {errors.code && <p className="text-coral-600 text-xs mt-1">{errors.code}</p>}
+                    {errors.code && <p className="text-coral-600 dark:text-coral-400 text-xs mt-1">{errors.code}</p>}
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('coupons.type_label')}</label>
@@ -63,7 +63,7 @@ function CouponForm({ coupon = null, onClose }) {
                         step={data.kind === 'percent' ? '0.01' : '1'}
                         required
                     />
-                    {errors.amount && <p className="text-coral-600 text-xs mt-1">{errors.amount}</p>}
+                    {errors.amount && <p className="text-coral-600 dark:text-coral-400 text-xs mt-1">{errors.amount}</p>}
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('coupons.duration_label')}</label>
@@ -118,7 +118,7 @@ function CouponForm({ coupon = null, onClose }) {
                 <button type="button" onClick={onClose} className="px-4 py-2 text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700">
                     {t('common.cancel')}
                 </button>
-                <button type="submit" disabled={processing} className="px-4 py-2 text-sm bg-brand-500 text-white rounded-soft hover:bg-brand-600 shadow-soft disabled:opacity-50 transition-all duration-150">
+                <button type="submit" disabled={processing} className="px-4 py-2 text-sm bg-brand-600 text-white rounded-soft hover:bg-brand-700 shadow-soft disabled:opacity-50 transition-all duration-150">
                     {coupon ? t('coupons.update_coupon') : t('coupons.create_coupon')}
                 </button>
             </div>
@@ -148,7 +148,7 @@ export default function CouponsIndex({ coupons }) {
                             <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('coupons.subtitle')}</p>
                         </div>
                     </div>
-                    <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 px-4 py-2 bg-brand-500 text-white text-sm rounded-soft hover:bg-brand-600 shadow-soft transition-all duration-150">
+                    <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white text-sm rounded-soft hover:bg-brand-700 shadow-soft transition-all duration-150">
                         <Plus className="h-4 w-4" /> {t('coupons.new_coupon')}
                     </button>
                 </div>
@@ -197,16 +197,16 @@ export default function CouponsIndex({ coupons }) {
                                             </td>
                                             <td className="px-4 py-3">
                                                 {coupon.enabled
-                                                    ? <span className="inline-flex items-center gap-1 text-green-600 dark:text-green-400"><Check className="h-3.5 w-3.5" /> {t('coupons.active')}</span>
-                                                    : <span className="inline-flex items-center gap-1 text-neutral-400"><X className="h-3.5 w-3.5" /> {t('coupons.disabled')}</span>
+                                                    ? <span className="inline-flex items-center gap-1 text-green-700 dark:text-green-400"><Check className="h-3.5 w-3.5" /> {t('coupons.active')}</span>
+                                                    : <span className="inline-flex items-center gap-1 text-neutral-500 dark:text-neutral-400"><X className="h-3.5 w-3.5" /> {t('coupons.disabled')}</span>
                                                 }
                                             </td>
                                             <td className="px-4 py-3">
                                                 <div className="flex items-center gap-2 justify-end">
-                                                    <button onClick={() => setEditing(coupon)} className="p-1 text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition">
+                                                    <button onClick={() => setEditing(coupon)} className="p-1 text-neutral-500 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition">
                                                         <Pencil className="h-4 w-4" />
                                                     </button>
-                                                    <button onClick={() => handleDelete(coupon)} className="p-1 text-neutral-400 hover:text-coral-600">
+                                                    <button onClick={() => handleDelete(coupon)} className="p-1 text-neutral-500 dark:text-neutral-400 hover:text-coral-600">
                                                         <Trash2 className="h-4 w-4" />
                                                     </button>
                                                 </div>
@@ -217,7 +217,7 @@ export default function CouponsIndex({ coupons }) {
                             ))}
                             {!coupons.data?.length && (
                                 <tr>
-                                    <td colSpan={7} className="px-4 py-8 text-center text-neutral-400 dark:text-neutral-500">
+                                    <td colSpan={7} className="px-4 py-8 text-center text-neutral-500 dark:text-neutral-400">
                                         {t('coupons.no_coupons')}
                                     </td>
                                 </tr>

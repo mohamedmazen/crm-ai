@@ -50,12 +50,12 @@ export function LeadCardView({ lead, onOpen, dragging = false, overlay = false, 
             </div>
 
             {lead.deal_value > 0 && (
-                <div className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                <div className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
                     <span>
                         {lead.currency || '$'}{Number(lead.deal_value).toLocaleString()}
                     </span>
                     {lead.probability !== null && lead.probability !== undefined && (
-                        <span className="text-[10px] font-normal text-neutral-400">
+                        <span className="text-3xs font-normal text-neutral-500 dark:text-neutral-400">
                             ({lead.probability}%)
                         </span>
                     )}
@@ -67,13 +67,13 @@ export function LeadCardView({ lead, onOpen, dragging = false, overlay = false, 
                     {lead.tags.slice(0, 3).map((tag) => (
                         <span
                             key={tag.id}
-                            className="inline-flex items-center rounded bg-neutral-100 px-1.5 py-0.2 text-[10px] font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
+                            className="inline-flex items-center rounded bg-neutral-100 px-1.5 py-0.2 text-3xs font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
                         >
                             {tag.name}
                         </span>
                     ))}
                     {lead.tags.length > 3 && (
-                        <span className="text-[10px] text-neutral-400">+{lead.tags.length - 3}</span>
+                        <span className="text-3xs text-neutral-500 dark:text-neutral-400">+{lead.tags.length - 3}</span>
                     )}
                 </div>
             )}
@@ -82,7 +82,7 @@ export function LeadCardView({ lead, onOpen, dragging = false, overlay = false, 
                 <div className="mt-1.5">
                     <span
                         title={lead.risk.headline}
-                        className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-semibold ${
+                        className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-3xs font-semibold ${
                             lead.risk.level === 'high'
                                 ? 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300'
                                 : lead.risk.level === 'medium'
@@ -92,7 +92,7 @@ export function LeadCardView({ lead, onOpen, dragging = false, overlay = false, 
                     >
                         <AlertTriangle className="h-3 w-3" aria-hidden="true" />
                         {t('leads.risk_badge')}
-                        <span className="font-normal opacity-70">{lead.risk.score}</span>
+                        <span className="font-normal">{lead.risk.score}</span>
                     </span>
                 </div>
             )}
@@ -101,7 +101,7 @@ export function LeadCardView({ lead, onOpen, dragging = false, overlay = false, 
                 {lead.phone && (
                     <span className="inline-flex items-center gap-1">
                         <Phone className="h-3 w-3" aria-hidden="true" />
-                        {lead.phone}
+                        <bdi dir="ltr">{lead.phone}</bdi>
                     </span>
                 )}
                 {lead.rating > 0 && (
@@ -112,7 +112,7 @@ export function LeadCardView({ lead, onOpen, dragging = false, overlay = false, 
                 )}
                 {lead.website && <Globe className="h-3 w-3" aria-label={t('leads.has_website')} />}
                 {lead.contact && (
-                    <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+                    <span className="inline-flex items-center gap-1 text-emerald-700 dark:text-emerald-400">
                         <UserCheck className="h-3 w-3" aria-hidden="true" />
                         {t('leads.in_contacts')}
                     </span>
@@ -127,10 +127,10 @@ export function LeadCardView({ lead, onOpen, dragging = false, overlay = false, 
 
                     {lead.assigned_user && (
                         <span
-                            className="inline-flex items-center gap-1 rounded bg-neutral-100 px-1.5 py-0.5 text-[11px] font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
+                            className="inline-flex items-center gap-1 rounded bg-neutral-100 px-1.5 py-0.5 text-2xs font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
                             title={t('leads.assigned_to_user', { name: lead.assigned_user.name }) || `Assigned to ${lead.assigned_user.name}`}
                         >
-                            <User className="h-3 w-3 text-neutral-400" />
+                            <User className="h-3 w-3 text-neutral-500 dark:text-neutral-400" />
                             <span className="max-w-[90px] truncate">{lead.assigned_user.name}</span>
                         </span>
                     )}

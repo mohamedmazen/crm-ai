@@ -22,7 +22,7 @@ function SectionToggle({ label, enabled, onChange, t }) {
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                     enabled
                         ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
-                        : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'
+                        : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400'
                 }`}
             >
                 {enabled ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
@@ -38,7 +38,7 @@ function MasterToggleCard({ enabled, onChange, t }) {
             <Card.Body>
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-start gap-3">
-                        <span className={`mt-0.5 p-2 rounded-soft ${enabled ? 'bg-green-100 text-green-600 dark:bg-green-900/40 dark:text-green-300' : 'bg-neutral-100 text-neutral-400 dark:bg-neutral-800 dark:text-neutral-500'}`}>
+                        <span className={`mt-0.5 p-2 rounded-soft ${enabled ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-600'}`}>
                             <Globe className="h-5 w-5" />
                         </span>
                         <div>
@@ -54,7 +54,7 @@ function MasterToggleCard({ enabled, onChange, t }) {
                         className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors shrink-0 ${
                             enabled
                                 ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
-                                : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'
+                                : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400'
                         }`}
                     >
                         {enabled ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
@@ -70,7 +70,7 @@ function Field({ label, hint, children }) {
     return (
         <div className="space-y-1">
             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">{label}</label>
-            {hint && <p className="text-xs text-neutral-400 dark:text-neutral-500">{hint}</p>}
+            {hint && <p className="text-xs text-neutral-500 dark:text-neutral-400">{hint}</p>}
             {children}
         </div>
     );
@@ -102,7 +102,7 @@ function LinkTypeField({ label, typeKey, urlKey, data, setData, t }) {
                         onChange={() => setData(typeKey, 'dynamic')}
                         className="accent-brand-600"
                     />
-                    <span className="text-sm text-neutral-700 dark:text-neutral-300">{t('landing_page_admin.dynamic_label')} <span className="text-xs text-neutral-400">{t('landing_page_admin.dynamic_hint')}</span></span>
+                    <span className="text-sm text-neutral-700 dark:text-neutral-300">{t('landing_page_admin.dynamic_label')} <span className="text-xs text-neutral-500 dark:text-neutral-400">{t('landing_page_admin.dynamic_hint')}</span></span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -113,7 +113,7 @@ function LinkTypeField({ label, typeKey, urlKey, data, setData, t }) {
                         onChange={() => setData(typeKey, 'static')}
                         className="accent-brand-600"
                     />
-                    <span className="text-sm text-neutral-700 dark:text-neutral-300">{t('landing_page_admin.static_label')} <span className="text-xs text-neutral-400">{t('landing_page_admin.static_hint')}</span></span>
+                    <span className="text-sm text-neutral-700 dark:text-neutral-300">{t('landing_page_admin.static_label')} <span className="text-xs text-neutral-500 dark:text-neutral-400">{t('landing_page_admin.static_hint')}</span></span>
                 </label>
             </div>
             {type === 'static' && (
@@ -726,7 +726,7 @@ function IntegrationsStripTab({ data, setData, t }) {
                     onChange={(v) => set('integrations_strip_enabled', v ? '1' : '0')}
                     t={t}
                 />
-                <p className="text-xs text-neutral-400 dark:text-neutral-500">{t('landing_page_admin.integrations_strip_hint', { defaultValue: 'The logo chips shown here are pulled from the integrations listed on the Integrations Page tab.' })}</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('landing_page_admin.integrations_strip_hint', { defaultValue: 'The logo chips shown here are pulled from the integrations listed on the Integrations Page tab.' })}</p>
                 <Field label={t('landing_page_admin.section_title')}>
                     <Input value={s('integrations_strip_title')} onChange={(e) => set('integrations_strip_title', e.target.value)} placeholder="Works with the tools you already use" />
                 </Field>
@@ -1011,7 +1011,7 @@ export default function LandingPageIndex({ settings: initialSettings }) {
                 <div className="space-y-3 rounded-soft-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4">
                     {GROUPS.map((g) => (
                         <div key={g.key} className="flex flex-wrap items-center gap-2">
-                            <span className="text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wide w-20 shrink-0">{g.label}</span>
+                            <span className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wide w-20 shrink-0">{g.label}</span>
                             {TABS.filter((x) => x.group === g.key).map((x) => (
                                 <button
                                     key={x.key}

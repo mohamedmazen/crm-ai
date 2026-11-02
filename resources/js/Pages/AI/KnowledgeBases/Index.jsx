@@ -115,7 +115,7 @@ export default function AiKnowledgeBasesIndex({ knowledgeBases }) {
                     <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-neutral-900 shadow-2xl">
                         <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-neutral-100 dark:border-neutral-800">
                             <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">{t('ai.new_kb')}</h3>
-                            <button onClick={() => setShowCreate(false)} className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
+                            <button onClick={() => setShowCreate(false)} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
                                 <X className="h-4 w-4" />
                             </button>
                         </div>

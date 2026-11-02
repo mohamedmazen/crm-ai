@@ -44,7 +44,7 @@ export default function SlaBadge({ awaitingSince, className = '' }) {
 
     return (
         <span
-            className={`inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-px text-[10px] font-semibold ${tone} ${className}`}
+            className={`inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-px text-3xs font-semibold ${tone} ${className}`}
             title={new Date(awaitingSince).toLocaleString()}
         >
             <Clock className="h-2.5 w-2.5" aria-hidden="true" />

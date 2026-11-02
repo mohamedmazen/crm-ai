@@ -67,7 +67,7 @@ export default function CallSummaryPanel({ call, aiEnabled = false, compact = fa
                 className="w-full rounded-lg border-soft bg-white p-2.5 text-xs text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100"
             />
 
-            {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
+            {error && <p className="text-xs text-red-700 dark:text-red-400">{error}</p>}
 
             <div className="flex items-center justify-end gap-2">
                 {summary && (
@@ -97,7 +97,7 @@ export default function CallSummaryPanel({ call, aiEnabled = false, compact = fa
             <button
                 type="button"
                 onClick={() => setEditing(true)}
-                className="inline-flex items-center gap-1 text-[11px] font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400"
+                className="inline-flex items-center gap-1 text-2xs font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400"
             >
                 <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
                 {t('calls.summary_open')}
@@ -110,13 +110,13 @@ export default function CallSummaryPanel({ call, aiEnabled = false, compact = fa
             {summary && (
                 <div className="rounded-lg border border-brand-200/60 bg-brand-50/50 p-3 dark:border-brand-900 dark:bg-brand-900/20">
                     <div className="flex items-start justify-between gap-2">
-                        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-brand-700 dark:text-brand-300">
+                        <span className="inline-flex items-center gap-1.5 text-2xs font-semibold uppercase tracking-wider text-brand-700 dark:text-brand-300">
                             <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
                             {t('calls.summary_title')}
                         </span>
                         <div className="flex shrink-0 items-center gap-2">
                             {data?.sentiment && (
-                                <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${sentimentStyles[data.sentiment] || sentimentStyles.neutral}`}>
+                                <span className={`rounded-full px-2 py-0.5 text-3xs font-semibold ${sentimentStyles[data.sentiment] || sentimentStyles.neutral}`}>
                                     {t(`calls.summary_sentiment_${data.sentiment}`)}
                                 </span>
                             )}
@@ -124,7 +124,7 @@ export default function CallSummaryPanel({ call, aiEnabled = false, compact = fa
                                 <button
                                     type="button"
                                     onClick={() => setEditing((value) => !value)}
-                                    className="text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400"
+                                    className="text-neutral-500 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400"
                                     title={t('calls.transcript_edit')}
                                     aria-label={t('calls.transcript_edit')}
                                 >
@@ -138,7 +138,7 @@ export default function CallSummaryPanel({ call, aiEnabled = false, compact = fa
 
                     {data?.action_items?.length > 0 && (
                         <div className="mt-2">
-                            <p className="inline-flex items-center gap-1 text-[11px] font-semibold text-neutral-500 dark:text-neutral-400">
+                            <p className="inline-flex items-center gap-1 text-2xs font-semibold text-neutral-500 dark:text-neutral-400">
                                 <ClipboardList className="h-3 w-3" aria-hidden="true" />
                                 {t('calls.summary_action_items')}
                             </p>
@@ -151,7 +151,7 @@ export default function CallSummaryPanel({ call, aiEnabled = false, compact = fa
                     )}
 
                     {generatedAt && (
-                        <p className="mt-1.5 text-[10px] text-neutral-400">
+                        <p className="mt-1.5 text-3xs text-neutral-500 dark:text-neutral-400">
                             {t('calls.summary_generated_at', { date: new Date(generatedAt).toLocaleString() })}
                         </p>
                     )}

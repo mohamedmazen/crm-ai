@@ -8,7 +8,7 @@ import { useBranding } from '@/hooks/useBranding';
 function Badge({ text }) {
     if (!text) return null;
     return (
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-500/15 text-brand-500 text-xs font-semibold px-3 py-1 border border-brand-500/30">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-500/15 text-brand-700 dark:text-brand-300 text-xs font-semibold px-3 py-1 border border-brand-500/30">
             <span className="h-1.5 w-1.5 rounded-full bg-brand-500 inline-block" />
             {text}
         </span>
@@ -127,7 +127,7 @@ export default function About({ canRegister, landing = {} }) {
                         )}
                         <div className="relative mt-10 flex flex-wrap items-center justify-center gap-4">
                             {canRegister && (
-                                <Link href={route('register')} className="inline-flex items-center gap-2 rounded-xl px-7 py-3.5 text-base font-bold text-white shadow-lg transition-all duration-200 hover:opacity-90" style={{ background: 'rgb(var(--brand-500))' }}>
+                                <Link href={route('register')} className="inline-flex items-center gap-2 rounded-xl px-7 py-3.5 text-base font-bold text-white shadow-lg transition-all duration-200 hover:opacity-90" style={{ background: 'rgb(var(--brand-600))' }}>
                                     {t('welcome.get_started_free', { defaultValue: 'Get Started Free' })}
                                 </Link>
                             )}

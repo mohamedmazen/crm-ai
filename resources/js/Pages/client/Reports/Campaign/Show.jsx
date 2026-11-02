@@ -58,6 +58,7 @@ export default function CampaignReportShow({
                     <div className="flex items-center gap-3">
                         <Link
                             href={route('client.campaigns.show', campaign.uuid)}
+                            aria-label={t('common.back')}
                             className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                         >
                             <ArrowLeft className="h-5 w-5" />
@@ -91,13 +92,13 @@ export default function CampaignReportShow({
                 {/* Status lag */}
                 {(lag?.sent_to_delivered || lag?.delivered_to_read || lag?.sent_to_read) ? (
                     <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
-                        <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3 flex items-center gap-2">
+                        <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3 flex items-center gap-2">
                             <Clock className="h-4 w-4" /> {t('reports.status_timeline')}
-                        </h3>
+                        </h2>
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 text-sm">
-                            <LagCard label={t('reports.lag_sent_to_delivered')} value={lag.sent_to_delivered} color="text-blue-600" />
-                            <LagCard label={t('reports.lag_delivered_to_read')} value={lag.delivered_to_read} color="text-violet-600" />
-                            <LagCard label={t('reports.lag_sent_to_read')} value={lag.sent_to_read} color="text-emerald-600" />
+                            <LagCard label={t('reports.lag_sent_to_delivered')} value={lag.sent_to_delivered} color="text-blue-700 dark:text-blue-400" />
+                            <LagCard label={t('reports.lag_delivered_to_read')} value={lag.delivered_to_read} color="text-violet-700 dark:text-violet-400" />
+                            <LagCard label={t('reports.lag_sent_to_read')} value={lag.sent_to_read} color="text-emerald-700 dark:text-emerald-400" />
                         </div>
                     </div>
                 ) : null}
@@ -111,7 +112,7 @@ export default function CampaignReportShow({
                         {funnel.length > 0 ? (
                             <FunnelChart data={funnel} nameKey="name" valueKey="value" height={250} />
                         ) : (
-                            <p className="text-sm text-gray-400 py-8 text-center">{t('reports.no_delivery_data')}</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 py-8 text-center">{t('reports.no_delivery_data')}</p>
                         )}
                     </div>
                     <div className="lg:col-span-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
@@ -127,7 +128,7 @@ export default function CampaignReportShow({
                                 height={250}
                             />
                         ) : (
-                            <p className="text-sm text-gray-400 py-8 text-center">{t('reports.no_timeseries')}</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 py-8 text-center">{t('reports.no_timeseries')}</p>
                         )}
                     </div>
                 </div>
@@ -141,7 +142,7 @@ export default function CampaignReportShow({
                         {failedReasons.length > 0 ? (
                             <DonutChart data={failedReasons} nameKey="name" valueKey="value" height={220} />
                         ) : (
-                            <p className="text-sm text-gray-400 py-8 text-center">{t('reports.no_failures')}</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 py-8 text-center">{t('reports.no_failures')}</p>
                         )}
                     </div>
                     <div className="lg:col-span-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
@@ -154,6 +155,7 @@ export default function CampaignReportShow({
                                 <select
                                     value={statusFilter}
                                     onChange={(e) => applyFilter(e.target.value)}
+                                    aria-label={t('common.filter')}
                                     className="text-xs rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                                 >
                                     <option value="">{t('reports.all_statuses')}</option>
@@ -201,7 +203,7 @@ export default function CampaignReportShow({
                                             <tr key={r.id}>
                                                 <td className="py-2 text-gray-800 dark:text-gray-200">
                                                     <div>{name}</div>
-                                                    <div className="text-xs text-gray-400">
+                                                    <div className="text-xs text-gray-500 dark:text-gray-400">
                                                         {c.phone_e164 || c.email}
                                                     </div>
                                                 </td>
@@ -214,18 +216,18 @@ export default function CampaignReportShow({
                                                         {r.status}
                                                     </span>
                                                 </td>
-                                                <td className="py-2 text-gray-500">
+                                                <td className="py-2 text-gray-500 dark:text-gray-400">
                                                     {r.sent_at ? formatInTz(r.sent_at, userTz) : '—'}
                                                 </td>
-                                                <td className="py-2 text-gray-500">
+                                                <td className="py-2 text-gray-500 dark:text-gray-400">
                                                     {r.delivered_at
                                                         ? formatInTz(r.delivered_at, userTz)
                                                         : '—'}
                                                 </td>
-                                                <td className="py-2 text-gray-500">
+                                                <td className="py-2 text-gray-500 dark:text-gray-400">
                                                     {r.read_at ? formatInTz(r.read_at, userTz) : '—'}
                                                 </td>
-                                                <td className="py-2 text-gray-500 max-w-xs truncate" title={r.failed_reason ?? ''}>
+                                                <td className="py-2 text-gray-500 dark:text-gray-400 max-w-xs truncate" title={r.failed_reason ?? ''}>
                                                     {r.failed_reason ?? '—'}
                                                 </td>
                                             </tr>
@@ -233,7 +235,7 @@ export default function CampaignReportShow({
                                     })}
                                     {recipients.data.length === 0 && (
                                         <tr>
-                                            <td colSpan={6} className="py-6 text-center text-gray-400">
+                                            <td colSpan={6} className="py-6 text-center text-gray-500 dark:text-gray-400">
                                                 {t('reports.no_recipients')}
                                             </td>
                                         </tr>
@@ -243,7 +245,7 @@ export default function CampaignReportShow({
                         </div>
                         {/* Pagination */}
                         {recipients.last_page > 1 && (
-                            <div className="mt-4 flex items-center justify-between text-xs text-gray-500">
+                            <div className="mt-4 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                                 <span>
                                     {t('reports.page_of', { current: recipients.current_page, total: recipients.last_page })}
                                 </span>

@@ -1,6 +1,7 @@
 import { Head, Link, router, usePage, useForm } from '@inertiajs/react';
 import ClientLayout from '@/Layouts/ClientLayout';
 import EmptyState from '@/Components/EmptyState';
+import PageHeader from '@/Components/PageHeader';
 import {
     Plus, Zap, Play, Pause, Trash2, BarChart2, Pencil, Clock,
     UserRound, Tag, MessageCircle, Megaphone, FileText, Link2,
@@ -151,13 +152,11 @@ export default function AutomationIndex({ automations, businessHours }) {
         <ClientLayout title={t('automation.title')}>
             <Head title={t('automation.title')} />
             <div className="space-y-5">
-                <div className="flex items-center justify-between gap-3">
-                    <div>
-                        <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">{t('automation.title')}</h2>
-                        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">{t('automation.subtitle')}</p>
-                    </div>
-                    {(
-                        <div className="flex items-center gap-2">
+                <PageHeader
+                    title={t('automation.title')}
+                    description={t('automation.subtitle')}
+                    actions={
+                        <>
                             <button onClick={openHours} className="flex items-center gap-1.5 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 py-2 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition">
                                 <Clock className="h-4 w-4" /> {t('automation.business_hours')}
                             </button>
@@ -167,9 +166,9 @@ export default function AutomationIndex({ automations, businessHours }) {
                             <button onClick={() => setShowCreate(true)} className="flex items-center gap-1.5 rounded-lg bg-brand-600 px-3 py-2 text-sm font-medium text-white hover:bg-brand-700 transition">
                                 <Plus className="h-4 w-4" /> {t('automation.new_automation')}
                             </button>
-                        </div>
-                    )}
-                </div>
+                        </>
+                    }
+                />
 
                 {flash.success && <div className="rounded-lg bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200 px-4 py-2 text-sm">{flash.success}</div>}
 
@@ -214,7 +213,7 @@ export default function AutomationIndex({ automations, businessHours }) {
 
                                     {/* Trigger */}
                                     <div className="mt-4 flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-300">
-                                        <TriggerIcon className="h-4 w-4 shrink-0 text-neutral-400" />
+                                        <TriggerIcon className="h-4 w-4 shrink-0 text-neutral-500 dark:text-neutral-400" />
                                         <span className="truncate">{trigger ? t(trigger.labelKey) : t('automation.no_trigger')}</span>
                                     </div>
 
@@ -222,18 +221,18 @@ export default function AutomationIndex({ automations, businessHours }) {
                                     <div className="mt-4 grid grid-cols-3 divide-x divide-neutral-100 rounded-lg bg-neutral-50 py-3 text-center dark:divide-neutral-800 dark:bg-neutral-800/50">
                                         <div className="px-1">
                                             <div className="text-base font-semibold text-neutral-900 dark:text-neutral-100">{automation.runs_count ?? 0}</div>
-                                            <div className="mt-0.5 text-[11px] uppercase tracking-wide text-neutral-400">{t('automation.col_runs')}</div>
+                                            <div className="mt-0.5 text-2xs uppercase tracking-wide text-neutral-500 dark:text-neutral-400">{t('automation.col_runs')}</div>
                                         </div>
                                         <div className="px-1">
                                             <div className="text-base font-semibold text-neutral-900 dark:text-neutral-100">{stepCount}</div>
-                                            <div className="mt-0.5 text-[11px] uppercase tracking-wide text-neutral-400">{t('automation.steps')}</div>
+                                            <div className="mt-0.5 text-2xs uppercase tracking-wide text-neutral-500 dark:text-neutral-400">{t('automation.steps')}</div>
                                         </div>
                                         <div className="px-1">
                                             <div className="flex items-center justify-center gap-1 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                                                <Clock className="h-3.5 w-3.5 text-neutral-400" />
+                                                <Clock className="h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400" />
                                                 {formatDate(automation.updated_at)}
                                             </div>
-                                            <div className="mt-0.5 text-[11px] uppercase tracking-wide text-neutral-400">{t('automation.updated')}</div>
+                                            <div className="mt-0.5 text-2xs uppercase tracking-wide text-neutral-500 dark:text-neutral-400">{t('automation.updated')}</div>
                                         </div>
                                     </div>
 
@@ -246,13 +245,13 @@ export default function AutomationIndex({ automations, businessHours }) {
                                             <Pencil className="h-3.5 w-3.5" /> {t('common.edit')}
                                         </Link>
                                         <div className="flex items-center gap-1">
-                                            <Link href={route('client.automations.runs', automation.uuid)} className="rounded-md p-1.5 text-neutral-400 transition hover:bg-neutral-100 hover:text-brand-600 dark:hover:bg-neutral-800" title={t('automation.view_runs')}>
+                                            <Link href={route('client.automations.runs', automation.uuid)} className="rounded-md p-1.5 text-neutral-600 dark:text-neutral-400 transition hover:bg-neutral-100 hover:text-brand-600 dark:hover:bg-neutral-800" title={t('automation.view_runs')}>
                                                 <BarChart2 className="h-4 w-4" />
                                             </Link>
-                                            <button onClick={() => toggleStatus(automation)} className="rounded-md p-1.5 text-neutral-400 transition hover:bg-neutral-100 hover:text-brand-600 dark:hover:bg-neutral-800" title={automation.status === 'active' ? t('automation.pause') : t('automation.activate')}>
+                                            <button onClick={() => toggleStatus(automation)} className="rounded-md p-1.5 text-neutral-600 dark:text-neutral-400 transition hover:bg-neutral-100 hover:text-brand-600 dark:hover:bg-neutral-800" title={automation.status === 'active' ? t('automation.pause') : t('automation.activate')}>
                                                 {automation.status === 'active' ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                                             </button>
-                                            <button onClick={() => handleDelete(automation)} className="rounded-md p-1.5 text-neutral-400 transition hover:bg-neutral-100 hover:text-red-500 dark:hover:bg-neutral-800" title={t('common.delete')}>
+                                            <button onClick={() => handleDelete(automation)} className="rounded-md p-1.5 text-neutral-600 dark:text-neutral-400 transition hover:bg-neutral-100 hover:text-red-500 dark:hover:bg-neutral-800" title={t('common.delete')}>
                                                 <Trash2 className="h-4 w-4" />
                                             </button>
                                         </div>
@@ -290,10 +289,10 @@ export default function AutomationIndex({ automations, businessHours }) {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
                     <div className="w-full max-w-lg rounded-xl bg-white dark:bg-neutral-900 p-6 shadow-xl space-y-4">
                         <div className="flex items-center gap-2.5">
-                            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-purple-50 text-purple-600 dark:bg-purple-900/30"><Sparkles className="h-4 w-4" /></span>
+                            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"><Sparkles className="h-4 w-4" /></span>
                             <div>
                                 <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{t('automation.ai_title')}</h3>
-                                <p className="text-xs text-neutral-500">{t('automation.ai_subtitle')}</p>
+                                <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('automation.ai_subtitle')}</p>
                             </div>
                         </div>
                         <textarea
@@ -313,7 +312,7 @@ export default function AutomationIndex({ automations, businessHours }) {
                                 <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />{aiError}
                             </div>
                         )}
-                        <p className="flex items-start gap-1.5 text-xs text-neutral-400">
+                        <p className="flex items-start gap-1.5 text-xs text-neutral-500 dark:text-neutral-400">
                             <Sparkles className="h-3.5 w-3.5 shrink-0 mt-0.5" />{t('automation.ai_disclaimer')}
                         </p>
                         <div className="flex gap-2 pt-1">
@@ -335,7 +334,7 @@ export default function AutomationIndex({ automations, businessHours }) {
                             <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600 dark:bg-brand-900/30"><Clock className="h-4 w-4" /></span>
                             <div>
                                 <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{t('automation.business_hours_title')}</h3>
-                                <p className="text-xs text-neutral-500">{t('automation.business_hours_subtitle')}</p>
+                                <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('automation.business_hours_subtitle')}</p>
                             </div>
                         </div>
 
@@ -369,7 +368,7 @@ export default function AutomationIndex({ automations, businessHours }) {
                                                     onChange={e => setDay(day, { start: e.target.value })}
                                                     className="rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-2 py-1 text-xs"
                                                 />
-                                                <span className="text-xs text-neutral-400">–</span>
+                                                <span className="text-xs text-neutral-500 dark:text-neutral-400">–</span>
                                                 <input
                                                     type="time"
                                                     value={window.end ?? '17:00'}
@@ -378,15 +377,15 @@ export default function AutomationIndex({ automations, businessHours }) {
                                                 />
                                             </>
                                         ) : (
-                                            <span className="text-xs text-neutral-400">{t('automation.business_hours_closed')}</span>
+                                            <span className="text-xs text-neutral-500 dark:text-neutral-400">{t('automation.business_hours_closed')}</span>
                                         )}
                                     </div>
                                 );
                             })}
                         </div>
 
-                        {props.errors?.timezone && <p className="text-xs text-red-600">{props.errors.timezone}</p>}
-                        {props.errors?.schedule && <p className="text-xs text-red-600">{props.errors.schedule}</p>}
+                        {props.errors?.timezone && <p className="text-xs text-red-700 dark:text-red-400">{props.errors.timezone}</p>}
+                        {props.errors?.schedule && <p className="text-xs text-red-700 dark:text-red-400">{props.errors.schedule}</p>}
 
                         <div className="flex gap-2 pt-1">
                             <button onClick={saveHours} disabled={savingHours} className="flex-1 rounded-lg bg-brand-600 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-60 transition">
@@ -396,7 +395,7 @@ export default function AutomationIndex({ automations, businessHours }) {
                                 {t('common.cancel')}
                             </button>
                         </div>
-                        <p className="text-[11px] text-neutral-400">{t('automation.business_hours_note')}</p>
+                        <p className="text-2xs text-neutral-500 dark:text-neutral-400">{t('automation.business_hours_note')}</p>
                     </div>
                 </div>
             )}

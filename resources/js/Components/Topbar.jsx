@@ -5,8 +5,7 @@ import ApplicationLogo from '@/Components/ApplicationLogo';
 import { Dropdown } from '@/Components/ui';
 import { useTheme } from '@/context/ThemeContext';
 import { useLocale } from '@/hooks/useLocale';
-import { Bell, X, CheckCheck, ExternalLink } from 'lucide-react';
-import GlobalSearch from '@/Components/GlobalSearch';
+import { Bell, X, CheckCheck, ExternalLink, Search } from 'lucide-react';
 import axios from 'axios';
 
 /**
@@ -92,6 +91,14 @@ export default function Topbar({
 
     const currentWorkspace = page.props.currentWorkspace;
     const workspaces = page.props.workspaces ?? [];
+
+    // Accessible names must contain the text the button shows, otherwise screen
+    // readers announce something different from what sighted users read (and
+    // Lighthouse flags `label-content-name-mismatch`).
+    const workspaceName = currentWorkspace?.name ?? t('topbar.no_workspace');
+    const currentLocaleName =
+        i18nLocales.find((l) => l.code === currentLocale)?.native_name ?? currentLocale.toUpperCase();
+    const accountName = user?.name || user?.email || '';
     const onboardingSummary = page.props.onboardingSummary;
     const showOnboardingProgress =
         user &&
@@ -116,7 +123,17 @@ export default function Topbar({
                 )}
                 {showGlobalSearch && (
                     <div className="hidden min-w-0 flex-1 justify-end sm:flex">
-                        <GlobalSearch />
+                        <button
+                            type="button"
+                            onClick={() => window.dispatchEvent(new Event('command-palette:open'))}
+                            className="flex items-center gap-2 rounded-soft border border-neutral-300 px-3 py-1.5 text-sm text-neutral-500 transition-colors duration-150 hover:border-brand-400 hover:text-neutral-700 dark:border-neutral-600 dark:text-neutral-400 dark:hover:border-brand-600 dark:hover:text-neutral-200"
+                            title={t('ui.global_search_title')}
+                            aria-label={t('ui.global_search_title')}
+                        >
+                            <Search className="h-3.5 w-3.5" aria-hidden />
+                            <span>{t('ui.search_short')}</span>
+                            <kbd className="rounded bg-neutral-100 px-1.5 py-0.5 text-xs text-neutral-600 dark:bg-neutral-700 dark:text-neutral-200">⌘K</kbd>
+                        </button>
                     </div>
                 )}
                 {showOnboardingProgress && (
@@ -125,7 +142,7 @@ export default function Topbar({
                         className="hidden min-w-0 max-w-[200px] shrink-0 flex-col justify-center gap-1 rounded-soft border border-neutral-200 bg-neutral-50/80 px-3 py-1.5 dark:border-neutral-700 dark:bg-neutral-800/50 md:flex"
                         title={t('ui.getting_started')}
                     >
-                        <div className="flex items-center justify-between gap-2 text-[11px] font-medium text-neutral-600 dark:text-neutral-400">
+                        <div className="flex items-center justify-between gap-2 text-2xs font-medium text-neutral-600 dark:text-neutral-400">
                             <span className="truncate tabular-nums">
                                 {t('ui.onboarding_progress', { done: onboardingSummary.done, total: onboardingSummary.total })}
                             </span>
@@ -155,7 +172,7 @@ export default function Topbar({
                         >
                             <Bell className="h-5 w-5" />
                             {unreadCount > 0 && (
-                                <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                                <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-3xs font-bold text-white">
                                     {unreadCount > 9 ? '9+' : unreadCount}
                                 </span>
                             )}
@@ -171,14 +188,14 @@ export default function Topbar({
                                                 <CheckCheck className="h-3.5 w-3.5" /> {t('ui.mark_all_read')}
                                             </button>
                                         )}
-                                        <button onClick={() => setNotifOpen(false)} className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200">
+                                        <button onClick={() => setNotifOpen(false)} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200">
                                             <X className="h-4 w-4" />
                                         </button>
                                     </div>
                                 </div>
                                 <div className="divide-y divide-neutral-100 dark:divide-neutral-800 max-h-80 overflow-y-auto">
                                     {recentNotifs.length === 0 ? (
-                                        <p className="text-sm text-neutral-400 text-center py-6">{t('ui.no_recent_notifications')}</p>
+                                        <p className="text-sm text-neutral-500 dark:text-neutral-400 text-center py-6">{t('ui.no_recent_notifications')}</p>
                                     ) : recentNotifs.map(n => (
                                         <div key={n.id} className={`px-4 py-3 text-sm ${n.read_at ? 'opacity-60' : 'bg-brand-50/40 dark:bg-brand-900/10'}`}>
                                             <p className="font-medium text-neutral-800 dark:text-neutral-200">{n.data?.type?.replace('_', ' ')}</p>
@@ -241,13 +258,13 @@ export default function Topbar({
                             <button
                                 type="button"
                                 className="flex items-center gap-1.5 rounded-soft px-2.5 py-1.5 text-sm text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100 transition duration-150"
-                                aria-label={t('topbar.workspace')}
+                                aria-label={`${workspaceName} — ${t('topbar.workspace')}`}
                             >
                                 <span className="text-base" aria-hidden>◫</span>
                                 <span className="hidden max-w-[140px] truncate sm:inline">
-                                    {currentWorkspace?.name ?? t('topbar.no_workspace')}
+                                    {workspaceName}
                                 </span>
-                                <svg className="h-4 w-4 text-neutral-400 dark:text-neutral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg className="h-4 w-4 text-neutral-500 dark:text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
@@ -289,7 +306,7 @@ export default function Topbar({
                         <button
                             type="button"
                             className="flex items-center gap-1.5 rounded-soft px-2.5 py-1.5 text-sm text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100 transition duration-150"
-                            aria-label={t('topbar.language')}
+                            aria-label={`${currentLocaleName}${currentIsRtl ? ' (RTL)' : ''} — ${t('topbar.language')}`}
                         >
                             <svg className="h-4 w-4 shrink-0" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
                                 <circle cx="12" cy="12" r="9" />
@@ -297,10 +314,10 @@ export default function Topbar({
                                 <path strokeLinecap="round" d="M12 3c-2.5 3-4 5.7-4 9s1.5 6 4 9M12 3c2.5 3 4 5.7 4 9s-1.5 6-4 9" />
                             </svg>
                             <span className="hidden sm:inline">
-                                {i18nLocales.find((l) => l.code === currentLocale)?.native_name ?? currentLocale.toUpperCase()}
+                                {currentLocaleName}
                             </span>
-                            {currentIsRtl && <span className="rounded bg-neutral-200 dark:bg-neutral-700 px-1 text-[10px] font-medium text-neutral-600 dark:text-neutral-300">RTL</span>}
-                            <svg className="h-4 w-4 text-neutral-400 dark:text-neutral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            {currentIsRtl && <span className="rounded bg-neutral-200 dark:bg-neutral-700 px-1 text-3xs font-medium text-neutral-600 dark:text-neutral-300">RTL</span>}
+                            <svg className="h-4 w-4 text-neutral-500 dark:text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
@@ -316,7 +333,7 @@ export default function Topbar({
                                     className={currentLocale === code ? 'bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300 font-medium' : ''}
                                 >
                                     <span>{label}</span>
-                                    {isRtl && <span className="ms-1.5 rounded bg-neutral-200 dark:bg-neutral-700 px-1 text-[10px]">RTL</span>}
+                                    {isRtl && <span className="ms-1.5 rounded bg-neutral-200 dark:bg-neutral-700 px-1 text-3xs">RTL</span>}
                                 </Dropdown.Item>
                             );
                         })}
@@ -330,13 +347,13 @@ export default function Topbar({
                             <button
                                 type="button"
                                 className="flex items-center gap-2 rounded-soft px-2.5 py-1.5 text-sm text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800 transition duration-150"
-                                aria-label={t('topbar.account')}
+                                title={t('topbar.account')}
                             >
-                                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-100 text-brand-600 dark:bg-brand-900/40 dark:text-brand-300 text-xs font-medium">
+                                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-100 text-brand-600 dark:bg-brand-900/40 dark:text-brand-300 text-xs font-medium" aria-hidden="true">
                                     {(user.name || user.email || 'U').charAt(0).toUpperCase()}
                                 </span>
-                                <span className="hidden max-w-[120px] truncate md:inline">{user.name || user.email}</span>
-                                <svg className="h-4 w-4 text-neutral-400 dark:text-neutral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <span className="hidden max-w-[120px] truncate md:inline">{accountName}</span>
+                                <svg className="h-4 w-4 text-neutral-500 dark:text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>

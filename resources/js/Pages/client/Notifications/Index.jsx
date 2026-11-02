@@ -73,7 +73,7 @@ function PreferencesPanel({ preferences }) {
                 </tbody>
             </table>
             <div className="mt-4 flex justify-end">
-                <button onClick={handleSave} className="px-4 py-2 text-sm bg-brand-500 text-white rounded-soft hover:bg-brand-600 shadow-soft transition-all duration-150">
+                <button onClick={handleSave} className="px-4 py-2 text-sm bg-brand-600 text-white rounded-soft hover:bg-brand-700 shadow-soft transition-all duration-150">
                     {t('common.save')}
                 </button>
             </div>
@@ -141,7 +141,7 @@ export default function NotificationsIndex({ notifications, preferences }) {
 
                 <div className="space-y-2">
                     {notifications.length === 0 && (
-                        <div className="text-center py-12 text-neutral-400 dark:text-neutral-500">
+                        <div className="text-center py-12 text-neutral-500 dark:text-neutral-400">
                             <Bell className="h-10 w-10 mx-auto mb-3 opacity-30" />
                             <p>{t('notifications.no_notifications')}</p>
                         </div>
@@ -152,15 +152,15 @@ export default function NotificationsIndex({ notifications, preferences }) {
                             <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium text-neutral-900 dark:text-white">{n.data.title ?? n.type}</p>
                                 {n.data.message && <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">{n.data.message}</p>}
-                                <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1">{formatInTz(n.created_at, userTz)}</p>
+                                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">{formatInTz(n.created_at, userTz)}</p>
                             </div>
                             <div className="flex items-center gap-1 shrink-0">
                                 {!n.read_at && (
-                                    <button onClick={() => markRead(n.id)} className="p-1 text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition" title={t('notifications_page.mark_as_read')}>
+                                    <button onClick={() => markRead(n.id)} className="p-1 text-neutral-500 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition" title={t('notifications_page.mark_as_read')}>
                                         <Check className="h-4 w-4" />
                                     </button>
                                 )}
-                                <button onClick={() => remove(n.id)} className="p-1 text-neutral-400 hover:text-coral-600" title={t('common.delete')}>
+                                <button onClick={() => remove(n.id)} className="p-1 text-neutral-500 dark:text-neutral-400 hover:text-coral-600" title={t('common.delete')}>
                                     <Trash2 className="h-4 w-4" />
                                 </button>
                             </div>

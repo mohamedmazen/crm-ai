@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 function Badge({ text }) {
     if (!text) return null;
     return (
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-500/15 text-brand-500 text-xs font-semibold px-3 py-1 border border-brand-500/30">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-500/15 text-brand-700 dark:text-brand-300 text-xs font-semibold px-3 py-1 border border-brand-500/30">
             <span className="h-1.5 w-1.5 rounded-full bg-brand-500 inline-block" />
             {text}
         </span>
@@ -26,7 +26,7 @@ const USE_CASES = [
         bulletKeys: ['use_cases.ecommerce_b1', 'use_cases.ecommerce_b2', 'use_cases.ecommerce_b3', 'use_cases.ecommerce_b4'],
         color: 'from-violet-500/20 to-violet-500/5',
         border: 'border-violet-200 dark:border-violet-800',
-        iconBg: 'bg-violet-100 dark:bg-violet-900/40 text-violet-600 dark:text-violet-400',
+        iconBg: 'bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-400',
     },
     {
         icon: (
@@ -40,7 +40,7 @@ const USE_CASES = [
         bulletKeys: ['use_cases.realestate_b1', 'use_cases.realestate_b2', 'use_cases.realestate_b3', 'use_cases.realestate_b4'],
         color: 'from-blue-500/20 to-blue-500/5',
         border: 'border-blue-200 dark:border-blue-800',
-        iconBg: 'bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400',
+        iconBg: 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400',
     },
     {
         icon: (
@@ -54,7 +54,7 @@ const USE_CASES = [
         bulletKeys: ['use_cases.education_b1', 'use_cases.education_b2', 'use_cases.education_b3', 'use_cases.education_b4'],
         color: 'from-amber-500/20 to-amber-500/5',
         border: 'border-amber-200 dark:border-amber-800',
-        iconBg: 'bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400',
+        iconBg: 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400',
     },
     {
         icon: (
@@ -68,7 +68,7 @@ const USE_CASES = [
         bulletKeys: ['use_cases.healthcare_b1', 'use_cases.healthcare_b2', 'use_cases.healthcare_b3', 'use_cases.healthcare_b4'],
         color: 'from-rose-500/20 to-rose-500/5',
         border: 'border-rose-200 dark:border-rose-800',
-        iconBg: 'bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400',
+        iconBg: 'bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-400',
     },
     {
         icon: (
@@ -82,7 +82,7 @@ const USE_CASES = [
         bulletKeys: ['use_cases.retail_b1', 'use_cases.retail_b2', 'use_cases.retail_b3', 'use_cases.retail_b4'],
         color: 'from-emerald-500/20 to-emerald-500/5',
         border: 'border-emerald-200 dark:border-emerald-800',
-        iconBg: 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400',
+        iconBg: 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400',
     },
     {
         icon: (
@@ -96,7 +96,7 @@ const USE_CASES = [
         bulletKeys: ['use_cases.finance_b1', 'use_cases.finance_b2', 'use_cases.finance_b3', 'use_cases.finance_b4'],
         color: 'from-cyan-500/20 to-cyan-500/5',
         border: 'border-cyan-200 dark:border-cyan-800',
-        iconBg: 'bg-cyan-100 dark:bg-cyan-900/40 text-cyan-600 dark:text-cyan-400',
+        iconBg: 'bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-400',
     },
 ];
 
@@ -148,7 +148,7 @@ export default function UseCases({ landing = {}, canRegister }) {
                         <Link
                             href={route('register')}
                             className="mt-8 inline-flex items-center gap-2 rounded-xl px-7 py-3.5 text-base font-bold text-white shadow-lg transition-all duration-200 hover:opacity-90"
-                            style={{ background: 'rgb(var(--brand-500))' }}
+                            style={{ background: 'rgb(var(--brand-600))' }}
                         >
                             {t('use_cases.start_free_trial')}
                         </Link>
@@ -170,7 +170,7 @@ export default function UseCases({ landing = {}, canRegister }) {
                                     {uc.icon}
                                 </div>
                                 <span className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">{t(uc.labelKey)}</span>
-                                <h3 className="mt-1 text-lg font-bold text-neutral-900 dark:text-white">{t(uc.titleKey)}</h3>
+                                <h2 className="mt-1 text-lg font-bold text-neutral-900 dark:text-white">{t(uc.titleKey)}</h2>
                                 <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">{t(uc.descKey)}</p>
 
                                 {active === idx && (
@@ -186,7 +186,7 @@ export default function UseCases({ landing = {}, canRegister }) {
                                     </ul>
                                 )}
 
-                                <div className={`mt-4 flex items-center gap-1 text-xs font-semibold transition-colors ${active === idx ? 'text-brand-500' : 'text-neutral-400'}`}>
+                                <div className={`mt-4 flex items-center gap-1 text-xs font-semibold transition-colors ${active === idx ? 'text-brand-500' : 'text-neutral-500 dark:text-neutral-400'}`}>
                                     {active === idx ? t('use_cases.show_less') : t('use_cases.see_details')}
                                     <svg className={`h-3.5 w-3.5 transition-transform ${active === idx ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -222,7 +222,7 @@ export default function UseCases({ landing = {}, canRegister }) {
                             <div key={idx} className="text-center">
                                 <div
                                     className="mx-auto mb-4 h-12 w-12 rounded-full flex items-center justify-center font-bold text-lg text-white"
-                                    style={{ background: 'rgb(var(--brand-500))', boxShadow: '0 4px 16px rgb(var(--brand-400) / 0.35)' }}
+                                    style={{ background: 'rgb(var(--brand-600))', boxShadow: '0 4px 16px rgb(var(--brand-400) / 0.35)' }}
                                 >
                                     {step.n}
                                 </div>
@@ -247,7 +247,7 @@ export default function UseCases({ landing = {}, canRegister }) {
                             <Link
                                 href={route('register')}
                                 className="inline-flex items-center gap-2 rounded-xl px-7 py-3.5 text-base font-bold text-white shadow-lg transition-all duration-200 hover:opacity-90"
-                                style={{ background: 'rgb(var(--brand-500))' }}
+                                style={{ background: 'rgb(var(--brand-600))' }}
                             >
                                 {t('use_cases.start_free_trial')}
                                 <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>

@@ -1,5 +1,7 @@
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Badge, Button, Card, Modal, Pagination, Tooltip } from '@/Components/ui';
+import PageHeader from '@/Components/PageHeader';
+import DataTable from '@/Components/DataTable';
+import { Badge, Button, Modal, Tooltip } from '@/Components/ui';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +14,7 @@ import {
     Trash2,
 } from 'lucide-react';
 import axios from 'axios';
+import useInertiaLoading from '@/hooks/useInertiaLoading';
 
 const STATUS_ACTIVE = 'active';
 const CLIENT_ROLE_ADMIN = 'administrator';
@@ -58,6 +61,7 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {} })
     const [editUser, setEditUser] = useState(null);
     const [deleteUserConfirm, setDeleteUserConfirm] = useState(null);
     const [usersLoading, setUsersLoading] = useState(false);
+    const loading = useInertiaLoading();
 
     // Blank currency fields are submitted as null and inherit the platform default
     // currency. Defaulting them to USD here would persist USD onto every client the
@@ -232,7 +236,73 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {} })
     };
 
     const data = clients?.data ?? [];
-    const links = clients?.links ?? [];
+
+    const columns = [
+        {
+            key: 'name',
+            header: t('admin.col_name'),
+            sortable: true,
+            cardTitle: true,
+            render: (c) => <span className="font-medium text-neutral-900 dark:text-neutral-100">{c.name}</span>,
+        },
+        {
+            key: 'email',
+            header: t('admin.col_email'),
+            render: (c) => <span className="text-neutral-600 dark:text-neutral-300">{c.email ?? '—'}</span>,
+        },
+        {
+            key: 'status',
+            header: t('admin.col_status'),
+            render: (c) => (
+                <Badge variant={c.status === STATUS_ACTIVE ? 'success' : 'default'}>
+                    {c.status === STATUS_ACTIVE ? t('common.active') : t('common.inactive')}
+                </Badge>
+            ),
+        },
+        {
+            key: 'subscription',
+            header: t('admin.col_subscription'),
+            render: (c) => <span className="text-neutral-900 dark:text-neutral-100">{c.subscription?.name ?? t('admin.no_plan')}</span>,
+        },
+        {
+            key: 'actions',
+            header: t('admin.col_actions'),
+            align: 'right',
+            render: (c) => (
+                <div className="flex items-center justify-end gap-0.5">
+                    {canUpdate && (
+                        <>
+                            <ActionIcon title={t('admin.edit_client_title')} icon={Pencil} onClick={() => openEditClient(c)} />
+                            <ActionIcon title={t('admin.manage_users_title')} icon={Users} onClick={() => openManageUsers(c)} />
+                            <ActionIcon title={t('admin.assign_plan_title')} icon={CheckCircle} onClick={() => openAssignPlan(c)} />
+                            <ActionIcon title={t('admin.impersonate_title')} icon={LogIn} onClick={() => doImpersonate(c)} />
+                        </>
+                    )}
+                    {canDelete && (
+                        <ActionIcon
+                            title={t('admin.delete_client_title')}
+                            icon={Trash2}
+                            className="text-amber-500 hover:text-amber-600"
+                            onClick={() => setDeleteClientConfirm(c)}
+                        />
+                    )}
+                </div>
+            ),
+        },
+    ];
+
+    const toolbar = (
+        <form onSubmit={submitSearch} className="flex flex-wrap gap-2">
+            <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={t('admin.search_clients')}
+                className="w-56 rounded-soft border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
+            />
+            <Button type="submit" variant="outline" size="sm">{t('common.search')}</Button>
+        </form>
+    );
 
     return (
         <AdminLayout title={t('admin.client_management')}>
@@ -249,92 +319,37 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {} })
                     </div>
                 )}
 
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">{t('admin.client_management')}</h2>
-                        <p className="mt-0.5 text-sm text-neutral-500 dark:text-neutral-400">{t('admin.client_management_description')}</p>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-2">
-                        {canCreate && (
-                            <Button onClick={() => { addClientForm.reset(); setAddClientOpen(true); }}>
-                                + {t('admin.add_client')}
-                            </Button>
-                        )}
-                        <a
-                            href={route('admin.clients.export') + (search ? `?search=${encodeURIComponent(search)}` : '')}
-                            className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition"
-                        >
-                            <Download className="h-4 w-4" /> {t('admin.export_csv')}
-                        </a>
-                    </div>
-                </div>
+                <PageHeader
+                    title={t('admin.client_management')}
+                    description={t('admin.client_management_description')}
+                    actions={
+                        <>
+                            {canCreate && (
+                                <Button onClick={() => { addClientForm.reset(); setAddClientOpen(true); }}>
+                                    + {t('admin.add_client')}
+                                </Button>
+                            )}
+                            <a
+                                href={route('admin.clients.export') + (search ? `?search=${encodeURIComponent(search)}` : '')}
+                                className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition"
+                            >
+                                <Download className="h-4 w-4" /> {t('admin.export_csv')}
+                            </a>
+                        </>
+                    }
+                />
 
-                <form onSubmit={submitSearch} className="flex flex-wrap gap-2">
-                    <input
-                        type="text"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder={t('admin.search_clients')}
-                        className="rounded-soft border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 px-3 py-2 text-sm w-56 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
-                    />
-                    <Button type="submit" variant="outline" size="sm">{t('common.search')}</Button>
-                </form>
-
-                <Card>
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full text-sm">
-                            <thead>
-                                <tr className="border-b border-neutral-200 dark:border-neutral-700 text-left text-neutral-500 dark:text-neutral-400">
-                                    <th className="pb-2 pr-4 font-medium uppercase">{t('admin.col_name')}</th>
-                                    <th className="pb-2 pr-4 font-medium uppercase">{t('admin.col_email')}</th>
-                                    <th className="pb-2 pr-4 font-medium uppercase">{t('admin.col_status')}</th>
-                                    <th className="pb-2 pr-4 font-medium uppercase">{t('admin.col_subscription')}</th>
-                                    <th className="pb-2 pr-4 font-medium text-right uppercase">{t('admin.col_actions')}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {data.map((c) => (
-                                    <tr key={c.id} className="border-b border-neutral-100 dark:border-neutral-800">
-                                        <td className="py-3 pr-4 font-medium text-neutral-900 dark:text-neutral-100">{c.name}</td>
-                                        <td className="py-3 pr-4 text-neutral-600 dark:text-neutral-300">{c.email ?? '—'}</td>
-                                        <td className="py-3 pr-4">
-                                            <Badge variant={c.status === STATUS_ACTIVE ? 'success' : 'default'}>
-                                                {c.status === STATUS_ACTIVE ? t('common.active') : t('common.inactive')}
-                                            </Badge>
-                                        </td>
-                                        <td className="py-3 pr-4 text-neutral-900 dark:text-neutral-100">
-                                            {c.subscription?.name ?? t('admin.no_plan')}
-                                        </td>
-                                        <td className="py-3 pr-4">
-                                            <div className="flex items-center justify-end gap-0.5">
-                                                {canUpdate && (
-                                                    <>
-                                                        <ActionIcon title={t('admin.edit_client_title')} icon={Pencil} onClick={() => openEditClient(c)} />
-                                                        <ActionIcon title={t('admin.manage_users_title')} icon={Users} onClick={() => openManageUsers(c)} />
-                                                        <ActionIcon title={t('admin.assign_plan_title')} icon={CheckCircle} onClick={() => openAssignPlan(c)} />
-                                                        <ActionIcon title={t('admin.impersonate_title')} icon={LogIn} onClick={() => doImpersonate(c)} />
-                                                    </>
-                                                )}
-                                                {canDelete && (
-                                                    <ActionIcon
-                                                        title={t('admin.delete_client_title')}
-                                                        icon={Trash2}
-                                                        className="text-amber-500 hover:text-amber-600"
-                                                        onClick={() => setDeleteClientConfirm(c)}
-                                                    />
-                                                )}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                    {data.length === 0 && (
+                <DataTable
+                    columns={columns}
+                    rows={data}
+                    pagination={clients}
+                    storageKey="admin-clients"
+                    loading={loading}
+                    toolbar={toolbar}
+                    emptyState={
                         <div className="py-8 text-center text-neutral-500 dark:text-neutral-400">{t('admin.no_clients_found')}</div>
-                    )}
-                    <Pagination data={clients} />
-                </Card>
+                    }
+                />
             </div>
 
             {/* Add Client Modal */}
@@ -398,7 +413,7 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {} })
                                     placeholder={t('admin.currency_inherit')}
                                     className="w-full rounded-soft border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm"
                                 />
-                                <p className="mt-0.5 text-xs text-neutral-500">{t('admin.iso_currency_hint')}</p>
+                                <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">{t('admin.iso_currency_hint')}</p>
                             </div>
                             <div>
                                 <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('admin.currency_symbol')}</label>
@@ -409,7 +424,7 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {} })
                                     placeholder={t('admin.currency_inherit')}
                                     className="w-full rounded-soft border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm"
                                 />
-                                <p className="mt-0.5 text-xs text-neutral-500">{t('admin.symbol_hint')}</p>
+                                <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">{t('admin.symbol_hint')}</p>
                             </div>
                             <div>
                                 <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('admin.currency_position')}</label>
@@ -542,7 +557,7 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {} })
                                 <Button size="sm" onClick={openAddUser}>+ {t('admin.add_user')}</Button>
                             </div>
                             {usersLoading ? (
-                                <p className="py-4 text-center text-neutral-500">{t('admin.loading_users')}</p>
+                                <p className="py-4 text-center text-neutral-500 dark:text-neutral-400">{t('admin.loading_users')}</p>
                             ) : (
                                 <div className="overflow-x-auto">
                                     <table className="min-w-full text-sm">
@@ -575,7 +590,7 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {} })
                                             ))}
                                         </tbody>
                                     </table>
-                                    {clientUsers.length === 0 && !usersLoading && <p className="py-4 text-center text-neutral-500">{t('admin.no_users_yet')}</p>}
+                                    {clientUsers.length === 0 && !usersLoading && <p className="py-4 text-center text-neutral-500 dark:text-neutral-400">{t('admin.no_users_yet')}</p>}
                                 </div>
                             )}
                         </Modal.Body>
@@ -720,7 +735,7 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {} })
                                                 className="sr-only"
                                             />
                                             <span className="font-medium">{p.name}</span>
-                                            <span className="text-sm text-neutral-500">
+                                            <span className="text-sm text-neutral-500 dark:text-neutral-400">
                                                 Monthly: {p.currency_code ?? 'USD'} {((p.monthly_price_cents ?? 0) / 100).toFixed(2)} · Yearly: {p.currency_code ?? 'USD'} {((p.yearly_price_cents ?? 0) / 100).toFixed(2)}
                                             </span>
                                         </label>

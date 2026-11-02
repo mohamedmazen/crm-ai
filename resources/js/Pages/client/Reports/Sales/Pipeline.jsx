@@ -34,20 +34,20 @@ export default function Pipeline({ rows, bottlenecks, pipelineName, summary, fil
         >
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 <div className="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-900">
-                    <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+                    <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
                         {t('reports.sales_funnel')}
-                    </h3>
+                    </h2>
                     {funnelData.length > 0 ? (
                         <FunnelChart data={funnelData} nameKey="name" valueKey="value" height={320} />
                     ) : (
-                        <p className="py-16 text-center text-sm text-neutral-400">{t('reports.sales_no_pipeline')}</p>
+                        <p className="py-16 text-center text-sm text-neutral-500 dark:text-neutral-400">{t('reports.sales_no_pipeline')}</p>
                     )}
                 </div>
 
                 <div className="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-900">
-                    <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+                    <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
                         {t('reports.sales_bottlenecks')}
-                    </h3>
+                    </h2>
                     {bottleneckData.length > 0 ? (
                         <BarChart
                             data={bottleneckData}
@@ -57,24 +57,24 @@ export default function Pipeline({ rows, bottlenecks, pipelineName, summary, fil
                             height={320}
                         />
                     ) : (
-                        <p className="py-16 text-center text-sm text-neutral-400">{t('reports.no_data')}</p>
+                        <p className="py-16 text-center text-sm text-neutral-500 dark:text-neutral-400">{t('reports.no_data')}</p>
                     )}
                 </div>
             </div>
 
             <div className="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-900">
-                <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+                <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
                     {t('reports.sales_funnel_table')}
-                </h3>
+                </h2>
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead>
                             <tr className="border-b border-neutral-200 dark:border-neutral-700">
-                                <th className="pb-2 text-left text-xs text-neutral-500">{t('reports.sales_col_stage')}</th>
-                                <th className="pb-2 text-right text-xs text-neutral-500">{t('reports.sales_col_leads')}</th>
-                                <th className="pb-2 text-right text-xs text-neutral-500">{t('reports.sales_conversion_rate')}</th>
-                                <th className="pb-2 text-right text-xs text-neutral-500">{t('reports.sales_step_conversion')}</th>
-                                <th className="pb-2 text-right text-xs text-neutral-500">{t('reports.sales_avg_days')}</th>
+                                <th className="pb-2 text-left text-xs text-neutral-500 dark:text-neutral-400">{t('reports.sales_col_stage')}</th>
+                                <th className="pb-2 text-right text-xs text-neutral-500 dark:text-neutral-400">{t('reports.sales_col_leads')}</th>
+                                <th className="pb-2 text-right text-xs text-neutral-500 dark:text-neutral-400">{t('reports.sales_conversion_rate')}</th>
+                                <th className="pb-2 text-right text-xs text-neutral-500 dark:text-neutral-400">{t('reports.sales_step_conversion')}</th>
+                                <th className="pb-2 text-right text-xs text-neutral-500 dark:text-neutral-400">{t('reports.sales_avg_days')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700/50">
@@ -91,7 +91,7 @@ export default function Pipeline({ rows, bottlenecks, pipelineName, summary, fil
                             ))}
                             {(rows ?? []).length === 0 && (
                                 <tr>
-                                    <td colSpan={5} className="py-6 text-center text-neutral-400">{t('reports.sales_no_pipeline')}</td>
+                                    <td colSpan={5} className="py-6 text-center text-neutral-500 dark:text-neutral-400">{t('reports.sales_no_pipeline')}</td>
                                 </tr>
                             )}
                         </tbody>

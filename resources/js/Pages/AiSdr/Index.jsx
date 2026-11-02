@@ -44,10 +44,11 @@ export default function AiSdrIndex({ settings, channels = [], usage = { today: 0
 
     const numberField = (key, hintKey) => (
         <div>
-            <label className="text-xs font-medium text-neutral-600 dark:text-neutral-300">
+            <label htmlFor={`ai-sdr-${key}`} className="text-xs font-medium text-neutral-600 dark:text-neutral-300">
                 {t(`ai_sdr.${key}`)}
             </label>
             <input
+                id={`ai-sdr-${key}`}
                 type="number"
                 min={limits[key]?.min ?? 1}
                 max={limits[key]?.max ?? 999}
@@ -55,8 +56,8 @@ export default function AiSdrIndex({ settings, channels = [], usage = { today: 0
                 onChange={(event) => setData(key, event.target.value)}
                 className={fieldClass}
             />
-            <p className="mt-1 text-[11px] text-neutral-400">{t(hintKey)}</p>
-            {errors[key] && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors[key]}</p>}
+            <p className="mt-1 text-2xs text-neutral-500 dark:text-neutral-400">{t(hintKey)}</p>
+            {errors[key] && <p className="mt-1 text-xs text-red-700 dark:text-red-400">{errors[key]}</p>}
         </div>
     );
 
@@ -82,18 +83,18 @@ export default function AiSdrIndex({ settings, channels = [], usage = { today: 0
 
                 <div className="grid gap-3 sm:grid-cols-3">
                     <div className="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-900">
-                        <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">{t('ai_sdr.usage_today')}</p>
+                        <p className="text-2xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">{t('ai_sdr.usage_today')}</p>
                         <p className="mt-1 text-2xl font-bold text-neutral-900 dark:text-neutral-100">
                             {usage.today}
-                            <span className="text-sm font-medium text-neutral-400"> / {data.daily_cap}</span>
+                            <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400"> / {data.daily_cap}</span>
                         </p>
                     </div>
                     <div className="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-900">
-                        <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">{t('ai_sdr.usage_total')}</p>
+                        <p className="text-2xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">{t('ai_sdr.usage_total')}</p>
                         <p className="mt-1 text-2xl font-bold text-neutral-900 dark:text-neutral-100">{usage.total}</p>
                     </div>
                     <div className="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-900">
-                        <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">{t('ai_sdr.last_run')}</p>
+                        <p className="text-2xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">{t('ai_sdr.last_run')}</p>
                         <p className="mt-1 text-sm font-medium text-neutral-700 dark:text-neutral-200">
                             {settings.last_run_at
                                 ? new Date(settings.last_run_at).toLocaleString()
@@ -112,6 +113,7 @@ export default function AiSdrIndex({ settings, channels = [], usage = { today: 0
                             type="button"
                             role="switch"
                             aria-checked={data.enabled}
+                            aria-label={t('ai_sdr.kill_switch')}
                             onClick={() => setData('enabled', !data.enabled)}
                             className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition ${
                                 data.enabled ? 'bg-brand-600' : 'bg-neutral-300 dark:bg-neutral-600'
@@ -123,15 +125,16 @@ export default function AiSdrIndex({ settings, channels = [], usage = { today: 0
 
                     <div className="rounded-lg bg-neutral-50 px-3 py-2 text-xs text-neutral-600 dark:bg-neutral-800/60 dark:text-neutral-300">
                         <span className="inline-flex items-center gap-1.5 font-medium">
-                            {data.enabled ? <Sparkles className="h-3.5 w-3.5 text-brand-600" /> : <Clock className="h-3.5 w-3.5" />}
+                            {data.enabled ? <Sparkles className="h-3.5 w-3.5 text-brand-600 dark:text-brand-400" /> : <Clock className="h-3.5 w-3.5" />}
                             {data.enabled ? t('ai_sdr.enabled') : t('ai_sdr.disabled')}
                         </span>
                     </div>
 
                     <div className="grid gap-4 sm:grid-cols-2">
                         <div>
-                            <label className="text-xs font-medium text-neutral-600 dark:text-neutral-300">{t('ai_sdr.channel')}</label>
+                            <label htmlFor="ai-sdr-channel" className="text-xs font-medium text-neutral-600 dark:text-neutral-300">{t('ai_sdr.channel')}</label>
                             <select
+                                id="ai-sdr-channel"
                                 value={data.channel}
                                 onChange={(event) => setData('channel', event.target.value)}
                                 className={fieldClass}
@@ -140,7 +143,7 @@ export default function AiSdrIndex({ settings, channels = [], usage = { today: 0
                                     <option key={channel} value={channel}>{t(`ai_sdr.channel_${channel}`)}</option>
                                 ))}
                             </select>
-                            {errors.channel && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.channel}</p>}
+                            {errors.channel && <p className="mt-1 text-xs text-red-700 dark:text-red-400">{errors.channel}</p>}
                         </div>
 
                         {numberField('daily_cap', 'ai_sdr.daily_cap_hint')}

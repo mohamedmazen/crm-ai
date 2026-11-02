@@ -54,7 +54,7 @@ export default function SegmentContacts({ segment, segmentContacts, availableCon
             <Head title={t('contacts_page.seg_head_title', { name: segment.name })} />
             <div className="space-y-6 max-w-4xl">
                 <div className="flex items-center gap-3">
-                    <a href={route('client.segments.index')} className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
+                    <a href={route('client.segments.index')} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
                         <ArrowLeft className="h-5 w-5" />
                     </a>
                     <div>
@@ -68,7 +68,7 @@ export default function SegmentContacts({ segment, segmentContacts, availableCon
                     <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900">
                         <div className="flex items-center justify-between gap-2 px-4 py-3 border-b border-neutral-100 dark:border-neutral-800">
                             <div className="flex items-center gap-2">
-                                <Users className="h-4 w-4 text-neutral-400" />
+                                <Users className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
                                 <span className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">{t('contacts_page.seg_in_segment')}</span>
                                 <span className="rounded-full bg-neutral-100 dark:bg-neutral-700 px-2 py-0.5 text-xs text-neutral-600 dark:text-neutral-300">{segmentContacts.length}</span>
                             </div>
@@ -80,7 +80,7 @@ export default function SegmentContacts({ segment, segmentContacts, availableCon
                             {segmentContacts.map(contact => (
                                 <div key={contact.id} className="flex items-center justify-between gap-2 px-4 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition">
                                     <ContactRow contact={contact} />
-                                    <button type="button" onClick={() => handleDetach(contact.id)} className="text-neutral-400 hover:text-red-500 transition shrink-0" title={t('contacts_page.seg_remove_title')}>
+                                    <button type="button" onClick={() => handleDetach(contact.id)} className="text-neutral-500 dark:text-neutral-400 hover:text-red-500 transition shrink-0" title={t('contacts_page.seg_remove_title')}>
                                         <Trash2 className="h-4 w-4" />
                                     </button>
                                 </div>
@@ -101,7 +101,7 @@ export default function SegmentContacts({ segment, segmentContacts, availableCon
                                 )}
                             </div>
                             <form onSubmit={handleSearch} className="relative">
-                                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 pointer-events-none" />
+                                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500 dark:text-neutral-400 pointer-events-none" />
                                 <input
                                     type="text"
                                     value={search}
@@ -123,7 +123,7 @@ export default function SegmentContacts({ segment, segmentContacts, availableCon
                                             type="checkbox"
                                             checked={isSelected}
                                             onChange={() => toggleSelect(contact.id)}
-                                            className="rounded border-neutral-300 dark:border-neutral-600 text-brand-600 focus:ring-brand-500"
+                                            className="rounded border-neutral-300 dark:border-neutral-600 text-brand-600 dark:text-brand-400 focus:ring-brand-500"
                                         />
                                         <ContactRow contact={contact} />
                                     </label>
@@ -131,7 +131,7 @@ export default function SegmentContacts({ segment, segmentContacts, availableCon
                             })}
                         </div>
                         {availableContacts.length > 0 && (
-                            <div className="px-4 py-2 border-t border-neutral-100 dark:border-neutral-800 text-xs text-neutral-400 dark:text-neutral-500">
+                            <div className="px-4 py-2 border-t border-neutral-100 dark:border-neutral-800 text-xs text-neutral-500 dark:text-neutral-400">
                                 {t('contacts_page.seg_showing_limit')}
                             </div>
                         )}

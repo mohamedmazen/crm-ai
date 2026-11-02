@@ -40,7 +40,7 @@ export default function RangeFilter({ value = 30, routeName, params = {} }) {
                         className={[
                             'rounded-soft px-3 py-1.5 text-sm font-medium transition',
                             active
-                                ? 'bg-brand-500 text-white shadow-soft'
+                                ? 'bg-brand-600 text-white shadow-soft'
                                 : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700/60',
                         ].join(' ')}
                     >

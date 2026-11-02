@@ -24,7 +24,7 @@ function CopyButton({ text }) {
             type="button"
             onClick={copy}
             title={t('whatsapp.setup_copy_to_clipboard')}
-            className="shrink-0 rounded p-1 text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition"
+            className="shrink-0 rounded p-1 text-neutral-500 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition"
         >
             {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
         </button>
@@ -160,12 +160,12 @@ function WabaCard({ waba, webhookUrl, webhookToken, activePhoneIds, onSyncTempla
                     </p>
                     <div className="space-y-1.5">
                         <div className="flex items-center gap-2">
-                            <Link2 className="h-3.5 w-3.5 text-neutral-400 shrink-0" />
+                            <Link2 className="h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400 shrink-0" />
                             <code className="flex-1 min-w-0 text-xs font-mono text-neutral-700 dark:text-neutral-300 break-all">{fullWebhookUrl}</code>
                             <CopyButton text={fullWebhookUrl} />
                         </div>
                         <div className="flex items-center gap-2">
-                            <span className="text-xs text-neutral-400 shrink-0">{t('whatsapp.setup_token_label')}</span>
+                            <span className="text-xs text-neutral-500 dark:text-neutral-400 shrink-0">{t('whatsapp.setup_token_label')}</span>
                             <code className="flex-1 min-w-0 text-xs font-mono text-neutral-700 dark:text-neutral-300 break-all">{webhookToken}</code>
                             <CopyButton text={webhookToken} />
                         </div>
@@ -242,27 +242,27 @@ function WabaCard({ waba, webhookUrl, webhookToken, activePhoneIds, onSyncTempla
                             return (
                                 <li key={phoneId ?? i} className="rounded-lg bg-neutral-50 dark:bg-neutral-800 px-3 py-2 text-xs space-y-2">
                                     <div className="flex items-center gap-2">
-                                        <Phone className="h-3.5 w-3.5 text-neutral-400 shrink-0" />
+                                        <Phone className="h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400 shrink-0" />
                                         <div className="flex-1 min-w-0">
                                             <div className="font-mono text-neutral-500 dark:text-neutral-400 truncate">{t('whatsapp.setup_phone_id', { id: phoneId })}</div>
                                             <div className="font-mono font-medium truncate">{num.display_phone ?? num.display_phone_number ?? '—'}</div>
                                             {num.verified_name && <div className="text-neutral-500 dark:text-neutral-400 truncate">{num.verified_name}</div>}
                                         </div>
-                                        {num.quality_rating && <span className="text-neutral-400 shrink-0">{num.quality_rating}</span>}
+                                        {num.quality_rating && <span className="text-neutral-500 dark:text-neutral-400 shrink-0">{num.quality_rating}</span>}
                                         {verStatus === 'VERIFIED'
-                                            ? <span className="flex items-center gap-1 text-green-600 dark:text-green-400 shrink-0"><ShieldCheck className="h-3.5 w-3.5" /> {t('whatsapp.setup_verified')}</span>
+                                            ? <span className="flex items-center gap-1 text-green-700 dark:text-green-400 shrink-0"><ShieldCheck className="h-3.5 w-3.5" /> {t('whatsapp.setup_verified')}</span>
                                             : verStatus
-                                                ? <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400 shrink-0"><ShieldAlert className="h-3.5 w-3.5" /> {verStatus}</span>
+                                                ? <span className="flex items-center gap-1 text-amber-700 dark:text-amber-400 shrink-0"><ShieldAlert className="h-3.5 w-3.5" /> {verStatus}</span>
                                                 : null}
                                         {isActive
-                                            ? <span className="flex items-center gap-1 font-medium text-green-600 dark:text-green-400 shrink-0"><Inbox className="h-3 w-3" /> {t('whatsapp.setup_inbox')}</span>
-                                            : <span className="text-neutral-400 shrink-0">—</span>}
+                                            ? <span className="flex items-center gap-1 font-medium text-green-700 dark:text-green-400 shrink-0"><Inbox className="h-3 w-3" /> {t('whatsapp.setup_inbox')}</span>
+                                            : <span className="text-neutral-500 dark:text-neutral-400 shrink-0">—</span>}
                                     </div>
 
                                     {needsVerify && verifyingPhone !== phoneId && (
                                         <div className="flex items-center gap-2 pt-1 border-t border-neutral-200 dark:border-neutral-700">
                                             <ShieldAlert className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-                                            <span className="text-amber-600 dark:text-amber-400 flex-1">{t('whatsapp.setup_phone_not_verified')}</span>
+                                            <span className="text-amber-700 dark:text-amber-400 flex-1">{t('whatsapp.setup_phone_not_verified')}</span>
                                             <button
                                                 type="button"
                                                 disabled={sendingCode}
@@ -291,7 +291,7 @@ function WabaCard({ waba, webhookUrl, webhookToken, activePhoneIds, onSyncTempla
                                             >
                                                 {submittingCode ? t('whatsapp.setup_verifying') : t('whatsapp.setup_verify')}
                                             </button>
-                                            <button type="button" onClick={() => setVerifyingPhone(null)} className="text-neutral-400 hover:text-neutral-600 shrink-0">{t('common.cancel')}</button>
+                                            <button type="button" onClick={() => setVerifyingPhone(null)} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 shrink-0">{t('common.cancel')}</button>
                                         </div>
                                     )}
                                 </li>
@@ -299,13 +299,13 @@ function WabaCard({ waba, webhookUrl, webhookToken, activePhoneIds, onSyncTempla
                         })}
                     </ul>
                 ) : (
-                    <p className="text-xs text-neutral-400 italic">{t('whatsapp.setup_no_phones')}</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 italic">{t('whatsapp.setup_no_phones')}</p>
                 )}
             </div>
 
             {/* Confirm delete warning */}
             {confirmDelete && (
-                <div className="px-5 py-3 flex items-start gap-2 text-xs text-red-600 dark:text-red-400">
+                <div className="px-5 py-3 flex items-start gap-2 text-xs text-red-700 dark:text-red-400">
                     <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
                     <span>{t('whatsapp.setup_delete_warning')}</span>
                 </div>
@@ -369,7 +369,7 @@ export default function WhatsappSetup({ wabas, webhookUrl, webhookTokensByWaba, 
                     <div className="rounded-xl border border-dashed border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 p-8 text-center">
                         <MessageSquare className="h-8 w-8 text-neutral-300 dark:text-neutral-600 mx-auto mb-3" />
                         <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400">{t('whatsapp.setup_empty_title')}</p>
-                        <p className="mt-1 text-xs text-neutral-400 dark:text-neutral-500">{t('whatsapp.setup_empty_description')}</p>
+                        <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">{t('whatsapp.setup_empty_description')}</p>
                     </div>
                 )}
 
@@ -377,7 +377,7 @@ export default function WhatsappSetup({ wabas, webhookUrl, webhookTokensByWaba, 
                 {wabas.length > 0 && (
                     <details className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-5 text-sm open:space-y-3">
                         <summary className="cursor-pointer font-medium text-neutral-700 dark:text-neutral-300 flex items-center gap-2">
-                            <Webhook className="h-4 w-4 text-neutral-400" /> {t('whatsapp.setup_webhook_instructions')}
+                            <Webhook className="h-4 w-4 text-neutral-500 dark:text-neutral-400" /> {t('whatsapp.setup_webhook_instructions')}
                         </summary>
                         <ol className="list-decimal list-inside text-neutral-600 dark:text-neutral-400 space-y-1.5 mt-3">
                             <li>{t('whatsapp.setup_webhook_step_1')}</li>

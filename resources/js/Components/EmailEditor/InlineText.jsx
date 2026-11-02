@@ -323,7 +323,7 @@ export function SelectionToolbar({ canvasRef, tokens = [] }) {
                     <button
                         type="button"
                         onClick={() => setLinkMode(false)}
-                        className="inline-flex h-7 w-7 items-center justify-center rounded-md text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-md text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700"
                     >
                         <X className="h-3.5 w-3.5" />
                     </button>
@@ -367,7 +367,7 @@ export function SelectionToolbar({ canvasRef, tokens = [] }) {
                                             className="flex w-full items-center justify-between px-3 py-1.5 text-left text-xs hover:bg-neutral-50 dark:hover:bg-neutral-700"
                                         >
                                             <span className="text-neutral-700 dark:text-neutral-200">{t.label}</span>
-                                            <span className="font-mono text-[10px] text-neutral-400">{t.key}</span>
+                                            <span className="font-mono text-3xs text-neutral-500 dark:text-neutral-400">{t.key}</span>
                                         </button>
                                     ))}
                                 </div>

@@ -15,7 +15,7 @@ const statusStyles = {
     viewed: 'bg-sky-100 text-sky-800 dark:bg-sky-950/60 dark:text-sky-300',
     paid: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300',
     overdue: 'bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-300',
-    cancelled: 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-500',
+    cancelled: 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-600',
 };
 
 function money(value, currency) {
@@ -150,14 +150,14 @@ export default function InvoiceShow({ invoice = {}, publicUrl = '', paidAmount =
                     <div className="flex items-center gap-3">
                         <Link
                             href={route('client.sales.invoices.index')}
-                            className="rounded-lg p-2 text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                            className="rounded-lg p-2 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800"
                         >
                             <ArrowLeft className="h-4 w-4" />
                         </Link>
                         <div>
                             <div className="flex items-center gap-2">
                                 <h1 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">{invoice.number}</h1>
-                                <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${statusStyles[invoice.status] || statusStyles.draft}`}>
+                                <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-2xs font-semibold ${statusStyles[invoice.status] || statusStyles.draft}`}>
                                     {invoice.status === 'overdue' && <AlertTriangle className="h-3 w-3" />}
                                     {t(`invoices.status_${invoice.status}`)}
                                 </span>
@@ -200,7 +200,7 @@ export default function InvoiceShow({ invoice = {}, publicUrl = '', paidAmount =
                             <button
                                 type="button"
                                 onClick={() => setDeleting(true)}
-                                className="rounded-lg p-2 text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30"
+                                className="rounded-lg p-2 text-neutral-500 dark:text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30"
                                 title={t('common.delete')}
                             >
                                 <Trash2 className="h-4 w-4" />
@@ -241,21 +241,21 @@ export default function InvoiceShow({ invoice = {}, publicUrl = '', paidAmount =
                         <div className="overflow-hidden rounded-2xl border border-soft bg-white dark:bg-neutral-900">
                             <div className="flex items-center justify-between border-b border-soft px-5 py-3.5">
                                 <h2 className="flex items-center gap-2 text-sm font-bold text-neutral-900 dark:text-neutral-100">
-                                    <Wallet className="h-4 w-4 text-neutral-400" />
+                                    <Wallet className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
                                     {t('invoices.payments')}
                                 </h2>
                             </div>
 
                             {(invoice.payments || []).length === 0 ? (
-                                <p className="px-5 py-6 text-sm text-neutral-400">{t('invoices.no_payments')}</p>
+                                <p className="px-5 py-6 text-sm text-neutral-500 dark:text-neutral-400">{t('invoices.no_payments')}</p>
                             ) : (
                                 <table className="w-full text-start text-sm">
                                     <tbody className="divide-y divide-soft">
                                         {(invoice.payments || []).map((payment) => (
                                             <tr key={payment.id}>
                                                 <td className="px-5 py-3 text-neutral-600 dark:text-neutral-300">{formatDate(payment.paid_at)}</td>
-                                                <td className="px-4 py-3 capitalize text-neutral-500">{payment.method ? payment.method.replace('_', ' ') : '—'}</td>
-                                                <td className="px-4 py-3 text-neutral-400">{payment.reference || ''}</td>
+                                                <td className="px-4 py-3 capitalize text-neutral-500 dark:text-neutral-400">{payment.method ? payment.method.replace('_', ' ') : '—'}</td>
+                                                <td className="px-4 py-3 text-neutral-500 dark:text-neutral-400">{payment.reference || ''}</td>
                                                 <td className="px-5 py-3 text-end tabular-nums font-medium text-emerald-700 dark:text-emerald-400">
                                                     {money(payment.amount, invoice.currency)}
                                                 </td>
@@ -268,7 +268,7 @@ export default function InvoiceShow({ invoice = {}, publicUrl = '', paidAmount =
 
                         {invoice.notes && (
                             <div className="rounded-2xl border border-soft bg-white p-5 dark:bg-neutral-900">
-                                <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">{t('invoices.notes')}</h2>
+                                <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">{t('invoices.notes')}</h2>
                                 <p className="mt-2 whitespace-pre-line text-sm text-neutral-700 dark:text-neutral-300">{invoice.notes}</p>
                             </div>
                         )}
@@ -278,11 +278,11 @@ export default function InvoiceShow({ invoice = {}, publicUrl = '', paidAmount =
                         <div className="space-y-3 rounded-2xl border border-soft bg-white p-5 dark:bg-neutral-900">
                             <dl className="space-y-2 text-sm">
                                 <div className="flex justify-between">
-                                    <dt className="text-neutral-500">{t('invoices.subtotal')}</dt>
+                                    <dt className="text-neutral-500 dark:text-neutral-400">{t('invoices.subtotal')}</dt>
                                     <dd className="tabular-nums text-neutral-900 dark:text-neutral-100">{money(invoice.subtotal)}</dd>
                                 </div>
                                 <div className="flex justify-between">
-                                    <dt className="text-neutral-500">{t('invoices.tax')}</dt>
+                                    <dt className="text-neutral-500 dark:text-neutral-400">{t('invoices.tax')}</dt>
                                     <dd className="tabular-nums text-neutral-900 dark:text-neutral-100">{money(invoice.tax_total)}</dd>
                                 </div>
                                 <div className="flex justify-between border-t border-soft pt-2 text-base font-bold">
@@ -290,7 +290,7 @@ export default function InvoiceShow({ invoice = {}, publicUrl = '', paidAmount =
                                     <dd className="tabular-nums">{money(invoice.total, invoice.currency)}</dd>
                                 </div>
                                 <div className="flex justify-between">
-                                    <dt className="text-neutral-500">{t('invoices.paid')}</dt>
+                                    <dt className="text-neutral-500 dark:text-neutral-400">{t('invoices.paid')}</dt>
                                     <dd className="tabular-nums text-emerald-700 dark:text-emerald-400">{money(paidAmount)}</dd>
                                 </div>
                                 <div className="flex justify-between font-semibold">
@@ -319,8 +319,8 @@ export default function InvoiceShow({ invoice = {}, publicUrl = '', paidAmount =
                         </div>
 
                         <div className="space-y-2 rounded-2xl border border-soft bg-white p-5 dark:bg-neutral-900">
-                            <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">{t('invoices.public_link')}</h2>
-                            <p className="text-[11px] text-neutral-400">{t('invoices.public_link_hint')}</p>
+                            <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">{t('invoices.public_link')}</h2>
+                            <p className="text-2xs text-neutral-500 dark:text-neutral-400">{t('invoices.public_link_hint')}</p>
                             <div className="flex gap-2">
                                 <input
                                     readOnly
@@ -373,7 +373,7 @@ export default function InvoiceShow({ invoice = {}, publicUrl = '', paidAmount =
                             <Wallet className="h-5 w-5 text-brand-600 dark:text-brand-400" />
                             {t('invoices.record_payment')}
                         </h2>
-                        <button type="button" onClick={() => setShowPayment(false)} className="text-neutral-400 hover:text-neutral-600">&times;</button>
+                        <button type="button" onClick={() => setShowPayment(false)} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600">&times;</button>
                     </div>
 
                     <p className="rounded-lg bg-neutral-50 p-3 text-xs text-neutral-600 dark:bg-neutral-800/60 dark:text-neutral-300">
@@ -391,7 +391,7 @@ export default function InvoiceShow({ invoice = {}, publicUrl = '', paidAmount =
                                 onChange={(event) => paymentForm.setData('amount', event.target.value)}
                                 className="mt-1 w-full rounded-lg border-soft bg-white p-2.5 text-sm dark:bg-neutral-800 dark:text-neutral-100"
                             />
-                            {paymentForm.errors.amount && <p className="mt-1 text-xs text-red-600">{paymentForm.errors.amount}</p>}
+                            {paymentForm.errors.amount && <p className="mt-1 text-xs text-red-700 dark:text-red-400">{paymentForm.errors.amount}</p>}
                         </div>
 
                         <div>
@@ -450,7 +450,7 @@ export default function InvoiceShow({ invoice = {}, publicUrl = '', paidAmount =
                 <form onSubmit={submitEdit} className="space-y-4 p-6">
                     <div className="flex items-center justify-between border-b border-soft pb-4">
                         <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">{t('invoices.edit')}</h2>
-                        <button type="button" onClick={() => setShowEdit(false)} className="text-neutral-400 hover:text-neutral-600">&times;</button>
+                        <button type="button" onClick={() => setShowEdit(false)} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600">&times;</button>
                     </div>
 
                     <div className="grid gap-3 sm:grid-cols-2">

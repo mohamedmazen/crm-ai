@@ -39,7 +39,7 @@ export default function BillingIndex({ transactions }) {
                     </div>
                     <Link
                         href={route('client.pricing')}
-                        className="inline-flex items-center gap-2 rounded-soft bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 shadow-soft transition-all duration-150"
+                        className="inline-flex items-center gap-2 rounded-soft bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 shadow-soft transition-all duration-150"
                     >
                         <CreditCard className="h-4 w-4" />
                         {t('client.view_plans') || 'View plans'}
@@ -108,7 +108,7 @@ export default function BillingIndex({ transactions }) {
                         </table>
                     ) : (
                         <div className="px-6 py-12 text-center text-neutral-500 dark:text-neutral-400">
-                            <Package className="mx-auto h-12 w-12 text-neutral-400 mb-3" />
+                            <Package className="mx-auto h-12 w-12 text-neutral-500 dark:text-neutral-400 mb-3" />
                             <p>{t('client.no_payments') || 'No payments yet'}</p>
                             <Link
                                 href={route('client.pricing')}

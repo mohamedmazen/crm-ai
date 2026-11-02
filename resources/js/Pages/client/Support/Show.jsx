@@ -7,7 +7,7 @@ import { formatInTz } from '@/Utils/datetime';
 const STATUS_CLS = {
     open:        'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800',
     in_progress: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800',
-    closed:      'bg-neutral-100 text-neutral-500 border-neutral-200 dark:bg-neutral-700/50 dark:text-neutral-400 dark:border-neutral-600',
+    closed:      'bg-neutral-100 text-neutral-600 border-neutral-200 dark:bg-neutral-700/50 dark:text-neutral-300 dark:border-neutral-600',
 };
 const STATUS_DOT = {
     open: 'bg-emerald-500',
@@ -16,10 +16,10 @@ const STATUS_DOT = {
 };
 
 const PRIORITY_STYLES = {
-    urgent: 'text-red-600 dark:text-red-400',
-    high:   'text-orange-500 dark:text-orange-400',
+    urgent: 'text-red-700 dark:text-red-400',
+    high:   'text-orange-700 dark:text-orange-400',
     normal: 'text-neutral-500 dark:text-neutral-400',
-    low:    'text-neutral-400 dark:text-neutral-500',
+    low:    'text-neutral-500 dark:text-neutral-400',
 };
 
 function Avatar({ name, staff = false }) {
@@ -53,7 +53,7 @@ export default function SupportShow({ ticket }) {
             <div className="max-w-2xl space-y-5">
                 {/* Header */}
                 <div className="flex items-start gap-3">
-                    <Link href={route('client.support.index')} className="mt-0.5 p-1.5 rounded-soft text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors flex-shrink-0">
+                    <Link href={route('client.support.index')} aria-label={t('common.back')} className="mt-0.5 p-1.5 rounded-soft text-neutral-600 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors flex-shrink-0">
                         <ArrowLeft className="h-4 w-4" />
                     </Link>
                     <div className="min-w-0 flex-1">
@@ -66,7 +66,7 @@ export default function SupportShow({ ticket }) {
                             <span className={`text-xs capitalize font-medium ${PRIORITY_STYLES[ticket.priority] ?? ''}`}>
                                 {ticket.priority} {t('support_tickets.priority_suffix')}
                             </span>
-                            <span className="text-xs text-neutral-400 dark:text-neutral-500">#{ticket.id}</span>
+                            <span className="text-xs text-neutral-500 dark:text-neutral-400">#{ticket.id}</span>
                         </div>
                     </div>
                 </div>
@@ -89,9 +89,9 @@ export default function SupportShow({ ticket }) {
                                 <div className="flex items-center justify-between mb-2 gap-2">
                                     <div className="flex items-center gap-1.5">
                                         <span className="text-sm font-semibold text-neutral-900 dark:text-white truncate">{ticket.name}</span>
-                                        <span className="text-xs px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400 rounded">{t('support_tickets.you_label')}</span>
+                                        <span className="text-xs px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 rounded">{t('support_tickets.you_label')}</span>
                                     </div>
-                                    <div className="flex items-center gap-1 text-xs text-neutral-400 dark:text-neutral-500 flex-shrink-0">
+                                    <div className="flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-400 flex-shrink-0">
                                         <Clock className="h-3 w-3" />
                                         {formatTime(ticket.created_at)}
                                     </div>
@@ -117,7 +117,7 @@ export default function SupportShow({ ticket }) {
                                                 <span className="text-xs px-1.5 py-0.5 bg-brand-100 dark:bg-brand-900/50 text-brand-700 dark:text-brand-400 rounded font-medium">{t('support_tickets.support_label')}</span>
                                             )}
                                         </div>
-                                        <div className="flex items-center gap-1 text-xs text-neutral-400 dark:text-neutral-500 flex-shrink-0">
+                                        <div className="flex items-center gap-1 text-xs text-neutral-600 dark:text-neutral-400 flex-shrink-0">
                                             <Clock className="h-3 w-3" />
                                             {formatTime(reply.created_at)}
                                         </div>
@@ -132,10 +132,10 @@ export default function SupportShow({ ticket }) {
                 {/* Reply or closed notice */}
                 {isClosed ? (
                     <div className="flex items-center gap-3 p-4 bg-neutral-50 dark:bg-neutral-800/70 rounded-xl border border-neutral-200 dark:border-neutral-700/50">
-                        <Lock className="h-4 w-4 text-neutral-400 flex-shrink-0" />
+                        <Lock className="h-4 w-4 text-neutral-500 dark:text-neutral-400 flex-shrink-0" />
                         <div>
                             <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400">{t('support_tickets.ticket_closed')}</p>
-                            <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5">
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
                                 {t('support_tickets.need_more_help')}{' '}
                                 <Link href={route('client.support.create')} className="text-brand-600 dark:text-brand-400 hover:underline">
                                     {t('support_tickets.open_new_ticket')}
@@ -146,7 +146,7 @@ export default function SupportShow({ ticket }) {
                 ) : (
                     <form onSubmit={submit} className="bg-white dark:bg-neutral-800/70 rounded-xl border border-neutral-200 dark:border-neutral-700/50 overflow-hidden shadow-soft">
                         <div className="p-4 border-b border-neutral-100 dark:border-neutral-700 flex items-center gap-2">
-                            <MessageSquare className="h-4 w-4 text-neutral-400" />
+                            <MessageSquare className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
                             <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('support_tickets.add_reply')}</span>
                         </div>
                         <div className="p-4">

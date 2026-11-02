@@ -74,11 +74,11 @@ function BriefStep({ brief, setBrief, accounts, onGenerate, loading, error }) {
                     placeholder={t('social.campaign_topic_placeholder')}
                     className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"
                 />
-                <p className="text-xs text-neutral-400 mt-0.5 text-right">{brief.topic.length}/500</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 text-right">{brief.topic.length}/500</p>
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('social.campaign_goal')} <span className="text-neutral-400 font-normal">({t('common.optional')})</span></label>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('social.campaign_goal')} <span className="text-neutral-500 dark:text-neutral-400 font-normal">({t('common.optional')})</span></label>
                 <input
                     type="text"
                     value={brief.campaign_goal}
@@ -143,7 +143,7 @@ function BriefStep({ brief, setBrief, accounts, onGenerate, loading, error }) {
             <div>
                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">{t('social.target_accounts')} <span className="text-red-500">*</span></label>
                 {accounts.length === 0 ? (
-                    <p className="text-sm text-neutral-400">{t('social.no_connected_accounts')}</p>
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('social.no_connected_accounts')}</p>
                 ) : (
                     <div className="flex flex-wrap gap-2">
                         {accounts.map(a => {
@@ -244,7 +244,7 @@ function ReviewStep({ editedPosts, setEditedPosts, approved, setApproved, select
                     >
                         <div className="flex items-start gap-3">
                             <button type="button" onClick={() => toggleOne(i)} className="mt-0.5 shrink-0 text-brand-600 dark:text-brand-400">
-                                {isApproved ? <CheckSquare className="h-4 w-4" /> : <Square className="h-4 w-4 text-neutral-400" />}
+                                {isApproved ? <CheckSquare className="h-4 w-4" /> : <Square className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />}
                             </button>
                             <div className="flex-1 space-y-3">
                                 <input
@@ -265,7 +265,7 @@ function ReviewStep({ editedPosts, setEditedPosts, approved, setApproved, select
                                             overLimit ? 'border-red-400' : 'border-neutral-200 dark:border-neutral-700'
                                         }`}
                                     />
-                                    <p className={`text-xs mt-0.5 text-right ${overLimit ? 'text-red-500' : 'text-neutral-400'}`}>
+                                    <p className={`text-xs mt-0.5 text-right ${overLimit ? 'text-red-500' : 'text-neutral-500 dark:text-neutral-400'}`}>
                                         {charCount}/{minLimit}
                                     </p>
                                 </div>
@@ -280,7 +280,7 @@ function ReviewStep({ editedPosts, setEditedPosts, approved, setApproved, select
                                     />
                                 </div>
                                 {post.rationale && (
-                                    <p className="text-xs text-neutral-400 italic">{post.rationale}</p>
+                                    <p className="text-xs text-neutral-500 dark:text-neutral-400 italic">{post.rationale}</p>
                                 )}
                             </div>
                         </div>
@@ -410,13 +410,13 @@ export default function AiPlannerModal({ show, onClose, accounts, onSuccess }) {
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200 dark:border-neutral-700 shrink-0">
                     <div className="flex items-center gap-2">
-                        <Sparkles className="h-5 w-5 text-brand-600" />
+                        <Sparkles className="h-5 w-5 text-brand-600 dark:text-brand-400" />
                         <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
                             {step === 'brief' ? t('social.ai_post_planner') : step === 'review' ? t('social.review_generated_posts') : t('social.confirm_and_schedule')}
                         </h2>
                     </div>
                     {!loading && (
-                        <button onClick={onClose} className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition text-xl leading-none">&times;</button>
+                        <button onClick={onClose} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition text-xl leading-none">&times;</button>
                     )}
                 </div>
 
@@ -428,7 +428,7 @@ export default function AiPlannerModal({ show, onClose, accounts, onSuccess }) {
                             {idx === 0 && <div className={`h-0.5 w-8 ${step === 'review' ? 'bg-brand-600' : 'bg-neutral-200 dark:bg-neutral-700'}`} />}
                         </div>
                     ))}
-                    <span className="ml-2 text-xs text-neutral-400">{step === 'brief' ? t('social.step_1_of_2') : t('social.step_2_of_2')}</span>
+                    <span className="ml-2 text-xs text-neutral-500 dark:text-neutral-400">{step === 'brief' ? t('social.step_1_of_2') : t('social.step_2_of_2')}</span>
                 </div>
 
                 {/* Body */}
@@ -462,7 +462,7 @@ export default function AiPlannerModal({ show, onClose, accounts, onSuccess }) {
                             type="button"
                             onClick={() => { setStep('brief'); setError(''); }}
                             disabled={loading}
-                            className="inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 disabled:opacity-50 transition"
+                            className="inline-flex items-center gap-1 text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300 disabled:opacity-50 transition"
                         >
                             <ChevronLeft className="h-4 w-4" /> {t('common.back')}
                         </button>

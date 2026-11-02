@@ -25,7 +25,7 @@ export default function Checkbox({ label, error, id, className = '', ...props })
                 </label>
             )}
             {error && (
-                <p className="mt-1 text-sm text-red-500 dark:text-red-400">{error}</p>
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>
             )}
         </div>
     );

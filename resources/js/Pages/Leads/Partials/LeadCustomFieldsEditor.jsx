@@ -72,7 +72,7 @@ export default function LeadCustomFieldsEditor({ lead, customFields = [] }) {
         <form onSubmit={handleSubmit} className="space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-neutral-100 dark:border-neutral-800">
                 <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
-                    <Sliders className="h-4 w-4 text-brand-600" />
+                    <Sliders className="h-4 w-4 text-brand-600 dark:text-brand-400" />
                     {t('custom_fields.title') || 'Custom Fields'}
                 </h3>
 
@@ -140,7 +140,7 @@ export default function LeadCustomFieldsEditor({ lead, customFields = [] }) {
                                         type="checkbox"
                                         checked={Boolean(val)}
                                         onChange={(e) => handleChange(field.key, e.target.checked)}
-                                        className="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
+                                        className="rounded border-neutral-300 text-brand-600 dark:text-brand-400 focus:ring-brand-500"
                                     />
                                     <span className="text-xs text-neutral-600 dark:text-neutral-400">
                                         {field.label}
@@ -175,7 +175,7 @@ export default function LeadCustomFieldsEditor({ lead, customFields = [] }) {
                                                 onClick={() => handleMultiSelectToggle(field.key, opt)}
                                                 className={`inline-flex items-center gap-1.5 rounded-soft px-2.5 py-1 text-xs font-medium transition ${
                                                     isSelected
-                                                        ? 'bg-brand-500 text-white'
+                                                        ? 'bg-brand-600 text-white'
                                                         : 'bg-white text-neutral-600 hover:bg-neutral-100 border border-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:border-neutral-700'
                                                 }`}
                                             >

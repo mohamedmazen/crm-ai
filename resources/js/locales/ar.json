@@ -146,7 +146,62 @@
         "sequences": "تسلسلات المتابعة",
         "quotes": "عروض الأسعار",
         "invoices": "الفواتير",
-        "sales_products": "المنتجات"
+        "sales_products": "المنتجات",
+        "canned_replies": "ردود جاهزة",
+        "labels": "التصنيفات",
+        "notifications": "الإشعارات",
+        "area_marketing": "التسويق",
+        "pinned": "المثبّتة",
+        "recent": "الزيارات الأخيرة",
+        "pin": "تثبيت في المفضلة",
+        "unpin": "إلغاء التثبيت",
+        "search_menu": "ابحث في القائمة",
+        "no_menu_results": "لا توجد شاشات مطابقة",
+        "show_more": "عرض {{count}} أخرى",
+        "show_less": "عرض أقل",
+        "upgrade_features": "افتح {{count}} ميزة إضافية",
+        "collapse": "طيّ القائمة الجانبية",
+        "expand": "توسيع القائمة الجانبية",
+        "expand_hint": "وسّع القائمة الجانبية لتصفح كل الشاشات",
+        "group_empty": "لا عناصر"
+    },
+    "dt": {
+        "views": "العروض",
+        "no_views": "لا توجد عروض محفوظة",
+        "save_view": "حفظ العرض الحالي",
+        "delete_view": "حذف العرض",
+        "view_name_prompt": "اسم العرض",
+        "columns": "الأعمدة",
+        "select_all": "تحديد كل الصفوف",
+        "select_row": "تحديد الصف",
+        "empty": "لا يوجد شيء بعد.",
+        "selected": "{{count}} محدّد",
+        "clear_selection": "مسح"
+    },
+    "state": {
+        "error_title": "حدث خطأ ما",
+        "loading": "جارٍ التحميل…",
+        "retry": "إعادة المحاولة"
+    },
+    "onboarding_checklist": {
+        "title": "ابدأ في ثلاث خطوات",
+        "body": "اربط قناة، واستورد جهات الاتصال، ودع الأتمتة تتولى المتابعة.",
+        "done_title": "كل شيء جاهز 🎉",
+        "done_body": "مساحة عملك جاهزة. استكشف اللوحة أو ادعُ فريقك.",
+        "dismiss": "إخفاء قائمة البدء",
+        "progress": "التقدّم",
+        "start": "ابدأ",
+        "sample_title": "معاينة ببيانات تجريبية",
+        "sample_body": "يعرض أرقاماً تجريبية في هذه اللوحة. يمكنك إيقافه في أي وقت — لا يُحفظ شيء في مساحة عملك.",
+        "sample_toggle": "تبديل البيانات التجريبية",
+        "sample_banner": "البيانات المعروضة تجريبية للمعاينة فقط — ولا تُحفظ في مساحة عملك.",
+        "sample_off": "إيقاف",
+        "step_channel": "اربط قناة",
+        "step_channel_desc": "واتساب أو إنستغرام أو ماسنجر أو SMS أو البريد.",
+        "step_contacts": "استورد جهات الاتصال",
+        "step_contacts_desc": "ارفع ملف CSV أو انقل جهات الاتصال من نظامك السابق.",
+        "step_automation": "شغّل أول أتمتة",
+        "step_automation_desc": "رحّب بالعملاء الجدد وتابعهم تلقائياً."
     },
     "sequences": {
         "title": "تسلسلات المتابعة",
@@ -232,7 +287,9 @@
         "last_run": "آخر تشغيل",
         "never": "أبدًا",
         "guard_title": "حدود مضمّنة",
-        "guard_body": "يكتب فقط للعملاء الذين سبق التواصل معهم ولم يردّوا، وخلال ساعات عملك فقط، ولا يتجاوز الحدود أعلاه. تُسجّل كل رسالة في سجل العميل مع سبب إرسالها."
+        "guard_body": "يكتب فقط للعملاء الذين سبق التواصل معهم ولم يردّوا، وخلال ساعات عملك فقط، ولا يتجاوز الحدود أعلاه. تُسجّل كل رسالة في سجل العميل مع سبب إرسالها.",
+        "${key}": "${Key}",
+        "channel_${channel}": "Channel ${Channel}"
     },
     "calls": {
         "title": "سجل المكالمات",
@@ -287,7 +344,10 @@
         "transcript": "النص المكتوب للمكالمة",
         "transcript_hint": "الصق نص المكالمة، ثم أنشئ ملخصًا.",
         "transcript_stored": "يوجد نص محفوظ لهذه المكالمة. الصق نصًا جديدًا لاستبداله، أو أنشئ ملخصًا من النص المحفوظ.",
-        "transcript_edit": "تعديل النص أو إعادة الإنشاء"
+        "transcript_edit": "تعديل النص أو إعادة الإنشاء",
+        "summary_sentiment_${data": {
+            "sentiment}": "Sentiment}"
+        }
     },
     "products": {
         "title": "المنتجات",
@@ -316,7 +376,10 @@
         "tax_rate": "نسبة الضريبة (%)",
         "description": "الوصف",
         "delete_title": "حذف المنتج؟",
-        "delete_body": "عروض الأسعار المُنشأة تحتفظ ببنودها؛ سيُحذف المنتج من الكتالوج فقط. لا يمكن التراجع."
+        "delete_body": "عروض الأسعار المُنشأة تحتفظ ببنودها؛ سيُحذف المنتج من الكتالوج فقط. لا يمكن التراجع.",
+        "status_${product": {
+            "status}": "Status}"
+        }
     },
     "quotes": {
         "title": "عروض الأسعار",
@@ -396,7 +459,15 @@
         "rejected_thanks": "تم رفض هذا العرض.",
         "public_footer": "أُرسل بواسطة {{app}}",
         "delete_title": "حذف عرض السعر؟",
-        "delete_body": "سيُحذف العرض وبنوده. الفاتورة المُنشأة منه تبقى محفوظة. لا يمكن التراجع."
+        "delete_body": "سيُحذف العرض وبنوده. الفاتورة المُنشأة منه تبقى محفوظة. لا يمكن التراجع.",
+        "status_${value}": "Status ${Value}",
+        "status_${quote": {
+            "status}": "Status}"
+        },
+        "public": {
+            "accept": "Accept",
+            "reject": "Reject"
+        }
     },
     "invoices": {
         "title": "الفواتير",
@@ -465,7 +536,12 @@
         "public_pay_hint": "تواصل معنا لترتيب الدفع.",
         "public_footer": "أُرسلت بواسطة {{app}}",
         "delete_title": "حذف الفاتورة؟",
-        "delete_body": "ستُحذف الفاتورة وسجل مدفوعاتها. لا يمكن التراجع."
+        "delete_body": "ستُحذف الفاتورة وسجل مدفوعاتها. لا يمكن التراجع.",
+        "status_${value}": "Status ${Value}",
+        "status_${invoice": {
+            "status}": "Status}"
+        },
+        "method_${value}": "Method ${Value}"
     },
     "welcome": {
         "title": "ابنِ مواقع بالذكاء الاصطناعي.",
@@ -861,6 +937,13 @@
                 "store": "Store",
                 "toggle": "Toggle",
                 "destroy": "Destroy"
+            },
+            "ai": {
+                "coach": "Coach",
+                "tags": {
+                    "suggest": "Suggest",
+                    "apply": "Apply"
+                }
             }
         },
         "automations": {
@@ -900,6 +983,16 @@
             },
             "social": {
                 "index": "القائمة"
+            },
+            "sales": {
+                "volume": "Volume",
+                "agents": "Agents",
+                "attribution": "Attribution",
+                "pipeline": "Pipeline",
+                "response": "Response",
+                "sources": "Sources",
+                "export": "Export",
+                "schedules": "Schedules"
             }
         },
         "push": {
@@ -951,7 +1044,8 @@
         "settings": {
             "update": "تحديث",
             "notifications": "الإشعارات",
-            "index": "Index"
+            "index": "Index",
+            "gdpr": "Gdpr"
         },
         "team": {
             "store": "متجر",
@@ -972,7 +1066,14 @@
         "kpi_campaigns": "Campaigns",
         "kpi_automations": "Active automations",
         "kpi_ai_runs": "AI runs",
-        "kpi_ai_cost": "cost",
+        "kpi_ai_cost": "التكلفة",
+        "insights": "رؤى",
+        "insight_messages_up": "ارتفع عدد الرسائل المرسلة بنسبة {{percent}}% مقارنة بالفترة السابقة.",
+        "insight_messages_down": "انخفض عدد الرسائل المرسلة بنسبة {{percent}}% مقارنة بالفترة السابقة.",
+        "insight_new_contacts": "انضم {{count}} عميل جديد خلال هذه الفترة.",
+        "insight_open_conversations": "لا تزال {{count}} محادثة مفتوحة بانتظار الرد.",
+        "insight_active_automations": "{{count}} أتمتة قيد التشغيل.",
+        "insight_ai_runs": "عالج الذكاء الاصطناعي {{count}} عملية بتكلفة {{cost}}.",
         "no_workspace_title": "No active workspace",
         "no_workspace_body": "Select or create a workspace to see your messaging analytics.",
         "no_data": "No data for this period",
@@ -1009,6 +1110,58 @@
                 "bookings": {
                     "cancel": "Cancel"
                 }
+            },
+            "sequences": {
+                "index": "Index",
+                "builder": {
+                    "update": "Update"
+                },
+                "status": "Status",
+                "enroll": "Enroll",
+                "store": "Store",
+                "destroy": "Destroy"
+            },
+            "quotes": {
+                "index": "Index",
+                "show": "Show",
+                "update": "Update",
+                "store": "Store",
+                "destroy": "Destroy",
+                "create": "Create",
+                "edit": "Edit",
+                "pdf": "Pdf",
+                "send": "Send",
+                "accept": "Accept",
+                "reject": "Reject",
+                "convert": "Convert"
+            },
+            "invoices": {
+                "index": "Index",
+                "store": "Store",
+                "destroy": "Destroy",
+                "show": "Show",
+                "pdf": "Pdf",
+                "payments": {
+                    "store": "Store"
+                },
+                "update": "Update",
+                "send": "Send"
+            },
+            "products": {
+                "index": "Index",
+                "update": "Update",
+                "store": "Store",
+                "destroy": "Destroy"
+            },
+            "calls": {
+                "index": "Index",
+                "settings": {
+                    "update": "Update"
+                },
+                "initiate": "Initiate",
+                "store": "Store",
+                "destroy": "Destroy",
+                "summary": "Summary"
             }
         },
         "tasks": {
@@ -1463,7 +1616,14 @@
         },
         "add_currency": "Add Currency",
         "currency_inherit": "Platform default",
-        "exchange_rate_hint": "Exchange rate is how much one unit of the currency is worth in USD — EUR is 1.087, INR is about 0.012. The currency with rate 1 is the reference. Setting a currency as Default makes it the platform-wide currency for anyone who has not picked their own."
+        "exchange_rate_hint": "Exchange rate is how much one unit of the currency is worth in USD — EUR is 1.087, INR is about 0.012. The currency with rate 1 is the reference. Setting a currency as Default makes it the platform-wide currency for anyone who has not picked their own.",
+        "backups": {
+            "index": "Index",
+            "create": "Create",
+            "destroy": "Destroy",
+            "verify": "Verify",
+            "download": "Download"
+        }
     },
     "open_menu": "فتح القائمة",
     "impersonation": {
@@ -2059,7 +2219,7 @@
         "sales_export_csv": "تصدير CSV",
         "sales_tab_volume": "الحجم",
         "sales_tab_sources": "المصادر",
-        "sales_tab_win_loss": "الفوز / الخسارة",
+        "sales_tab_win_loss": "الفوز \/ الخسارة",
         "sales_tab_agents": "الوكلاء",
         "sales_tab_pipeline": "المسار",
         "sales_tab_response": "زمن الاستجابة",
@@ -2282,7 +2442,12 @@
         "secondary_brand_color": "Secondary Brand Color",
         "secondary_color_hint": "Used for supporting surfaces such as the sidebar.",
         "font_family": "Font",
-        "font_family_hint": "Applied across the whole interface."
+        "font_family_hint": "Applied across the whole interface.",
+        "security": "Security",
+        "ip_allowlist_desc": "Ip Allowlist Desc",
+        "ip_allowlist_enabled": "Ip Allowlist Enabled",
+        "ip_allowlist": "Ip Allowlist",
+        "ip_allowlist_hint": "Ip Allowlist Hint"
     },
     "integrations": {
         "title": "عمليات التكامل",
@@ -2497,7 +2662,8 @@
         "status": {
             "pending": "قيد الانتظار",
             "completed": "مكتمل",
-            "cancelled": "ملغى"
+            "cancelled": "ملغى",
+            "${status}": "${Status}"
         }
     },
     "cookie_consent": {
@@ -4629,7 +4795,13 @@
         "won": "Won",
         "lost": "Lost",
         "new_reason_placeholder": "New Reason Placeholder",
-        "add_reason": "Add Reason"
+        "add_reason": "Add Reason",
+        "coach_channel_${advice": {
+            "channel}": "Channel}"
+        },
+        "risk_${risk": {
+            "level}": "Level}"
+        }
     },
     "automation": {
         "title": "الأتمتة",
@@ -4768,7 +4940,7 @@
         "day_fri": "الجمعة",
         "day_sat": "السبت",
         "day_sun": "الأحد",
-        "saving": "جارٍ الحفظ...",
+        "saving": "جارٍ الحفظ…",
         "node_label_optional": "تسمية العقدة (اختياري)",
         "available_tokens": "الرموز المتاحة:",
         "field_message_body_required": "نص الرسالة *",
@@ -4821,7 +4993,6 @@
         "category_channel": "القناة",
         "category_logic": "المنطق",
         "category_action": "الإجراء",
-        "saving": "جارٍ الحفظ…",
         "canvas_hint": "اسحب العقد من اللوحة · انقر على عقدة للإعداد · اسحب لربط المقابض · مفتاح الحذف يزيل المحدد",
         "delete_node": "حذف العقدة",
         "assign_unassigned": "Unassigned (human queue)",
@@ -4965,7 +5136,8 @@
         "field_media_required": "Media (upload or URL) *",
         "template_not_approved": "This template is {{status}} — only APPROVED templates are delivered by WhatsApp.",
         "template_var_n": "Variable {{n}}",
-        "template_var_placeholder": "Value for {{n}} (tokens allowed)"
+        "template_var_placeholder": "Value for {{n}} (tokens allowed)",
+        "day_${day}": "Day ${Day}"
     },
     "ai": {
         "chatbots_title": "روبوتات الدردشة",
@@ -5218,14 +5390,16 @@
         "favicon_url": "Favicon Url"
     },
     "5": {
-        "5": "5"
+        "5": "5",
+        " Sub-processors": " Sub Processors"
     },
     "0": {
         "01": "01",
         "07em": "07Em",
         "08em": "08Em",
         "1em": "1Em",
-        "00": "00"
+        "00": "00",
+        "5": "5"
     },
     "12": {
         "01": "01"
@@ -5235,10 +5409,12 @@
         "51": "51"
     },
     "6": {
-        "5": "5"
+        "5": "5",
+        " Retention and deletion": " Retention And Deletion"
     },
     "4": {
-        "9": "9"
+        "9": "9",
+        " Processor obligations": " Processor Obligations"
     },
     "37": {
         "4220": "4220"
@@ -5320,9 +5496,6 @@
     "contacts": {
         "title": "Title"
     },
-    "v20": [
-        "0"
-    ],
     "tasks": {
         "tab_today": "Tab Today",
         "tab_overdue": "Tab Overdue",
@@ -5352,5 +5525,131 @@
     "See you soon!": "See You Soon!",
     "your meeting": "Your Meeting",
     "If you need to make a change, use one of these links:": "If You Need To Make A Change, Use One Of These Links:",
-    "If you need to change it again, use one of these links:": "If You Need To Change It Again, Use One Of These Links:"
+    "If you need to change it again, use one of these links:": "If You Need To Change It Again, Use One Of These Links:",
+    "lead": {
+        "customer_replied": "Customer Replied",
+        "assigned": "Assigned",
+        "score_threshold": "Score Threshold",
+        "inactive": "Inactive",
+        "date_reached": "Date Reached"
+    },
+    "task": {
+        "overdue": "Overdue"
+    },
+    "crm": {
+        "yourcompany": {
+            "com": "Com"
+        }
+    },
+    "Amount due": "Amount Due",
+    "Due date": "Due Date",
+    "View the invoice": "View The Invoice",
+    "Thanks,": "Thanks,",
+    "Total": "Total",
+    "Valid until": "Valid Until",
+    "Review and accept the quote": "Review And Accept The Quote",
+    "You can view, accept or reject the quote from the link above": {
+        "": ""
+    },
+    "Data Processing Agreement": "Data Processing Agreement",
+    "Generated": "Generated",
+    "1": {
+        " Parties and roles": " Parties And Roles"
+    },
+    "Controller": "Controller",
+    "Processor": "Processor",
+    "Contact": "Contact",
+    "2": {
+        " Scope and purpose": " Scope And Purpose"
+    },
+    "The Processor processes personal data only to provide the services requested by the Controller: CRM records, sales pipeline management, messaging, automation and reporting": {
+        " Processing is carried out on documented instructions from the Controller and for the duration of the subscription": {
+            "": ""
+        }
+    },
+    "3": {
+        " Categories of data and data subjects": " Categories Of Data And Data Subjects"
+    },
+    "Data categories: names, email addresses, phone numbers, company details, message content, conversation metadata and usage records": {
+        "": ""
+    },
+    "Special categories of data are not intentionally collected": {
+        " The Controller must not submit them unless a lawful basis exists": {
+            "": ""
+        }
+    },
+    "Process personal data only on documented instructions from the Controller": {
+        "": ""
+    },
+    "Ensure that personnel authorised to process the data are bound by confidentiality": {
+        "": ""
+    },
+    "Implement appropriate technical and organisational measures, including encryption in transit, access controls and audit logging": {
+        "": ""
+    },
+    "Assist the Controller in responding to data-subject requests within the statutory deadline": {
+        "": ""
+    },
+    "Notify the Controller without undue delay after becoming aware of a personal-data breach": {
+        "": ""
+    },
+    "The Controller authorises the Processor to engage sub-processors for hosting, email delivery, messaging and payment processing": {
+        " The Processor remains responsible for their performance and will give notice of material changes so the Controller can object": {
+            "": ""
+        }
+    },
+    "Workspace data is retained for the duration of the subscription and deleted or anonymised after termination, subject to statutory retention duties": {
+        "": ""
+    },
+    "Data-subject erasure requests are executed no later than 30 days after acceptance, unless the Controller cancels the request": {
+        "": ""
+    },
+    "7": {
+        " Data-subject rights": " Data Subject Rights"
+    },
+    "The Controller can export, correct and erase data from the workspace settings": {
+        " The Processor assists with requests that require access beyond the self-service tools": {
+            "": ""
+        }
+    },
+    "8": {
+        " International transfers": " International Transfers"
+    },
+    "Where personal data is transferred outside the European Economic Area, the parties rely on the Standard Contractual Clauses or another lawful transfer mechanism": {
+        "": ""
+    },
+    "9": {
+        " Term and termination": " Term And Termination"
+    },
+    "This DPA remains in force while the Processor handles personal data on behalf of the Controller": {
+        " On termination, personal data is deleted or returned as described in section 6": {
+            "": ""
+        }
+    },
+    "Controller signature \/ date": "Controller Signature \/ Date",
+    "Processor signature \/ date": "Processor Signature \/ Date",
+    "This document was generated automatically from the platform settings": {
+        " Review it with legal counsel before signing": {
+            "": ""
+        }
+    },
+    "Invoice": "Invoice",
+    "Issued": "Issued",
+    "Billed to": "Billed To",
+    "Description": "Description",
+    "Qty": "Qty",
+    "Unit price": "Unit Price",
+    "Tax": "Tax",
+    "Subtotal": "Subtotal",
+    "Paid": "Paid",
+    "Balance due": "Balance Due",
+    "Payments": "Payments",
+    "Notes": "Notes",
+    "Quote": "Quote",
+    "Prepared for": "Prepared For",
+    "Discount": "Discount",
+    "Terms": "Terms",
+    "v20": [
+        "0"
+    ]
 }

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Clock, Globe, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import TimezonePicker from '@/Components/TimezonePicker';
+import { readableTextColor } from '@/lib/contrast';
 
 export const DAYS = [
     { key: 'mon', labelKey: 'whatsapp.widget_day_mon' },
@@ -53,7 +54,7 @@ export function Field({ label, error, hint, children, className = '' }) {
         <div className={className}>
             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">{label}</label>
             {children}
-            {hint && !error && <p className="mt-1.5 text-xs text-neutral-400">{hint}</p>}
+            {hint && !error && <p className="mt-1.5 text-xs text-neutral-500 dark:text-neutral-400">{hint}</p>}
             {error && <p className="mt-1.5 text-xs text-red-500">{error}</p>}
         </div>
     );
@@ -63,25 +64,28 @@ export function WidgetPreview({ data }) {
     const { t } = useTranslation();
     const posRight = data.position !== 'bottom_left';
     const color = data.button_color || '#25D366';
+    const avatarColor = data.agent_avatar_color || color;
+    const onColor = readableTextColor(color);
+    const onAvatar = readableTextColor(avatarColor);
     const agentInitial = (data.agent_name || 'S')[0].toUpperCase();
 
     return (
         <div className="relative bg-[url('data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Crect width=\'20\' height=\'20\' fill=\'%23f8fafc\'/%3E%3Crect width=\'10\' height=\'10\' fill=\'%23f1f5f9\'/%3E%3Crect x=\'10\' y=\'10\' width=\'10\' height=\'10\' fill=\'%23f1f5f9\'/%3E%3C/svg%3E')] dark:bg-neutral-800 rounded-xl h-72 overflow-hidden border border-neutral-200 dark:border-neutral-700">
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span className="text-xs text-neutral-400 bg-white/70 dark:bg-neutral-900/70 px-3 py-1 rounded-full">{t('whatsapp.widget_live_preview')}</span>
+                <span className="text-xs text-neutral-500 dark:text-neutral-400 bg-white/70 dark:bg-neutral-900/70 px-3 py-1 rounded-full">{t('whatsapp.widget_live_preview')}</span>
             </div>
             <div className={`absolute bottom-5 ${posRight ? 'right-5' : 'left-5'}`}>
                 {data.greeting_message && (
                     <div className={`absolute bottom-[68px] ${posRight ? 'right-0' : 'left-0'} w-56 bg-white dark:bg-neutral-700 rounded-2xl shadow-xl overflow-hidden`}
                         style={{ transformOrigin: posRight ? 'bottom right' : 'bottom left' }}>
                         <div className="px-3.5 py-3 flex items-center gap-2.5" style={{ background: color }}>
-                            <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
-                                style={{ background: data.agent_avatar_color || color, filter: 'brightness(.85)' }}>
+                            <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
+                                style={{ background: avatarColor, filter: 'brightness(.85)', color: onAvatar }}>
                                 {agentInitial}
                             </div>
                             <div>
-                                <div className="text-white text-xs font-semibold leading-tight">{data.agent_name || t('whatsapp.widget_default_agent_name')}</div>
-                                <div className="text-white/80 text-[11px] flex items-center gap-1">
+                                <div className="text-xs font-semibold leading-tight" style={{ color: onColor }}>{data.agent_name || t('whatsapp.widget_default_agent_name')}</div>
+                                <div className="text-2xs flex items-center gap-1" style={{ color: onColor }}>
                                     <span className="w-1.5 h-1.5 rounded-full bg-green-300 inline-block" />
                                     {t('whatsapp.widget_replies_instantly')}
                                 </div>
@@ -91,7 +95,7 @@ export function WidgetPreview({ data }) {
                             <div className="bg-neutral-100 dark:bg-neutral-600 rounded-[4px_12px_12px_12px] px-3 py-2 text-xs text-neutral-700 dark:text-neutral-100 leading-relaxed mb-3">
                                 {data.greeting_message}
                             </div>
-                            <div className="text-center text-xs font-semibold text-white rounded-lg py-2" style={{ background: color }}>
+                            <div className="text-center text-xs font-semibold rounded-lg py-2" style={{ background: color, color: onColor }}>
                                 {t('whatsapp.widget_start_chat')}
                             </div>
                         </div>
@@ -124,7 +128,7 @@ export function WorkingHoursEditor({ value, onChange }) {
             <div className="flex items-center justify-between p-4 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
                 <div>
                     <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200">{t('whatsapp.widget_working_hours')}</p>
-                    <p className="text-xs text-neutral-500 mt-0.5">{t('whatsapp.widget_working_hours_hint')}</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{t('whatsapp.widget_working_hours_hint')}</p>
                 </div>
                 <Toggle checked={enabled} onChange={v => set({ enabled: v })} />
             </div>
@@ -139,7 +143,7 @@ export function WorkingHoursEditor({ value, onChange }) {
                     </Field>
                     <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
                         <div className="bg-neutral-50 dark:bg-neutral-800 px-4 py-2.5 border-b border-neutral-200 dark:border-neutral-700">
-                            <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">{t('whatsapp.widget_schedule')}</p>
+                            <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wide">{t('whatsapp.widget_schedule')}</p>
                         </div>
                         <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
                             {DAYS.map(d => {
@@ -147,17 +151,17 @@ export function WorkingHoursEditor({ value, onChange }) {
                                 return (
                                     <div key={d.key} className="flex items-center gap-4 px-4 py-3">
                                         <Toggle checked={day.enabled} onChange={v => setDay(d.key, { enabled: v })} />
-                                        <span className={`w-24 text-sm ${day.enabled ? 'text-neutral-800 dark:text-neutral-200 font-medium' : 'text-neutral-400'}`}>{t(d.labelKey)}</span>
+                                        <span className={`w-24 text-sm ${day.enabled ? 'text-neutral-800 dark:text-neutral-200 font-medium' : 'text-neutral-500 dark:text-neutral-400'}`}>{t(d.labelKey)}</span>
                                         {day.enabled ? (
                                             <div className="flex items-center gap-2 ml-auto">
                                                 <input type="time" value={day.open} onChange={e => setDay(d.key, { open: e.target.value })}
                                                     className="rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
-                                                <span className="text-neutral-400 text-sm">–</span>
+                                                <span className="text-neutral-500 dark:text-neutral-400 text-sm">–</span>
                                                 <input type="time" value={day.close} onChange={e => setDay(d.key, { close: e.target.value })}
                                                     className="rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
                                             </div>
                                         ) : (
-                                            <span className="ml-auto text-sm text-neutral-400">{t('whatsapp.widget_closed')}</span>
+                                            <span className="ml-auto text-sm text-neutral-500 dark:text-neutral-400">{t('whatsapp.widget_closed')}</span>
                                         )}
                                     </div>
                                 );
@@ -201,17 +205,17 @@ export function DomainEditor({ value, onChange }) {
             {domains.length > 0 && (
                 <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
                     <div className="bg-neutral-50 dark:bg-neutral-800 px-4 py-2.5 border-b border-neutral-200 dark:border-neutral-700">
-                        <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">{t('whatsapp.widget_allowed_domains_count', { count: domains.length })}</p>
+                        <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wide">{t('whatsapp.widget_allowed_domains_count', { count: domains.length })}</p>
                     </div>
                     <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
                         {domains.map(d => (
                             <div key={d} className="flex items-center justify-between px-4 py-3">
                                 <div className="flex items-center gap-2.5">
-                                    <Globe className="h-4 w-4 text-neutral-400 flex-shrink-0" />
+                                    <Globe className="h-4 w-4 text-neutral-500 dark:text-neutral-400 flex-shrink-0" />
                                     <span className="text-sm text-neutral-800 dark:text-neutral-200 font-mono">{d}</span>
                                 </div>
                                 <button type="button" onClick={() => onChange(domains.filter(x => x !== d))}
-                                    className="p-1 rounded text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition">
+                                    className="p-1 rounded text-neutral-500 dark:text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition">
                                     <X className="h-4 w-4" />
                                 </button>
                             </div>

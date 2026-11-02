@@ -357,7 +357,7 @@ const SETUP_GUIDES = {
 
 function PermBadge({ p }) {
     return (
-        <span className="inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-mono font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+        <span className="inline-flex items-center rounded px-1.5 py-0.5 text-3xs font-mono font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
             {p}
         </span>
     );
@@ -380,7 +380,7 @@ function CallbackUrlCard({ url }) {
                 </div>
                 <div>
                     <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200">{t('integrations.callback_url_title')}</p>
-                    <p className="text-xs text-neutral-400">{t('integrations.callback_url_desc')}</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('integrations.callback_url_desc')}</p>
                 </div>
             </div>
             <div className="mt-3 flex items-center gap-2 rounded-lg bg-neutral-50 dark:bg-neutral-800 px-3 py-2">
@@ -404,19 +404,19 @@ function SetupGuide({ provider }) {
         <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-5">
             <button type="button" onClick={() => setOpen(v => !v)}
                 className="flex items-center gap-2 w-full text-left">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 shrink-0">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 shrink-0">
                     <BookOpen className="h-4 w-4" />
                 </div>
                 <div className="flex-1 min-w-0">
                     <span className="text-sm font-medium text-neutral-800 dark:text-neutral-200">{t('integrations.setup_guide')}</span>
-                    <p className="text-xs text-neutral-400 mt-0.5 truncate">{guide.title}</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 truncate">{guide.title}</p>
                 </div>
-                {open ? <ChevronUp className="h-4 w-4 text-neutral-400 shrink-0" /> : <ChevronDown className="h-4 w-4 text-neutral-400 shrink-0" />}
+                {open ? <ChevronUp className="h-4 w-4 text-neutral-500 dark:text-neutral-400 shrink-0" /> : <ChevronDown className="h-4 w-4 text-neutral-500 dark:text-neutral-400 shrink-0" />}
             </button>
             {open && (
                 <div className="mt-4 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/40 px-4 py-3 space-y-4">
                     {guide.subtitle && (
-                        <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">{guide.subtitle}</p>
+                        <p className="text-xs text-blue-700 dark:text-blue-400 font-medium">{guide.subtitle}</p>
                     )}
                     {hasSections ? (
                         <div className="space-y-4">
@@ -425,8 +425,8 @@ function SetupGuide({ provider }) {
                                     <p className="text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-blue-300 border-b border-blue-200 dark:border-blue-800 pb-1">{sec.heading}</p>
                                     {sec.note && (
                                         <div className="flex items-start gap-1.5 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 px-2.5 py-1.5">
-                                            <span className="text-amber-600 dark:text-amber-400 text-[10px] font-bold uppercase tracking-wide shrink-0 mt-0.5">{t('integrations.note')}</span>
-                                            <p className="text-[11px] text-amber-700 dark:text-amber-300">{sec.note}</p>
+                                            <span className="text-amber-700 dark:text-amber-400 text-3xs font-bold uppercase tracking-wide shrink-0 mt-0.5">{t('integrations.note')}</span>
+                                            <p className="text-2xs text-amber-700 dark:text-amber-300">{sec.note}</p>
                                         </div>
                                     )}
                                     {sec.steps && (
@@ -441,7 +441,7 @@ function SetupGuide({ provider }) {
                                     )}
                                     {sec.permissions && (
                                         <div>
-                                            <p className="text-[10px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide mb-1">{t('integrations.required_permissions')}</p>
+                                            <p className="text-3xs font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wide mb-1">{t('integrations.required_permissions')}</p>
                                             <div className="flex flex-wrap gap-1">
                                                 {sec.permissions.map(p => <PermBadge key={p} p={p} />)}
                                             </div>
@@ -449,10 +449,10 @@ function SetupGuide({ provider }) {
                                     )}
                                     {sec.webhookFields && (
                                         <div>
-                                            <p className="text-[10px] font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide mb-1">{t('integrations.webhook_fields')}</p>
+                                            <p className="text-3xs font-semibold text-purple-700 dark:text-purple-400 uppercase tracking-wide mb-1">{t('integrations.webhook_fields')}</p>
                                             <div className="flex flex-wrap gap-1">
                                                 {sec.webhookFields.map(f => (
-                                                    <span key={f} className="inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-mono font-medium bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">{f}</span>
+                                                    <span key={f} className="inline-flex items-center rounded px-1.5 py-0.5 text-3xs font-mono font-medium bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">{f}</span>
                                                 ))}
                                             </div>
                                         </div>
@@ -484,14 +484,14 @@ function SetupGuide({ provider }) {
                         <div className="flex flex-wrap gap-4 pt-2 border-t border-blue-200 dark:border-blue-800">
                             {guide.links.map(l => (
                                 <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer"
-                                    className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                                    className="text-xs font-medium text-blue-700 dark:text-blue-400 hover:underline">
                                     {l.label} →
                                 </a>
                             ))}
                         </div>
                     ) : guide.link ? (
                         <a href={guide.link} target="_blank" rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline pt-1">
+                            className="inline-flex items-center gap-1 text-xs font-medium text-blue-700 dark:text-blue-400 hover:underline pt-1">
                             {guide.linkLabel} →
                         </a>
                     ) : null}
@@ -543,12 +543,13 @@ function SecretField({ label, fieldKey, value, onChange, required, hint }) {
                 <button
                     type="button"
                     onClick={() => setVisible(v => !v)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
+                    aria-label={visible ? t('common.hide', { defaultValue: 'Hide' }) : t('common.show', { defaultValue: 'Show' })}
+                    className="absolute right-1 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
                 >
                     {visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
             </div>
-            {hint && <p className="mt-1 text-xs text-neutral-400 dark:text-neutral-500">{hint}</p>}
+            {hint && <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">{hint}</p>}
         </div>
     );
 }
@@ -565,7 +566,7 @@ function PlainField({ label, fieldKey, value, onChange, required, hint }) {
                 onChange={e => onChange(fieldKey, e.target.value)}
                 className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-brand-500"
             />
-            {hint && <p className="mt-1 text-xs text-neutral-400 dark:text-neutral-500">{hint}</p>}
+            {hint && <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">{hint}</p>}
         </div>
     );
 }
@@ -651,7 +652,7 @@ export default function IntegrationsEdit({ provider, label, category, fields, co
                 <div className="flex items-center gap-3">
                     <a
                         href={route('admin.integrations.index')}
-                        className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition"
+                        className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition"
                     >
                         <ArrowLeft className="h-5 w-5" />
                     </a>
@@ -664,7 +665,7 @@ export default function IntegrationsEdit({ provider, label, category, fields, co
                         </div>
                     )}
                     <div>
-                        <p className="text-xs text-neutral-400 uppercase tracking-wider">{category}</p>
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">{category}</p>
                         <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">{label}</h2>
                     </div>
                 </div>
@@ -685,7 +686,7 @@ export default function IntegrationsEdit({ provider, label, category, fields, co
                                     type="checkbox"
                                     checked={data.enabled}
                                     onChange={e => setData('enabled', e.target.checked)}
-                                    className="h-4 w-4 rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
+                                    className="h-4 w-4 rounded border-neutral-300 text-brand-600 dark:text-brand-400 focus:ring-brand-500"
                                 />
                                 <span className="text-sm text-neutral-700 dark:text-neutral-300">{t('common.enabled')}</span>
                             </label>
@@ -713,7 +714,7 @@ export default function IntegrationsEdit({ provider, label, category, fields, co
                             </div>
                         ) : (
                             <>
-                                <p className="text-xs text-neutral-400">
+                                <p className="text-xs text-neutral-500 dark:text-neutral-400">
                                     {t('integrations.encrypted_note')}
                                 </p>
                                 {fields.map(f => (
@@ -800,7 +801,7 @@ export default function IntegrationsEdit({ provider, label, category, fields, co
 
                 {/* Last test status */}
                 {config.last_test_status !== 'untested' && (
-                    <div className="text-xs text-neutral-400">
+                    <div className="text-xs text-neutral-500 dark:text-neutral-400">
                         {t('integrations.last_tested')}: {config.last_tested_at ? formatInTz(config.last_tested_at, adminTz) : t('integrations.never')}
                         {' · '}
                         <span className={config.last_test_status === 'ok' ? 'text-green-500' : 'text-red-500'}>

@@ -31,7 +31,7 @@ function PageForm({ page = null, onClose }) {
                 <div>
                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('cms.col_slug')}</label>
                     <input type="text" value={data.slug} onChange={e => setData('slug', e.target.value)} className="w-full border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-2 text-sm dark:bg-neutral-700 dark:text-white font-mono" placeholder={t('cms.slug_placeholder')} required />
-                    {errors.slug && <p className="text-coral-600 text-xs mt-1">{errors.slug}</p>}
+                    {errors.slug && <p className="text-coral-600 dark:text-coral-400 text-xs mt-1">{errors.slug}</p>}
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('cms.col_title')}</label>
@@ -65,7 +65,7 @@ function PageForm({ page = null, onClose }) {
             </div>
             <div className="flex justify-end gap-2">
                 <button type="button" onClick={onClose} className="px-4 py-2 text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg">{t('common.cancel')}</button>
-                <button type="submit" disabled={processing} className="px-4 py-2 text-sm bg-brand-500 text-white rounded-soft hover:bg-brand-600 shadow-soft disabled:opacity-50 transition-all duration-150">
+                <button type="submit" disabled={processing} className="px-4 py-2 text-sm bg-brand-600 text-white rounded-soft hover:bg-brand-700 shadow-soft disabled:opacity-50 transition-all duration-150">
                     {page ? t('cms.update_page') : t('cms.create_page')}
                 </button>
             </div>
@@ -86,7 +86,7 @@ export default function CmsPagesIndex({ pages }) {
                         <FileText className="h-6 w-6 text-brand-600 dark:text-brand-400" />
                         <h1 className="text-xl font-bold text-neutral-900 dark:text-white">{t('cms.title')}</h1>
                     </div>
-                    <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 px-4 py-2 bg-brand-500 text-white text-sm rounded-soft hover:bg-brand-600 shadow-soft transition-all duration-150">
+                    <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white text-sm rounded-soft hover:bg-brand-700 shadow-soft transition-all duration-150">
                         <Plus className="h-4 w-4" /> {t('cms.new_page')}
                     </button>
                 </div>
@@ -122,14 +122,14 @@ export default function CmsPagesIndex({ pages }) {
                                             <td className="px-4 py-3 font-medium text-neutral-900 dark:text-white">{p.title}</td>
                                             <td className="px-4 py-3 text-neutral-600 dark:text-neutral-400 capitalize">{p.layout}</td>
                                             <td className="px-4 py-3">
-                                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${p.published ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-neutral-100 text-neutral-500'}`}>
+                                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${p.published ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-neutral-100 text-neutral-600 dark:text-neutral-400'}`}>
                                                     {p.published ? t('cms.published') : t('cms.draft')}
                                                 </span>
                                             </td>
                                             <td className="px-4 py-3">
                                                 <div className="flex items-center gap-2 justify-end">
-                                                    <button onClick={() => setEditing(p)} className="p-1 text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition"><Pencil className="h-4 w-4" /></button>
-                                                    <button onClick={() => { if (confirm(t('cms.delete_confirm'))) router.delete(route('admin.cms-pages.destroy', p.id)); }} className="p-1 text-neutral-400 hover:text-coral-600"><Trash2 className="h-4 w-4" /></button>
+                                                    <button onClick={() => setEditing(p)} className="p-1 text-neutral-500 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition"><Pencil className="h-4 w-4" /></button>
+                                                    <button onClick={() => { if (confirm(t('cms.delete_confirm'))) router.delete(route('admin.cms-pages.destroy', p.id)); }} className="p-1 text-neutral-500 dark:text-neutral-400 hover:text-coral-600"><Trash2 className="h-4 w-4" /></button>
                                                 </div>
                                             </td>
                                         </>
@@ -137,7 +137,7 @@ export default function CmsPagesIndex({ pages }) {
                                 </tr>
                             ))}
                             {!pages?.length && (
-                                <tr><td colSpan={5} className="px-4 py-8 text-center text-neutral-400 dark:text-neutral-500">{t('cms.no_pages')}</td></tr>
+                                <tr><td colSpan={5} className="px-4 py-8 text-center text-neutral-500 dark:text-neutral-400">{t('cms.no_pages')}</td></tr>
                             )}
                         </tbody>
                     </table>

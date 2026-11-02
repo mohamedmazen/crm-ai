@@ -82,9 +82,9 @@ export default function TimezonePicker({ value, onChange, className = '' }) {
                 onClick={() => setOpen(v => !v)}
                 className="w-full flex items-center gap-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm text-left focus:outline-none focus:ring-2 focus:ring-brand-500 transition"
             >
-                <Clock className="h-3.5 w-3.5 shrink-0 text-neutral-400" />
+                <Clock className="h-3.5 w-3.5 shrink-0 text-neutral-500 dark:text-neutral-400" />
                 <span className="flex-1 truncate text-neutral-800 dark:text-neutral-200">{displayLabel}</span>
-                <ChevronDown className={`h-3.5 w-3.5 shrink-0 text-neutral-400 transition-transform ${open ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`h-3.5 w-3.5 shrink-0 text-neutral-500 dark:text-neutral-400 transition-transform ${open ? 'rotate-180' : ''}`} />
             </button>
 
             {/* Dropdown */}
@@ -92,7 +92,7 @@ export default function TimezonePicker({ value, onChange, className = '' }) {
                 <div className="absolute z-50 mt-1 w-full min-w-[260px] rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 shadow-xl overflow-hidden">
                     {/* Search */}
                     <div className="flex items-center gap-2 px-3 py-2.5 border-b border-neutral-100 dark:border-neutral-800">
-                        <Search className="h-3.5 w-3.5 shrink-0 text-neutral-400" />
+                        <Search className="h-3.5 w-3.5 shrink-0 text-neutral-500 dark:text-neutral-400" />
                         <input
                             ref={searchRef}
                             type="text"
@@ -102,7 +102,7 @@ export default function TimezonePicker({ value, onChange, className = '' }) {
                             className="flex-1 bg-transparent text-sm text-neutral-800 dark:text-neutral-200 placeholder-neutral-400 focus:outline-none"
                         />
                         {search && (
-                            <button type="button" onClick={() => setSearch('')} className="text-neutral-400 hover:text-neutral-600">
+                            <button type="button" onClick={() => setSearch('')} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600">
                                 <X className="h-3.5 w-3.5" />
                             </button>
                         )}
@@ -111,7 +111,7 @@ export default function TimezonePicker({ value, onChange, className = '' }) {
                     {/* List */}
                     <ul className="max-h-56 overflow-y-auto py-1">
                         {filtered.length === 0 && (
-                            <li className="px-4 py-3 text-sm text-neutral-400 text-center">{t('ui.no_timezones')}</li>
+                            <li className="px-4 py-3 text-sm text-neutral-500 dark:text-neutral-400 text-center">{t('ui.no_timezones')}</li>
                         )}
                         {filtered.map(tz => (
                             <li key={tz}>
@@ -123,7 +123,7 @@ export default function TimezonePicker({ value, onChange, className = '' }) {
                                     }`}
                                 >
                                     <span className="truncate">{tz.replace(/_/g, ' ')}</span>
-                                    <span className="shrink-0 text-xs text-neutral-400 font-mono">{getUtcOffset(tz)}</span>
+                                    <span className="shrink-0 text-xs text-neutral-500 dark:text-neutral-400 font-mono">{getUtcOffset(tz)}</span>
                                 </button>
                             </li>
                         ))}

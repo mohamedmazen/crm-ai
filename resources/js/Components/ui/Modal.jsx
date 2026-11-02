@@ -71,7 +71,7 @@ Modal.Header = function ModalHeader({ title, onClose, showClose = true }) {
                 <button
                     type="button"
                     onClick={onClose}
-                    className="rounded-soft p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300 transition duration-150"
+                    className="rounded-soft p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300 transition duration-150"
                     aria-label={t('common.close')}
                 >
                     <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

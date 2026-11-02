@@ -1,10 +1,13 @@
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import ClientLayout from '@/Layouts/ClientLayout';
 import EmptyState from '@/Components/EmptyState';
+import PageHeader from '@/Components/PageHeader';
+import DataTable from '@/Components/DataTable';
 import ImportCsvModal from './ImportCsvModal';
-import { useState, useCallback } from 'react';
-import { UserPlus, Upload, Search, Tag, Trash2, Eye, Users, Table2, Download, CheckSquare, Square, X, Layers, Plus, Minus } from 'lucide-react';
+import { useState } from 'react';
+import { UserPlus, Upload, Search, Tag, Trash2, Eye, Users, Table2, Download, X, Layers, Plus, Minus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import useInertiaLoading from '@/hooks/useInertiaLoading';
 
 function ContactAvatar({ contact, size = 8 }) {
     const { t } = useTranslation();
@@ -27,61 +30,6 @@ function ContactAvatar({ contact, size = 8 }) {
         <div className={`h-${size} w-${size} rounded-full bg-brand-100 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 flex items-center justify-center text-xs font-semibold flex-shrink-0`}>
             {initials}
         </div>
-    );
-}
-
-function ContactRow({ contact, selected, onToggle, onDelete }) {
-    const { t } = useTranslation();
-    return (
-        <tr className={`hover:bg-neutral-50 dark:hover:bg-neutral-800/50 ${selected ? 'bg-brand-50 dark:bg-brand-900/10' : ''}`}>
-            <td className="px-4 py-3">
-                <button type="button" onClick={() => onToggle(contact.uuid)} className="text-neutral-400 hover:text-brand-600 transition">
-                    {selected
-                        ? <CheckSquare className="h-4 w-4 text-brand-600" />
-                        : <Square className="h-4 w-4" />
-                    }
-                </button>
-            </td>
-            <td className="px-4 py-3 text-sm text-neutral-900 dark:text-neutral-100">
-                <div className="flex items-center gap-2.5">
-                    <ContactAvatar contact={contact} size={8} />
-                    <span>
-                        {contact.first_name || contact.last_name
-                            ? `${contact.first_name ?? ''} ${contact.last_name ?? ''}`.trim()
-                            : <span className="text-neutral-400">—</span>
-                        }
-                    </span>
-                </div>
-            </td>
-            <td className="px-4 py-3 text-sm text-neutral-600 dark:text-neutral-400">{contact.phone_e164 || '—'}</td>
-            <td className="px-4 py-3 text-sm text-neutral-600 dark:text-neutral-400">{contact.email || '—'}</td>
-            <td className="px-4 py-3">
-                <div className="flex flex-wrap gap-1">
-                    {contact.tags?.map(tag => (
-                        <span key={tag.id} className="rounded-full px-2 py-0.5 text-xs font-medium" style={{ backgroundColor: tag.color + '33', color: tag.color }}>
-                            {tag.name}
-                        </span>
-                    ))}
-                </div>
-            </td>
-            <td className="px-4 py-3">
-                <div className="flex items-center gap-1">
-                    {contact.opt_in_whatsapp && <span className="text-xs bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300 rounded px-1">{t('contacts_page.channel_wa')}</span>}
-                    {contact.opt_in_sms      && <span className="text-xs bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 rounded px-1">{t('contacts_page.channel_sms')}</span>}
-                    {contact.opt_in_email    && <span className="text-xs bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 rounded px-1">{t('contacts_page.channel_email')}</span>}
-                </div>
-            </td>
-            <td className="px-4 py-3">
-                <div className="flex items-center gap-2">
-                    <Link href={route('client.contacts.show', contact.uuid)} className="text-neutral-400 hover:text-brand-600 transition">
-                        <Eye className="h-4 w-4" />
-                    </Link>
-                    <button type="button" onClick={() => onDelete(contact.uuid)} className="text-neutral-400 hover:text-red-500 transition">
-                        <Trash2 className="h-4 w-4" />
-                    </button>
-                </div>
-            </td>
-        </tr>
     );
 }
 
@@ -123,10 +71,10 @@ function BulkManageModal({ mode, count, tags, segments, processing, onClose, onA
             <div className="w-full max-w-md rounded-xl bg-white dark:bg-neutral-900 p-6 shadow-xl space-y-4">
                 <div className="flex items-start justify-between">
                     <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
-                        {isTags ? <Tag className="h-5 w-5 text-brand-600" /> : <Layers className="h-5 w-5 text-brand-600" />}
+                        {isTags ? <Tag className="h-5 w-5 text-brand-600 dark:text-brand-400" /> : <Layers className="h-5 w-5 text-brand-600 dark:text-brand-400" />}
                         {isTags ? t('contacts_page.bulk_tags_title', { count }) : t('contacts_page.bulk_segments_title', { count })}
                     </h3>
-                    <button type="button" onClick={onClose} className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
+                    <button type="button" onClick={onClose} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
                         <X className="h-5 w-5" />
                     </button>
                 </div>
@@ -240,6 +188,7 @@ export default function ContactsIndex({ contacts, filters, tags = [], segments =
     const [bulkModal, setBulkModal] = useState(null); // null | 'tags' | 'segments'
     const [bulkProcessing, setBulkProcessing] = useState(false);
     const [selected, setSelected] = useState(new Set());
+    const loading = useInertiaLoading();
 
     const { data, setData, post, processing, reset } = useForm({
         first_name: '', last_name: '', phone_e164: '', email: '',
@@ -247,21 +196,7 @@ export default function ContactsIndex({ contacts, filters, tags = [], segments =
         segment_ids: [],
     });
 
-    const allUuids = contacts.data.map(c => c.uuid);
-    const allSelected = allUuids.length > 0 && allUuids.every(id => selected.has(id));
     const someSelected = selected.size > 0;
-
-    const toggleAll = useCallback(() => {
-        if (allSelected) {
-            setSelected(prev => { const next = new Set(prev); allUuids.forEach(id => next.delete(id)); return next; });
-        } else {
-            setSelected(prev => new Set([...prev, ...allUuids]));
-        }
-    }, [allSelected, allUuids]);
-
-    const toggleOne = useCallback((uuid) => {
-        setSelected(prev => { const next = new Set(prev); next.has(uuid) ? next.delete(uuid) : next.add(uuid); return next; });
-    }, []);
 
     const clearSelection = () => setSelected(new Set());
 
@@ -331,134 +266,171 @@ export default function ContactsIndex({ contacts, filters, tags = [], segments =
         post(route('client.contacts.store'), { onSuccess: () => { reset(); setShowAddModal(false); } });
     };
 
+    const columns = [
+        {
+            key: 'name',
+            header: t('common.name'),
+            sortable: true,
+            cardTitle: true,
+            render: (c) => (
+                <div className="flex items-center gap-2.5">
+                    <ContactAvatar contact={c} size={8} />
+                    <span>
+                        {c.first_name || c.last_name
+                            ? `${c.first_name ?? ''} ${c.last_name ?? ''}`.trim()
+                            : <span className="text-neutral-500 dark:text-neutral-400">—</span>}
+                    </span>
+                </div>
+            ),
+        },
+        {
+            key: 'phone_e164',
+            header: t('contacts_page.col_phone'),
+            render: (c) => c.phone_e164 || '—',
+        },
+        {
+            key: 'email',
+            header: t('common.email'),
+            render: (c) => c.email || '—',
+        },
+        {
+            key: 'tags',
+            header: t('contacts_page.col_tags'),
+            render: (c) => (
+                <div className="flex flex-wrap gap-1">
+                    {c.tags?.map(tag => (
+                        <span
+                            key={tag.id}
+                            className="inline-flex items-center gap-1.5 rounded-full bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300"
+                        >
+                            <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: tag.color }} aria-hidden="true" />
+                            {tag.name}
+                        </span>
+                    ))}
+                </div>
+            ),
+        },
+        {
+            key: 'opt_ins',
+            header: t('contacts_page.col_optins'),
+            render: (c) => (
+                <div className="flex items-center gap-1">
+                    {c.opt_in_whatsapp && <span className="text-xs bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300 rounded px-1">{t('contacts_page.channel_wa')}</span>}
+                    {c.opt_in_sms      && <span className="text-xs bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 rounded px-1">{t('contacts_page.channel_sms')}</span>}
+                    {c.opt_in_email    && <span className="text-xs bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 rounded px-1">{t('contacts_page.channel_email')}</span>}
+                </div>
+            ),
+        },
+        {
+            key: 'actions',
+            header: t('common.actions', { defaultValue: 'Actions' }),
+            align: 'right',
+            render: (c) => (
+                <div className="flex items-center justify-end gap-2">
+                    <Link href={route('client.contacts.show', c.uuid)} aria-label={t('contacts_page.view_contact', { defaultValue: 'View contact' })} className="text-neutral-500 dark:text-neutral-400 hover:text-brand-600 transition">
+                        <Eye className="h-4 w-4" />
+                    </Link>
+                    <button type="button" onClick={() => handleDelete(c.uuid)} aria-label={t('contacts_page.delete_contact', { defaultValue: 'Delete contact' })} className="text-neutral-500 dark:text-neutral-400 hover:text-red-500 transition">
+                        <Trash2 className="h-4 w-4" />
+                    </button>
+                </div>
+            ),
+        },
+    ];
+
+    const toolbar = (
+        <form onSubmit={handleSearch} className="flex gap-2">
+            <div className="relative flex-1">
+                <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500 dark:text-neutral-400" />
+                <input
+                    type="text"
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    placeholder={t('contacts_page.search_placeholder')}
+                    className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 ps-9 pe-3 py-2 text-sm text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                />
+            </div>
+            <button type="submit" className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 transition">{t('common.search')}</button>
+        </form>
+    );
+
+    const bulkActions = (
+        <div className="flex flex-wrap items-center gap-3">
+            <span className="text-sm font-medium text-brand-700 dark:text-brand-300">{t('contacts_page.n_selected', { count: selected.size })}</span>
+            <div className="ms-auto flex gap-2">
+                <button type="button" onClick={() => setBulkModal('tags')} className="flex items-center gap-1.5 rounded-lg border border-brand-300 dark:border-brand-600 px-3 py-1.5 text-xs font-medium text-brand-700 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-900/40 transition">
+                    <Tag className="h-3.5 w-3.5" /> {t('contacts_page.bulk_tags_btn')}
+                </button>
+                <button type="button" onClick={() => setBulkModal('segments')} className="flex items-center gap-1.5 rounded-lg border border-brand-300 dark:border-brand-600 px-3 py-1.5 text-xs font-medium text-brand-700 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-900/40 transition">
+                    <Layers className="h-3.5 w-3.5" /> {t('contacts_page.bulk_segments_btn')}
+                </button>
+                <button type="button" onClick={() => handleExport(true)} className="flex items-center gap-1.5 rounded-lg border border-brand-300 dark:border-brand-600 px-3 py-1.5 text-xs font-medium text-brand-700 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-900/40 transition">
+                    <Download className="h-3.5 w-3.5" /> {t('contacts_page.export_selected')}
+                </button>
+                <button type="button" onClick={handleBulkDelete} className="flex items-center gap-1.5 rounded-lg border border-red-300 dark:border-red-700 px-3 py-1.5 text-xs font-medium text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition">
+                    <Trash2 className="h-3.5 w-3.5" /> {t('contacts_page.delete_selected')}
+                </button>
+                <button type="button" onClick={clearSelection} aria-label={t('dt.clear_selection', { defaultValue: 'Clear' })} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
+                    <X className="h-4 w-4" />
+                </button>
+            </div>
+        </div>
+    );
+
     return (
         <ClientLayout title={t('contacts_page.title')}>
             <Head title={t('contacts_page.title')} />
             <div className="space-y-5">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                    <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">{t('contacts_page.title')}</h2>
-                    <div className="flex gap-2">
-                        {(
+                <PageHeader
+                    title={t('contacts_page.title')}
+                    actions={
+                        <>
                             <Link
                                 href={route('client.contacts.bulk-import')}
                                 className="flex items-center gap-1.5 rounded-lg border border-neutral-300 dark:border-neutral-600 px-3 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition"
                             >
                                 <Table2 className="h-4 w-4" /> {t('contacts_page.bulk_import')}
                             </Link>
-                        )}
-                        {(
                             <button type="button" onClick={() => setShowImportModal(true)} className="flex items-center gap-1.5 rounded-lg border border-neutral-300 dark:border-neutral-600 px-3 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition">
                                 <Upload className="h-4 w-4" /> {t('contacts_page.import_csv')}
                             </button>
-                        )}
-                        <button type="button" onClick={() => handleExport(false)} className="flex items-center gap-1.5 rounded-lg border border-neutral-300 dark:border-neutral-600 px-3 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition">
-                            <Download className="h-4 w-4" /> {t('contacts_page.export_csv')}
-                        </button>
-                        <Link href={route('client.segments.index')} className="flex items-center gap-1.5 rounded-lg border border-neutral-300 dark:border-neutral-600 px-3 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition">
-                            <Tag className="h-4 w-4" /> {t('contacts_page.segments')}
-                        </Link>
-                        {(
+                            <button type="button" onClick={() => handleExport(false)} className="flex items-center gap-1.5 rounded-lg border border-neutral-300 dark:border-neutral-600 px-3 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition">
+                                <Download className="h-4 w-4" /> {t('contacts_page.export_csv')}
+                            </button>
+                            <Link href={route('client.segments.index')} className="flex items-center gap-1.5 rounded-lg border border-neutral-300 dark:border-neutral-600 px-3 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition">
+                                <Tag className="h-4 w-4" /> {t('contacts_page.segments')}
+                            </Link>
                             <button type="button" onClick={() => setShowAddModal(true)} className="flex items-center gap-1.5 rounded-lg bg-brand-600 px-3 py-2 text-sm font-medium text-white hover:bg-brand-700 transition">
                                 <UserPlus className="h-4 w-4" /> {t('contacts_page.add_contact')}
                             </button>
-                        )}
-                    </div>
-                </div>
+                        </>
+                    }
+                />
 
                 {flash.success && <div className="rounded-lg bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200 px-4 py-2 text-sm">{flash.success}</div>}
 
-                {/* Search */}
-                <form onSubmit={handleSearch} className="flex gap-2">
-                    <div className="relative flex-1">
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-                        <input
-                            type="text"
-                            value={search}
-                            onChange={e => setSearch(e.target.value)}
-                            placeholder={t('contacts_page.search_placeholder')}
-                            className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 pl-9 pr-3 py-2 text-sm text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                <DataTable
+                    columns={columns}
+                    rows={contacts.data}
+                    rowKey="uuid"
+                    pagination={contacts}
+                    storageKey="contacts"
+                    loading={loading}
+                    toolbar={toolbar}
+                    selectable
+                    selectedKeys={[...selected]}
+                    onSelectedKeysChange={(keys) => setSelected(new Set(keys))}
+                    bulkActions={bulkActions}
+                    emptyState={
+                        <EmptyState
+                            icon={<Users className="h-8 w-8" />}
+                            title={t('contacts_page.empty_title')}
+                            description={t('contacts_page.empty_description')}
+                            action={{ label: t('contacts_page.add_contact'), onClick: () => setShowAddModal(true) }}
+                            secondaryAction={{ label: t('contacts_page.bulk_import'), href: route('client.contacts.bulk-import') }}
                         />
-                    </div>
-                    <button type="submit" className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 transition">{t('common.search')}</button>
-                </form>
-
-                {/* Bulk action bar */}
-                {someSelected && (
-                    <div className="flex items-center gap-3 rounded-lg bg-brand-50 dark:bg-brand-900/20 border border-brand-200 dark:border-brand-700 px-4 py-2.5">
-                        <span className="text-sm font-medium text-brand-700 dark:text-brand-300">{t('contacts_page.n_selected', { count: selected.size })}</span>
-                        <div className="flex gap-2 ml-auto">
-                            <button type="button" onClick={() => setBulkModal('tags')} className="flex items-center gap-1.5 rounded-lg border border-brand-300 dark:border-brand-600 px-3 py-1.5 text-xs font-medium text-brand-700 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-900/40 transition">
-                                <Tag className="h-3.5 w-3.5" /> {t('contacts_page.bulk_tags_btn')}
-                            </button>
-                            <button type="button" onClick={() => setBulkModal('segments')} className="flex items-center gap-1.5 rounded-lg border border-brand-300 dark:border-brand-600 px-3 py-1.5 text-xs font-medium text-brand-700 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-900/40 transition">
-                                <Layers className="h-3.5 w-3.5" /> {t('contacts_page.bulk_segments_btn')}
-                            </button>
-                            <button type="button" onClick={() => handleExport(true)} className="flex items-center gap-1.5 rounded-lg border border-brand-300 dark:border-brand-600 px-3 py-1.5 text-xs font-medium text-brand-700 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-900/40 transition">
-                                <Download className="h-3.5 w-3.5" /> {t('contacts_page.export_selected')}
-                            </button>
-                            <button type="button" onClick={handleBulkDelete} className="flex items-center gap-1.5 rounded-lg border border-red-300 dark:border-red-700 px-3 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition">
-                                <Trash2 className="h-3.5 w-3.5" /> {t('contacts_page.delete_selected')}
-                            </button>
-                            <button type="button" onClick={clearSelection} className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
-                                <X className="h-4 w-4" />
-                            </button>
-                        </div>
-                    </div>
-                )}
-
-                {/* Table */}
-                <div className="overflow-x-auto rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900">
-                    <table className="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700 text-sm">
-                        <thead className="bg-neutral-50 dark:bg-neutral-800">
-                            <tr>
-                                <th className="px-4 py-3 w-10">
-                                    <button type="button" onClick={toggleAll} className="text-neutral-400 hover:text-brand-600 transition">
-                                        {allSelected
-                                            ? <CheckSquare className="h-4 w-4 text-brand-600" />
-                                            : <Square className="h-4 w-4" />
-                                        }
-                                    </button>
-                                </th>
-                                {[t('common.name'), t('contacts_page.col_phone'), t('common.email'), t('contacts_page.col_tags'), t('contacts_page.col_optins'), ''].map(h => (
-                                    <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">{h}</th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                            {contacts.data.map(c => (
-                                <ContactRow
-                                    key={c.id}
-                                    contact={c}
-                                    selected={selected.has(c.uuid)}
-                                    onToggle={toggleOne}
-                                    onDelete={handleDelete}
-                                />
-                            ))}
-                            {contacts.data.length === 0 && (
-                                <tr>
-                                    <td colSpan={7}>
-                                        <EmptyState
-                                            icon={<Users className="h-8 w-8" />}
-                                            title={t('contacts_page.empty_title')}
-                                            description={t('contacts_page.empty_description')}
-                                            action={{ label: t('contacts_page.add_contact'), onClick: () => setShowAddModal(true) }}
-                                            secondaryAction={{ label: t('contacts_page.bulk_import'), href: route('client.contacts.bulk-import') }}
-                                        />
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-
-                {/* Pagination */}
-                {contacts.last_page > 1 && (
-                    <div className="flex gap-1">
-                        {contacts.links.map((link, i) => (
-                            <a key={i} href={link.url ?? '#'} className={`px-3 py-1.5 rounded text-sm border ${link.active ? 'bg-brand-600 text-white border-brand-600' : 'border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800'} ${!link.url ? 'opacity-40 pointer-events-none' : ''}`} dangerouslySetInnerHTML={{ __html: link.label }} />
-                        ))}
-                    </div>
-                )}
+                    }
+                />
             </div>
 
             {/* Import CSV wizard */}

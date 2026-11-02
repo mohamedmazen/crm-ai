@@ -12,8 +12,10 @@ import {
 } from 'lucide-react';
 import { ChannelBrandIcon, CHANNEL_LABELS } from '@/Components/BrandIcons';
 import SlaBadge from '@/Components/SlaBadge';
+import { ListSkeleton } from '@/Components/ui/Skeleton';
 import useFeature from '@/hooks/useFeature';
 import { formatTimeTz, formatInTz } from '@/Utils/datetime';
+import { readableTextColor } from '@/lib/contrast';
 import { playInboundSound, getSoundPrefs, setChannelSoundEnabled, SOUND_CHANNELS } from '@/Utils/notificationSound';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -39,14 +41,14 @@ const STATUS_COLORS = {
 
 // Conversation activity log — icon + accent colour per event type
 const ACTIVITY_STYLES = {
-    created:        { Icon: Plus,           color: 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300' },
+    created:        { Icon: Plus,           color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' },
     assigned:       { Icon: UserCheck,      color: 'bg-brand-100 text-brand-600 dark:bg-brand-900/30 dark:text-brand-300' },
-    transferred:    { Icon: ArrowRightLeft, color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300' },
-    unassigned:     { Icon: UserMinus,      color: 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400' },
-    status_changed: { Icon: CheckCircle,    color: 'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-300' },
-    handover:       { Icon: Bot,            color: 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300' },
-    label_added:    { Icon: Tag,            color: 'bg-teal-100 text-teal-600 dark:bg-teal-900/30 dark:text-teal-300' },
-    label_removed:  { Icon: Tag,            color: 'bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-300' },
+    transferred:    { Icon: ArrowRightLeft, color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' },
+    unassigned:     { Icon: UserMinus,      color: 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400' },
+    status_changed: { Icon: CheckCircle,    color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' },
+    handover:       { Icon: Bot,            color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300' },
+    label_added:    { Icon: Tag,            color: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300' },
+    label_removed:  { Icon: Tag,            color: 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300' },
 };
 
 function activityText(a, t) {
@@ -81,7 +83,7 @@ function activityText(a, t) {
 
 function ActivityRow({ activity, t, userTz, isLast }) {
     const { Icon, color } = ACTIVITY_STYLES[activity.type]
-        ?? { Icon: History, color: 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400' };
+        ?? { Icon: History, color: 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400' };
     return (
         <div className="flex gap-3">
             <div className="flex flex-col items-center">
@@ -92,7 +94,7 @@ function ActivityRow({ activity, t, userTz, isLast }) {
             </div>
             <div className={`min-w-0 ${isLast ? '' : 'pb-4'}`}>
                 <p className="text-sm text-neutral-700 dark:text-neutral-300">{activityText(activity, t)}</p>
-                <p className="text-xs text-neutral-400 mt-0.5">{formatInTz(activity.created_at, userTz)}</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{formatInTz(activity.created_at, userTz)}</p>
             </div>
         </div>
     );
@@ -340,7 +342,7 @@ function ImageGallery({ messages, conversationId }) {
                         </button>
                     ))}
                 </div>
-                <div className={`flex items-center justify-end gap-1 px-3 py-1 text-[10px] ${isOut ? 'text-white/60' : 'text-neutral-400'}`}>
+                <div className={`flex items-center justify-end gap-1 px-3 py-1 text-3xs ${isOut ? 'text-white' : 'text-neutral-500 dark:text-neutral-400'}`}>
                     {last.sent_at ? formatTimeTz(last.sent_at, bubbleTz) : ''}
                     {isOut && <span title={last.status} className={statusClass}>{statusGlyph}</span>}
                 </div>
@@ -413,7 +415,7 @@ function MediaDocument({ src, filename, conversationId, messageId, isOut }) {
             </div>
             <div className="min-w-0">
                 <p className="text-xs font-medium truncate">{filename || t('inbox.document')}</p>
-                <p className="text-[10px] opacity-60">{t('inbox.tap_to_open')}</p>
+                <p className="text-3xs opacity-60">{t('inbox.tap_to_open')}</p>
             </div>
         </a>
     );
@@ -435,8 +437,8 @@ function LocationCard({ location, isOut }) {
             </div>
             <div className={`px-3 py-2 ${isOut ? 'bg-white/10' : 'bg-neutral-50 dark:bg-neutral-800'}`}>
                 {name && <p className="text-xs font-semibold truncate">{name}</p>}
-                {address && <p className="text-[10px] opacity-70 truncate">{address}</p>}
-                <p className="text-[10px] opacity-50">{latitude}, {longitude}</p>
+                {address && <p className="text-3xs opacity-70 truncate">{address}</p>}
+                <p className="text-3xs opacity-50">{latitude}, {longitude}</p>
             </div>
         </a>
     );
@@ -455,8 +457,8 @@ function ContactCard({ contacts, isOut }) {
             </div>
             <div className="min-w-0">
                 <p className="text-xs font-semibold truncate">{name}</p>
-                {phone && <p className="text-[10px] opacity-60">{phone}</p>}
-                {contacts.length > 1 && <p className="text-[10px] opacity-50">{t('inbox.plus_n_more', { count: contacts.length - 1 })}</p>}
+                {phone && <p className="text-3xs opacity-60">{phone}</p>}
+                {contacts.length > 1 && <p className="text-3xs opacity-50">{t('inbox.plus_n_more', { count: contacts.length - 1 })}</p>}
             </div>
         </div>
     );
@@ -472,7 +474,7 @@ function ReactionBubble({ reaction }) {
     return (
         <div className="flex items-center gap-1 text-sm">
             <span className="text-xl">{reaction?.emoji}</span>
-            <span className="text-[10px] opacity-50">{t('inbox.reacted')}</span>
+            <span className="text-3xs opacity-50">{t('inbox.reacted')}</span>
         </div>
     );
 }
@@ -525,12 +527,12 @@ function TemplateBodyContent({ components, isOut }) {
             )}
             {bodyText && <WaText text={bodyText} />}
             {footerText && (
-                <p className={`text-[11px] mt-1.5 ${isOut ? 'text-white/50' : 'text-neutral-400'}`}>{footerText}</p>
+                <p className={`text-2xs mt-1.5 ${isOut ? 'text-white' : 'text-neutral-500 dark:text-neutral-400'}`}>{footerText}</p>
             )}
             {btns.length > 0 && (
                 <div className={`mt-2 pt-2 border-t ${isOut ? 'border-white/20' : 'border-neutral-200 dark:border-neutral-600'} flex flex-col gap-1`}>
                     {btns.map((b, i) => (
-                        <div key={i} className={`text-xs text-center py-1 rounded ${isOut ? 'text-white/80' : 'text-brand-600 dark:text-brand-400'}`}>
+                        <div key={i} className={`text-xs text-center py-1 rounded ${isOut ? 'text-white' : 'text-brand-600 dark:text-brand-400'}`}>
                             {b.type === 'URL' ? '🔗 ' : b.type === 'PHONE_NUMBER' ? '📞 ' : '↩ '}
                             {b.text}
                         </div>
@@ -676,13 +678,14 @@ function SoundPrefsMenu() {
                 type="button"
                 onClick={() => setOpen((o) => !o)}
                 title={t('inbox.notification_sounds')}
-                className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-400 transition"
+                aria-label={t('inbox.notification_sounds')}
+                className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400 transition"
             >
                 {anyOn ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
             </button>
             {open && (
                 <div className="absolute right-0 z-30 mt-1 w-48 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 shadow-lg p-1.5">
-                    <div className="px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">
+                    <div className="px-2 py-1 text-2xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
                         {t('inbox.notification_sounds')}
                     </div>
                     {SOUND_CHANNELS.map((c) => (
@@ -762,7 +765,7 @@ function MessageBubble({ msg, conversationId }) {
                       : '';
 
     const timeRow = (
-        <div className={`flex items-center gap-1 text-[10px] mt-1 ${isOut ? 'text-white/60 justify-end' : 'text-neutral-400'}`}>
+        <div className={`flex items-center gap-1 text-3xs mt-1 ${isOut ? 'text-white justify-end' : 'text-neutral-500 dark:text-neutral-400'}`}>
             {msg.sent_at ? formatTimeTz(msg.sent_at, bubbleTz) : ''}
             {isOut && (
                 <span title={msg.status} className={statusClass}>{statusGlyph}</span>
@@ -899,28 +902,34 @@ function ConversationCard({ conv, isActive, userTz }) {
                     <div className="flex items-center justify-between gap-1">
                         <button
                             onClick={handleContactClick}
-                            className={`text-sm truncate text-left hover:underline ${conv.unread_count > 0 ? 'font-semibold text-neutral-900 dark:text-neutral-100' : 'font-medium text-neutral-700 dark:text-neutral-300'}`}
+                            className={`text-sm truncate text-left py-0.5 hover:underline ${conv.unread_count > 0 ? 'font-semibold text-neutral-900 dark:text-neutral-100' : 'font-medium text-neutral-700 dark:text-neutral-300'}`}
                             title={t('inbox.view_contact_profile')}
                         >
                             {name}
                         </button>
-                        <span className="text-[11px] text-neutral-400 shrink-0">
+                        <span className="text-2xs text-neutral-500 dark:text-neutral-400 shrink-0">
                             {conv.last_message_at ? formatTimeTz(conv.last_message_at, userTz) : ''}
                         </span>
                     </div>
-                    <p className={`text-xs truncate mt-0.5 ${conv.unread_count > 0 ? 'text-neutral-700 dark:text-neutral-300' : 'text-neutral-400'}`}>
+                    <p className={`text-xs truncate mt-0.5 ${conv.unread_count > 0 ? 'text-neutral-700 dark:text-neutral-300' : 'text-neutral-500 dark:text-neutral-400'}`}>
                         {conv.last_message?.body || '(media)'}
                     </p>
                     {conv.labels?.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-1">
                             {conv.labels.map(l => (
-                                <span key={l.id} className="rounded-full px-1.5 py-px text-[10px] font-medium text-white" style={{ backgroundColor: l.color }}>{l.name}</span>
+                                <span
+                                    key={l.id}
+                                    className="rounded-full px-1.5 py-px text-3xs font-medium"
+                                    style={{ backgroundColor: l.color, color: readableTextColor(l.color) }}
+                                >
+                                    {l.name}
+                                </span>
                             ))}
                         </div>
                     )}
                 </div>
                 {conv.unread_count > 0 && (
-                    <span className="shrink-0 h-5 min-w-5 rounded-full bg-brand-600 text-white text-[10px] font-bold flex items-center justify-center px-1 mt-0.5">
+                    <span className="shrink-0 h-5 min-w-5 rounded-full bg-brand-600 text-white text-3xs font-bold flex items-center justify-center px-1 mt-0.5">
                         {conv.unread_count > 99 ? '99+' : conv.unread_count}
                     </span>
                 )}
@@ -934,7 +943,7 @@ function FilterSidebar({ filters, labels, channelAccounts = [], onFolder, onChan
     return (
         <div className="flex flex-col h-full overflow-y-auto">
             <div className="p-2 border-b border-neutral-100 dark:border-neutral-800">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 px-2 py-1.5">{t('inbox.views')}</p>
+                <p className="text-3xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 px-2 py-1.5">{t('inbox.views')}</p>
                 {FOLDERS.map(({ key, labelKey, icon: Icon }) => (
                     <button key={key ?? 'all'} onClick={() => onFolder(key)}
                         className={`w-full flex items-center gap-2.5 px-2 py-2 rounded-lg text-sm transition ${
@@ -947,7 +956,7 @@ function FilterSidebar({ filters, labels, channelAccounts = [], onFolder, onChan
                 ))}
             </div>
             <div className="p-2 border-b border-neutral-100 dark:border-neutral-800">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 px-2 py-1.5">{t('inbox.channels')}</p>
+                <p className="text-3xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 px-2 py-1.5">{t('inbox.channels')}</p>
                 {ALL_CHANNELS.map(ch => (
                     <button key={ch} onClick={() => onChannel(ch)}
                         className={`w-full flex items-center gap-2.5 px-2 py-2 rounded-lg text-sm transition ${
@@ -962,7 +971,7 @@ function FilterSidebar({ filters, labels, channelAccounts = [], onFolder, onChan
             </div>
             {channelAccounts.length > 0 && (
                 <div className="p-2 border-b border-neutral-100 dark:border-neutral-800">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 px-2 py-1.5">{t('inbox.numbers')}</p>
+                    <p className="text-3xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 px-2 py-1.5">{t('inbox.numbers')}</p>
                     {channelAccounts.map(account => (
                         <button key={account.id} onClick={() => onAccount(account.id)}
                             className={`w-full flex items-center gap-2.5 px-2 py-2 rounded-lg text-sm transition ${
@@ -978,7 +987,7 @@ function FilterSidebar({ filters, labels, channelAccounts = [], onFolder, onChan
             )}
             {labels.length > 0 && (
                 <div className="p-2">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 px-2 py-1.5">{t('inbox.labels')}</p>
+                    <p className="text-3xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 px-2 py-1.5">{t('inbox.labels')}</p>
                     {labels.map(label => (
                         <button key={label.id} onClick={() => onLabel(label.id)}
                             className={`w-full flex items-center gap-2.5 px-2 py-2 rounded-lg text-sm transition ${
@@ -1176,7 +1185,7 @@ function TemplatePicker({ conversationId, onSent, onClose }) {
         <div ref={ref} className="absolute bottom-full mb-2 left-0 right-0 z-50 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-lg overflow-hidden flex flex-col max-h-[28rem]">
             {/* Picker header */}
             <div className="flex items-center gap-2 px-3 py-2 border-b border-neutral-100 dark:border-neutral-800 shrink-0">
-                <LayoutTemplate className="h-4 w-4 text-neutral-400 shrink-0" />
+                <LayoutTemplate className="h-4 w-4 text-neutral-500 dark:text-neutral-400 shrink-0" />
                 {!picked ? (
                     <input autoFocus value={query} onChange={e => setQuery(e.target.value)}
                         placeholder={t('inbox.search_templates')}
@@ -1186,7 +1195,7 @@ function TemplatePicker({ conversationId, onSent, onClose }) {
                         {t('inbox.back_to_templates')}
                     </button>
                 )}
-                <button type="button" onClick={onClose} className="text-neutral-400 hover:text-neutral-600 shrink-0">
+                <button type="button" onClick={onClose} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 shrink-0">
                     <X className="h-4 w-4" />
                 </button>
             </div>
@@ -1194,8 +1203,8 @@ function TemplatePicker({ conversationId, onSent, onClose }) {
             {/* Template list */}
             {!picked && (
                 <div className="overflow-y-auto flex-1">
-                    {loading && <p className="text-xs text-neutral-400 text-center py-6">{t('inbox.loading_templates')}</p>}
-                    {!loading && filtered.length === 0 && <p className="text-xs text-neutral-400 text-center py-6">{t('inbox.no_approved_templates')}</p>}
+                    {loading && <p className="text-xs text-neutral-500 dark:text-neutral-400 text-center py-6">{t('inbox.loading_templates')}</p>}
+                    {!loading && filtered.length === 0 && <p className="text-xs text-neutral-500 dark:text-neutral-400 text-center py-6">{t('inbox.no_approved_templates')}</p>}
                     {filtered.map(t => {
                         const bodyPreview = t.components?.find(c => c.type === 'BODY')?.text ?? '';
                         const hdr = t.components?.find(c => c.type === 'HEADER');
@@ -1204,15 +1213,15 @@ function TemplatePicker({ conversationId, onSent, onClose }) {
                                 className="w-full text-left px-3 py-2.5 hover:bg-brand-50 dark:hover:bg-brand-900/20 transition border-b border-neutral-100 dark:border-neutral-800 last:border-0">
                                 <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
                                     <span className="text-xs font-semibold text-neutral-800 dark:text-neutral-200">{t.name}</span>
-                                    <span className="text-[10px] text-neutral-400 bg-neutral-100 dark:bg-neutral-800 rounded px-1.5">{t.language}</span>
-                                    <span className="text-[10px] text-neutral-400 bg-neutral-100 dark:bg-neutral-800 rounded px-1.5">{t.category}</span>
+                                    <span className="text-3xs text-neutral-600 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800 rounded px-1.5">{t.language}</span>
+                                    <span className="text-3xs text-neutral-600 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800 rounded px-1.5">{t.category}</span>
                                     {hdr?.format && hdr.format !== 'TEXT' && (
-                                        <span className="text-[10px] text-amber-600 bg-amber-50 dark:bg-amber-900/20 rounded px-1.5 flex items-center gap-0.5">
+                                        <span className="text-3xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 rounded px-1.5 flex items-center gap-0.5">
                                             <ImageIcon className="h-2.5 w-2.5" />{hdr.format}
                                         </span>
                                     )}
                                 </div>
-                                <p className="text-xs text-neutral-500 line-clamp-2">{bodyPreview || t('inbox.no_body_preview')}</p>
+                                <p className="text-xs text-neutral-500 dark:text-neutral-400 line-clamp-2">{bodyPreview || t('inbox.no_body_preview')}</p>
                             </button>
                         );
                     })}
@@ -1224,20 +1233,20 @@ function TemplatePicker({ conversationId, onSent, onClose }) {
                 <div className="overflow-y-auto flex-1 p-3 space-y-3">
                     <div className="flex items-center gap-2">
                         <span className="text-xs font-semibold text-neutral-800 dark:text-neutral-200">{picked.name}</span>
-                        <span className="text-[10px] text-neutral-400 bg-neutral-100 dark:bg-neutral-800 rounded px-1.5">{picked.language}</span>
-                        {needsHeader && <span className="text-[10px] text-amber-600 bg-amber-50 dark:bg-amber-900/20 rounded px-1.5">{t('inbox.format_header', { format: headerFormat })}</span>}
+                        <span className="text-3xs text-neutral-600 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800 rounded px-1.5">{picked.language}</span>
+                        {needsHeader && <span className="text-3xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 rounded px-1.5">{t('inbox.format_header', { format: headerFormat })}</span>}
                     </div>
 
                     {/* Header media upload */}
                     {needsHeader && (
                         <div>
-                            <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
+                            <p className="text-3xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">
                                 {t('inbox.header_label', { format: headerFormat })} <span className="text-red-400">{t('inbox.required')}</span>
                             </p>
                             <input ref={headerFileRef} type="file" accept={headerAccept} className="hidden" onChange={handleHeaderFile} />
                             {!headerMedia ? (
                                 <button type="button" onClick={() => headerFileRef.current?.click()}
-                                    className="w-full rounded-xl border-2 border-dashed border-neutral-300 dark:border-neutral-600 py-4 flex flex-col items-center gap-1.5 text-neutral-400 hover:border-brand-400 hover:text-brand-500 transition">
+                                    className="w-full rounded-xl border-2 border-dashed border-neutral-300 dark:border-neutral-600 py-4 flex flex-col items-center gap-1.5 text-neutral-500 dark:text-neutral-400 hover:border-brand-400 hover:text-brand-500 transition">
                                     <ImageIcon className="h-6 w-6" />
                                     <span className="text-xs">{t('inbox.click_to_upload', { format: headerFormat.toLowerCase() })}</span>
                                 </button>
@@ -1248,14 +1257,14 @@ function TemplatePicker({ conversationId, onSent, onClose }) {
                                     )}
                                     <div className="flex items-center gap-2 px-3 py-2 bg-neutral-50 dark:bg-neutral-800">
                                         {headerMedia.uploading ? (
-                                            <><Loader2 className="h-4 w-4 animate-spin text-brand-600" /><span className="text-xs text-neutral-500">{t('inbox.uploading_to_whatsapp')}</span></>
+                                            <><Loader2 className="h-4 w-4 animate-spin text-brand-600 dark:text-brand-400" /><span className="text-xs text-neutral-500 dark:text-neutral-400">{t('inbox.uploading_to_whatsapp')}</span></>
                                         ) : headerMedia.mediaId ? (
-                                            <><span className="text-xs text-green-600 dark:text-green-400 font-medium flex-1">{t('inbox.uploaded')}</span></>
+                                            <><span className="text-xs text-green-700 dark:text-green-400 font-medium flex-1">{t('inbox.uploaded')}</span></>
                                         ) : (
                                             <span className="text-xs text-red-500 flex-1">{t('inbox.upload_failed')}</span>
                                         )}
                                         <button type="button" onClick={() => { setHeaderMedia(null); setUploadError(''); }}
-                                            className="text-neutral-400 hover:text-red-500">
+                                            className="text-neutral-500 dark:text-neutral-400 hover:text-red-500">
                                             <X className="h-3.5 w-3.5" />
                                         </button>
                                     </div>
@@ -1268,10 +1277,10 @@ function TemplatePicker({ conversationId, onSent, onClose }) {
                     {/* Body variables */}
                     {varIds.length > 0 && (
                         <div className="space-y-2">
-                            <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">{t('inbox.body_variables')}</p>
+                            <p className="text-3xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">{t('inbox.body_variables')}</p>
                             {varIds.map(id => (
                                 <div key={id}>
-                                    <label className="text-xs text-neutral-500 mb-0.5 block">{'{{' + id + '}}'}</label>
+                                    <label className="text-xs text-neutral-500 dark:text-neutral-400 mb-0.5 block">{'{{' + id + '}}'}</label>
                                     <input type="text" value={vars[id] ?? ''} onChange={e => setVars(v => ({ ...v, [id]: e.target.value }))}
                                         placeholder={t('inbox.value_for_variable', { token: `{{${id}}}` })}
                                         className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500" />
@@ -1282,7 +1291,7 @@ function TemplatePicker({ conversationId, onSent, onClose }) {
 
                     {/* Live preview */}
                     <div>
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">{t('inbox.preview')}</p>
+                        <p className="text-3xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">{t('inbox.preview')}</p>
                         <div className="rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 overflow-hidden">
                             {needsHeader && headerMedia?.previewUrl && (
                                 <img src={headerMedia.previewUrl} alt="" className="w-full h-24 object-cover" />
@@ -1350,16 +1359,16 @@ function ProductPicker({ conversationId, onSent, onClose }) {
     return (
         <div ref={ref} className="absolute bottom-full mb-2 left-0 right-0 z-20 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 shadow-xl flex flex-col max-h-80">
             <div className="p-2 border-b border-neutral-100 dark:border-neutral-800 flex items-center gap-2">
-                <Search className="h-4 w-4 text-neutral-400 shrink-0" />
+                <Search className="h-4 w-4 text-neutral-500 dark:text-neutral-400 shrink-0" />
                 <input autoFocus value={query} onChange={e => setQuery(e.target.value)}
                     placeholder={t('inbox.search_products_share')}
                     className="flex-1 bg-transparent text-sm focus:outline-none text-neutral-700 dark:text-neutral-200" />
-                <button type="button" onClick={onClose} className="text-neutral-400 hover:text-neutral-600 transition"><X className="h-4 w-4" /></button>
+                <button type="button" onClick={onClose} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 transition"><X className="h-4 w-4" /></button>
             </div>
             {error && <p className="px-3 py-2 text-xs text-red-500">{error}</p>}
             <div className="overflow-y-auto">
                 {loading ? (
-                    <p className="text-sm text-neutral-400 py-6 text-center">{t('inbox.loading_products')}</p>
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400 py-6 text-center">{t('inbox.loading_products')}</p>
                 ) : products.length === 0 ? (
                     <div className="py-6"><EmptyState icon={<ShoppingBag className="h-7 w-7" />} title={t('inbox.no_products')} description={t('inbox.no_products_match')} /></div>
                 ) : products.map(p => (
@@ -1367,12 +1376,12 @@ function ProductPicker({ conversationId, onSent, onClose }) {
                         className="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-brand-50 dark:hover:bg-brand-900/20 transition border-b border-neutral-100 dark:border-neutral-800 last:border-0 disabled:opacity-60">
                         {p.image_url
                             ? <img src={p.image_url} alt="" className="h-10 w-10 rounded-lg object-cover shrink-0" />
-                            : <div className="h-10 w-10 rounded-lg bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center shrink-0"><ShoppingBag className="h-4 w-4 text-neutral-400" /></div>}
+                            : <div className="h-10 w-10 rounded-lg bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center shrink-0"><ShoppingBag className="h-4 w-4 text-neutral-500 dark:text-neutral-300" /></div>}
                         <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-neutral-800 dark:text-neutral-100 truncate">{p.name}</p>
-                            <p className="text-xs text-neutral-500 truncate">
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate">
                                 {p.sku ? `${p.sku} · ` : ''}{p.currency ? `${p.currency} ` : ''}{p.price}
-                                {p.inventory_quantity != null && <span className="text-neutral-400"> · {t('inbox.in_stock', { count: p.inventory_quantity })}</span>}
+                                {p.inventory_quantity != null && <span className="text-neutral-500 dark:text-neutral-400"> · {t('inbox.in_stock', { count: p.inventory_quantity })}</span>}
                             </p>
                         </div>
                         {sendingId === p.id
@@ -1423,7 +1432,7 @@ function AgentDropdown({ teamMembers, currentUserId, conversationId, onAssigned,
             </div>
             <div className="max-h-52 overflow-y-auto">
                 <button type="button" onClick={() => assign(null)}
-                    className="w-full text-left px-3 py-2 text-xs text-neutral-500 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition border-b border-neutral-100 dark:border-neutral-800">
+                    className="w-full text-left px-3 py-2 text-xs text-neutral-500 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition border-b border-neutral-100 dark:border-neutral-800">
                     {t('inbox.unassign')}
                 </button>
                 {filtered.map(m => (
@@ -1437,7 +1446,7 @@ function AgentDropdown({ teamMembers, currentUserId, conversationId, onAssigned,
                                 <p className={`text-xs font-medium truncate ${m.id === currentUserId ? 'text-brand-600 dark:text-brand-400' : 'text-neutral-800 dark:text-neutral-200'}`}>
                                     {m.name} {m.id === currentUserId && t('inbox.you_paren')}
                                 </p>
-                                <p className="text-[10px] text-neutral-400 truncate">{m.email}</p>
+                                <p className="text-3xs text-neutral-500 dark:text-neutral-400 truncate">{m.email}</p>
                             </div>
                         </div>
                     </button>
@@ -1526,6 +1535,7 @@ export default function InboxShow({
     const [attachPreview, setAttachPreview]   = useState(null); // { file, url, type }
     const fileRef = useRef(null);
     const bottomRef = useRef(null);
+    const listSearchRef = useRef(null);
 
     const { data, setData, reset } = useForm({ body: '', type: 'text', payload: null });
 
@@ -1777,6 +1787,49 @@ export default function InboxShow({
 
     const assignedAgent = teamMembers.find(m => m.id === assignedUserId);
 
+    // Keyboard shortcuts (Phase 3): "/" jumps to the conversation search,
+    // ArrowUp/ArrowDown (or k/j) walk the visible list, Esc clears the search.
+    // Skipped whenever the user is typing in a field, so the composer is never
+    // hijacked.
+    useEffect(() => {
+        const handler = (e) => {
+            if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+            const el = e.target;
+            const typing = !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable);
+
+            if (e.key === '/' && !typing) {
+                e.preventDefault();
+                listSearchRef.current?.focus();
+                return;
+            }
+            if (e.key === 'Escape' && el === listSearchRef.current) {
+                setListSearch('');
+                listSearchRef.current?.blur();
+                return;
+            }
+            if (typing) return;
+
+            const down = e.key === 'ArrowDown' || e.key === 'j';
+            const up = e.key === 'ArrowUp' || e.key === 'k';
+            if (!down && !up) return;
+
+            const list = filteredList;
+            if (!list || list.length === 0) return;
+            const idx = list.findIndex(c => c.uuid === conversation.uuid);
+            const base = idx < 0 ? 0 : idx;
+            const target = list[Math.min(list.length - 1, Math.max(0, base + (down ? 1 : -1)))];
+            if (target && target.uuid !== conversation.uuid) {
+                e.preventDefault();
+                setListLoading(true);
+                router.get(route('client.inbox.show', target.uuid), { ...filters }, { preserveState: true, replace: true });
+            }
+        };
+
+        window.addEventListener('keydown', handler);
+        return () => window.removeEventListener('keydown', handler);
+    }, [filteredList, conversation.uuid, filters]);
+
     return (
         <InboxLayout>
             <Head title={t('inbox.show_title', { name: contactName })} />
@@ -1787,7 +1840,7 @@ export default function InboxShow({
                 <aside className="w-48 shrink-0 border-r border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col overflow-hidden">
                     <div className="px-3 py-3 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between gap-1">
                         <Link href={route('client.inbox.index')} className="text-sm font-bold text-neutral-800 dark:text-neutral-200 flex items-center gap-2 hover:text-brand-600 transition">
-                            <Inbox className="h-4 w-4 text-brand-600" />{t('inbox.title')}
+                            <Inbox className="h-4 w-4 text-brand-600 dark:text-brand-400" />{t('inbox.title')}
                         </Link>
                         <button
                             onClick={() => setShowNewModal(true)}
@@ -1814,30 +1867,34 @@ export default function InboxShow({
                         <div className="flex items-center justify-between">
                             <span className="text-sm font-semibold text-neutral-800 dark:text-neutral-200 flex items-center gap-1 flex-wrap">
                                 {t(FOLDERS.find(f => (f.key ?? null) === (filters.folder ?? null))?.labelKey ?? 'inbox.folder_all')}
-                                {filters.channel && <span className="text-xs font-normal text-neutral-400">· {CHANNEL_LABELS[filters.channel] ?? filters.channel}</span>}
+                                {filters.channel && <span className="text-xs font-normal text-neutral-500 dark:text-neutral-400">· {CHANNEL_LABELS[filters.channel] ?? filters.channel}</span>}
                                 {filters.account_id && (() => {
                                     const acct = channelAccounts.find(a => String(a.id) === String(filters.account_id));
-                                    return acct ? <span className="text-xs font-normal text-neutral-400">· {acct.display_name || acct.phone_number_id}</span> : null;
+                                    return acct ? <span className="text-xs font-normal text-neutral-500 dark:text-neutral-400">· {acct.display_name || acct.phone_number_id}</span> : null;
                                 })()}
                             </span>
                             <div className="flex items-center gap-1">
-                                <span className="text-xs text-neutral-400 tabular-nums">{conversations?.total ?? 0}</span>
+                                <span className="text-xs text-neutral-500 dark:text-neutral-400 tabular-nums">{conversations?.total ?? 0}</span>
                                 <SoundPrefsMenu />
-                                <button onClick={() => { setListLoading(true); router.reload(); }} className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-400 transition">
+                                <button onClick={() => { setListLoading(true); router.reload(); }} aria-label={t('inbox.refresh')} className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400 transition">
                                     <RefreshCw className={`h-3.5 w-3.5 ${listLoading ? 'animate-spin' : ''}`} />
                                 </button>
                             </div>
                         </div>
                         <div className="relative">
-                            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-neutral-400 pointer-events-none" />
+                            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400 pointer-events-none" />
                             <input value={listSearch} onChange={e => setListSearch(e.target.value)}
+                                ref={listSearchRef}
+                                aria-keyshortcuts="/"
                                 placeholder={t('inbox.search_conversations')}
                                 className="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg bg-neutral-100 dark:bg-neutral-800 border-0 focus:outline-none focus:ring-2 focus:ring-brand-500 placeholder-neutral-400"
                             />
                         </div>
                     </div>
                     <div className="flex-1 overflow-y-auto">
-                        {filteredList.length === 0 ? (
+                        {filteredList.length === 0 && listLoading ? (
+                            <ListSkeleton rows={8} />
+                        ) : filteredList.length === 0 ? (
                             <div className="py-10 px-4">
                                 <EmptyState icon={<Inbox className="h-7 w-7" />} title={t('inbox.no_conversations')} description={t('inbox.no_conversations_match')} />
                             </div>
@@ -1862,7 +1919,7 @@ export default function InboxShow({
                         </div>
                         <div className="flex-1 min-w-0">
                             <p className="font-semibold text-sm text-neutral-900 dark:text-neutral-100 truncate">{contactName}</p>
-                            <p className="text-xs text-neutral-400 flex items-center gap-1.5">
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center gap-1.5">
                                 <ChannelBrandIcon channel={channel} className="h-3 w-3 shrink-0" />
                                 <span>{CHANNEL_LABELS[channel] ?? channel}</span>
                                 {conversation.channel_account?.name && <><span className="text-neutral-300 dark:text-neutral-600">·</span><span>{conversation.channel_account.name}</span></>}
@@ -1874,7 +1931,7 @@ export default function InboxShow({
 
                         {/* Presence */}
                         {otherViewers.length > 0 && (
-                            <div className="flex items-center gap-1 text-xs text-neutral-400 hidden xl:flex">
+                            <div className="flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-400 hidden xl:flex">
                                 <Eye className="h-3.5 w-3.5" />
                                 <span>{t('inbox.viewing', { names: otherViewers.map(v => v.name).join(', ') })}</span>
                             </div>
@@ -1906,6 +1963,7 @@ export default function InboxShow({
                         <select
                             defaultValue={conversation.status}
                             onChange={e => handleStatus(e.target.value)}
+                            aria-label={t('inbox.status')}
                             className={`rounded-full border-0 px-3 py-1 text-xs font-medium cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-500 ${STATUS_COLORS[conversation.status] ?? 'bg-neutral-100 text-neutral-600'}`}
                         >
                             {['open','pending','resolved','snoozed'].map(s => (
@@ -1928,7 +1986,7 @@ export default function InboxShow({
                                 className={`px-5 py-2.5 text-sm font-medium border-b-2 transition ${
                                     activeTab === tab.key
                                         ? 'border-brand-600 text-brand-700 dark:text-brand-300'
-                                        : 'border-transparent text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'
+                                        : 'border-transparent text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300'
                                 }`}>
                                 {tab.icon}{tab.label}
                             </button>
@@ -1970,7 +2028,7 @@ export default function InboxShow({
                                 <div key={note.id} className="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-3 text-sm">
                                     <div className="flex items-center gap-2 mb-1">
                                         <span className="font-semibold text-amber-800 dark:text-amber-300">{note.user?.name ?? t('inbox.you')}</span>
-                                        <span className="text-xs text-neutral-400">{formatInTz(note.created_at, userTz)}</span>
+                                        <span className="text-xs text-neutral-500 dark:text-neutral-400">{formatInTz(note.created_at, userTz)}</span>
                                     </div>
                                     <p className="text-neutral-700 dark:text-neutral-300 whitespace-pre-wrap">{note.body}</p>
                                 </div>
@@ -1982,7 +2040,7 @@ export default function InboxShow({
                     {activeTab === 'orders' && (
                         <div className="flex-1 overflow-y-auto p-4 space-y-3">
                             {!ordersLoaded ? (
-                                <p className="text-sm text-neutral-400 py-6 text-center">{t('inbox.loading_orders')}</p>
+                                <ListSkeleton rows={4} />
                             ) : orders.length === 0 ? (
                                 <div className="py-6"><EmptyState icon={<ShoppingBag className="h-7 w-7" />} title={t('inbox.no_orders')} description={t('inbox.no_orders_desc')} /></div>
                             ) : orders.map((o, i) => (
@@ -1991,13 +2049,13 @@ export default function InboxShow({
                                         <span className="font-semibold text-neutral-800 dark:text-neutral-200">{o.number || '—'}</span>
                                         <span className="font-semibold text-neutral-900 dark:text-neutral-100">{o.currency} {o.total}</span>
                                     </div>
-                                    <div className="flex items-center gap-2 flex-wrap text-xs text-neutral-500">
+                                    <div className="flex items-center gap-2 flex-wrap text-xs text-neutral-500 dark:text-neutral-400">
                                         {o.fulfillment_status && <span className="px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800">{o.fulfillment_status}</span>}
                                         {o.financial_status && <span className="px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800">{o.financial_status}</span>}
                                         {o.placed_at && <span>{formatInTz(o.placed_at, userTz)}</span>}
                                     </div>
                                     {o.tracking_url && (
-                                        <a href={o.tracking_url} target="_blank" rel="noopener noreferrer" className="mt-1.5 inline-block text-xs text-brand-600 hover:underline">{t('inbox.track_shipment')}</a>
+                                        <a href={o.tracking_url} target="_blank" rel="noopener noreferrer" className="mt-1.5 inline-block text-xs text-brand-600 dark:text-brand-400 hover:underline">{t('inbox.track_shipment')}</a>
                                     )}
                                 </div>
                             ))}
@@ -2008,7 +2066,7 @@ export default function InboxShow({
                     {activeTab === 'activity' && (
                         <div className="flex-1 overflow-y-auto p-4">
                             {!activitiesLoaded ? (
-                                <p className="text-sm text-neutral-400 py-6 text-center">{t('inbox.loading_activity')}</p>
+                                <ListSkeleton rows={5} />
                             ) : activities.length === 0 ? (
                                 <div className="py-6"><EmptyState icon={<History className="h-7 w-7" />} title={t('inbox.no_activity')} description={t('inbox.no_activity_desc')} /></div>
                             ) : (
@@ -2024,7 +2082,7 @@ export default function InboxShow({
                     {/* Contact tab */}
                     {/* Typing indicator */}
                     {typingUsers.length > 0 && activeTab === 'messages' && (
-                        <div className="px-4 py-1.5 text-xs text-neutral-400 italic bg-neutral-50 dark:bg-neutral-950 shrink-0">
+                        <div className="px-4 py-1.5 text-xs text-neutral-500 dark:text-neutral-400 italic bg-neutral-50 dark:bg-neutral-950 shrink-0">
                             {typingUsers.length === 1
                                 ? t('inbox.typing_one', { names: typingUsers.map(u => u.user_name).join(', ') })
                                 : t('inbox.typing_many', { names: typingUsers.map(u => u.user_name).join(', ') })}
@@ -2044,7 +2102,7 @@ export default function InboxShow({
                     <div className="border-t border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-3 shrink-0">
                         {flash.error && <p className="text-xs text-red-500 mb-2">{flash.error}</p>}
                         {sendError && (
-                            <div className="flex items-start justify-between gap-2 mb-2 text-xs text-red-600 bg-red-50 dark:bg-red-900/20 dark:text-red-300 rounded-lg px-3 py-2">
+                            <div className="flex items-start justify-between gap-2 mb-2 text-xs text-red-700 bg-red-50 dark:bg-red-900/20 dark:text-red-300 rounded-lg px-3 py-2">
                                 <span className="flex-1">{sendError}</span>
                                 <button type="button" onClick={() => setSendError(null)} className="text-red-400 hover:text-red-600">
                                     <X className="h-3.5 w-3.5" />
@@ -2059,13 +2117,13 @@ export default function InboxShow({
                             <div className="mb-2 flex items-center gap-2 bg-neutral-50 dark:bg-neutral-800 rounded-xl p-2 border border-neutral-200 dark:border-neutral-700">
                                 {attachPreview.type === 'image'
                                     ? <img src={attachPreview.url} alt="" className="h-12 w-12 rounded-lg object-cover" />
-                                    : <div className="h-12 w-12 rounded-lg bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center"><Paperclip className="h-5 w-5 text-neutral-500" /></div>
+                                    : <div className="h-12 w-12 rounded-lg bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center"><Paperclip className="h-5 w-5 text-neutral-500 dark:text-neutral-300" /></div>
                                 }
                                 <div className="flex-1 min-w-0">
                                     <p className="text-xs font-medium text-neutral-700 dark:text-neutral-300 truncate">{attachPreview.file.name}</p>
-                                    <p className="text-[10px] text-neutral-400">{(attachPreview.file.size / 1024).toFixed(1)} KB</p>
+                                    <p className="text-3xs text-neutral-500 dark:text-neutral-400">{(attachPreview.file.size / 1024).toFixed(1)} KB</p>
                                 </div>
-                                <button type="button" onClick={() => setAttachPreview(null)} className="text-neutral-400 hover:text-red-500 transition">
+                                <button type="button" onClick={() => setAttachPreview(null)} className="text-neutral-500 dark:text-neutral-400 hover:text-red-500 transition">
                                     <X className="h-4 w-4" />
                                 </button>
                             </div>
@@ -2079,7 +2137,7 @@ export default function InboxShow({
                                         onClick={() => { setData('body', renderCannedBody(reply.body, conversation.contact)); setSlashMenu([]); }}
                                         className="w-full text-left px-3 py-2 hover:bg-brand-50 dark:hover:bg-brand-900/20 transition border-b border-neutral-100 dark:border-neutral-800 last:border-0">
                                         <span className="font-mono text-xs font-semibold text-brand-600 dark:text-brand-400 mr-2">/{reply.shortcut}</span>
-                                        <span className="text-xs text-neutral-500 line-clamp-1">{reply.body}</span>
+                                        <span className="text-xs text-neutral-500 dark:text-neutral-400 line-clamp-1">{reply.body}</span>
                                     </button>
                                 ))}
                             </div>
@@ -2119,19 +2177,19 @@ export default function InboxShow({
                                     {/* Emoji */}
                                     <button type="button" onClick={() => setShowEmoji(v => !v)}
                                         title={t('inbox.emoji')}
-                                        className={`p-1.5 rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition ${showEmoji ? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600' : ''}`}>
+                                        className={`p-1.5 rounded-lg text-neutral-600 dark:text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition ${showEmoji ? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600' : ''}`}>
                                         <Smile className="h-4 w-4" />
                                     </button>
                                     {/* Attachment */}
                                     <button type="button" onClick={() => fileRef.current?.click()}
                                         title={t('inbox.attach_file')}
-                                        className="p-1.5 rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
+                                        className="p-1.5 rounded-lg text-neutral-600 dark:text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
                                         <Paperclip className="h-4 w-4" />
                                     </button>
                                     {/* Image */}
                                     <button type="button" onClick={() => { const i = document.createElement('input'); i.type='file'; i.accept='image/*'; i.onchange=handleFileChange; i.click(); }}
                                         title={t('inbox.attach_image')}
-                                        className="p-1.5 rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
+                                        className="p-1.5 rounded-lg text-neutral-600 dark:text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
                                         <ImageIcon className="h-4 w-4" />
                                     </button>
                                     {/* Share product */}
@@ -2139,7 +2197,7 @@ export default function InboxShow({
                                         <button type="button" onClick={() => setShowProducts(v => !v)}
                                             title={isWhatsApp && !isWindowOpen ? t('inbox.session_closed_reengage') : t('inbox.share_a_product')}
                                             disabled={isWhatsApp && !isWindowOpen}
-                                            className={`p-1.5 rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition disabled:opacity-40 disabled:cursor-not-allowed ${showProducts ? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600' : ''}`}>
+                                            className={`p-1.5 rounded-lg text-neutral-600 dark:text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition disabled:opacity-40 disabled:cursor-not-allowed ${showProducts ? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600' : ''}`}>
                                             <ShoppingBag className="h-4 w-4" />
                                         </button>
                                     )}
@@ -2149,8 +2207,8 @@ export default function InboxShow({
                                             title={t('inbox.send_template')}
                                             className={`flex items-center gap-1 p-1.5 rounded-lg text-xs transition ${
                                                 !isWindowOpen
-                                                    ? 'bg-amber-50 text-amber-600 border border-amber-200 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800'
-                                                    : 'text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                                                    ? 'bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800'
+                                                    : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                                             } ${showTemplates ? 'bg-neutral-100 dark:bg-neutral-800' : ''}`}>
                                             <LayoutTemplate className="h-4 w-4" />
                                             {!isWindowOpen && <span className="font-medium">{t('inbox.template')}</span>}
@@ -2178,6 +2236,7 @@ export default function InboxShow({
                                     <button
                                         type="submit"
                                         disabled={sending || (!data.body.trim() && !attachPreview) || (isWhatsApp && !isWindowOpen && !attachPreview)}
+                                        aria-label={t('inbox.send')}
                                         className="self-end rounded-xl bg-brand-600 p-2.5 text-white hover:bg-brand-700 disabled:opacity-50 transition">
                                         {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                                     </button>
@@ -2198,11 +2257,11 @@ export default function InboxShow({
                             </div>
                             <div className="min-w-0">
                                 <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 truncate">{contactName}</p>
-                                <p className="text-[11px] text-neutral-400 truncate">{conversation.contact?.phone_e164}</p>
+                                <p className="text-2xs text-neutral-500 dark:text-neutral-400 truncate">{conversation.contact?.phone_e164}</p>
                             </div>
                         </div>
                         {conversation.contact?.email && (
-                            <p className="flex items-center gap-1.5 text-xs text-neutral-500 mb-1">
+                            <p className="flex items-center gap-1.5 text-xs text-neutral-500 dark:text-neutral-400 mb-1">
                                 <ChannelBrandIcon channel="email" className="h-3.5 w-3.5 shrink-0" />
                                 <span className="truncate">{conversation.contact.email}</span>
                             </p>
@@ -2214,7 +2273,7 @@ export default function InboxShow({
                         {/* One-click conversion to a CRM lead (conversation intelligence). */}
                         {salesReportsEnabled && conversation.contact && (
                             conversation.contact.lead_id ? (
-                                <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-medium text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
+                                <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-2xs font-medium text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
                                     <UserCheck className="h-3 w-3" aria-hidden="true" />
                                     {t('inbox.is_lead')}
                                 </span>
@@ -2236,18 +2295,18 @@ export default function InboxShow({
 
                     {/* Conversation meta */}
                     <div className="p-4 border-b border-neutral-100 dark:border-neutral-800">
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-2">{t('inbox.conversation')}</p>
+                        <p className="text-3xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-2">{t('inbox.conversation')}</p>
                         <div className="space-y-1.5 text-xs">
                             <div className="flex items-center justify-between">
-                                <span className="text-neutral-500">{t('inbox.status')}</span>
+                                <span className="text-neutral-500 dark:text-neutral-400">{t('inbox.status')}</span>
                                 <span className={`rounded-full px-2 py-0.5 font-medium ${STATUS_COLORS[conversation.status] ?? 'bg-neutral-100 text-neutral-600'}`}>{t(`inbox.status_${conversation.status}`)}</span>
                             </div>
                             <div className="flex items-center justify-between">
-                                <span className="text-neutral-500">{t('inbox.agent')}</span>
+                                <span className="text-neutral-500 dark:text-neutral-400">{t('inbox.agent')}</span>
                                 <span className="font-medium text-neutral-800 dark:text-neutral-200 truncate max-w-[100px]">{assignedAgent?.name ?? '—'}</span>
                             </div>
                             <div className="flex items-center justify-between">
-                                <span className="text-neutral-500">{t('inbox.messages')}</span>
+                                <span className="text-neutral-500 dark:text-neutral-400">{t('inbox.messages')}</span>
                                 <span className="font-medium text-neutral-800 dark:text-neutral-200">{messages.length}</span>
                             </div>
                         </div>
@@ -2256,17 +2315,20 @@ export default function InboxShow({
                     {/* Labels / Tags */}
                     {allLabels.length > 0 && (
                         <div className="p-4 border-b border-neutral-100 dark:border-neutral-800">
-                            <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-2">{t('inbox.tags')}</p>
+                            <p className="text-3xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-2">{t('inbox.tags')}</p>
                             <div className="flex flex-wrap gap-1.5">
                                 {allLabels.map(label => {
                                     const active = convLabels.some(l => l.id === label.id);
                                     return (
                                         <button key={label.id} type="button" onClick={() => toggleLabel(label)}
                                             title={active ? t('inbox.remove_label', { name: label.name }) : t('inbox.add_label', { name: label.name })}
-                                            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium transition border ${
-                                                active ? 'text-white border-transparent' : 'bg-transparent border-current opacity-40 hover:opacity-70'
+                                            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-2xs font-medium transition border ${
+                                                active ? 'border-transparent' : 'bg-transparent border-current opacity-40 hover:opacity-70'
                                             }`}
-                                            style={{ backgroundColor: active ? label.color : undefined, color: active ? 'white' : label.color }}>
+                                            style={{
+                                                backgroundColor: active ? label.color : undefined,
+                                                color: active ? readableTextColor(label.color) : label.color,
+                                            }}>
                                             {label.name}
                                         </button>
                                     );
@@ -2277,14 +2339,14 @@ export default function InboxShow({
 
                     {/* Opt-ins */}
                     <div className="p-4 border-b border-neutral-100 dark:border-neutral-800">
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-2">{t('inbox.opt_ins')}</p>
+                        <p className="text-3xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-2">{t('inbox.opt_ins')}</p>
                         {[
                             ['whatsapp', 'WhatsApp', conversation.contact?.opt_in_whatsapp],
                             ['sms', 'SMS', conversation.contact?.opt_in_sms],
                             ['email', t('common.email'), conversation.contact?.opt_in_email],
                         ].map(([chKey, k, v]) => (
                             <div key={k} className="flex items-center justify-between text-xs py-1">
-                                <span className="flex items-center gap-1.5 text-neutral-500">
+                                <span className="flex items-center gap-1.5 text-neutral-500 dark:text-neutral-400">
                                     <ChannelBrandIcon channel={chKey} className="h-3.5 w-3.5 shrink-0" />{k}
                                 </span>
                                 <span className={`font-semibold ${v ? 'text-green-500' : 'text-neutral-300 dark:text-neutral-600'}`}>{v ? t('common.yes') : t('common.no')}</span>
@@ -2294,7 +2356,7 @@ export default function InboxShow({
 
                     {/* AI Handover */}
                     <div className="p-4">
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-2">{t('inbox.ai_handover')}</p>
+                        <p className="text-3xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-2">{t('inbox.ai_handover')}</p>
                         <div className="flex items-center justify-between">
                             <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
                                 assignedTo === 'human' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
@@ -2302,8 +2364,8 @@ export default function InboxShow({
                                 {assignedTo === 'human' ? <><User className="h-3 w-3" /> {t('inbox.human')}</> : <><Bot className="h-3 w-3" /> {t('inbox.bot')}</>}
                             </span>
                             {assignedTo === 'human'
-                                ? <button onClick={() => switchHandover('bot')} className="text-xs text-brand-600 hover:underline">{t('inbox.back_to_bot')}</button>
-                                : <button onClick={() => switchHandover('human')} className="text-xs text-amber-600 hover:underline">{t('inbox.take_over')}</button>
+                                ? <button onClick={() => switchHandover('bot')} className="text-xs text-brand-600 dark:text-brand-400 hover:underline">{t('inbox.back_to_bot')}</button>
+                                : <button onClick={() => switchHandover('human')} className="text-xs text-amber-700 dark:text-amber-400 hover:underline">{t('inbox.take_over')}</button>
                             }
                         </div>
                     </div>

@@ -127,7 +127,7 @@ function CreateTokenModal({ onClose, onCreated }) {
                         {error && <p className="text-coral-500 text-sm">{error}</p>}
                         <div className="flex justify-end gap-2 pt-1">
                             <button type="button" onClick={onClose} className="px-4 py-2 text-sm border border-neutral-300 dark:border-neutral-600 rounded-soft text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700">{t('common.cancel')}</button>
-                            <button type="submit" disabled={loading} className="px-4 py-2 text-sm bg-brand-500 text-white rounded-soft hover:bg-brand-600 disabled:opacity-50">
+                            <button type="submit" disabled={loading} className="px-4 py-2 text-sm bg-brand-600 text-white rounded-soft hover:bg-brand-700 disabled:opacity-50">
                                 {loading ? t('api.creating') : t('api.create_token')}
                             </button>
                         </div>
@@ -152,12 +152,12 @@ function NewTokenDisplay({ token, onClose }) {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
             <div className="bg-white dark:bg-neutral-800 rounded-soft-lg p-6 w-full max-w-lg shadow-xl">
                 <h2 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">{t('api.token_created')}</h2>
-                <p className="text-sm text-amber-600 dark:text-amber-400 mb-4">
+                <p className="text-sm text-amber-700 dark:text-amber-400 mb-4">
                     {t('api.copy_token_warning')}
                 </p>
                 <div className="flex items-center gap-2 bg-neutral-100 dark:bg-neutral-700 rounded-soft p-3">
                     <code className="flex-1 text-xs text-neutral-900 dark:text-white break-all font-mono">{token.token}</code>
-                    <button onClick={copy} className="shrink-0 p-1.5 text-neutral-500 hover:text-brand-600">
+                    <button onClick={copy} className="shrink-0 p-1.5 text-neutral-500 dark:text-neutral-400 hover:text-brand-600">
                         {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
                     </button>
                 </div>
@@ -168,7 +168,7 @@ function NewTokenDisplay({ token, onClose }) {
                     </div>
                 </div>
                 <div className="mt-4 flex justify-end">
-                    <button onClick={onClose} className="px-4 py-2 text-sm bg-brand-500 text-white rounded-soft hover:bg-brand-600">{t('common.close')}</button>
+                    <button onClick={onClose} className="px-4 py-2 text-sm bg-brand-600 text-white rounded-soft hover:bg-brand-700">{t('common.close')}</button>
                 </div>
             </div>
         </div>
@@ -213,7 +213,7 @@ export default function ApiTokens({ tokens: initialTokens }) {
                     </div>
                     <button
                         onClick={() => setShowCreate(true)}
-                        className="inline-flex items-center gap-2 rounded-soft bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 shadow-soft transition-all duration-150"
+                        className="inline-flex items-center gap-2 rounded-soft bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 shadow-soft transition-all duration-150"
                     >
                         <Plus className="h-4 w-4" /> {t('api.create_token')}
                     </button>
@@ -224,7 +224,7 @@ export default function ApiTokens({ tokens: initialTokens }) {
                         <h2 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300">
                             {t('api.base_url')}: <code className="font-mono text-brand-600 dark:text-brand-400">{window.location.origin}/api/v1</code>
                         </h2>
-                        <a href={route('client.api-docs')} className="text-xs text-brand-600 hover:underline">{t('api.view_docs')} →</a>
+                        <a href={route('client.api-docs')} className="text-xs text-brand-600 dark:text-brand-400 hover:underline">{t('api.view_docs')} →</a>
                     </div>
                     <table className="w-full text-sm">
                         <thead className="bg-neutral-50 dark:bg-neutral-700/50">
@@ -245,7 +245,7 @@ export default function ApiTokens({ tokens: initialTokens }) {
                                         <div className="flex flex-wrap gap-1">
                                             {(token.abilities ?? ['*']).slice(0, 3).map(s => <ScopeTag key={s} scope={s} />)}
                                             {(token.abilities ?? []).length > 3 && (
-                                                <span className="text-xs text-neutral-400">+{token.abilities.length - 3}</span>
+                                                <span className="text-xs text-neutral-500 dark:text-neutral-400">+{token.abilities.length - 3}</span>
                                             )}
                                         </div>
                                     </td>
@@ -259,7 +259,7 @@ export default function ApiTokens({ tokens: initialTokens }) {
                                     </td>
                                     <td className="px-4 py-3 text-neutral-500 dark:text-neutral-400 text-xs">{formatDate(token.created_at)}</td>
                                     <td className="px-4 py-3 text-right">
-                                        <button onClick={() => handleRevoke(token.id)} className="p-1 text-neutral-400 hover:text-coral-600" title={t('api.revoke')}>
+                                        <button onClick={() => handleRevoke(token.id)} className="p-1 text-neutral-500 dark:text-neutral-400 hover:text-coral-600" title={t('api.revoke')}>
                                             <Trash2 className="h-4 w-4" />
                                         </button>
                                     </td>
@@ -267,7 +267,7 @@ export default function ApiTokens({ tokens: initialTokens }) {
                             ))}
                             {!tokens.length && (
                                 <tr>
-                                    <td colSpan={6} className="px-4 py-8 text-center text-neutral-400 dark:text-neutral-500">
+                                    <td colSpan={6} className="px-4 py-8 text-center text-neutral-500 dark:text-neutral-400">
                                         {t('api.no_tokens')}
                                     </td>
                                 </tr>

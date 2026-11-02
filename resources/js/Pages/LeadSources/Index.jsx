@@ -135,7 +135,7 @@ export default function LeadSourcesIndex({
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
                         <div className="flex items-center gap-2">
-                            <span className="p-2 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 rounded-xl">
+                            <span className="p-2 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 rounded-xl">
                                 <Radio className="h-6 w-6" />
                             </span>
                             <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
@@ -181,7 +181,7 @@ export default function LeadSourcesIndex({
                             <span>{t('lead_sources.active_sources', 'Active Channels')}</span>
                             <ShieldCheck className="h-5 w-5 text-emerald-500" />
                         </div>
-                        <div className="mt-2 text-3xl font-bold text-emerald-600 dark:text-emerald-400">
+                        <div className="mt-2 text-3xl font-bold text-emerald-700 dark:text-emerald-400">
                             {stats.active_sources || 0}
                         </div>
                     </div>
@@ -201,10 +201,10 @@ export default function LeadSourcesIndex({
                 <div className="bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 border border-indigo-200/60 dark:border-indigo-800/40 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                            <Globe className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-                            <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">
+                            <Globe className="h-5 w-5 text-indigo-700 dark:text-indigo-400" />
+                            <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">
                                 {t('lead_sources.tracker_title', 'Website Auto-Tracker Script (UTM Attribution)')}
-                            </h3>
+                            </h2>
                         </div>
                         <p className="text-sm text-zinc-600 dark:text-zinc-400 max-w-2xl">
                             {t('lead_sources.tracker_subtitle', 'Place this single snippet before the closing </body> tag on your website or landing pages to persist UTM parameters for 30 days and auto-attribute every new lead.')}
@@ -216,7 +216,7 @@ export default function LeadSourcesIndex({
                         <button
                             type="button"
                             onClick={copyTrackerCode}
-                            className="p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                            className="p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
                             title={t('lead_sources.copy_tracker', 'Copy Tracker Snippet')}
                         >
                             {copiedTracker ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
@@ -286,7 +286,7 @@ export default function LeadSourcesIndex({
                                         <td className="py-3.5 px-4 font-semibold text-zinc-900 dark:text-zinc-100">
                                             {src.leads_count || 0}
                                         </td>
-                                        <td className="py-3.5 px-4 text-xs text-zinc-500">
+                                        <td className="py-3.5 px-4 text-xs text-zinc-500 dark:text-zinc-400">
                                             {src.last_lead_at ? new Date(src.last_lead_at).toLocaleString() : '—'}
                                         </td>
                                         <td className="py-3.5 px-4">
@@ -298,7 +298,7 @@ export default function LeadSourcesIndex({
                                                     <button
                                                         type="button"
                                                         onClick={() => copyWebhookUrl(src.id, src.webhook_url)}
-                                                        className="p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-zinc-500 hover:text-zinc-900 transition-colors"
+                                                        className="p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 transition-colors"
                                                         title={t('lead_sources.copy_webhook', 'Copy Webhook URL')}
                                                     >
                                                         {copiedWebhookId === src.id ? (
@@ -310,7 +310,7 @@ export default function LeadSourcesIndex({
                                                     <button
                                                         type="button"
                                                         onClick={() => setSnippetSource(src)}
-                                                        className="p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-zinc-500 hover:text-indigo-600 transition-colors"
+                                                        className="p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-zinc-500 dark:text-zinc-400 hover:text-indigo-600 transition-colors"
                                                         title={t('lead_sources.view_example', 'View Code Snippet')}
                                                     >
                                                         <Code className="h-3.5 w-3.5" />
@@ -326,7 +326,7 @@ export default function LeadSourcesIndex({
                                                     <button
                                                         type="button"
                                                         onClick={() => handleRegenerateToken(src)}
-                                                        className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                                                        className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
                                                         title={t('lead_sources.regenerate_token', 'Regenerate Token')}
                                                     >
                                                         <RefreshCw className="h-3.5 w-3.5" />
@@ -343,7 +343,7 @@ export default function LeadSourcesIndex({
                                                             stage_id: src.config?.stage_id || '',
                                                         });
                                                     }}
-                                                    className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg text-zinc-500 hover:text-indigo-600 transition-colors"
+                                                    className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg text-zinc-500 dark:text-zinc-400 hover:text-indigo-600 transition-colors"
                                                     title={t('common.edit', 'Edit')}
                                                 >
                                                     <Layers className="h-3.5 w-3.5" />
@@ -351,7 +351,7 @@ export default function LeadSourcesIndex({
                                                 <button
                                                     type="button"
                                                     onClick={() => handleDeleteSource(src)}
-                                                    className="p-1.5 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg text-zinc-500 hover:text-rose-600 transition-colors"
+                                                    className="p-1.5 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg text-zinc-500 dark:text-zinc-400 hover:text-rose-600 transition-colors"
                                                     title={t('common.delete', 'Delete')}
                                                 >
                                                     <Trash2 className="h-3.5 w-3.5" />

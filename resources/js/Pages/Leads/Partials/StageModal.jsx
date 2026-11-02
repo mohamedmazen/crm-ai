@@ -94,7 +94,7 @@ export default function StageModal({ stage, colors, canDelete, onClose }) {
                                 type="checkbox"
                                 checked={data.is_won}
                                 onChange={(e) => setTerminal('is_won', e.target.checked)}
-                                className="rounded border-soft text-brand-600 focus:ring-brand-500"
+                                className="rounded border-soft text-brand-600 dark:text-brand-400 focus:ring-brand-500"
                             />
                             {t('leads.mark_as_won')}
                         </label>
@@ -103,7 +103,7 @@ export default function StageModal({ stage, colors, canDelete, onClose }) {
                                 type="checkbox"
                                 checked={data.is_lost}
                                 onChange={(e) => setTerminal('is_lost', e.target.checked)}
-                                className="rounded border-soft text-brand-600 focus:ring-brand-500"
+                                className="rounded border-soft text-brand-600 dark:text-brand-400 focus:ring-brand-500"
                             />
                             {t('leads.mark_as_lost')}
                         </label>

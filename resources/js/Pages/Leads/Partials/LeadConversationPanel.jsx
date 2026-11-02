@@ -70,7 +70,7 @@ export default function LeadConversationPanel({ conversation, timeline = [] }) {
                             {t('leads.conversation_channel', { channel: CHANNEL_LABELS[conversation.channel] ?? conversation.channel ?? 'chat' })}
                         </span>
                         {conversation.unread_count > 0 && (
-                            <span className="rounded-full bg-brand-600 px-1.5 py-px text-[10px] font-bold text-white">
+                            <span className="rounded-full bg-brand-600 px-1.5 py-px text-3xs font-bold text-white">
                                 {t('leads.conversation_unread', { count: conversation.unread_count })}
                             </span>
                         )}
@@ -86,13 +86,13 @@ export default function LeadConversationPanel({ conversation, timeline = [] }) {
                     </Link>
                 </div>
             ) : (
-                <p className="rounded-xl border border-dashed border-neutral-200 p-3 text-center text-xs text-neutral-400 dark:border-neutral-700">
+                <p className="rounded-xl border border-dashed border-neutral-200 p-3 text-center text-xs text-neutral-500 dark:text-neutral-400 dark:border-neutral-700">
                     {t('leads.conversation_none')}
                 </p>
             )}
 
             {timeline.length === 0 ? (
-                <p className="py-6 text-center text-sm text-neutral-400 dark:text-neutral-600">
+                <p className="py-6 text-center text-sm text-neutral-500 dark:text-neutral-600">
                     {t('leads.conversation_empty')}
                 </p>
             ) : (
@@ -106,7 +106,7 @@ export default function LeadConversationPanel({ conversation, timeline = [] }) {
                             : (ITEM_ICONS[item.type] ?? MessageCircle);
                         const tone = inbound
                             ? 'bg-brand-100 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300'
-                            : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400';
+                            : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400';
 
                         return (
                             <li key={item.id} className="relative">
@@ -125,7 +125,7 @@ export default function LeadConversationPanel({ conversation, timeline = [] }) {
                                     <p className="mt-0.5 whitespace-pre-wrap text-sm text-neutral-600 dark:text-neutral-400">{item.body}</p>
                                 )}
 
-                                <p className="mt-0.5 flex items-center gap-1 text-xs text-neutral-400 dark:text-neutral-500">
+                                <p className="mt-0.5 flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-400">
                                     <Clock className="h-3 w-3" aria-hidden="true" />
                                     <time dateTime={item.occurred_at} title={item.occurred_at ? new Date(item.occurred_at).toLocaleString() : ''}>
                                         {relative(item.occurred_at)}

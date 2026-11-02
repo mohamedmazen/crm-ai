@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 function Badge({ text }) {
     if (!text) return null;
     return (
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-500/15 text-brand-500 text-xs font-semibold px-3 py-1 border border-brand-500/30">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-500/15 text-brand-700 dark:text-brand-300 text-xs font-semibold px-3 py-1 border border-brand-500/30">
             <span className="h-1.5 w-1.5 rounded-full bg-brand-500 inline-block" />
             {text}
         </span>
@@ -73,9 +73,9 @@ export default function Faq({ landing = {}, canRegister }) {
                             className={`flex-shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
                                 cat === c.key
                                     ? 'text-white font-bold'
-                                    : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 bg-neutral-100 dark:bg-neutral-800'
+                                    : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 bg-neutral-100 dark:bg-neutral-800'
                             }`}
-                            style={cat === c.key ? { background: 'rgb(var(--brand-500))' } : {}}
+                            style={cat === c.key ? { background: 'rgb(var(--brand-600))' } : {}}
                         >
                             {t(c.labelKey)}
                         </button>
@@ -101,7 +101,7 @@ export default function Faq({ landing = {}, canRegister }) {
                                     >
                                         <span className="font-medium text-neutral-900 dark:text-white text-sm">{faq.q}</span>
                                         <svg
-                                            className={`h-5 w-5 flex-shrink-0 text-neutral-400 transition-transform duration-200 ${open === idx ? 'rotate-180' : ''}`}
+                                            className={`h-5 w-5 flex-shrink-0 text-neutral-500 dark:text-neutral-400 transition-transform duration-200 ${open === idx ? 'rotate-180' : ''}`}
                                             fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"
                                         >
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -122,12 +122,12 @@ export default function Faq({ landing = {}, canRegister }) {
                         className="mt-12 rounded-2xl p-8 text-center"
                         style={{ background: 'rgb(var(--brand-400) / 0.08)', border: '1px solid rgb(var(--brand-400) / 0.25)' }}
                     >
-                        <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-2">{t('faq.still_have_questions')}</h3>
+                        <h2 className="text-lg font-bold text-neutral-900 dark:text-white mb-2">{t('faq.still_have_questions')}</h2>
                         <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-5">{t('faq.still_have_questions_desc')}</p>
                         <Link
                             href="/contact"
                             className="inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-bold text-white transition-all hover:opacity-90"
-                            style={{ background: 'rgb(var(--brand-500))' }}
+                            style={{ background: 'rgb(var(--brand-600))' }}
                         >
                             {t('faq.contact_support')}
                         </Link>
@@ -144,7 +144,7 @@ export default function Faq({ landing = {}, canRegister }) {
                         <Link
                             href={route('register')}
                             className="mt-6 inline-flex items-center gap-2 rounded-xl px-7 py-3.5 text-base font-bold text-white shadow-lg transition-all duration-200 hover:opacity-90"
-                            style={{ background: 'rgb(var(--brand-500))' }}
+                            style={{ background: 'rgb(var(--brand-600))' }}
                         >
                             {t('welcome.get_started_free')}
                         </Link>

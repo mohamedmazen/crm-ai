@@ -104,14 +104,14 @@ export function BrandMark({ name, tileClassName = 'h-10 w-10 rounded-xl', glyphC
     const tile = `inline-flex items-center justify-center bg-white ring-1 ring-neutral-200 dark:ring-neutral-700 ${tileClassName}`;
     if (key) {
         return (
-            <span className={tile} aria-label={name}>
+            <span className={tile} role="img" aria-label={name}>
                 <SvgBrand name={key} className={glyphClassName} />
             </span>
         );
     }
     const letter = (name || '?').trim().charAt(0).toUpperCase();
     return (
-        <span className={`${tile} font-bold text-neutral-700 ${monogramClassName}`} aria-label={name}>
+        <span className={`${tile} font-bold text-neutral-700 dark:text-neutral-400 ${monogramClassName}`} role="img" aria-label={name}>
             {letter}
         </span>
     );

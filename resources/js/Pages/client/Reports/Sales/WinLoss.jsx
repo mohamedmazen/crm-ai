@@ -12,20 +12,20 @@ function ReasonCard({ title, rows }) {
 
     return (
         <div className="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-900">
-            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">{title}</h3>
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">{title}</h2>
             {data.length > 0 ? (
                 <DonutChart data={data} nameKey="name" valueKey="value" height={280} />
             ) : (
-                <p className="py-16 text-center text-sm text-neutral-400">{t('reports.no_data')}</p>
+                <p className="py-16 text-center text-sm text-neutral-500 dark:text-neutral-400">{t('reports.no_data')}</p>
             )}
 
             {rows.length > 0 && (
                 <table className="mt-4 w-full text-sm">
                     <thead>
                         <tr className="border-b border-neutral-200 dark:border-neutral-700">
-                            <th className="pb-2 text-left text-xs text-neutral-500">{t('reports.sales_col_reason')}</th>
-                            <th className="pb-2 text-right text-xs text-neutral-500">{t('reports.sales_col_count')}</th>
-                            <th className="pb-2 text-right text-xs text-neutral-500">{t('reports.sales_col_value')}</th>
+                            <th className="pb-2 text-left text-xs text-neutral-500 dark:text-neutral-400">{t('reports.sales_col_reason')}</th>
+                            <th className="pb-2 text-right text-xs text-neutral-500 dark:text-neutral-400">{t('reports.sales_col_count')}</th>
+                            <th className="pb-2 text-right text-xs text-neutral-500 dark:text-neutral-400">{t('reports.sales_col_value')}</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700/50">

@@ -37,7 +37,7 @@ function TaxRateForm({ taxRate = null, onClose }) {
                         placeholder="VAT 20%"
                         required
                     />
-                    {errors.name && <p className="text-coral-600 text-xs mt-1">{errors.name}</p>}
+                    {errors.name && <p className="text-coral-600 dark:text-coral-400 text-xs mt-1">{errors.name}</p>}
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('admin.tax_country_code')}</label>
@@ -50,7 +50,7 @@ function TaxRateForm({ taxRate = null, onClose }) {
                         maxLength={2}
                         required
                     />
-                    {errors.country && <p className="text-coral-600 text-xs mt-1">{errors.country}</p>}
+                    {errors.country && <p className="text-coral-600 dark:text-coral-400 text-xs mt-1">{errors.country}</p>}
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('admin.tax_region')}</label>
@@ -74,7 +74,7 @@ function TaxRateForm({ taxRate = null, onClose }) {
                         step="0.01"
                         required
                     />
-                    {errors.percentage && <p className="text-coral-600 text-xs mt-1">{errors.percentage}</p>}
+                    {errors.percentage && <p className="text-coral-600 dark:text-coral-400 text-xs mt-1">{errors.percentage}</p>}
                 </div>
                 <div className="flex items-center gap-4 pt-2">
                     <label className="flex items-center gap-2 text-sm text-neutral-700 dark:text-neutral-300">
@@ -91,7 +91,7 @@ function TaxRateForm({ taxRate = null, onClose }) {
                 <button type="button" onClick={onClose} className="px-4 py-2 text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700">
                     {t('common.cancel')}
                 </button>
-                <button type="submit" disabled={processing} className="px-4 py-2 text-sm bg-brand-500 text-white rounded-soft hover:bg-brand-600 shadow-soft disabled:opacity-50 transition-all duration-150">
+                <button type="submit" disabled={processing} className="px-4 py-2 text-sm bg-brand-600 text-white rounded-soft hover:bg-brand-700 shadow-soft disabled:opacity-50 transition-all duration-150">
                     {taxRate ? t('admin.tax_update') : t('admin.tax_create')}
                 </button>
             </div>
@@ -120,7 +120,7 @@ export default function TaxRatesIndex({ taxRates }) {
                             <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('admin.tax_rates_subtitle')}</p>
                         </div>
                     </div>
-                    <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 px-4 py-2 bg-brand-500 text-white text-sm rounded-soft hover:bg-brand-600 shadow-soft transition-all duration-150">
+                    <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white text-sm rounded-soft hover:bg-brand-700 shadow-soft transition-all duration-150">
                         <Plus className="h-4 w-4" /> {t('admin.tax_add')}
                     </button>
                 </div>
@@ -160,16 +160,16 @@ export default function TaxRatesIndex({ taxRates }) {
                                             <td className="px-4 py-3 text-neutral-700 dark:text-neutral-300">{rate.percentage}%</td>
                                             <td className="px-4 py-3 text-neutral-600 dark:text-neutral-400">{rate.inclusive ? t('admin.tax_type_inclusive') : t('admin.tax_type_exclusive')}</td>
                                             <td className="px-4 py-3">
-                                                <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${rate.enabled ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400'}`}>
+                                                <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${rate.enabled ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300'}`}>
                                                     {rate.enabled ? t('common.active') : t('admin.disabled')}
                                                 </span>
                                             </td>
                                             <td className="px-4 py-3">
                                                 <div className="flex items-center gap-2 justify-end">
-                                                    <button onClick={() => setEditing(rate)} className="p-1 text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition">
+                                                    <button onClick={() => setEditing(rate)} className="p-1 text-neutral-500 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition">
                                                         <Pencil className="h-4 w-4" />
                                                     </button>
-                                                    <button onClick={() => handleDelete(rate)} className="p-1 text-neutral-400 hover:text-coral-600">
+                                                    <button onClick={() => handleDelete(rate)} className="p-1 text-neutral-500 dark:text-neutral-400 hover:text-coral-600">
                                                         <Trash2 className="h-4 w-4" />
                                                     </button>
                                                 </div>
@@ -180,7 +180,7 @@ export default function TaxRatesIndex({ taxRates }) {
                             ))}
                             {!taxRates?.length && (
                                 <tr>
-                                    <td colSpan={7} className="px-4 py-8 text-center text-neutral-400 dark:text-neutral-500">
+                                    <td colSpan={7} className="px-4 py-8 text-center text-neutral-500 dark:text-neutral-400">
                                         {t('admin.tax_empty')}
                                     </td>
                                 </tr>

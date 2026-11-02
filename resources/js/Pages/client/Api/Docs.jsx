@@ -143,8 +143,8 @@ function EndpointRow({ ep }) {
                 )}
                 {hasDetail && (
                     open
-                        ? <ChevronDown className="h-4 w-4 text-neutral-400 shrink-0" />
-                        : <ChevronRight className="h-4 w-4 text-neutral-400 shrink-0" />
+                        ? <ChevronDown className="h-4 w-4 text-neutral-500 dark:text-neutral-400 shrink-0" />
+                        : <ChevronRight className="h-4 w-4 text-neutral-500 dark:text-neutral-400 shrink-0" />
                 )}
             </button>
             {open && (
@@ -191,7 +191,7 @@ export default function ApiDocs() {
                     </div>
                     <Link
                         href={route('client.api-tokens.index')}
-                        className="inline-flex items-center gap-1.5 px-3 py-2 text-sm bg-brand-500 text-white rounded-soft hover:bg-brand-600 shadow-soft transition-all duration-150"
+                        className="inline-flex items-center gap-1.5 px-3 py-2 text-sm bg-brand-600 text-white rounded-soft hover:bg-brand-700 shadow-soft transition-all duration-150"
                     >
                         <Key className="h-4 w-4" /> {t('api.manage_tokens')}
                     </Link>
@@ -211,7 +211,7 @@ export default function ApiDocs() {
                                 className={`pb-2 text-sm font-medium border-b-2 transition-colors duration-150 ${
                                     tab === tabKey
                                         ? 'border-brand-600 text-brand-600 dark:border-brand-400 dark:text-brand-400'
-                                        : 'border-transparent text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'
+                                        : 'border-transparent text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300'
                                 }`}
                             >
                                 {t(labelKey)}
@@ -242,8 +242,8 @@ export default function ApiDocs() {
                             <table className="w-full text-sm">
                                 <thead className="bg-neutral-50 dark:bg-neutral-700/50">
                                     <tr>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500">{t('api.col_scope')}</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500">{t('api.col_grants')}</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400">{t('api.col_scope')}</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400">{t('api.col_grants')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">

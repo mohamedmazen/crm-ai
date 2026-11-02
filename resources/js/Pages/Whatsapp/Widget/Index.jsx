@@ -115,18 +115,18 @@ function WidgetCard({ widget: w, copied, onCopy, onDelete }) {
                                 {w.name || w.display_phone}
                             </p>
                             {w.name && (
-                                <p className="text-xs text-neutral-500 truncate">{w.display_phone}</p>
+                                <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate">{w.display_phone}</p>
                             )}
                         </div>
                     </div>
                     <div className="flex items-center gap-1 flex-shrink-0">
                         <Link href={route('client.whatsapp.widgets.edit', w.id)}
-                            className="p-1.5 rounded-lg text-neutral-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-brand-900/20 transition"
+                            className="p-1.5 rounded-lg text-neutral-500 dark:text-neutral-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-brand-900/20 transition"
                             title={t('whatsapp.widget_edit_tooltip')}>
                             <Pencil className="h-4 w-4" />
                         </Link>
                         <button onClick={onDelete}
-                            className="p-1.5 rounded-lg text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
+                            className="p-1.5 rounded-lg text-neutral-500 dark:text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
                             title={t('whatsapp.widget_delete_tooltip')}>
                             <Trash2 className="h-4 w-4" />
                         </button>
@@ -161,7 +161,7 @@ function WidgetCard({ widget: w, copied, onCopy, onDelete }) {
 
                 {/* Embed snippet */}
                 <div className="rounded-lg bg-neutral-950 border border-neutral-800 px-3 py-2 mt-auto">
-                    <p className="text-[11px] font-mono text-green-400 truncate select-all">
+                    <p className="text-2xs font-mono text-green-400 truncate select-all">
                         {embedSnippet(w)}
                     </p>
                 </div>
@@ -175,7 +175,7 @@ function WidgetCard({ widget: w, copied, onCopy, onDelete }) {
                             : <><Code className="h-3.5 w-3.5" /> {t('whatsapp.widget_copy_snippet')}</>}
                     </button>
                     <a href={w.embed_url} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center gap-1 rounded-lg border border-neutral-300 dark:border-neutral-600 px-2.5 py-2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition"
+                        className="flex items-center gap-1 rounded-lg border border-neutral-300 dark:border-neutral-600 px-2.5 py-2 text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition"
                         title={t('whatsapp.widget_view_embed_js')}>
                         <ExternalLink className="h-3.5 w-3.5" />
                     </a>

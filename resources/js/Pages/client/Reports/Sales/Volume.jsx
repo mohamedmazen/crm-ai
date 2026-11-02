@@ -19,9 +19,9 @@ export default function Volume({ rows, summary, filters, pipelines, agents, sour
             summary={summary}
         >
             <div className="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-900">
-                <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+                <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
                     {t('reports.sales_lead_volume')}
-                </h3>
+                </h2>
                 {(summary?.leads ?? 0) > 0 ? (
                     <LineChart
                         data={rows}
@@ -31,7 +31,7 @@ export default function Volume({ rows, summary, filters, pipelines, agents, sour
                         height={320}
                     />
                 ) : (
-                    <p className="py-16 text-center text-sm text-neutral-400">{t('reports.no_data')}</p>
+                    <p className="py-16 text-center text-sm text-neutral-500 dark:text-neutral-400">{t('reports.no_data')}</p>
                 )}
             </div>
         </SalesReportShell>

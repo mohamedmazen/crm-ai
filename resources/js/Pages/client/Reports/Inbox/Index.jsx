@@ -60,7 +60,7 @@ export default function InboxReportIndex({ conversationsOverTime, channelMix, ag
                             onChange={setFrom}
                             className="w-40"
                         />
-                        <span className="text-gray-500">—</span>
+                        <span className="text-gray-500 dark:text-gray-400">—</span>
                         <DatePicker
                             value={to}
                             onChange={setTo}
@@ -79,7 +79,7 @@ export default function InboxReportIndex({ conversationsOverTime, channelMix, ag
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div className="flex items-center gap-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
                         <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                            <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                            <Clock className="h-5 w-5 text-blue-700 dark:text-blue-400" />
                         </div>
                         <div>
                             <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('reports.median_first_response')}</p>
@@ -88,7 +88,7 @@ export default function InboxReportIndex({ conversationsOverTime, channelMix, ag
                     </div>
                     <div className="flex items-center gap-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
                         <div className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                            <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                            <CheckCircle className="h-5 w-5 text-green-700 dark:text-green-400" />
                         </div>
                         <div>
                             <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('reports.median_resolution')}</p>
@@ -100,7 +100,7 @@ export default function InboxReportIndex({ conversationsOverTime, channelMix, ag
                 {/* Charts row */}
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
                     <div className="lg:col-span-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-                        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.opened_vs_resolved')}</h3>
+                        <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.opened_vs_resolved')}</h2>
                         <LineChart
                             data={conversationsOverTime}
                             xKey="date"
@@ -110,7 +110,7 @@ export default function InboxReportIndex({ conversationsOverTime, channelMix, ag
                         />
                     </div>
                     <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-                        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.channel_mix')}</h3>
+                        <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.channel_mix')}</h2>
                         {channelMix.length > 0 ? (
                             <DonutChart data={channelMix} nameKey="name" valueKey="value" height={280} />
                         ) : (
@@ -122,7 +122,7 @@ export default function InboxReportIndex({ conversationsOverTime, channelMix, ag
                 {/* SLA trend chart */}
                 {(firstResponseTimes?.length > 0) && (
                     <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-                        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.sla_trend')}</h3>
+                        <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.sla_trend')}</h2>
                         <LineChart
                             data={firstResponseTimes.map((r, i) => ({
                                 date: r.date,
@@ -140,7 +140,7 @@ export default function InboxReportIndex({ conversationsOverTime, channelMix, ag
                 {/* Agent leaderboard */}
                 <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
                     <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('reports.agent_leaderboard')}</h3>
+                        <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('reports.agent_leaderboard')}</h2>
                         <button
                             onClick={exportLeaderboardCsv}
                             className="inline-flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
@@ -153,9 +153,9 @@ export default function InboxReportIndex({ conversationsOverTime, channelMix, ag
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b border-gray-200 dark:border-gray-700">
-                                    <th className="pb-2 text-left text-xs text-gray-500">{t('reports.col_agent')}</th>
-                                    <th className="pb-2 text-right text-xs text-gray-500">{t('reports.col_conversations_handled')}</th>
-                                    <th className="pb-2 text-right text-xs text-gray-500">{t('reports.col_avg_first_response')}</th>
+                                    <th className="pb-2 text-left text-xs text-gray-500 dark:text-gray-400">{t('reports.col_agent')}</th>
+                                    <th className="pb-2 text-right text-xs text-gray-500 dark:text-gray-400">{t('reports.col_conversations_handled')}</th>
+                                    <th className="pb-2 text-right text-xs text-gray-500 dark:text-gray-400">{t('reports.col_avg_first_response')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">

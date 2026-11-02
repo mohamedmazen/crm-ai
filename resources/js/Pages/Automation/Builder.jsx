@@ -434,7 +434,7 @@ function ConfigPanel({ node, onClose, onChange }) {
 const inputCls = "w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition";
 const textareaCls = "w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition resize-none";
 const selectCls = "w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition";
-const labelCls = "block text-xs font-semibold text-gray-600 mb-1";
+const labelCls = "block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1";
 
 function Field({ label, children }) {
     return <div><label className={labelCls}>{label}</label>{children}</div>;
@@ -799,7 +799,7 @@ function SequenceFields({ d, set }) {
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <span style={{ fontSize: 10, fontWeight: 700, color: '#64748b' }}>{t('automation.step_n', { n: i + 1 })}</span>
                         <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                            <select className="rounded border border-gray-200 text-[10px] px-1 py-0.5" value={s.kind ?? 'text'} onChange={e => update(i, { kind: e.target.value })}>
+                            <select className="rounded border border-gray-200 text-3xs px-1 py-0.5" value={s.kind ?? 'text'} onChange={e => update(i, { kind: e.target.value })}>
                                 <option value="text">{t('automation.step_text')}</option>
                                 <option value="media">{t('automation.step_media')}</option>
                             </select>
@@ -2077,10 +2077,10 @@ export default function AutomationBuilder({ automation }) {
                     </Link>
                     <div>
                         <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100 leading-tight">{automation.name}</h2>
-                        <p className="text-xs text-neutral-500">{t('automation.builder')}</p>
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('automation.builder')}</p>
                     </div>
                     <div className="ml-auto flex items-center gap-2">
-                        <Link href={route('client.automations.runs', automation.uuid)} className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-neutral-700 transition">
+                        <Link href={route('client.automations.runs', automation.uuid)} className="flex items-center gap-1.5 text-xs text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 transition">
                             {t('automation.view_runs_arrow')}
                         </Link>
                     </div>

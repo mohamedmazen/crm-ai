@@ -78,12 +78,12 @@ export default function DuplicatesIndex({
                 {/* Groups List */}
                 {groups.data.length === 0 ? (
                     <div className="rounded-2xl border border-soft bg-white p-16 text-center shadow-xs dark:bg-neutral-900">
-                        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400">
+                        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400">
                             <CheckCircle2 className="h-8 w-8" />
                         </div>
-                        <h3 className="mt-4 text-base font-bold text-neutral-900 dark:text-neutral-100">
+                        <h2 className="mt-4 text-base font-bold text-neutral-900 dark:text-neutral-100">
                             {t('duplicates.clean_database_title') || 'No Duplicates Detected!'}
-                        </h3>
+                        </h2>
                         <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400 max-w-md mx-auto">
                             {t('duplicates.clean_database_subtitle') || 'Your CRM leads database is clean and deduplicated. You can run a full scan anytime new leads are imported.'}
                         </p>
@@ -108,7 +108,7 @@ export default function DuplicatesIndex({
                                             {group.match_type === 'phone' ? <Phone className="h-3 w-3" /> : group.match_type === 'email' ? <Mail className="h-3 w-3" /> : <Globe className="h-3 w-3" />}
                                             <span className="capitalize">{group.match_type}</span>: <span className="font-mono">{group.match_value}</span>
                                         </span>
-                                        <span className="text-xs text-neutral-400">
+                                        <span className="text-xs text-neutral-500 dark:text-neutral-400">
                                             {group.leads?.length ?? 0} {t('duplicates.potential_duplicates') || 'conflicting records'}
                                         </span>
                                     </div>
@@ -117,7 +117,7 @@ export default function DuplicatesIndex({
                                         <button
                                             type="button"
                                             onClick={() => handleDismiss(group.id)}
-                                            className="text-xs font-medium text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 px-2 py-1"
+                                            className="text-xs font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300 px-2 py-1"
                                         >
                                             {t('duplicates.dismiss') || 'Dismiss'}
                                         </button>
@@ -155,7 +155,7 @@ export default function DuplicatesIndex({
                                                         </span>
                                                     )}
                                                 </div>
-                                                <span className="font-mono text-[10px] text-neutral-400 shrink-0">
+                                                <span className="font-mono text-3xs text-neutral-500 dark:text-neutral-400 shrink-0">
                                                     #{lead.id}
                                                 </span>
                                             </div>
@@ -163,19 +163,19 @@ export default function DuplicatesIndex({
                                             <div className="space-y-1 text-neutral-600 dark:text-neutral-300">
                                                 {lead.phone && (
                                                     <div className="flex items-center gap-1.5 truncate">
-                                                        <Phone className="h-3 w-3 text-neutral-400 shrink-0" />
+                                                        <Phone className="h-3 w-3 text-neutral-500 dark:text-neutral-400 shrink-0" />
                                                         <span>{lead.phone}</span>
                                                     </div>
                                                 )}
                                                 {lead.email && (
                                                     <div className="flex items-center gap-1.5 truncate">
-                                                        <Mail className="h-3 w-3 text-neutral-400 shrink-0" />
+                                                        <Mail className="h-3 w-3 text-neutral-500 dark:text-neutral-400 shrink-0" />
                                                         <span>{lead.email}</span>
                                                     </div>
                                                 )}
                                             </div>
 
-                                            <div className="flex flex-wrap items-center gap-2 border-t border-soft/60 pt-2 text-[11px] text-neutral-500">
+                                            <div className="flex flex-wrap items-center gap-2 border-t border-soft/60 pt-2 text-2xs text-neutral-500 dark:text-neutral-400">
                                                 <span className="font-medium text-neutral-800 dark:text-neutral-200">
                                                     {lead.stage?.name || 'No Stage'}
                                                 </span>
@@ -197,7 +197,7 @@ export default function DuplicatesIndex({
                         {/* Pagination */}
                         {groups.links && groups.links.length > 3 && (
                             <div className="flex items-center justify-between border-t border-soft pt-4">
-                                <div className="text-xs text-neutral-500">
+                                <div className="text-xs text-neutral-500 dark:text-neutral-400">
                                     {t('common.total') || 'Total'}: <span className="font-semibold text-neutral-800 dark:text-neutral-200">{groups.total}</span>
                                 </div>
                                 <div className="flex items-center gap-1">
@@ -209,7 +209,7 @@ export default function DuplicatesIndex({
                                                 dangerouslySetInnerHTML={{ __html: link.label }}
                                                 className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
                                                     link.active
-                                                        ? 'bg-brand-500 text-white'
+                                                        ? 'bg-brand-600 text-white'
                                                         : 'text-neutral-600 hover:bg-neutral-200/60 dark:text-neutral-300 dark:hover:bg-neutral-700'
                                                 }`}
                                             />
@@ -217,7 +217,7 @@ export default function DuplicatesIndex({
                                             <span
                                                 key={i}
                                                 dangerouslySetInnerHTML={{ __html: link.label }}
-                                                className="px-2 py-1 text-xs text-neutral-400 cursor-not-allowed"
+                                                className="px-2 py-1 text-xs text-neutral-500 dark:text-neutral-400 cursor-not-allowed"
                                             />
                                         )
                                     ))}

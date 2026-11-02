@@ -63,10 +63,11 @@ export default function ClientSettingsIndex({
                         </h2>
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div>
-                                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                                <label htmlFor="settings-locale" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                                     {t('client.language') || 'Language'}
                                 </label>
                                 <select
+                                    id="settings-locale"
                                     value={form.data.locale}
                                     onChange={e => form.setData('locale', e.target.value)}
                                     className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm"
@@ -77,10 +78,11 @@ export default function ClientSettingsIndex({
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                                <label htmlFor="settings-currency" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                                     {t('client.display_currency') || 'Display currency'}
                                 </label>
                                 <select
+                                    id="settings-currency"
                                     value={form.data.display_currency}
                                     onChange={e => form.setData('display_currency', e.target.value)}
                                     className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm"
@@ -93,10 +95,11 @@ export default function ClientSettingsIndex({
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                                <label htmlFor="settings-theme" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                                     {t('client.theme') || 'Theme'}
                                 </label>
                                 <select
+                                    id="settings-theme"
                                     value={form.data.theme}
                                     onChange={e => form.setData('theme', e.target.value)}
                                     className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm"
@@ -114,7 +117,7 @@ export default function ClientSettingsIndex({
                                     onChange={tz => form.setData('timezone', tz)}
                                 />
                                 {form.errors.timezone && <p className="mt-1 text-xs text-red-500">{form.errors.timezone}</p>}
-                                <p className="mt-1 text-xs text-neutral-400">{t('settings.timezone_hint')}</p>
+                                <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">{t('settings.timezone_hint')}</p>
                             </div>
                         </div>
                     </div>
@@ -126,10 +129,11 @@ export default function ClientSettingsIndex({
                             </h2>
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div className="sm:col-span-2">
-                                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                                    <label htmlFor="settings-client-name" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                                         {t('client.organization_name') || 'Organization name'}
                                     </label>
                                     <input
+                                        id="settings-client-name"
                                         type="text"
                                         value={form.data.client_name}
                                         onChange={e => form.setData('client_name', e.target.value)}
@@ -137,10 +141,11 @@ export default function ClientSettingsIndex({
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                                    <label htmlFor="settings-client-email" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                                         {t('client.organization_email') || 'Email'}
                                     </label>
                                     <input
+                                        id="settings-client-email"
                                         type="email"
                                         value={form.data.client_email}
                                         onChange={e => form.setData('client_email', e.target.value)}
@@ -148,10 +153,11 @@ export default function ClientSettingsIndex({
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                                    <label htmlFor="settings-client-phone" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                                         {t('client.phone') || 'Phone'}
                                     </label>
                                     <input
+                                        id="settings-client-phone"
                                         type="text"
                                         value={form.data.client_phone}
                                         onChange={e => form.setData('client_phone', e.target.value)}
@@ -159,10 +165,11 @@ export default function ClientSettingsIndex({
                                     />
                                 </div>
                                 <div className="sm:col-span-2">
-                                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                                    <label htmlFor="settings-client-address" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                                         {t('client.address') || 'Address'}
                                     </label>
                                     <textarea
+                                        id="settings-client-address"
                                         value={form.data.client_address}
                                         onChange={e => form.setData('client_address', e.target.value)}
                                         rows={2}
@@ -184,11 +191,12 @@ export default function ClientSettingsIndex({
                             </p>
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div>
-                                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                                    <label htmlFor="settings-subdomain" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                                         {t('client.subdomain') || 'Workspace subdomain'}
                                     </label>
                                     <div className="flex items-stretch">
                                         <input
+                                            id="settings-subdomain"
                                             type="text"
                                             value={form.data.client_subdomain}
                                             onChange={e => form.setData('client_subdomain', e.target.value.toLowerCase())}
@@ -200,7 +208,7 @@ export default function ClientSettingsIndex({
                                             .{tenantBaseDomain || 'example.com'}
                                         </span>
                                     </div>
-                                    <p className="mt-1 text-xs text-neutral-400">
+                                    <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
                                         {tenantBaseDomainEnabled
                                             ? (t('client.subdomain_hint') || 'Lowercase letters, digits and hyphens only.')
                                             : (t('client.subdomains_disabled') || 'Subdomains are disabled on this installation.')}
@@ -208,17 +216,18 @@ export default function ClientSettingsIndex({
                                     {form.errors.client_subdomain && <p className="mt-1 text-xs text-red-500">{form.errors.client_subdomain}</p>}
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                                    <label htmlFor="settings-custom-domain" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                                         {t('client.custom_domain') || 'Custom domain'}
                                     </label>
                                     <input
+                                        id="settings-custom-domain"
                                         type="text"
                                         value={form.data.client_custom_domain}
                                         onChange={e => form.setData('client_custom_domain', e.target.value.toLowerCase())}
                                         placeholder="crm.yourcompany.com"
                                         className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm"
                                     />
-                                    <p className="mt-1 text-xs text-neutral-400">
+                                    <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
                                         {t('client.custom_domain_hint') || 'Optional. Example: crm.yourcompany.com'}
                                     </p>
                                     {form.errors.client_custom_domain && <p className="mt-1 text-xs text-red-500">{form.errors.client_custom_domain}</p>}
@@ -235,7 +244,7 @@ export default function ClientSettingsIndex({
                                 type="checkbox"
                                 checked={!!form.data.weekly_digest_enabled}
                                 onChange={e => form.setData('weekly_digest_enabled', e.target.checked)}
-                                className="h-4 w-4 rounded border-gray-300 text-indigo-600"
+                                className="h-4 w-4 rounded border-gray-300 text-indigo-700 dark:text-indigo-400"
                             />
                             <span className="text-sm text-neutral-700 dark:text-neutral-300">
                                 {t('settings.weekly_digest_label')}

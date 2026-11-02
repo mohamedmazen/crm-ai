@@ -88,7 +88,7 @@ export default function CompanyShow({
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <Link
                         href={route('client.leads.companies.index')}
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200"
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200"
                     >
                         <ArrowLeft className="h-4 w-4" />
                         {t('companies.back_to_companies') || 'Back to Companies'}
@@ -110,7 +110,7 @@ export default function CompanyShow({
                 <div className="rounded-2xl border border-soft bg-white p-6 shadow-xs dark:bg-neutral-900">
                     <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
                         <div className="flex items-start gap-4">
-                            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-brand-500 font-bold text-2xl text-white shadow-md shadow-brand-500/20">
+                            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-brand-600 font-bold text-2xl text-white shadow-md shadow-brand-500/20">
                                 {company.name.substring(0, 2).toUpperCase()}
                             </div>
                             <div className="min-w-0">
@@ -118,7 +118,7 @@ export default function CompanyShow({
                                     {company.name}
                                 </h1>
                                 {company.domain && (
-                                    <p className="mt-0.5 font-mono text-xs text-neutral-400">
+                                    <p className="mt-0.5 font-mono text-xs text-neutral-500 dark:text-neutral-400">
                                         {company.domain}
                                     </p>
                                 )}
@@ -131,7 +131,7 @@ export default function CompanyShow({
                                             rel="noreferrer"
                                             className="inline-flex items-center gap-1.5 font-medium hover:text-brand-600 dark:hover:text-brand-400"
                                         >
-                                            <Globe className="h-3.5 w-3.5 text-neutral-400" />
+                                            <Globe className="h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400" />
                                             {company.website}
                                         </a>
                                     )}
@@ -140,13 +140,13 @@ export default function CompanyShow({
                                             href={`tel:${company.phone}`}
                                             className="inline-flex items-center gap-1.5 font-medium hover:text-brand-600 dark:hover:text-brand-400"
                                         >
-                                            <Phone className="h-3.5 w-3.5 text-neutral-400" />
+                                            <Phone className="h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400" />
                                             {company.phone}
                                         </a>
                                     )}
                                     {company.address && (
                                         <span className="inline-flex items-center gap-1.5">
-                                            <MapPin className="h-3.5 w-3.5 text-neutral-400" />
+                                            <MapPin className="h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400" />
                                             {company.address}
                                         </span>
                                     )}
@@ -167,7 +167,7 @@ export default function CompanyShow({
                                 </span>
                             )}
                             <div className="flex items-center gap-1.5 rounded-full border border-soft bg-neutral-50 px-3 py-1 text-xs font-medium text-neutral-700 dark:bg-neutral-800/80 dark:text-neutral-200">
-                                <User className="h-3 w-3 text-neutral-400" />
+                                <User className="h-3 w-3 text-neutral-500 dark:text-neutral-400" />
                                 <span>{company.owner?.name || t('leads.unassigned') || 'Unassigned'}</span>
                             </div>
                         </div>
@@ -221,7 +221,7 @@ export default function CompanyShow({
                 <div className="overflow-hidden rounded-2xl border border-soft bg-white shadow-xs dark:bg-neutral-900">
                     <div className="flex items-center justify-between border-b border-soft px-6 py-4">
                         <div className="flex items-center gap-2">
-                            <Users className="h-5 w-5 text-neutral-500" />
+                            <Users className="h-5 w-5 text-neutral-500 dark:text-neutral-400" />
                             <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
                                 {t('companies.associated_leads') || 'Associated Leads'} ({leads.length})
                             </h2>
@@ -243,7 +243,7 @@ export default function CompanyShow({
                             <p className="mt-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">
                                 {t('companies.no_associated_leads') || 'No leads linked to this company yet'}
                             </p>
-                            <p className="mt-1 text-xs text-neutral-400">
+                            <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
                                 {t('companies.link_leads_hint') || 'You can link existing leads to this company from their card in the pipeline board.'}
                             </p>
                         </div>
@@ -271,7 +271,7 @@ export default function CompanyShow({
                                                     >
                                                         {lead.name}
                                                     </a>
-                                                    <div className="flex items-center gap-2 text-xs text-neutral-400">
+                                                    <div className="flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400">
                                                         {lead.email && <span>{lead.email}</span>}
                                                         {lead.phone && <span>{lead.phone}</span>}
                                                     </div>
@@ -283,12 +283,12 @@ export default function CompanyShow({
                                                     {lead.stage?.name || '—'}
                                                 </span>
                                                 {lead.pipeline?.name && (
-                                                    <div className="text-[10px] text-neutral-400">{lead.pipeline.name}</div>
+                                                    <div className="text-3xs text-neutral-500 dark:text-neutral-400">{lead.pipeline.name}</div>
                                                 )}
                                             </td>
 
                                             <td className="px-4 py-3.5">
-                                                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                                                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-2xs font-semibold ${
                                                     lead.status === 'won'
                                                         ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300'
                                                         : lead.status === 'lost'
@@ -307,7 +307,7 @@ export default function CompanyShow({
                                                 {lead.assigned_user?.name ? (
                                                     <span className="font-medium">{lead.assigned_user.name}</span>
                                                 ) : (
-                                                    <span className="text-neutral-400 italic">{t('leads.unassigned') || 'Unassigned'}</span>
+                                                    <span className="text-neutral-500 dark:text-neutral-400 italic">{t('leads.unassigned') || 'Unassigned'}</span>
                                                 )}
                                             </td>
 
@@ -315,7 +315,7 @@ export default function CompanyShow({
                                                 <div className="flex items-center justify-end gap-1">
                                                     <a
                                                         href={route('client.leads.pipeline.index', { lead: lead.id })}
-                                                        className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
+                                                        className="rounded-lg p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
                                                         title={t('common.view') || 'View in Pipeline'}
                                                     >
                                                         <ExternalLink className="h-4 w-4" />
@@ -323,7 +323,7 @@ export default function CompanyShow({
                                                     <button
                                                         type="button"
                                                         onClick={() => handleDetachLead(lead.id)}
-                                                        className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400"
+                                                        className="rounded-lg p-1.5 text-neutral-500 dark:text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400"
                                                         title={t('companies.unlink_lead') || 'Unlink from Company'}
                                                     >
                                                         <Unlink className="h-4 w-4" />
@@ -350,7 +350,7 @@ export default function CompanyShow({
                         <button
                             type="button"
                             onClick={() => setShowEditModal(false)}
-                            className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
+                            className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
                         >
                             &times;
                         </button>
@@ -487,7 +487,7 @@ export default function CompanyShow({
             {/* Delete Modal */}
             <Modal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} maxWidth="sm">
                 <div className="p-6">
-                    <div className="flex items-center gap-3 text-red-600 dark:text-red-400">
+                    <div className="flex items-center gap-3 text-red-700 dark:text-red-400">
                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-950/50">
                             <Trash2 className="h-5 w-5" />
                         </div>

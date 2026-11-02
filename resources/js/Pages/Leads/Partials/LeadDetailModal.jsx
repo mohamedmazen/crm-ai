@@ -87,7 +87,7 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
     return (
         <Modal show={open} onClose={onClose} maxWidth="2xl">
             {loading && !lead ? (
-                <div className="p-10 text-center text-sm text-neutral-400">{t('common.loading')}</div>
+                <div className="p-10 text-center text-sm text-neutral-500 dark:text-neutral-400">{t('common.loading')}</div>
             ) : lead ? (
                 <div className="flex max-h-[85vh] flex-col">
                     <div className="border-b border-soft p-5">
@@ -109,25 +109,25 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
                         <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-neutral-600 dark:text-neutral-300">
                             {lead.phone && (
                                 <a href={`tel:${lead.phone}`} className="inline-flex items-center gap-1.5 hover:text-brand-600 dark:hover:text-brand-400">
-                                    <Phone className="h-3.5 w-3.5 text-neutral-400" aria-hidden="true" />
+                                    <Phone className="h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400" aria-hidden="true" />
                                     {lead.phone}
                                 </a>
                             )}
                             {lead.website && (
                                 <a href={lead.website} target="_blank" rel="noreferrer noopener" className="inline-flex min-w-0 items-center gap-1.5 hover:text-brand-600 dark:hover:text-brand-400">
-                                    <Globe className="h-3.5 w-3.5 shrink-0 text-neutral-400" aria-hidden="true" />
+                                    <Globe className="h-3.5 w-3.5 shrink-0 text-neutral-500 dark:text-neutral-400" aria-hidden="true" />
                                     <span className="truncate">{lead.website}</span>
                                 </a>
                             )}
                             {lead.rating > 0 && (
                                 <span className="inline-flex items-center gap-1.5">
-                                    <Star className="h-3.5 w-3.5 text-neutral-400" aria-hidden="true" />
+                                    <Star className="h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400" aria-hidden="true" />
                                     {t('leads.rating_summary', { rating: lead.rating, count: lead.review_count })}
                                 </span>
                             )}
                             {lead.address && (
                                 <span className="inline-flex items-center gap-1.5">
-                                    <MapPin className="h-3.5 w-3.5 text-neutral-400" aria-hidden="true" />
+                                    <MapPin className="h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400" aria-hidden="true" />
                                     {lead.address}
                                 </span>
                             )}
@@ -135,7 +135,7 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
 
                         <div className="mt-3 flex flex-wrap items-center gap-4">
                             <div className="flex items-center gap-2">
-                                <User className="h-3.5 w-3.5 text-neutral-400" />
+                                <User className="h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400" />
                                 <span className="text-xs text-neutral-500 dark:text-neutral-400">
                                     {t('leads.assigned_to') || 'Assigned to'}:
                                 </span>
@@ -152,14 +152,14 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
                                     ))}
                                 </select>
                                 {lead.assigned_at && (
-                                    <span className="text-[11px] text-neutral-400">
+                                    <span className="text-2xs text-neutral-500 dark:text-neutral-400">
                                         ({new Date(lead.assigned_at).toLocaleDateString()})
                                     </span>
                                 )}
                             </div>
 
                             <div className="flex items-center gap-2">
-                                <Building2 className="h-3.5 w-3.5 text-neutral-400" />
+                                <Building2 className="h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400" />
                                 <span className="text-xs text-neutral-500 dark:text-neutral-400">
                                     {t('leads.company') || 'Company'}:
                                 </span>
@@ -176,7 +176,7 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
                                         <button
                                             type="button"
                                             onClick={() => handleAssignCompany(null)}
-                                            className="text-neutral-400 hover:text-red-500"
+                                            className="text-neutral-500 dark:text-neutral-400 hover:text-red-500"
                                             title={t('common.remove')}
                                         >
                                             &times;
@@ -205,8 +205,8 @@ export default function LeadDetailModal({ detail, stages, activityTypes, callOut
                                     onClick={() => setTab(key)}
                                     className={`inline-flex items-center gap-1.5 rounded-soft px-2.5 py-1 text-xs font-medium transition-colors ${
                                         tab === key
-                                            ? 'bg-brand-500 text-white'
-                                            : 'text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800'
+                                            ? 'bg-brand-600 text-white'
+                                            : 'text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800'
                                     }`}
                                 >
                                     <Icon className="h-3.5 w-3.5" />
@@ -302,7 +302,7 @@ function DealEditor({ lead, stageHistory }) {
                             {t('leads.deal_value') || 'Deal Value'}
                         </label>
                         <div className="mt-1 flex rounded-soft shadow-sm">
-                            <span className="inline-flex items-center rounded-l-soft border border-r-0 border-soft bg-neutral-100 px-3 text-sm text-neutral-500 dark:bg-neutral-800">
+                            <span className="inline-flex items-center rounded-l-soft border border-r-0 border-soft bg-neutral-100 px-3 text-sm text-neutral-600 dark:text-neutral-400 dark:bg-neutral-800">
                                 $
                             </span>
                             <input
@@ -377,12 +377,12 @@ function DealEditor({ lead, stageHistory }) {
 
             {/* Stage Transition History */}
             <div>
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
                     {t('leads.stage_history_title') || 'Stage Movement History'}
                 </h4>
 
                 {stageHistory.length === 0 ? (
-                    <p className="mt-2 text-xs text-neutral-400">{t('leads.no_stage_history') || 'No stage movement recorded yet.'}</p>
+                    <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">{t('leads.no_stage_history') || 'No stage movement recorded yet.'}</p>
                 ) : (
                     <ul className="mt-2 space-y-2 border-l-2 border-neutral-100 pl-3 dark:border-neutral-800">
                         {stageHistory.map((h) => (
@@ -390,9 +390,9 @@ function DealEditor({ lead, stageHistory }) {
                                 <span className="font-medium text-neutral-900 dark:text-neutral-100">
                                     {h.from_stage ? `${h.from_stage} → ` : ''}{h.to_stage}
                                 </span>
-                                {h.user && <span className="text-neutral-400"> by {h.user}</span>}
+                                {h.user && <span className="text-neutral-500 dark:text-neutral-400"> by {h.user}</span>}
                                 {h.changed_at && (
-                                    <span className="block text-[11px] text-neutral-400 mt-0.5">
+                                    <span className="block text-2xs text-neutral-500 dark:text-neutral-400 mt-0.5">
                                         {new Date(h.changed_at).toLocaleString()}
                                     </span>
                                 )}
@@ -438,7 +438,7 @@ function RiskPanel({ risk }) {
                                     defaultValue: reason.detail,
                                 })}
                             </span>
-                            <span className="shrink-0 tabular-nums text-neutral-400">+{reason.points}</span>
+                            <span className="shrink-0 tabular-nums text-neutral-500 dark:text-neutral-400">+{reason.points}</span>
                         </li>
                     ))}
                 </ul>
@@ -451,7 +451,7 @@ function ScoreBreakdown({ breakdown }) {
     const { t } = useTranslation();
 
     if (!breakdown.length) {
-        return <p className="py-6 text-center text-sm text-neutral-400">{t('leads.not_scored_yet')}</p>;
+        return <p className="py-6 text-center text-sm text-neutral-500 dark:text-neutral-400">{t('leads.not_scored_yet')}</p>;
     }
 
     return (
@@ -474,7 +474,7 @@ function ScoreBreakdown({ breakdown }) {
                                 <span className="text-neutral-600 dark:text-neutral-300">{row.detail}</span>
                                 <span
                                     className={`shrink-0 font-medium tabular-nums ${
-                                        negative ? 'text-red-600 dark:text-red-400' : 'text-neutral-500 dark:text-neutral-400'
+                                        negative ? 'text-red-700 dark:text-red-400' : 'text-neutral-500 dark:text-neutral-400'
                                     }`}
                                 >
                                     {behavioral
@@ -550,7 +550,7 @@ function CompanyPicker({ onSelect }) {
                 <button
                     type="button"
                     onClick={() => setOpen(false)}
-                    className="text-xs text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
+                    className="text-xs text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
                 >
                     &times;
                 </button>
@@ -558,9 +558,9 @@ function CompanyPicker({ onSelect }) {
             {open && (
                 <div className="absolute left-0 top-full z-20 mt-1 max-h-48 w-52 overflow-y-auto rounded-soft border border-soft bg-white p-1 shadow-lg dark:bg-neutral-800">
                     {loading ? (
-                        <div className="p-2 text-center text-xs text-neutral-400">{t('common.loading')}</div>
+                        <div className="p-2 text-center text-xs text-neutral-500 dark:text-neutral-400">{t('common.loading')}</div>
                     ) : results.length === 0 ? (
-                        <div className="p-2 text-center text-xs text-neutral-400">{t('common.no_results') || 'No companies found'}</div>
+                        <div className="p-2 text-center text-xs text-neutral-500 dark:text-neutral-400">{t('common.no_results') || 'No companies found'}</div>
                     ) : (
                         results.map((comp) => (
                             <button
@@ -574,7 +574,7 @@ function CompanyPicker({ onSelect }) {
                             >
                                 <span className="font-medium">{comp.name}</span>
                                 {comp.domain && (
-                                    <span className="text-[10px] text-neutral-400">{comp.domain}</span>
+                                    <span className="text-3xs text-neutral-500 dark:text-neutral-400">{comp.domain}</span>
                                 )}
                             </button>
                         ))

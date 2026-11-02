@@ -76,7 +76,7 @@ export default function WhatsappTemplatesIndex({ templates, phoneNumbers = [], f
                 {/* Search + Phone filter bar */}
                 <div className="flex flex-wrap gap-3">
                     <div className="relative flex-1 min-w-48">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 pointer-events-none" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500 dark:text-neutral-400 pointer-events-none" />
                         <input
                             type="text"
                             value={search}
@@ -88,10 +88,11 @@ export default function WhatsappTemplatesIndex({ templates, phoneNumbers = [], f
 
                     {phoneNumbers.length > 0 && (
                         <div className="relative">
-                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 pointer-events-none" />
+                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500 dark:text-neutral-400 pointer-events-none" />
                             <select
                                 value={filters.phone_number_id ?? ''}
                                 onChange={handlePhone}
+                                aria-label={t('whatsapp.templates_all_phone_numbers')}
                                 className="rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-900 pl-9 pr-8 py-2 text-sm text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-brand-500 appearance-none min-w-48"
                             >
                                 <option value="">{t('whatsapp.templates_all_phone_numbers')}</option>
@@ -138,7 +139,7 @@ export default function WhatsappTemplatesIndex({ templates, phoneNumbers = [], f
                                 <TemplatePreview components={tpl.components ?? []} />
 
                                 {tpl.rejection_reason && (
-                                    <p className="text-xs text-red-500 dark:text-red-400">{tpl.rejection_reason}</p>
+                                    <p className="text-xs text-red-600 dark:text-red-400">{tpl.rejection_reason}</p>
                                 )}
 
                                 <div className="flex gap-2 pt-1 mt-auto border-t border-neutral-100 dark:border-neutral-800">
@@ -150,7 +151,7 @@ export default function WhatsappTemplatesIndex({ templates, phoneNumbers = [], f
                                     </Link>
                                     <button
                                         onClick={() => handleDelete(tpl)}
-                                        className="flex items-center justify-center gap-1.5 rounded-lg border border-red-200 dark:border-red-900/50 px-3 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition mt-2"
+                                        className="flex items-center justify-center gap-1.5 rounded-lg border border-red-200 dark:border-red-900/50 px-3 py-1.5 text-xs font-medium text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition mt-2"
                                     >
                                         <Trash2 className="h-3.5 w-3.5" /> {t('common.delete')}
                                     </button>

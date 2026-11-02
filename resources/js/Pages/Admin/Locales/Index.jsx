@@ -373,7 +373,7 @@ function TranslationRow({ item, localeCode }) {
                 />
             </td>
             <td className="py-2">
-                {saving && <span className="text-xs text-neutral-400">{t('locales.saving')}</span>}
+                {saving && <span className="text-xs text-neutral-500 dark:text-neutral-400">{t('locales.saving')}</span>}
             </td>
         </tr>
     );

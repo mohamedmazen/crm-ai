@@ -97,6 +97,49 @@ class BrandPalette
         return is_string($hex) && preg_match('/^#[0-9A-Fa-f]{6}$/', $hex) === 1;
     }
 
+    /**
+     * WCAG 2.1 contrast ratio between two hex colours, from 1 to 21.
+     *
+     * The picked brand colour is pinned to the 600 stop, and the UI paints white
+     * text on that stop, so the admin settings can compare the two directly.
+     */
+    public static function contrastRatio(string $foreground, string $background): float
+    {
+        $first = self::relativeLuminance($foreground);
+        $second = self::relativeLuminance($background);
+
+        [$lighter, $darker] = $first >= $second ? [$first, $second] : [$second, $first];
+
+        return ($lighter + 0.05) / ($darker + 0.05);
+    }
+
+    /** Whether a foreground/background pair clears the given WCAG ratio. */
+    public static function meetsContrast(string $foreground, string $background, float $minimum = 4.5): bool
+    {
+        return self::contrastRatio($foreground, $background) >= $minimum;
+    }
+
+    /** Relative luminance per WCAG 2.1 (0 = black, 1 = white). */
+    private static function relativeLuminance(string $hex): float
+    {
+        $hex = ltrim($hex, '#');
+
+        $channels = [
+            hexdec(substr($hex, 0, 2)) / 255,
+            hexdec(substr($hex, 2, 2)) / 255,
+            hexdec(substr($hex, 4, 2)) / 255,
+        ];
+
+        [$r, $g, $b] = array_map(
+            static fn (float $channel): float => $channel <= 0.03928
+                ? $channel / 12.92
+                : (($channel + 0.055) / 1.055) ** 2.4,
+            $channels,
+        );
+
+        return 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
+    }
+
     /** @return array{float, float, float} hue 0–1, saturation 0–1, lightness 0–1 */
     private static function hexToHsl(string $hex): array
     {

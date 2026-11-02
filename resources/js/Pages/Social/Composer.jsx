@@ -30,7 +30,7 @@ const NETWORK_LABELS = {
 function Avatar({ name, pictureUrl, className = 'h-10 w-10', ring = false }) {
     const inner = pictureUrl
         ? <img src={pictureUrl} alt={name} className={`${className} rounded-full object-cover shrink-0`} />
-        : <div className={`${className} rounded-full bg-neutral-200 dark:bg-neutral-700 shrink-0 flex items-center justify-center text-xs font-bold text-neutral-500`}>
+        : <div className={`${className} rounded-full bg-neutral-200 dark:bg-neutral-700 shrink-0 flex items-center justify-center text-xs font-bold text-neutral-500 dark:text-neutral-300`}>
             {(name?.[0] ?? 'U').toUpperCase()}
           </div>;
     if (!ring) return inner;
@@ -38,7 +38,7 @@ function Avatar({ name, pictureUrl, className = 'h-10 w-10', ring = false }) {
         <div className={`${className} rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 p-0.5 shrink-0`}>
             {pictureUrl
                 ? <img src={pictureUrl} alt={name} className="h-full w-full rounded-full object-cover" />
-                : <div className="h-full w-full rounded-full bg-white dark:bg-neutral-900 flex items-center justify-center text-xs font-bold text-neutral-500">
+                : <div className="h-full w-full rounded-full bg-white dark:bg-neutral-900 flex items-center justify-center text-xs font-bold text-neutral-500 dark:text-neutral-400">
                     {(name?.[0] ?? 'U').toUpperCase()}
                   </div>
             }
@@ -56,13 +56,13 @@ function TwitterPreview({ body, mediaUrls, accountName, pictureUrl }) {
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 flex-wrap">
                         <span className="font-bold text-neutral-900 dark:text-neutral-100">{accountName ?? t('social.preview_your_account')}</span>
-                        <span className="text-neutral-500 text-xs">{handle} · now</span>
+                        <span className="text-neutral-500 dark:text-neutral-400 text-xs">{handle} · now</span>
                     </div>
                     <p className="mt-1 text-neutral-800 dark:text-neutral-200 whitespace-pre-wrap break-words leading-snug">
-                        {body || <span className="text-neutral-400 italic">{t('social.preview_tweet_placeholder')}</span>}
+                        {body || <span className="text-neutral-500 dark:text-neutral-400 italic">{t('social.preview_tweet_placeholder')}</span>}
                     </p>
                     {mediaUrls?.[0] && <img src={mediaUrls[0]} alt="" className="mt-2 rounded-xl w-full object-cover max-h-48" />}
-                    <div className="mt-3 flex items-center gap-5 text-neutral-500 text-xs">
+                    <div className="mt-3 flex items-center gap-5 text-neutral-500 dark:text-neutral-400 text-xs">
                         <span className="flex items-center gap-1"><MessageCircle className="h-3.5 w-3.5" /> 0</span>
                         <span className="flex items-center gap-1"><Repeat2 className="h-3.5 w-3.5" /> 0</span>
                         <span className="flex items-center gap-1"><Heart className="h-3.5 w-3.5" /> 0</span>
@@ -83,14 +83,14 @@ function FacebookPreview({ body, mediaUrls, accountName, pictureUrl }) {
                 <Avatar name={accountName} pictureUrl={pictureUrl} className="h-9 w-9" />
                 <div>
                     <p className="font-semibold text-neutral-900 dark:text-neutral-100 text-sm">{accountName ?? t('social.preview_your_page')}</p>
-                    <p className="text-xs text-neutral-500">{t('social.preview_just_now')} · <span className="text-blue-500">{t('social.preview_public')}</span></p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('social.preview_just_now')} · <span className="text-blue-500">{t('social.preview_public')}</span></p>
                 </div>
             </div>
             <p className="text-neutral-800 dark:text-neutral-200 whitespace-pre-wrap break-words leading-snug">
-                {body || <span className="text-neutral-400 italic">{t('social.preview_post_placeholder')}</span>}
+                {body || <span className="text-neutral-500 dark:text-neutral-400 italic">{t('social.preview_post_placeholder')}</span>}
             </p>
             {mediaUrls?.[0] && <img src={mediaUrls[0]} alt="" className="mt-3 -mx-4 w-[calc(100%+2rem)] object-cover max-h-52" />}
-            <div className="mt-3 flex items-center justify-between text-neutral-500 text-xs border-t border-neutral-100 dark:border-neutral-700 pt-2">
+            <div className="mt-3 flex items-center justify-between text-neutral-500 dark:text-neutral-400 text-xs border-t border-neutral-100 dark:border-neutral-700 pt-2">
                 <span className="flex items-center gap-1"><ThumbsUp className="h-3.5 w-3.5" /> {t('social.preview_like')}</span>
                 <span className="flex items-center gap-1"><MessageCircle className="h-3.5 w-3.5" /> {t('social.preview_comment')}</span>
                 <span className="flex items-center gap-1"><Share2 className="h-3.5 w-3.5" /> {t('social.preview_share')}</span>
@@ -112,7 +112,7 @@ function InstagramPreview({ body, mediaUrls, accountName, pictureUrl }) {
             </div>
             {mediaUrls?.[0]
                 ? <img src={mediaUrls[0]} alt="" className="w-full object-cover max-h-52" />
-                : <div className="w-full h-36 bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-700 flex items-center justify-center text-neutral-400 text-xs">{t('social.preview_photo_video')}</div>
+                : <div className="w-full h-36 bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-700 flex items-center justify-center text-neutral-500 dark:text-neutral-400 text-xs">{t('social.preview_photo_video')}</div>
             }
             <div className="px-3 pt-2 pb-3">
                 <div className="flex items-center gap-3 mb-2 text-neutral-600 dark:text-neutral-400">
@@ -121,7 +121,7 @@ function InstagramPreview({ body, mediaUrls, accountName, pictureUrl }) {
                 </div>
                 <p className="text-xs text-neutral-800 dark:text-neutral-200 whitespace-pre-wrap break-words leading-snug">
                     <span className="font-semibold mr-1">{handle}</span>
-                    {body || <span className="text-neutral-400 italic">{t('social.preview_caption_placeholder')}</span>}
+                    {body || <span className="text-neutral-500 dark:text-neutral-400 italic">{t('social.preview_caption_placeholder')}</span>}
                 </p>
             </div>
         </div>
@@ -136,14 +136,14 @@ function LinkedInPreview({ body, mediaUrls, accountName, pictureUrl }) {
                 <Avatar name={accountName} pictureUrl={pictureUrl} className="h-10 w-10" />
                 <div>
                     <p className="font-semibold text-neutral-900 dark:text-neutral-100 text-sm">{accountName ?? t('social.preview_your_profile')}</p>
-                    <p className="text-xs text-neutral-500">{t('social.preview_now')} · <span>🌐</span></p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('social.preview_now')} · <span>🌐</span></p>
                 </div>
             </div>
             <p className="text-neutral-800 dark:text-neutral-200 whitespace-pre-wrap break-words leading-snug">
-                {body || <span className="text-neutral-400 italic">{t('social.preview_post_placeholder')}</span>}
+                {body || <span className="text-neutral-500 dark:text-neutral-400 italic">{t('social.preview_post_placeholder')}</span>}
             </p>
             {mediaUrls?.[0] && <img src={mediaUrls[0]} alt="" className="mt-3 rounded-lg w-full object-cover max-h-48" />}
-            <div className="mt-3 flex items-center gap-4 text-neutral-500 text-xs border-t border-neutral-100 dark:border-neutral-700 pt-2">
+            <div className="mt-3 flex items-center gap-4 text-neutral-500 dark:text-neutral-400 text-xs border-t border-neutral-100 dark:border-neutral-700 pt-2">
                 <span className="flex items-center gap-1"><ThumbsUp className="h-3.5 w-3.5" /> {t('social.preview_like')}</span>
                 <span className="flex items-center gap-1"><MessageCircle className="h-3.5 w-3.5" /> {t('social.preview_comment')}</span>
                 <span className="flex items-center gap-1"><Repeat2 className="h-3.5 w-3.5" /> {t('social.preview_repost')}</span>
@@ -161,7 +161,7 @@ function TikTokPreview({ body, mediaUrls, accountName }) {
             <div className="relative">
                 {mediaUrls?.[0]
                     ? <img src={mediaUrls[0]} alt="" className="w-full object-cover max-h-64" />
-                    : <div className="w-full h-52 bg-neutral-900 flex items-center justify-center text-neutral-600 text-xs">{t('social.preview_video')}</div>
+                    : <div className="w-full h-52 bg-neutral-900 flex items-center justify-center text-neutral-300 text-xs">{t('social.preview_video')}</div>
                 }
                 <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
                     <p className="text-white font-semibold text-xs mb-1">{handle}</p>
@@ -193,9 +193,9 @@ function YouTubePreview({ body, mediaUrls, accountName }) {
             }
             <div className="p-3">
                 <p className="font-semibold text-neutral-900 dark:text-neutral-100 line-clamp-2 leading-snug">
-                    {body?.split('\n')[0] || <span className="text-neutral-400 italic">{t('social.preview_video_title_placeholder')}</span>}
+                    {body?.split('\n')[0] || <span className="text-neutral-500 dark:text-neutral-400 italic">{t('social.preview_video_title_placeholder')}</span>}
                 </p>
-                <p className="text-xs text-neutral-500 mt-1">{accountName ?? t('social.preview_your_channel')} · {t('social.preview_youtube_meta')}</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">{accountName ?? t('social.preview_your_channel')} · {t('social.preview_youtube_meta')}</p>
             </div>
         </div>
     );
@@ -311,7 +311,7 @@ export default function SocialComposer({ accounts }) {
                                     {account.name}
                                 </button>
                             ))}
-                            {accounts.length === 0 && <p className="text-sm text-neutral-400">{t('social.no_accounts_connected')} <a href={route('client.social.accounts.index')} className="text-brand-600 hover:underline">{t('social.add_one')}</a></p>}
+                            {accounts.length === 0 && <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('social.no_accounts_connected')} <a href={route('client.social.accounts.index')} className="text-brand-600 dark:text-brand-400 hover:underline">{t('social.add_one')}</a></p>}
                         </div>
                         {errors.target_accounts && <p className="mt-1 text-xs text-red-500">{errors.target_accounts}</p>}
                     </div>
@@ -333,7 +333,7 @@ export default function SocialComposer({ accounts }) {
                         {/* Title */}
                         <div>
                             <label className="text-xs font-medium text-neutral-500 dark:text-neutral-400 block mb-1">
-                                {t('social.title_label')} <span className="text-neutral-400 font-normal">({t('common.optional')})</span>
+                                {t('social.title_label')} <span className="text-neutral-500 dark:text-neutral-400 font-normal">({t('common.optional')})</span>
                             </label>
                             <input
                                 type="text"
@@ -350,7 +350,7 @@ export default function SocialComposer({ accounts }) {
                         <div>
                             <div className="flex items-center justify-between mb-1">
                                 <label className="text-xs font-medium text-neutral-500 dark:text-neutral-400">{t('social.post_content')}</label>
-                                <span className={`text-xs ${data.body.length > minCharLimit ? 'text-red-500' : 'text-neutral-400'}`}>
+                                <span className={`text-xs ${data.body.length > minCharLimit ? 'text-red-500' : 'text-neutral-500 dark:text-neutral-400'}`}>
                                     {data.body.length} / {minCharLimit}
                                 </span>
                             </div>
@@ -370,7 +370,7 @@ export default function SocialComposer({ accounts }) {
                                 <button
                                     type="button"
                                     onClick={() => setData('media_urls', [...(data.media_urls ?? []), ''])}
-                                    className="flex items-center gap-1 text-xs text-brand-600 hover:text-brand-700 font-medium"
+                                    className="flex items-center gap-1 text-xs text-brand-600 dark:text-brand-400 hover:text-brand-700 font-medium"
                                 >
                                     <Plus className="h-3.5 w-3.5" /> {t('social.add_media')}
                                 </button>
@@ -393,14 +393,15 @@ export default function SocialComposer({ accounts }) {
                                     <button
                                         type="button"
                                         onClick={() => setData('media_urls', (data.media_urls ?? []).filter((_, j) => j !== i))}
-                                        className="mt-7 shrink-0 text-neutral-400 hover:text-red-500"
+                                        aria-label={t('common.remove', { defaultValue: 'Remove' })}
+                                        className="mt-7 inline-flex h-6 w-6 shrink-0 items-center justify-center text-neutral-500 dark:text-neutral-400 hover:text-red-500"
                                     >
                                         <Trash2 className="h-4 w-4" />
                                     </button>
                                 </div>
                             ))}
                             {(data.media_urls ?? []).length === 0 && (
-                                <p className="text-xs text-neutral-400">{t('social.no_media_hint')}</p>
+                                <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('social.no_media_hint')}</p>
                             )}
                         </div>
 
@@ -418,7 +419,7 @@ export default function SocialComposer({ accounts }) {
                                 />
                             </div>
                             {data.scheduled_at && (
-                                <p className="text-xs text-neutral-400">
+                                <p className="text-xs text-neutral-500 dark:text-neutral-400">
                                     {t('social.publishes_at', { time: formatInTz(tzLocalToUtcIso(data.scheduled_at, data.timezone), data.timezone) })}
                                 </p>
                             )}
@@ -444,12 +445,12 @@ export default function SocialComposer({ accounts }) {
                         <div className="flex items-center gap-2">
                             <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300">{t('social.post_preview')}</h3>
                             {selectedAccounts.length > 0 && (
-                                <span className="text-xs text-neutral-400">({t('social.network_count', { count: selectedAccounts.length })})</span>
+                                <span className="text-xs text-neutral-500 dark:text-neutral-400">({t('social.network_count', { count: selectedAccounts.length })})</span>
                             )}
                         </div>
 
                         {selectedAccounts.length === 0 ? (
-                            <div className="rounded-xl border border-dashed border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900/50 p-10 text-center text-sm text-neutral-400">
+                            <div className="rounded-xl border border-dashed border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900/50 p-10 text-center text-sm text-neutral-500 dark:text-neutral-400">
                                 {t('social.preview_empty')}
                             </div>
                         ) : (

@@ -94,7 +94,7 @@ function SectionCard({ title, onRemove, children }) {
                     {title}
                 </span>
                 {onRemove && (
-                    <button type="button" onClick={onRemove} className="text-neutral-400 hover:text-red-500 transition">
+                    <button type="button" onClick={onRemove} className="text-neutral-500 dark:text-neutral-400 hover:text-red-500 transition">
                         <Trash2 className="h-4 w-4" />
                     </button>
                 )}
@@ -112,7 +112,7 @@ function ExampleInputs({ label, placeholders, values, onChange }) {
             <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400">{t('whatsapp.templates_example_values', { section: label })}</p>
             {placeholders.map(n => (
                 <div key={n} className="flex items-center gap-2">
-                    <span className="text-xs font-mono text-neutral-400 w-10 shrink-0">{`{{${n}}}`}</span>
+                    <span className="text-xs font-mono text-neutral-500 dark:text-neutral-400 w-10 shrink-0">{`{{${n}}}`}</span>
                     <input
                         type="text"
                         placeholder={t('whatsapp.templates_example_for', { token: `{{${n}}}` })}
@@ -220,7 +220,7 @@ function HeaderBlock({ comp, onChange, onRemove }) {
                             {format === 'IMAGE' && comp.example._preview ? (
                                 <img src={comp.example._preview} alt="" className="h-12 w-12 object-cover rounded" />
                             ) : (
-                                <div className="h-10 w-10 rounded bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center text-neutral-500">
+                                <div className="h-10 w-10 rounded bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center text-neutral-500 dark:text-neutral-300">
                                     {format === 'VIDEO' ? <FileVideo className="h-5 w-5" /> : <FileTextIcon className="h-5 w-5" />}
                                 </div>
                             )}
@@ -350,15 +350,15 @@ function ButtonRow({ btn, idx, total, onChange, onRemove, onMove }) {
                     {BTN_TYPE_ICON[btn.type]} {t(BTN_TYPE_LABEL_KEYS[btn.type] ?? '')}
                 </span>
                 <div className="flex gap-1 ml-auto">
-                    <button type="button" disabled={idx === 0}        onClick={() => onMove(idx, -1)} className="text-neutral-400 hover:text-neutral-600 disabled:opacity-30"><ChevronUp className="h-4 w-4" /></button>
-                    <button type="button" disabled={idx === total - 1} onClick={() => onMove(idx, +1)} className="text-neutral-400 hover:text-neutral-600 disabled:opacity-30"><ChevronDown className="h-4 w-4" /></button>
-                    <button type="button" onClick={onRemove} className="text-neutral-400 hover:text-red-500"><X className="h-4 w-4" /></button>
+                    <button type="button" disabled={idx === 0}        onClick={() => onMove(idx, -1)} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 disabled:opacity-30"><ChevronUp className="h-4 w-4" /></button>
+                    <button type="button" disabled={idx === total - 1} onClick={() => onMove(idx, +1)} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 disabled:opacity-30"><ChevronDown className="h-4 w-4" /></button>
+                    <button type="button" onClick={onRemove} className="text-neutral-500 dark:text-neutral-400 hover:text-red-500"><X className="h-4 w-4" /></button>
                 </div>
             </div>
 
             {/* Button text (label) */}
             <div>
-                <label className="block text-xs text-neutral-500 mb-1">{t('whatsapp.templates_button_label')} <span className="text-red-500">*</span> <span className="text-neutral-400">{t('whatsapp.templates_max_25_chars')}</span></label>
+                <label className="block text-xs text-neutral-500 dark:text-neutral-400 mb-1">{t('whatsapp.templates_button_label')} <span className="text-red-500">*</span> <span className="text-neutral-500 dark:text-neutral-400">{t('whatsapp.templates_max_25_chars')}</span></label>
                 <input
                     type="text"
                     value={btn.text ?? ''}
@@ -372,7 +372,7 @@ function ButtonRow({ btn, idx, total, onChange, onRemove, onMove }) {
             {btn.type === 'URL' && (
                 <div className="space-y-2">
                     <div>
-                        <label className="block text-xs text-neutral-500 mb-1">URL <span className="text-red-500">*</span> <span className="text-neutral-400">{t('whatsapp.templates_url_hint', { token: '{{1}}' })}</span></label>
+                        <label className="block text-xs text-neutral-500 dark:text-neutral-400 mb-1">URL <span className="text-red-500">*</span> <span className="text-neutral-500 dark:text-neutral-400">{t('whatsapp.templates_url_hint', { token: '{{1}}' })}</span></label>
                         <input
                             type="text"
                             value={btn.url ?? ''}
@@ -383,7 +383,7 @@ function ButtonRow({ btn, idx, total, onChange, onRemove, onMove }) {
                     </div>
                     {phs.length > 0 && (
                         <div>
-                            <label className="block text-xs text-neutral-500 mb-1">{t('whatsapp.templates_url_example_label', { token: '{{1}}' })}</label>
+                            <label className="block text-xs text-neutral-500 dark:text-neutral-400 mb-1">{t('whatsapp.templates_url_example_label', { token: '{{1}}' })}</label>
                             <input
                                 type="text"
                                 value={exampleValues[0] ?? ''}
@@ -398,7 +398,7 @@ function ButtonRow({ btn, idx, total, onChange, onRemove, onMove }) {
 
             {btn.type === 'PHONE_NUMBER' && (
                 <div>
-                    <label className="block text-xs text-neutral-500 mb-1">{t('whatsapp.templates_phone_number_label')} <span className="text-red-500">*</span> <span className="text-neutral-400">{t('whatsapp.templates_phone_hint')}</span></label>
+                    <label className="block text-xs text-neutral-500 dark:text-neutral-400 mb-1">{t('whatsapp.templates_phone_number_label')} <span className="text-red-500">*</span> <span className="text-neutral-500 dark:text-neutral-400">{t('whatsapp.templates_phone_hint')}</span></label>
                     <input
                         type="text"
                         value={btn.phone_number ?? ''}
@@ -471,7 +471,7 @@ function ButtonsBlock({ comp, onChange, onRemove }) {
                         >
                             <Plus className="h-3 w-3" /> {t(labelKey)}
                             {canAdd(type) && (
-                                <span className="text-neutral-400">
+                                <span className="text-neutral-500 dark:text-neutral-400">
                                     ({(typeCounts[type] ?? 0)}/{BTN_LIMITS[type]})
                                 </span>
                             )}
@@ -479,7 +479,7 @@ function ButtonsBlock({ comp, onChange, onRemove }) {
                     ))}
                 </div>
 
-                <p className="text-xs text-neutral-400 text-right">{t('whatsapp.templates_buttons_used', { used: totalUsed, max: BTN_TOTAL_MAX })}</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 text-right">{t('whatsapp.templates_buttons_used', { used: totalUsed, max: BTN_TOTAL_MAX })}</p>
             </div>
         </SectionCard>
     );
@@ -583,7 +583,7 @@ export default function WhatsappTemplateEditor({ template, phoneNumbers = [] }) 
             <Head title={isEdit ? t('whatsapp.templates_edit_head_title') : t('whatsapp.templates_new_head_title')} />
             <div className="max-w-5xl space-y-6">
                 <div className="flex items-center gap-3">
-                    <a href={route('client.whatsapp.templates.index')} className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
+                    <a href={route('client.whatsapp.templates.index')} aria-label={t('common.back')} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
                         <ArrowLeft className="h-5 w-5" />
                     </a>
                     <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
@@ -610,10 +610,11 @@ export default function WhatsappTemplateEditor({ template, phoneNumbers = [] }) 
 
                         {phoneNumbers.length > 0 && (
                             <div>
-                                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                                <label htmlFor="wa-template-phone" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                                     {t('whatsapp.templates_whatsapp_number')} <span className="text-red-500">*</span>
                                 </label>
                                 <select
+                                    id="wa-template-phone"
                                     value={phoneNumberId}
                                     onChange={e => setPhoneNumberId(e.target.value)}
                                     className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm"
@@ -624,7 +625,7 @@ export default function WhatsappTemplateEditor({ template, phoneNumbers = [] }) 
                                         </option>
                                     ))}
                                 </select>
-                                <p className="mt-1 text-xs text-neutral-400">{t('whatsapp.templates_phone_select_hint')}</p>
+                                <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">{t('whatsapp.templates_phone_select_hint')}</p>
                             </div>
                         )}
 
@@ -641,14 +642,15 @@ export default function WhatsappTemplateEditor({ template, phoneNumbers = [] }) 
                                     disabled={isEdit}
                                     className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm font-mono disabled:opacity-60 disabled:cursor-not-allowed"
                                 />
-                                <p className="mt-1 text-xs text-neutral-400">{isEdit ? t('whatsapp.templates_name_locked_hint') : t('whatsapp.templates_name_format_hint')}</p>
+                                <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">{isEdit ? t('whatsapp.templates_name_locked_hint') : t('whatsapp.templates_name_format_hint')}</p>
                                 {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                                <label htmlFor="wa-template-language" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                                     {t('whatsapp.templates_language')} <span className="text-red-500">*</span>
                                 </label>
                                 <select
+                                    id="wa-template-language"
                                     value={language}
                                     onChange={e => setLanguage(e.target.value)}
                                     disabled={isEdit}
@@ -745,7 +747,7 @@ export default function WhatsappTemplateEditor({ template, phoneNumbers = [] }) 
                     <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-3">
                         <TemplatePreview components={components} />
                     </div>
-                    <p className="text-xs text-neutral-400">{t('whatsapp.templates_preview_fallback_note', { token: '{{n}}' })}</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('whatsapp.templates_preview_fallback_note', { token: '{{n}}' })}</p>
                 </aside>
                 </div>
             </div>

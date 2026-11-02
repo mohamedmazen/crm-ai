@@ -183,7 +183,7 @@ function SetupGuide({ providerKey }) {
                         ))}
                     </ol>
                     {guide.link && (
-                        <a href={guide.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                        <a href={guide.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-medium text-blue-700 dark:text-blue-400 hover:underline">
                             {guide.linkLabel} →
                         </a>
                     )}
@@ -309,7 +309,7 @@ function ProviderCard({ provider }) {
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                     {provider.configured && (
-                        <span className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
+                        <span className="flex items-center gap-1 text-xs text-green-700 dark:text-green-400">
                             <CheckCircle className="h-3.5 w-3.5" /> {t('sms.configured')}
                         </span>
                     )}
@@ -324,11 +324,12 @@ function ProviderCard({ provider }) {
             <form onSubmit={handleSubmit} className="space-y-3">
                 {(provider.fields ?? []).map(field => (
                     <div key={field.key}>
-                        <label className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+                        <label htmlFor={`sms-${provider.provider}-${field.key}`} className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
                             {field.label}{field.required && ' *'}
                         </label>
                         <div className="relative mt-1">
                             <input
+                                id={`sms-${provider.provider}-${field.key}`}
                                 type={field.type === 'password' && !showSecrets[field.key] ? 'password' : 'text'}
                                 value={data.credentials[field.key] ?? ''}
                                 onChange={e => setData('credentials', { ...data.credentials, [field.key]: e.target.value })}
@@ -339,7 +340,8 @@ function ProviderCard({ provider }) {
                                 <button
                                     type="button"
                                     onClick={() => setShowSecrets(s => ({ ...s, [field.key]: !s[field.key] }))}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
+                                    aria-label={showSecrets[field.key] ? t('common.hide', { defaultValue: 'Hide' }) : t('common.show', { defaultValue: 'Show' })}
+                                    className="absolute right-1 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center text-neutral-500 dark:text-neutral-400 hover:text-neutral-600"
                                 >
                                     {showSecrets[field.key] ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                 </button>
@@ -352,8 +354,9 @@ function ProviderCard({ provider }) {
                 ))}
 
                 <div>
-                    <label className="text-xs font-medium text-neutral-500 dark:text-neutral-400">{t('sms.sender_id')}</label>
+                    <label htmlFor={`sms-${provider.provider}-sender_id`} className="text-xs font-medium text-neutral-500 dark:text-neutral-400">{t('sms.sender_id')}</label>
                     <input
+                        id={`sms-${provider.provider}-sender_id`}
                         type="text"
                         value={data.sender_id}
                         onChange={e => setData('sender_id', e.target.value)}
@@ -384,7 +387,8 @@ function ProviderCard({ provider }) {
                         <button
                             type="button"
                             onClick={handleDelete}
-                            className="rounded-lg border border-neutral-200 dark:border-neutral-700 px-3 py-2 text-neutral-500 hover:text-red-500 hover:border-red-300 transition"
+                            aria-label={t('common.delete', { defaultValue: 'Delete' })}
+                            className="rounded-lg border border-neutral-200 dark:border-neutral-700 px-3 py-2 text-neutral-500 dark:text-neutral-400 hover:text-red-500 hover:border-red-300 transition"
                         >
                             <Trash2 className="h-4 w-4" />
                         </button>

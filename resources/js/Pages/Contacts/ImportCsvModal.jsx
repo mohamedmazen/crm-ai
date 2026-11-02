@@ -300,13 +300,13 @@ export default function ImportCsvModal({ open, onClose, tags = [], segments = []
                 <div className="flex items-start justify-between border-b border-neutral-200 dark:border-neutral-700 px-6 py-4">
                     <div>
                         <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
-                            <FileSpreadsheet className="h-5 w-5 text-brand-600" />
+                            <FileSpreadsheet className="h-5 w-5 text-brand-600 dark:text-brand-400" />
                             {t('contacts_import.title')}
                         </h3>
                         <p className="mt-0.5 text-sm text-neutral-500 dark:text-neutral-400">{t('contacts_import.subtitle')}</p>
                     </div>
                     {step !== 'importing' && (
-                        <button type="button" onClick={() => closeModal(step === 'done')} className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
+                        <button type="button" onClick={() => closeModal(step === 'done')} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
                             <X className="h-5 w-5" />
                         </button>
                     )}
@@ -316,8 +316,8 @@ export default function ImportCsvModal({ open, onClose, tags = [], segments = []
                 <div className="flex items-center gap-2 px-6 py-3 border-b border-neutral-100 dark:border-neutral-800">
                     {steps.map((s, i) => (
                         <div key={s.key} className="flex items-center gap-2">
-                            <div className={`flex items-center gap-1.5 text-xs font-medium ${i <= stepIndex ? 'text-brand-600 dark:text-brand-400' : 'text-neutral-400 dark:text-neutral-500'}`}>
-                                <span className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] ${i < stepIndex ? 'bg-brand-600 text-white' : i === stepIndex ? 'border-2 border-brand-600 text-brand-600 dark:text-brand-400' : 'border border-neutral-300 dark:border-neutral-600'}`}>
+                            <div className={`flex items-center gap-1.5 text-xs font-medium ${i <= stepIndex ? 'text-brand-600 dark:text-brand-400' : 'text-neutral-500 dark:text-neutral-400'}`}>
+                                <span className={`flex h-5 w-5 items-center justify-center rounded-full text-3xs ${i < stepIndex ? 'bg-brand-600 text-white' : i === stepIndex ? 'border-2 border-brand-600 text-brand-600 dark:text-brand-400' : 'border border-neutral-300 dark:border-neutral-600'}`}>
                                     {i < stepIndex ? '✓' : i + 1}
                                 </span>
                                 {s.label}
@@ -342,7 +342,7 @@ export default function ImportCsvModal({ open, onClose, tags = [], segments = []
                                         : 'border-neutral-300 dark:border-neutral-600 hover:border-brand-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50'}`}
                             >
                                 <div className={`rounded-full p-3 ${dragging ? 'bg-brand-100 dark:bg-brand-900/40' : 'bg-neutral-100 dark:bg-neutral-800'}`}>
-                                    <Upload className={`h-7 w-7 ${dragging ? 'text-brand-600' : 'text-neutral-400'}`} />
+                                    <Upload className={`h-7 w-7 ${dragging ? 'text-brand-600 dark:text-brand-400' : 'text-neutral-500 dark:text-neutral-400'}`} />
                                 </div>
                                 <div>
                                     <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200">{t('contacts_import.drop_title')}</p>
@@ -371,9 +371,9 @@ export default function ImportCsvModal({ open, onClose, tags = [], segments = []
                         <div className="space-y-4">
                             <div className="flex flex-wrap items-center justify-between gap-3">
                                 <div className="flex items-center gap-2 text-sm text-neutral-700 dark:text-neutral-300">
-                                    <FileSpreadsheet className="h-4 w-4 text-brand-600" />
+                                    <FileSpreadsheet className="h-4 w-4 text-brand-600 dark:text-brand-400" />
                                     <span className="font-medium">{fileMeta?.name}</span>
-                                    <span className="text-neutral-400">({prettyBytes(fileMeta?.size ?? 0)})</span>
+                                    <span className="text-neutral-500 dark:text-neutral-400">({prettyBytes(fileMeta?.size ?? 0)})</span>
                                     <span className="rounded-full bg-brand-50 dark:bg-brand-900/30 px-2 py-0.5 text-xs font-medium text-brand-700 dark:text-brand-300">
                                         {t('contacts_import.rows_detected', { count: dataRows.length })}
                                     </span>
@@ -422,7 +422,7 @@ export default function ImportCsvModal({ open, onClose, tags = [], segments = []
                                                                 <option key={f} value={f}>{fieldLabel(f)}</option>
                                                             ))}
                                                         </select>
-                                                        {isDupe && <p className="mt-1 text-[11px] text-amber-600 dark:text-amber-400">{t('contacts_import.duplicate_mapping')}</p>}
+                                                        {isDupe && <p className="mt-1 text-2xs text-amber-700 dark:text-amber-400">{t('contacts_import.duplicate_mapping')}</p>}
                                                     </td>
                                                 </tr>
                                             );
@@ -455,14 +455,14 @@ export default function ImportCsvModal({ open, onClose, tags = [], segments = []
                                     </div>
                                     {tagOptions.length > 0
                                         ? <ChipPicker options={tagOptions.map(name => ({ key: name, label: name }))} selected={applyTagNames} onToggle={toggleApplyTag} />
-                                        : <p className="text-xs text-neutral-400 dark:text-neutral-500">{t('contacts_import.no_tags_hint')}</p>}
+                                        : <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('contacts_import.no_tags_hint')}</p>}
                                 </div>
 
                                 <div>
                                     <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">{t('contacts_import.apply_segments_label')}</p>
                                     {segments.length > 0
                                         ? <ChipPicker options={segments.map(seg => ({ key: seg.id, label: seg.name }))} selected={applySegmentIds} onToggle={toggleApplySegment} />
-                                        : <p className="text-xs text-neutral-400 dark:text-neutral-500">{t('contacts_import.no_segments_hint')}</p>}
+                                        : <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('contacts_import.no_segments_hint')}</p>}
                                 </div>
                             </div>
 
@@ -483,7 +483,7 @@ export default function ImportCsvModal({ open, onClose, tags = [], segments = []
                     {step === 'importing' && (
                         <div className="space-y-5 py-6">
                             <div className="flex items-center justify-center gap-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                                <Loader2 className="h-4 w-4 animate-spin text-brand-600" />
+                                <Loader2 className="h-4 w-4 animate-spin text-brand-600 dark:text-brand-400" />
                                 {t('contacts_import.importing', { processed: progress.processed.toLocaleString(), total: progress.total.toLocaleString() })}
                             </div>
                             <div className="h-3 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
@@ -492,9 +492,9 @@ export default function ImportCsvModal({ open, onClose, tags = [], segments = []
                             <p className="text-center text-xs text-neutral-500 dark:text-neutral-400">{percent}%</p>
                             <div className="grid grid-cols-3 gap-3">
                                 {[
-                                    [t('contacts_import.created'), stats.created, 'text-green-600 dark:text-green-400'],
-                                    [t('contacts_import.updated'), stats.updated, 'text-blue-600 dark:text-blue-400'],
-                                    [t('contacts_import.skipped'), stats.skipped, 'text-amber-600 dark:text-amber-400'],
+                                    [t('contacts_import.created'), stats.created, 'text-green-700 dark:text-green-400'],
+                                    [t('contacts_import.updated'), stats.updated, 'text-blue-700 dark:text-blue-400'],
+                                    [t('contacts_import.skipped'), stats.skipped, 'text-amber-700 dark:text-amber-400'],
                                 ].map(([label, value, color]) => (
                                     <div key={label} className="rounded-lg border border-neutral-200 dark:border-neutral-700 px-3 py-2.5 text-center">
                                         <p className={`text-lg font-semibold ${color}`}>{value.toLocaleString()}</p>
@@ -517,14 +517,14 @@ export default function ImportCsvModal({ open, onClose, tags = [], segments = []
                                 <h4 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
                                     {importError ? t('contacts_import.err_import_failed') : cancelled ? t('contacts_import.cancelled') : t('contacts_import.complete')}
                                 </h4>
-                                {importError && <p className="text-sm text-red-600 dark:text-red-400">{importError}</p>}
+                                {importError && <p className="text-sm text-red-700 dark:text-red-400">{importError}</p>}
                             </div>
 
                             <div className="grid grid-cols-3 gap-3">
                                 {[
-                                    [t('contacts_import.created'), stats.created, 'text-green-600 dark:text-green-400', UserPlus],
-                                    [t('contacts_import.updated'), stats.updated, 'text-blue-600 dark:text-blue-400', RefreshCw],
-                                    [t('contacts_import.skipped'), stats.skipped, 'text-amber-600 dark:text-amber-400', Users],
+                                    [t('contacts_import.created'), stats.created, 'text-green-700 dark:text-green-400', UserPlus],
+                                    [t('contacts_import.updated'), stats.updated, 'text-blue-700 dark:text-blue-400', RefreshCw],
+                                    [t('contacts_import.skipped'), stats.skipped, 'text-amber-700 dark:text-amber-400', Users],
                                 ].map(([label, value, color, Icon]) => (
                                     <div key={label} className="rounded-xl border border-neutral-200 dark:border-neutral-700 px-4 py-4 text-center">
                                         <Icon className={`mx-auto mb-1.5 h-5 w-5 ${color}`} />
@@ -578,7 +578,7 @@ export default function ImportCsvModal({ open, onClose, tags = [], segments = []
                             </button>
                         )}
                         {step === 'importing' && (
-                            <button type="button" onClick={() => { cancelRef.current = true; }} className="rounded-lg border border-red-300 dark:border-red-700 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition">
+                            <button type="button" onClick={() => { cancelRef.current = true; }} className="rounded-lg border border-red-300 dark:border-red-700 px-4 py-2 text-sm text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition">
                                 {t('contacts_import.cancel_import')}
                             </button>
                         )}

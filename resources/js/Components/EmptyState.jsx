@@ -14,13 +14,13 @@ export default function EmptyState({ icon, title, description, action, secondary
     return (
         <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
             {icon && (
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-neutral-100 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500">
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400">
                     {icon}
                 </div>
             )}
-            <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-1">
+            <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-1">
                 {title}
-            </h3>
+            </h2>
             {description && (
                 <p className="text-sm text-neutral-500 dark:text-neutral-400 max-w-sm mb-6">
                     {description}
@@ -33,7 +33,7 @@ export default function EmptyState({ icon, title, description, action, secondary
                             <Link
                                 href={action.href}
                                 method={action.method}
-                                className="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium rounded-soft transition-colors shadow-soft"
+                                className="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium rounded-soft transition-colors shadow-soft"
                             >
                                 {action.label}
                             </Link>
@@ -41,7 +41,7 @@ export default function EmptyState({ icon, title, description, action, secondary
                             <button
                                 type="button"
                                 onClick={action.onClick}
-                                className="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium rounded-soft transition-colors shadow-soft"
+                                className="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium rounded-soft transition-colors shadow-soft"
                             >
                                 {action.label}
                             </button>

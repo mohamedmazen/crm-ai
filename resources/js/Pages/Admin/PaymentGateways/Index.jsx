@@ -5,6 +5,7 @@ import { Head, router, usePage } from '@inertiajs/react';
 import { useForm } from '@inertiajs/react';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
+import { readableTextColor } from '@/lib/contrast';
 
 // Brand marks served from public/images/gateways (Simple Icons). Gateways without
 // a bundled mark fall back to a brand-colored letter tile below.
@@ -39,8 +40,11 @@ function GatewayLogo({ gateway, name }) {
     }
     return (
         <span
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-soft-lg text-sm font-bold text-white"
-            style={{ backgroundColor: GATEWAY_FALLBACK_COLORS[gateway] ?? '#6B7280' }}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-soft-lg text-sm font-bold"
+            style={{
+                backgroundColor: GATEWAY_FALLBACK_COLORS[gateway] ?? '#6B7280',
+                color: readableTextColor(GATEWAY_FALLBACK_COLORS[gateway] ?? '#6B7280'),
+            }}
         >
             {name.charAt(0).toUpperCase()}
         </span>

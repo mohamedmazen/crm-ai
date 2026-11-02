@@ -233,7 +233,7 @@ function GeneralTab({ general, fonts, flash }) {
                                 type="checkbox"
                                 checked={data.security_ip_allowlist_enabled === '1'}
                                 onChange={(e) => setData('security_ip_allowlist_enabled', e.target.checked ? '1' : '0')}
-                                className="h-4 w-4 rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
+                                className="h-4 w-4 rounded border-neutral-300 text-brand-600 dark:text-brand-400 focus:ring-brand-500"
                             />
                             {t('settings.ip_allowlist_enabled') || 'Enable IP allowlist for the admin panel'}
                         </label>
@@ -397,7 +397,7 @@ function ImageUploadWidget({ label, description, accept, currentUrl, uploadRoute
                             type="button"
                             onClick={handleDelete}
                             disabled={deleting || uploading}
-                            className="inline-flex items-center gap-2 rounded-soft border border-red-200 dark:border-red-900 bg-white dark:bg-neutral-800 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition disabled:opacity-50"
+                            className="inline-flex items-center gap-2 rounded-soft border border-red-200 dark:border-red-900 bg-white dark:bg-neutral-800 px-3 py-2 text-sm text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition disabled:opacity-50"
                         >
                             <X className="h-4 w-4" />
                             {t('settings.remove')}
@@ -432,7 +432,7 @@ function AdvancedTab({ settingsByGroup, flash }) {
                     <div className="text-center py-8">
                         <Code2 className="h-10 w-10 mx-auto text-neutral-300 dark:text-neutral-600 mb-3" />
                         <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('settings.no_advanced')}</p>
-                        <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1">{t('settings.no_advanced_desc')}</p>
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">{t('settings.no_advanced_desc')}</p>
                     </div>
                 </Card.Body>
             </Card>
@@ -464,7 +464,7 @@ function AdvancedTab({ settingsByGroup, flash }) {
                 <Card key={group}>
                     <Card.Body className="space-y-3">
                         <div className="flex items-center gap-2 pb-3 border-b border-neutral-100 dark:border-neutral-800">
-                            <Settings2 className="h-4 w-4 text-neutral-400" />
+                            <Settings2 className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
                             <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 capitalize">{group}</h3>
                         </div>
                         {items.map((s) => {
@@ -543,7 +543,7 @@ function FirebaseTab({ firebase, flash }) {
     const field = (label, key, description, placeholder = '') => (
         <div className="space-y-1">
             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">{label}</label>
-            {description && <p className="text-xs text-neutral-400 dark:text-neutral-500">{description}</p>}
+            {description && <p className="text-xs text-neutral-500 dark:text-neutral-400">{description}</p>}
             <input
                 type="text"
                 value={data[key]}
@@ -578,7 +578,7 @@ function FirebaseTab({ firebase, flash }) {
                     <div className="flex items-center justify-between rounded-soft border border-neutral-200 dark:border-neutral-700 px-4 py-3">
                         <div>
                             <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('settings.enable_firebase')}</p>
-                            <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5">{t('settings.enable_firebase_desc')}</p>
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{t('settings.enable_firebase_desc')}</p>
                         </div>
                         <button
                             type="button"

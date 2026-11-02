@@ -24,7 +24,7 @@ const NETWORK_LABELS = { facebook: 'Facebook', instagram: 'Instagram', linkedin:
 
 function StatusBadge({ status }) {
     const { t } = useTranslation();
-    const meta = STATUS_META[status] ?? { labelKey: null, cls: 'bg-neutral-100 text-neutral-500', icon: null };
+    const meta = STATUS_META[status] ?? { labelKey: null, cls: 'bg-neutral-100 text-neutral-600 dark:text-neutral-400', icon: null };
     return (
         <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${meta.cls}`}>
             {meta.icon} {meta.labelKey ? t(meta.labelKey) : status}
@@ -38,7 +38,7 @@ function AccountPill({ acct }) {
             <div className="relative shrink-0">
                 {acct.picture_url
                     ? <img src={acct.picture_url} alt={acct.name} className="h-5 w-5 rounded-full object-cover" />
-                    : <span className="flex h-5 w-5 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-700 text-[9px] font-bold text-neutral-500">
+                    : <span className="flex h-5 w-5 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-700 text-3xs font-bold text-neutral-500 dark:text-neutral-300">
                         {acct.name?.[0]?.toUpperCase() ?? '?'}
                       </span>
                 }
@@ -69,12 +69,12 @@ function PostDetailModal({ post, accountMap, userTz, onClose }) {
                     <div className="flex items-center gap-2 flex-wrap">
                         <StatusBadge status={post.status} />
                         {dateField && (
-                            <span className="flex items-center gap-1 text-xs text-neutral-400">
+                            <span className="flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-400">
                                 <Calendar className="h-3 w-3" /> {formatInTz(dateField, tz)}
                             </span>
                         )}
                     </div>
-                    <button onClick={onClose} className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
+                    <button onClick={onClose} aria-label={t('common.close')} className="inline-flex h-6 w-6 items-center justify-center text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
                         <X className="h-5 w-5" />
                     </button>
                 </div>
@@ -93,7 +93,7 @@ function PostDetailModal({ post, accountMap, userTz, onClose }) {
 
                     {targets.length > 0 && (
                         <div>
-                            <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">{t('social.posted_to')}</p>
+                            <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-2">{t('social.posted_to')}</p>
                             <div className="flex flex-wrap gap-2">
                                 {targets.map((id) => {
                                     const acct = accountMap[id];
@@ -110,14 +110,14 @@ function PostDetailModal({ post, accountMap, userTz, onClose }) {
 
                     {post.publish_results && Object.keys(post.publish_results).length > 0 && (
                         <div>
-                            <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">{t('social.publish_results')}</p>
+                            <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-2">{t('social.publish_results')}</p>
                             <div className="space-y-1.5">
                                 {Object.entries(post.publish_results).map(([accountId, result]) => {
                                     const acct = accountMap[accountId];
                                     return (
                                         <div key={accountId} className="flex items-center justify-between text-xs rounded-lg bg-neutral-50 dark:bg-neutral-800 px-3 py-2">
                                             <span className="text-neutral-600 dark:text-neutral-400">{acct?.name ?? t('social.account_number', { id: accountId })}</span>
-                                            <span className={result.status === 'published' ? 'text-green-600 font-medium' : 'text-red-500 font-medium'}>
+                                            <span className={result.status === 'published' ? 'text-green-700 dark:text-green-400 font-medium' : 'text-red-500 font-medium'}>
                                                 {result.status === 'published' ? t('social.result_published') : t('social.result_failed')}
                                             </span>
                                         </div>
@@ -132,7 +132,7 @@ function PostDetailModal({ post, accountMap, userTz, onClose }) {
                     <div className="flex items-center gap-2">
                         {post.post_url && (
                             <a href={post.post_url} target="_blank" rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-600 hover:text-brand-700 transition">
+                                className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-600 dark:text-brand-400 hover:text-brand-700 transition">
                                 <ExternalLink className="h-4 w-4" /> {t('social.view_on_platform')}
                             </a>
                         )}
@@ -184,7 +184,7 @@ function PostCard({ post, accountMap, userTz, onView, onDelete }) {
                 <div className="relative h-40 bg-neutral-100 dark:bg-neutral-800 shrink-0">
                     <img src={mediaUrls[0]} alt="" className="w-full h-full object-cover" />
                     {mediaUrls.length > 1 && (
-                        <span className="absolute top-2 right-2 flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-[10px] text-white">
+                        <span className="absolute top-2 right-2 flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-3xs text-white">
                             <Image className="h-3 w-3" /> {mediaUrls.length}
                         </span>
                     )}
@@ -198,7 +198,7 @@ function PostCard({ post, accountMap, userTz, onView, onDelete }) {
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                     <StatusBadge status={post.status} />
                     {dateField && (
-                        <span className="flex items-center gap-1 text-[11px] text-neutral-400">
+                        <span className="flex items-center gap-1 text-2xs text-neutral-500 dark:text-neutral-400">
                             <Clock className="h-3 w-3 shrink-0" /> {formatInTz(dateField, tz)}
                         </span>
                     )}
@@ -217,7 +217,7 @@ function PostCard({ post, accountMap, userTz, onView, onDelete }) {
                             const acct = accountMap[id];
                             return acct ? <AccountPill key={id} acct={acct} /> : null;
                         })}
-                        {targets.length > 3 && <span className="text-[11px] text-neutral-400 self-center">{t('social.more_count', { count: targets.length - 3 })}</span>}
+                        {targets.length > 3 && <span className="text-2xs text-neutral-500 dark:text-neutral-400 self-center">{t('social.more_count', { count: targets.length - 3 })}</span>}
                     </div>
                 )}
 
@@ -241,7 +241,7 @@ function PostCard({ post, accountMap, userTz, onView, onDelete }) {
                         <button
                             onClick={() => action('publish', t('social.confirm_publish_now'), () => route('client.social.posts.publish-now', post.id))}
                             disabled={actioning === 'publish'}
-                            className="inline-flex items-center gap-1 rounded-lg bg-brand-600 px-2.5 py-1 text-[11px] font-medium text-white hover:bg-brand-700 disabled:opacity-60 transition"
+                            className="inline-flex items-center gap-1 rounded-lg bg-brand-600 px-2.5 py-1 text-2xs font-medium text-white hover:bg-brand-700 disabled:opacity-60 transition"
                         >
                             <Zap className="h-3 w-3" /> {actioning === 'publish' ? t('social.publishing') : t('social.publish_now')}
                         </button>
@@ -250,20 +250,21 @@ function PostCard({ post, accountMap, userTz, onView, onDelete }) {
                         <button
                             onClick={() => action('cancel', t('social.confirm_cancel_schedule'), () => route('client.social.posts.cancel', post.id))}
                             disabled={actioning === 'cancel'}
-                            className="inline-flex items-center gap-1 rounded-lg border border-amber-300 px-2.5 py-1 text-[11px] font-medium text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20 disabled:opacity-60 transition"
+                            className="inline-flex items-center gap-1 rounded-lg border border-amber-300 dark:border-amber-800 px-2.5 py-1 text-2xs font-medium text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 disabled:opacity-60 transition"
                         >
                             <Ban className="h-3 w-3" /> {actioning === 'cancel' ? t('social.cancelling') : t('social.cancel_schedule')}
                         </button>
                     )}
                     {post.post_url && (
                         <a href={post.post_url} target="_blank" rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 rounded-lg border border-neutral-200 dark:border-neutral-700 px-2.5 py-1 text-[11px] font-medium text-neutral-500 hover:text-brand-600 transition">
+                            className="inline-flex items-center gap-1 rounded-lg border border-neutral-200 dark:border-neutral-700 px-2.5 py-1 text-2xs font-medium text-neutral-500 dark:text-neutral-400 hover:text-brand-600 transition">
                             <ExternalLink className="h-3 w-3" /> {t('social.view')}
                         </a>
                     )}
                     {canDelete && (
                         <button onClick={() => onDelete(post.id)}
-                            className="ml-auto inline-flex items-center gap-1 rounded-lg border border-neutral-200 dark:border-neutral-700 px-2 py-1 text-[11px] text-neutral-400 hover:text-red-500 hover:border-red-300 transition">
+                            aria-label={t('common.delete')}
+                            className="ml-auto inline-flex items-center gap-1 rounded-lg border border-neutral-200 dark:border-neutral-700 px-2 py-1 text-2xs text-neutral-500 dark:text-neutral-400 hover:text-red-500 hover:border-red-300 transition">
                             <Trash2 className="h-3 w-3" />
                         </button>
                     )}
@@ -306,7 +307,7 @@ export default function PostsIndex({ posts, accounts, filters }) {
                     {(
                         <div className="flex items-center gap-2">
                             <button onClick={() => setPlannerOpen(true)}
-                                className="ai-glow inline-flex items-center gap-1.5 rounded-lg border border-brand-600 px-3 py-2 text-sm font-medium text-brand-600 hover:bg-brand-50 dark:hover:bg-brand-900/20 transition">
+                                className="ai-glow inline-flex items-center gap-1.5 rounded-lg border border-brand-600 px-3 py-2 text-sm font-medium text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-900/20 transition">
                                 <Sparkles className="h-4 w-4" /> {t('social.ai_plan')}
                             </button>
                             <Link href={route('client.social.composer')}
@@ -323,18 +324,19 @@ export default function PostsIndex({ posts, accounts, filters }) {
 
                 {/* Filters */}
                 <div className="flex flex-wrap items-center gap-3 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3">
-                    <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider shrink-0">{t('social.filter_by')}</span>
+                    <span className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider shrink-0">{t('social.filter_by')}</span>
                     <div className="flex flex-wrap gap-2 flex-1">
                         <div className="relative">
                             <select
                                 value={filters.status ?? ''}
                                 onChange={(e) => handleFilter('status', e.target.value)}
+                                aria-label={t('social.filter_status', { defaultValue: 'Filter by status' })}
                                 className="appearance-none rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 pl-3 pr-8 py-1.5 text-sm font-medium text-neutral-700 dark:text-neutral-300 focus:outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer"
                             >
                                 <option value="">{t('social.status_all')}</option>
                                 {Object.entries(STATUS_META).map(([k, v]) => <option key={k} value={k}>{t(v.labelKey)}</option>)}
                             </select>
-                            <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400">
+                            <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-500 dark:text-neutral-400">
                                 <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" /></svg>
                             </span>
                         </div>
@@ -342,25 +344,26 @@ export default function PostsIndex({ posts, accounts, filters }) {
                             <select
                                 value={filters.network ?? ''}
                                 onChange={(e) => handleFilter('network', e.target.value)}
+                                aria-label={t('social.filter_platform', { defaultValue: 'Filter by platform' })}
                                 className="appearance-none rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 pl-3 pr-8 py-1.5 text-sm font-medium text-neutral-700 dark:text-neutral-300 focus:outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer"
                             >
                                 <option value="">{t('social.all_platforms')}</option>
                                 {NETWORKS.map((n) => <option key={n} value={n}>{NETWORK_LABELS[n]}</option>)}
                             </select>
-                            <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400">
+                            <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-500 dark:text-neutral-400">
                                 <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" /></svg>
                             </span>
                         </div>
                         {(filters.status || filters.network) && (
                             <button
                                 onClick={() => router.get(route('client.social.posts.index'), {}, { replace: true })}
-                                className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
+                                className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-neutral-500 dark:text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
                             >
                                 <X className="h-3.5 w-3.5" /> {t('social.clear')}
                             </button>
                         )}
                     </div>
-                    <span className="text-xs text-neutral-400 shrink-0">{t('social.post_count', { count: posts.total })}</span>
+                    <span className="text-xs text-neutral-500 dark:text-neutral-400 shrink-0">{t('social.post_count', { count: posts.total })}</span>
                 </div>
 
                 {/* Cards */}
@@ -395,7 +398,7 @@ export default function PostsIndex({ posts, accounts, filters }) {
                                     className={`px-3 py-1.5 rounded text-sm border ${link.active ? 'bg-brand-600 text-white border-brand-600' : 'border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800'}`}
                                     dangerouslySetInnerHTML={{ __html: link.label }} />
                             ) : (
-                                <span key={i} className="px-3 py-1.5 rounded text-sm border border-neutral-200 dark:border-neutral-700 text-neutral-300 dark:text-neutral-600 opacity-40 cursor-not-allowed"
+                                <span key={i} className="px-3 py-1.5 rounded text-sm border border-neutral-200 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400 cursor-not-allowed"
                                     dangerouslySetInnerHTML={{ __html: link.label }} />
                             )
                         ))}

@@ -64,7 +64,7 @@ function CopyButton({ text }) {
     });
     return (
         <button type="button" onClick={copy} title={t('inbox.copy')}
-            className="shrink-0 rounded-md p-1.5 text-neutral-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-brand-950/30 dark:hover:text-brand-400 transition-all">
+            className="shrink-0 rounded-md p-1.5 text-neutral-500 dark:text-neutral-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-brand-950/30 dark:hover:text-brand-400 transition-all">
             {copied ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
         </button>
     );
@@ -74,7 +74,7 @@ function StatusBadge({ status }) {
     const { t } = useTranslation();
     const map = {
         active:   'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:ring-emerald-800',
-        inactive: 'bg-neutral-100 text-neutral-500 ring-1 ring-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:ring-neutral-700',
+        inactive: 'bg-neutral-100 text-neutral-600 ring-1 ring-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:ring-neutral-700',
         error:    'bg-red-50 text-red-700 ring-1 ring-red-200 dark:bg-red-900/30 dark:text-red-300 dark:ring-red-800',
     };
     const dot = {
@@ -107,7 +107,7 @@ function ChannelCard({ icon: Icon, iconBg, title, count, emptyText = null, child
                     <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 text-sm">{title}</h3>
                 </div>
                 {count != null && (
-                    <span className={`ml-auto text-xs font-medium px-2 py-0.5 rounded-full ${count > 0 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'}`}>
+                    <span className={`ml-auto text-xs font-medium px-2 py-0.5 rounded-full ${count > 0 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400'}`}>
                         {t('inbox.count_connected', { count })}
                     </span>
                 )}
@@ -118,7 +118,7 @@ function ChannelCard({ icon: Icon, iconBg, title, count, emptyText = null, child
                         <div className="mx-auto mb-3 rounded-2xl w-12 h-12 flex items-center justify-center bg-white dark:bg-neutral-800 shadow-sm border border-neutral-100 dark:border-neutral-700">
                             <Icon className="h-6 w-6" />
                         </div>
-                        <p className="text-sm text-neutral-400 dark:text-neutral-500">{emptyText}</p>
+                        <p className="text-sm text-neutral-500 dark:text-neutral-400">{emptyText}</p>
                     </div>
                 )}
             </div>
@@ -152,6 +152,7 @@ function ChatbotSelector({ channelAccountId, currentChatbotId, chatbots }) {
                     value={value}
                     onChange={handleChange}
                     disabled={saving}
+                    aria-label={t('inbox.assign_chatbot', { defaultValue: 'Assign chatbot' })}
                     className="w-full appearance-none rounded-lg border border-neutral-200 dark:border-neutral-600 bg-white dark:bg-neutral-800 pl-2.5 pr-7 py-1.5 text-xs disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-400 transition"
                 >
                     <option value="">{t('inbox.no_chatbot')}</option>
@@ -159,9 +160,9 @@ function ChatbotSelector({ channelAccountId, currentChatbotId, chatbots }) {
                         <option key={bot.id} value={String(bot.id)}>{bot.name}</option>
                     ))}
                 </select>
-                <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-neutral-400" />
+                <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-neutral-500 dark:text-neutral-400" />
             </div>
-            {saving && <span className="text-xs text-neutral-400 shrink-0">{t('inbox.saving')}</span>}
+            {saving && <span className="text-xs text-neutral-500 dark:text-neutral-400 shrink-0">{t('inbox.saving')}</span>}
         </div>
     );
 }
@@ -179,9 +180,9 @@ const NAME_STATUS = {
 };
 
 const QUALITY_COLOR = {
-    GREEN:  'text-emerald-600 dark:text-emerald-400',
+    GREEN:  'text-emerald-700 dark:text-emerald-400',
     YELLOW: 'text-amber-500 dark:text-amber-400',
-    RED:    'text-red-500 dark:text-red-400',
+    RED:    'text-red-600 dark:text-red-400',
 };
 
 function NameStatusBadge({ status }) {
@@ -190,7 +191,7 @@ function NameStatusBadge({ status }) {
     if (!info) return null;
     const Icon = info.icon;
     return (
-        <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${info.color}`}>
+        <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-3xs font-medium ${info.color}`}>
             {Icon && <Icon className="h-2.5 w-2.5 shrink-0" />}
             {t(info.labelKey)}
         </span>
@@ -227,10 +228,10 @@ function PhoneStatusCard({ num, wabaId, onRefreshed }) {
         if (nameStatus === 'PENDING_REVIEW') return { label: t('inbox.overall_pending_review'), color: 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300', dot: 'bg-amber-400' };
         if (nameStatus === 'DECLINED')       return { label: t('inbox.overall_name_declined'),  color: 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300',         dot: 'bg-red-500'  };
         if (qualityRating === 'RED')         return { label: t('inbox.overall_quality_issue'),  color: 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300',         dot: 'bg-red-500'  };
-        if (codeStatus === 'NOT_VERIFIED')   return { label: t('inbox.overall_not_verified'),   color: 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400', dot: 'bg-neutral-400' };
+        if (codeStatus === 'NOT_VERIFIED')   return { label: t('inbox.overall_not_verified'),   color: 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400', dot: 'bg-neutral-400' };
         if (nameStatus === 'APPROVED' || nameStatus === 'AVAILABLE_WITHOUT_MOCK_UP')
             return { label: t('common.active'), color: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300', dot: 'bg-emerald-500' };
-        return { label: t('inbox.overall_unknown'), color: 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400', dot: 'bg-neutral-400' };
+        return { label: t('inbox.overall_unknown'), color: 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400', dot: 'bg-neutral-400' };
     })();
 
     const refresh = async () => {
@@ -277,22 +278,22 @@ function PhoneStatusCard({ num, wabaId, onRefreshed }) {
         <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/60 overflow-hidden">
             <div className="flex items-start gap-3 px-3.5 py-3">
                 <div className="mt-0.5 rounded-lg bg-green-100 dark:bg-green-900/30 p-1.5 shrink-0">
-                    <Phone className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
+                    <Phone className="h-3.5 w-3.5 text-green-700 dark:text-green-400" />
                 </div>
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-semibold text-sm text-neutral-900 dark:text-neutral-100">
                             {data.display_phone ?? data.display_phone_number ?? '—'}
                         </span>
-                        <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${overallStatus.color}`}>
+                        <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-3xs font-medium ${overallStatus.color}`}>
                             <span className={`h-1.5 w-1.5 rounded-full ${overallStatus.dot}`} />
                             {overallStatus.label}
                         </span>
                         {qualityRating && (
-                            <span className={`text-xs font-medium ${QUALITY_COLOR[qualityRating] ?? 'text-neutral-400'}`}>{qualityRating}</span>
+                            <span className={`text-xs font-medium ${QUALITY_COLOR[qualityRating] ?? 'text-neutral-500 dark:text-neutral-400'}`}>{qualityRating}</span>
                         )}
                         {accountMode && (
-                            <span className="inline-flex items-center gap-1 text-[10px] text-neutral-400">
+                            <span className="inline-flex items-center gap-1 text-3xs text-neutral-500 dark:text-neutral-400">
                                 {accountMode === 'LIVE' ? <Wifi className="h-2.5 w-2.5" /> : <WifiOff className="h-2.5 w-2.5" />}
                                 {accountMode}
                             </span>
@@ -303,33 +304,33 @@ function PhoneStatusCard({ num, wabaId, onRefreshed }) {
                         {nameStatus && <NameStatusBadge status={nameStatus} />}
                     </div>
                     {nameStatus === 'PENDING_REVIEW' && requestedName && requestedName !== verifiedName && (
-                        <div className="mt-1 flex items-center gap-1 text-[10px] text-amber-600 dark:text-amber-400">
+                        <div className="mt-1 flex items-center gap-1 text-3xs text-amber-700 dark:text-amber-400">
                             <Clock className="h-3 w-3 shrink-0" />
                             <span>{t('inbox.requested_label')} <strong>{requestedName}</strong> {t('inbox.under_review_suffix')}</span>
                         </div>
                     )}
                     {nameStatus === 'DECLINED' && (
-                        <div className="mt-1 flex items-center gap-1 text-[10px] text-red-600 dark:text-red-400">
+                        <div className="mt-1 flex items-center gap-1 text-3xs text-red-700 dark:text-red-400">
                             <ShieldAlert className="h-3 w-3 shrink-0" />
                             <span>{t('inbox.name_declined_submit_new')}</span>
                         </div>
                     )}
-                    <div className="font-mono text-[10px] text-neutral-400 mt-0.5">{t('inbox.id_label')} {phoneId}</div>
+                    <div className="font-mono text-3xs text-neutral-500 dark:text-neutral-400 mt-0.5">{t('inbox.id_label')} {phoneId}</div>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
                     <button type="button" onClick={refresh} disabled={refreshing} title={t('inbox.refresh_status_meta')}
-                        className="p-1.5 rounded-lg text-neutral-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-brand-950/30 disabled:opacity-50 transition">
+                        className="p-1.5 rounded-lg text-neutral-500 dark:text-neutral-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-brand-950/30 disabled:opacity-50 transition">
                         <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`} />
                     </button>
                     <button type="button" onClick={() => { setShowNameForm(v => !v); setNameMsg(null); }} title={t('inbox.change_display_name')}
-                        className={`p-1.5 rounded-lg transition ${showNameForm ? 'bg-brand-100 dark:bg-brand-900/30 text-brand-600' : 'text-neutral-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-brand-950/30'}`}>
+                        className={`p-1.5 rounded-lg transition ${showNameForm ? 'bg-brand-100 dark:bg-brand-900/30 text-brand-600' : 'text-neutral-500 dark:text-neutral-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-brand-950/30'}`}>
                         <Edit3 className="h-3.5 w-3.5" />
                     </button>
                 </div>
             </div>
 
             {nameMsg && (
-                <div className={`flex items-start gap-2 px-3.5 py-2 text-xs border-t ${nameMsg.type === 'success' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border-emerald-100 dark:border-emerald-900/30' : 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-100 dark:border-red-900/30'}`}>
+                <div className={`flex items-start gap-2 px-3.5 py-2 text-xs border-t ${nameMsg.type === 'success' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border-emerald-100 dark:border-emerald-900/30' : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border-red-100 dark:border-red-900/30'}`}>
                     {nameMsg.type === 'success' ? <Check className="h-3.5 w-3.5 mt-0.5 shrink-0" /> : <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" />}
                     <span className="flex-1">{nameMsg.text}</span>
                     <button onClick={() => setNameMsg(null)}><X className="h-3.5 w-3.5 opacity-50 hover:opacity-100" /></button>
@@ -338,10 +339,10 @@ function PhoneStatusCard({ num, wabaId, onRefreshed }) {
 
             {showNameForm && (
                 <div className="px-3.5 pb-3.5 pt-2.5 border-t border-neutral-200 dark:border-neutral-700 space-y-2">
-                    <p className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider flex items-center gap-1">
+                    <p className="text-3xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider flex items-center gap-1">
                         <Edit3 className="h-3 w-3" /> {t('inbox.change_display_name')}
                     </p>
-                    <p className="text-[10px] text-neutral-400 leading-relaxed">
+                    <p className="text-3xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
                         {t('inbox.change_display_name_help')}
                     </p>
                     <div className="flex gap-2">
@@ -353,7 +354,7 @@ function PhoneStatusCard({ num, wabaId, onRefreshed }) {
                             {submitting ? t('inbox.submitting') : t('inbox.submit')}
                         </button>
                         <button type="button" onClick={() => { setShowNameForm(false); setNewName(''); }}
-                            className="rounded-lg border border-neutral-300 dark:border-neutral-600 px-2 py-1.5 text-xs text-neutral-500 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition">
+                            className="rounded-lg border border-neutral-300 dark:border-neutral-600 px-2 py-1.5 text-xs text-neutral-500 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition">
                             {t('common.cancel')}
                         </button>
                     </div>
@@ -366,7 +367,7 @@ function PhoneStatusCard({ num, wabaId, onRefreshed }) {
 function CodeField({ label, value, icon: Icon }) {
     return (
         <div className="rounded-xl bg-neutral-50 dark:bg-neutral-800/60 border border-neutral-200 dark:border-neutral-700 px-3.5 py-2.5">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400 mb-1.5 flex items-center gap-1.5">
+            <p className="text-3xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1.5 flex items-center gap-1.5">
                 {Icon && <Icon className="h-3 w-3" />} {label}
             </p>
             <div className="flex items-center gap-2">
@@ -465,6 +466,7 @@ function WabaCard({ waba, webhookGlobalUrl, webhookBaseUrl, webhookToken, channe
                         </div>
                     ) : (
                         <button onClick={() => setConfirmDelete(true)}
+                            aria-label={t('inbox.remove_waba')}
                             className="rounded-lg border border-red-200 dark:border-red-800 p-1.5 text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 hover:text-red-600 transition"
                             title={t('inbox.remove_waba')}>
                             <Trash2 className="h-3.5 w-3.5" />
@@ -474,7 +476,7 @@ function WabaCard({ waba, webhookGlobalUrl, webhookBaseUrl, webhookToken, channe
             </div>
 
             {confirmDelete && (
-                <div className="px-4 py-2.5 flex items-start gap-2 text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/20 border-b border-red-100 dark:border-red-900/30">
+                <div className="px-4 py-2.5 flex items-start gap-2 text-xs text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/20 border-b border-red-100 dark:border-red-900/30">
                     <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
                     <span>{t('inbox.remove_waba_warning')}</span>
                 </div>
@@ -507,7 +509,7 @@ function WabaCard({ waba, webhookGlobalUrl, webhookBaseUrl, webhookToken, channe
                     <div className="flex items-center justify-between mb-3">
                         <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider flex items-center gap-1.5">
                             <Phone className="h-3 w-3" /> {t('inbox.phone_numbers')}
-                            <span className="ml-1 rounded-full bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 text-[10px] font-semibold text-neutral-600 dark:text-neutral-300">{phoneList.length}</span>
+                            <span className="ml-1 rounded-full bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 text-3xs font-semibold text-neutral-600 dark:text-neutral-300">{phoneList.length}</span>
                         </p>
                         <button onClick={syncPhones} disabled={syncingPhones}
                             className="flex items-center gap-1 text-xs text-brand-600 dark:text-brand-400 hover:text-brand-700 disabled:opacity-60 font-medium transition">
@@ -541,7 +543,7 @@ function WabaCard({ waba, webhookGlobalUrl, webhookBaseUrl, webhookToken, channe
                     ) : (
                         <div className="rounded-xl border border-dashed border-neutral-200 dark:border-neutral-700 py-6 text-center">
                             <Phone className="h-5 w-5 text-neutral-300 dark:text-neutral-600 mx-auto mb-2" />
-                            <p className="text-xs text-neutral-400">{t('inbox.no_phone_numbers')}</p>
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('inbox.no_phone_numbers')}</p>
                         </div>
                     )}
                 </div>
@@ -616,7 +618,7 @@ function WhatsAppSection({ wabas, webhookGlobalUrl, webhookBaseUrl, webhookToken
                     <div className="mx-auto mb-3 rounded-2xl w-12 h-12 flex items-center justify-center bg-green-100 dark:bg-green-900/30 opacity-60">
                         <WhatsAppLogo className="h-6 w-6" />
                     </div>
-                    <p className="text-sm text-neutral-400 dark:text-neutral-500">{t('inbox.no_whatsapp_accounts')}</p>
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('inbox.no_whatsapp_accounts')}</p>
                 </div>
             )}
 
@@ -637,7 +639,7 @@ function WhatsAppSection({ wabas, webhookGlobalUrl, webhookBaseUrl, webhookToken
                                     color="green"
                                     onCode={handleWaEmbeddedCode}
                                 />
-                                {waSubmitting && <p className="text-xs text-neutral-400">{t('inbox.connecting_whatsapp')}</p>}
+                                {waSubmitting && <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('inbox.connecting_whatsapp')}</p>}
                                 {waApiError && (
                                     <p className="text-xs text-red-500 flex items-start gap-1.5">
                                         <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" /> {waApiError}
@@ -725,7 +727,7 @@ function AccountRow({ account, channel, chatbots }) {
                         <span className="font-semibold text-sm text-neutral-900 dark:text-neutral-100">{account.display_name}</span>
                         <StatusBadge status={account.status} />
                     </div>
-                    {pageId && <div className="font-mono text-xs text-neutral-400 mt-0.5">{t('inbox.page_id_label')} {pageId}</div>}
+                    {pageId && <div className="font-mono text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{t('inbox.page_id_label')} {pageId}</div>}
                     {chatbots.length > 0 && (
                         <ChatbotSelector
                             channelAccountId={account.id}
@@ -749,14 +751,15 @@ function AccountRow({ account, channel, chatbots }) {
                     ) : (
                         <>
                             <button onClick={runHealthCheck} disabled={health === 'loading'} title={t('inbox.webhook_check')}
-                                className="rounded-lg border border-neutral-200 dark:border-neutral-600 p-1.5 text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-emerald-600 disabled:opacity-60 transition">
+                                className="rounded-lg border border-neutral-200 dark:border-neutral-600 p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-emerald-600 disabled:opacity-60 transition">
                                 <ShieldCheck className="h-3.5 w-3.5" />
                             </button>
-                            <button onClick={runResubscribe} disabled={resubscribing} title={t('inbox.webhook_resubscribe')}
-                                className="rounded-lg border border-neutral-200 dark:border-neutral-600 p-1.5 text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-blue-600 disabled:opacity-60 transition">
+                            <button onClick={runResubscribe} disabled={resubscribing} title={t('inbox.webhook_resubscribe')} aria-label={t('inbox.webhook_resubscribe')}
+                                className="rounded-lg border border-neutral-200 dark:border-neutral-600 p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-blue-600 disabled:opacity-60 transition">
                                 <RefreshCw className={`h-3.5 w-3.5 ${resubscribing ? 'animate-spin' : ''}`} />
                             </button>
                             <button onClick={() => setConfirmDelete(true)}
+                                aria-label={t('inbox.remove_waba')}
                                 className="rounded-lg border border-red-200 dark:border-red-800 p-1.5 text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 hover:text-red-600 transition">
                                 <Trash2 className="h-3.5 w-3.5" />
                             </button>
@@ -765,13 +768,13 @@ function AccountRow({ account, channel, chatbots }) {
                 </div>
             </div>
             {confirmDelete && (
-                <div className="flex items-start gap-2 px-3.5 py-2 text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/20 border-t border-red-100 dark:border-red-900/30">
+                <div className="flex items-start gap-2 px-3.5 py-2 text-xs text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/20 border-t border-red-100 dark:border-red-900/30">
                     <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
                     <span>{t('inbox.account_remove_warning')}</span>
                 </div>
             )}
             {health === 'loading' && (
-                <div className="px-3.5 py-2 text-xs text-neutral-400 border-t border-neutral-200 dark:border-neutral-700">
+                <div className="px-3.5 py-2 text-xs text-neutral-500 dark:text-neutral-400 border-t border-neutral-200 dark:border-neutral-700">
                     {t('inbox.webhook_checking')}
                 </div>
             )}
@@ -779,7 +782,7 @@ function AccountRow({ account, channel, chatbots }) {
                 <div className="px-3.5 py-2.5 space-y-1.5 border-t border-neutral-200 dark:border-neutral-700 bg-white/60 dark:bg-neutral-900/40">
                     <div className="flex items-center justify-between">
                         <span className="text-xs font-semibold text-neutral-600 dark:text-neutral-300">{t('inbox.webhook_health_title')}</span>
-                        <button onClick={() => setHealth(null)} className="text-neutral-400 hover:text-neutral-600 transition">
+                        <button onClick={() => setHealth(null)} className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 transition">
                             <X className="h-3 w-3" />
                         </button>
                     </div>
@@ -793,7 +796,7 @@ function AccountRow({ account, channel, chatbots }) {
                                 {check.ok
                                     ? <Check className="h-3.5 w-3.5 shrink-0 mt-0.5 text-emerald-500" />
                                     : <AlertTriangle className={`h-3.5 w-3.5 shrink-0 mt-0.5 ${check.severity === 'error' ? 'text-red-500' : 'text-amber-500'}`} />}
-                                <span className={check.ok ? 'text-neutral-500 dark:text-neutral-400' : (check.severity === 'error' ? 'text-red-600 dark:text-red-400' : 'text-amber-600 dark:text-amber-400')}>
+                                <span className={check.ok ? 'text-neutral-500 dark:text-neutral-400' : (check.severity === 'error' ? 'text-red-700 dark:text-red-400' : 'text-amber-700 dark:text-amber-400')}>
                                     <strong>{t(`inbox.health_${check.key}`)}:</strong> {check.detail}
                                 </span>
                             </div>
@@ -1075,7 +1078,7 @@ function ManualField({ label, help, ...inputProps }) {
             <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">{label}</label>
             <input {...inputProps}
                 className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-2.5 py-2 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-400" />
-            {help && <p className="mt-1 text-[10px] text-neutral-400 leading-relaxed">{help}</p>}
+            {help && <p className="mt-1 text-3xs text-neutral-500 dark:text-neutral-400 leading-relaxed">{help}</p>}
         </div>
     );
 }
@@ -1142,7 +1145,7 @@ function ManualWhatsappForm({ onSuccess }) {
                 {submitting ? t('inbox.manual_connecting') : t('inbox.manual_connect')}
             </button>
             {warning && (
-                <p className="text-xs text-amber-600 dark:text-amber-400 flex items-start gap-1.5">
+                <p className="text-xs text-amber-700 dark:text-amber-400 flex items-start gap-1.5">
                     <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" /> {warning}
                 </p>
             )}
@@ -1298,7 +1301,7 @@ function AddInstagramForm({ onSuccess, metaConfigIdSocial, metaAppId, metaConfig
                             color="purple"
                             onCode={handleEmbeddedCode}
                         />
-                        {submitting && <p className="text-xs text-neutral-400">{t('inbox.connecting_accounts')}</p>}
+                        {submitting && <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('inbox.connecting_accounts')}</p>}
                         {apiWarnings.length > 0 && (
                             <div className="rounded-lg border border-amber-200 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 px-3 py-2.5 space-y-1.5 text-xs text-amber-700 dark:text-amber-300">
                                 <p className="font-semibold">{t('inbox.connected_with_warnings')}</p>
@@ -1392,7 +1395,7 @@ function AddMessengerForm({ onSuccess, metaConfigIdSocial, metaAppId, metaConfig
                             color="blue"
                             onCode={handleEmbeddedCode}
                         />
-                        {submitting && <p className="text-xs text-neutral-400">{t('inbox.connecting_pages')}</p>}
+                        {submitting && <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('inbox.connecting_pages')}</p>}
                         {apiWarnings.length > 0 && (
                             <div className="rounded-lg border border-amber-200 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 px-3 py-2.5 space-y-1.5 text-xs text-amber-700 dark:text-amber-300">
                                 <p className="font-semibold">{t('inbox.connected_with_warnings')}</p>
@@ -1428,7 +1431,7 @@ function ConnectDrawer({ open, onClose, title, icon: Icon, iconBg, children }) {
                         <Icon className="h-4 w-4" />
                     </div>
                     <h3 className="flex-1 font-semibold text-neutral-900 dark:text-neutral-100">{title}</h3>
-                    <button onClick={onClose} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
+                    <button onClick={onClose} className="rounded-lg p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
                     </button>
                 </div>
@@ -1543,9 +1546,9 @@ export default function ChannelSetup({
                             <div className="mx-auto mb-3 rounded-2xl w-12 h-12 flex items-center justify-center bg-gradient-to-br from-pink-100 to-purple-100 dark:from-pink-900/30 dark:to-purple-900/30 opacity-60">
                                 <InstagramLogo className="h-6 w-6" />
                             </div>
-                            <p className="text-sm text-neutral-400 dark:text-neutral-500 mb-3">{t('inbox.no_instagram_accounts')}</p>
+                            <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3">{t('inbox.no_instagram_accounts')}</p>
                             <button onClick={() => openDrawer('instagram')}
-                                className="text-xs font-medium text-pink-600 dark:text-pink-400 hover:underline">
+                                className="text-xs font-medium text-pink-700 dark:text-pink-400 hover:underline">
                                 {t('inbox.plus_connect_instagram')}
                             </button>
                         </div>
@@ -1568,9 +1571,9 @@ export default function ChannelSetup({
                             <div className="mx-auto mb-3 rounded-2xl w-12 h-12 flex items-center justify-center bg-blue-100 dark:bg-blue-900/30 opacity-60">
                                 <MessengerLogo className="h-6 w-6" />
                             </div>
-                            <p className="text-sm text-neutral-400 dark:text-neutral-500 mb-3">{t('inbox.no_messenger_accounts')}</p>
+                            <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3">{t('inbox.no_messenger_accounts')}</p>
                             <button onClick={() => openDrawer('messenger')}
-                                className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                                className="text-xs font-medium text-blue-700 dark:text-blue-400 hover:underline">
                                 {t('inbox.plus_connect_messenger')}
                             </button>
                         </div>

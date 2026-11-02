@@ -27,7 +27,7 @@ export default function FormAnalytics({
                     <div className="flex items-center gap-3">
                         <Link
                             href={route('client.sales.forms.index')}
-                            className="rounded-lg p-2 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
+                            className="rounded-lg p-2 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
                         >
                             <ArrowLeft className="h-4 w-4" />
                         </Link>
@@ -35,7 +35,7 @@ export default function FormAnalytics({
                             <h1 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
                                 {form.name}
                             </h1>
-                            <p className="text-xs text-neutral-400 font-mono">
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400 font-mono">
                                 {form.public_url}
                             </p>
                         </div>
@@ -78,7 +78,7 @@ export default function FormAnalytics({
                             <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                             {t('forms.total_submissions') || 'Total Inbound Submissions'}
                         </span>
-                        <div className="mt-2 text-3xl font-bold text-emerald-600 dark:text-emerald-400">
+                        <div className="mt-2 text-3xl font-bold text-emerald-700 dark:text-emerald-400">
                             {form.submissions_count.toLocaleString()}
                         </div>
                     </div>
@@ -98,7 +98,7 @@ export default function FormAnalytics({
                 {utmSources.length > 0 && (
                     <div className="rounded-2xl border border-soft bg-white p-5 shadow-xs dark:bg-neutral-900 space-y-3">
                         <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
-                            <Globe className="h-4 w-4 text-neutral-400" />
+                            <Globe className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
                             {t('forms.utm_sources') || 'Marketing Source Attribution (UTM)'}
                         </h3>
                         <div className="flex flex-wrap gap-2">
@@ -108,7 +108,7 @@ export default function FormAnalytics({
                                     className="inline-flex items-center gap-2 rounded-xl border border-soft bg-neutral-50 px-3 py-1.5 text-xs text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300"
                                 >
                                     <span className="font-semibold">{s.utm_source}</span>
-                                    <span className="rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-bold text-brand-700 dark:bg-brand-950 dark:text-brand-300">
+                                    <span className="rounded-full bg-brand-100 px-2 py-0.5 text-3xs font-bold text-brand-700 dark:bg-brand-950 dark:text-brand-300">
                                         {s.count}
                                     </span>
                                 </span>
@@ -126,7 +126,7 @@ export default function FormAnalytics({
                     </div>
 
                     {submissions.data.length === 0 ? (
-                        <div className="p-12 text-center text-sm text-neutral-400">
+                        <div className="p-12 text-center text-sm text-neutral-500 dark:text-neutral-400">
                             {t('forms.no_submissions_yet') || 'No submissions received yet for this form.'}
                         </div>
                     ) : (
@@ -160,25 +160,25 @@ export default function FormAnalytics({
                                                         <ExternalLink className="h-3 w-3" />
                                                     </a>
                                                 ) : (
-                                                    <span className="text-xs text-neutral-400 italic">No Lead</span>
+                                                    <span className="text-xs text-neutral-500 dark:text-neutral-400 italic">No Lead</span>
                                                 )}
                                             </td>
 
                                             <td className="px-4 py-3.5 text-xs text-neutral-600 dark:text-neutral-300">
                                                 {sub.utm_source ? (
-                                                    <span className="font-mono text-[11px] text-brand-600 dark:text-brand-400">
+                                                    <span className="font-mono text-2xs text-brand-600 dark:text-brand-400">
                                                         {sub.utm_source} {sub.utm_campaign && `(${sub.utm_campaign})`}
                                                     </span>
                                                 ) : sub.referrer ? (
-                                                    <span className="truncate max-w-[150px] block text-[11px] text-neutral-400">
+                                                    <span className="truncate max-w-[150px] block text-2xs text-neutral-500 dark:text-neutral-400">
                                                         {sub.referrer}
                                                     </span>
                                                 ) : (
-                                                    <span className="text-neutral-400 italic">Direct / Embed</span>
+                                                    <span className="text-neutral-500 dark:text-neutral-400 italic">Direct / Embed</span>
                                                 )}
                                             </td>
 
-                                            <td className="px-4 py-3.5 font-mono text-xs text-neutral-400">
+                                            <td className="px-4 py-3.5 font-mono text-xs text-neutral-500 dark:text-neutral-400">
                                                 {sub.ip || '—'}
                                             </td>
 
@@ -206,13 +206,13 @@ export default function FormAnalytics({
                 <div className="p-6 space-y-4">
                     <div className="flex items-center justify-between border-b border-soft pb-3">
                         <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
-                            <Code className="h-4 w-4 text-brand-600" />
+                            <Code className="h-4 w-4 text-brand-600 dark:text-brand-400" />
                             {t('forms.submission_data') || 'Submitted Answers'}
                         </h3>
                         <button
                             type="button"
                             onClick={() => setSelectedPayload(null)}
-                            className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
+                            className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
                         >
                             &times;
                         </button>

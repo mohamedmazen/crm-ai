@@ -8,7 +8,7 @@ import { useBranding } from '@/hooks/useBranding';
 function Badge({ text }) {
     if (!text) return null;
     return (
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-500/15 text-brand-500 text-xs font-semibold px-3 py-1 border border-brand-500/30">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-500/15 text-brand-700 dark:text-brand-300 text-xs font-semibold px-3 py-1 border border-brand-500/30">
             <span className="h-1.5 w-1.5 rounded-full bg-brand-500 inline-block" />
             {text}
         </span>
@@ -16,7 +16,7 @@ function Badge({ text }) {
 }
 
 const inputClass =
-    'w-full rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-2.5 text-sm text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-500 transition-colors focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30';
+    'w-full rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-2.5 text-sm text-neutral-900 dark:text-white placeholder:text-neutral-500 dark:placeholder:text-neutral-500 transition-colors focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30';
 
 export default function Contact({ landing = {} }) {
     const { t } = useTranslation();
@@ -145,7 +145,7 @@ export default function Contact({ landing = {} }) {
                                                 className={inputClass}
                                                 required
                                             />
-                                            {errors.name && <p className="text-coral-600 text-xs mt-1.5">{errors.name}</p>}
+                                            {errors.name && <p className="text-coral-600 dark:text-coral-400 text-xs mt-1.5">{errors.name}</p>}
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">{t('common.email')}</label>
@@ -157,7 +157,7 @@ export default function Contact({ landing = {} }) {
                                                 className={inputClass}
                                                 required
                                             />
-                                            {errors.email && <p className="text-coral-600 text-xs mt-1.5">{errors.email}</p>}
+                                            {errors.email && <p className="text-coral-600 dark:text-coral-400 text-xs mt-1.5">{errors.email}</p>}
                                         </div>
                                     </div>
                                     <div>
@@ -169,7 +169,7 @@ export default function Contact({ landing = {} }) {
                                             placeholder={t('contact_page.subject_placeholder', { defaultValue: '' })}
                                             className={inputClass}
                                         />
-                                        {errors.subject && <p className="text-coral-600 text-xs mt-1.5">{errors.subject}</p>}
+                                        {errors.subject && <p className="text-coral-600 dark:text-coral-400 text-xs mt-1.5">{errors.subject}</p>}
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">{t('contact_page.message')}</label>
@@ -181,13 +181,13 @@ export default function Contact({ landing = {} }) {
                                             className={`${inputClass} resize-y`}
                                             required
                                         />
-                                        {errors.message && <p className="text-coral-600 text-xs mt-1.5">{errors.message}</p>}
+                                        {errors.message && <p className="text-coral-600 dark:text-coral-400 text-xs mt-1.5">{errors.message}</p>}
                                     </div>
                                     <button
                                         type="submit"
                                         disabled={processing}
                                         className="inline-flex w-full items-center justify-center gap-2 rounded-xl px-7 py-3 text-base font-bold text-white shadow-lg transition-all duration-200 hover:opacity-90 disabled:opacity-50 sm:w-auto"
-                                        style={{ background: 'rgb(var(--brand-500))' }}
+                                        style={{ background: 'rgb(var(--brand-600))' }}
                                     >
                                         <Send className="h-4 w-4" />
                                         {processing ? t('contact_page.sending', { defaultValue: 'Sending…' }) : t('contact_page.send_message')}

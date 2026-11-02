@@ -51,11 +51,11 @@ export default function PlanForm({
                             value={data.description ?? ''}
                             onChange={(e) => setData('description', e.target.value)}
                             rows={2}
-                            className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+                            className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
                             placeholder={t('admin.short_description_placeholder')}
                         />
                         {errors.description && (
-                            <p className="mt-1.5 text-sm text-red-500 dark:text-red-400">{errors.description}</p>
+                            <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">{errors.description}</p>
                         )}
                     </div>
                     <div>
@@ -82,7 +82,7 @@ export default function PlanForm({
                             ))}
                         </select>
                         {errors.currency_code && (
-                            <p className="mt-1.5 text-sm text-red-500 dark:text-red-400">{errors.currency_code}</p>
+                            <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">{errors.currency_code}</p>
                         )}
                     </div>
                 </div>

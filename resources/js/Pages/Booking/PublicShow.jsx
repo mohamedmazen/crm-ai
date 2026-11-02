@@ -108,7 +108,7 @@ export default function PublicBookingShow({
                             <button
                                 type="button"
                                 onClick={() => setStep('select_slot')}
-                                className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 mb-2 transition-colors"
+                                className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 mb-2 transition-colors"
                             >
                                 <ArrowLeft className="h-3.5 w-3.5" />
                                 Back to calendar
@@ -129,7 +129,7 @@ export default function PublicBookingShow({
                             )}
                             <div>
                                 <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">{host.name}</h3>
-                                <p className="text-xs text-zinc-500">Meeting Host</p>
+                                <p className="text-xs text-zinc-500 dark:text-zinc-400">Meeting Host</p>
                             </div>
                         </div>
 
@@ -168,7 +168,7 @@ export default function PublicBookingShow({
                     </div>
 
                     <div className="space-y-1 pt-4 border-t border-zinc-200 dark:border-zinc-800">
-                        <label className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-1">
+                        <label className="text-2xs font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-1">
                             <Globe className="h-3 w-3" />
                             Timezone
                         </label>
@@ -270,7 +270,7 @@ export default function PublicBookingShow({
                                                 key={idx}
                                                 type="button"
                                                 onClick={() => handleSelectSlot(s)}
-                                                className="w-full py-2.5 px-3 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-indigo-500 dark:hover:border-indigo-500 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 text-xs font-semibold text-indigo-600 dark:text-indigo-400 transition-all text-center"
+                                                className="w-full py-2.5 px-3 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-indigo-500 dark:hover:border-indigo-500 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 text-xs font-semibold text-indigo-700 dark:text-indigo-400 transition-all text-center"
                                             >
                                                 {s.time_formatted}
                                             </button>
@@ -294,13 +294,13 @@ export default function PublicBookingShow({
                                 <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100">
                                     Enter Your Details
                                 </h2>
-                                <p className="text-xs text-zinc-500 mt-0.5">
+                                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
                                     Please provide your contact info to confirm the appointment.
                                 </p>
                             </div>
 
                             {form.errors.starts_at && (
-                                <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-xl text-xs text-rose-600 dark:text-rose-400 flex items-center gap-2">
+                                <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-xl text-xs text-rose-700 dark:text-rose-400 flex items-center gap-2">
                                     <AlertCircle className="h-4 w-4 shrink-0" />
                                     <span>{form.errors.starts_at}</span>
                                 </div>

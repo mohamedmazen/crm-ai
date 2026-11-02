@@ -138,7 +138,7 @@ export default function AdminLicenseIndex({ license = {} }) {
                                     {deactivating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                                     Deactivate license
                                 </Button>
-                                <p className="mt-2 text-xs text-neutral-400 dark:text-neutral-500">
+                                <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
                                     Deactivating frees this installation's slot so you can move the license to another server.
                                 </p>
                             </div>
@@ -254,7 +254,7 @@ export default function AdminLicenseIndex({ license = {} }) {
                                             New: v{update.version}
                                         </Badge>
                                         {update.released_at && (
-                                            <span className="text-xs text-neutral-400">Released {update.released_at}</span>
+                                            <span className="text-xs text-neutral-500 dark:text-neutral-400">Released {update.released_at}</span>
                                         )}
                                     </div>
                                     {update.summary && (

@@ -44,7 +44,7 @@ export default function PlanFeatures({ features = [], onChange }) {
                         <button
                             type="button"
                             onClick={() => remove(index)}
-                            className="p-2 rounded-lg text-neutral-500 hover:bg-neutral-100 hover:text-red-600 dark:hover:bg-neutral-800 dark:hover:text-red-400 transition"
+                            className="p-2 rounded-lg text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-red-600 dark:hover:bg-neutral-800 dark:hover:text-red-400 transition"
                             aria-label={t('admin.remove_feature')}
                         >
                             <Trash2 className="h-4 w-4" />

@@ -51,7 +51,7 @@ function ChangePlanModal({ subscription, plans, onClose }) {
                                 <option key={p.id} value={p.id}>{p.name}</option>
                             ))}
                         </select>
-                        {errors.plan_id && <p className="text-coral-600 text-xs mt-1">{errors.plan_id}</p>}
+                        {errors.plan_id && <p className="text-coral-600 dark:text-coral-400 text-xs mt-1">{errors.plan_id}</p>}
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('subscription.billing_cycle')}</label>
@@ -83,7 +83,7 @@ function ChangePlanModal({ subscription, plans, onClose }) {
                             </button>
                         </div>
                         {couponStatus && (
-                            <p className={`text-xs mt-1 ${couponStatus.valid ? 'text-green-600 dark:text-green-400' : 'text-coral-600'}`}>
+                            <p className={`text-xs mt-1 ${couponStatus.valid ? 'text-green-700 dark:text-green-400' : 'text-coral-600 dark:text-coral-400'}`}>
                                 {couponStatus.valid ? t('subscription.coupon_applied', { amount: couponStatus.kind === 'percent' ? couponStatus.amount + '%' : '$' + (couponStatus.amount / 100).toFixed(2) }) : couponStatus.message}
                             </p>
                         )}
@@ -95,7 +95,7 @@ function ChangePlanModal({ subscription, plans, onClose }) {
                         <button type="button" onClick={onClose} className="px-4 py-2 text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700">
                             {t('common.cancel')}
                         </button>
-                        <button type="submit" disabled={processing} className="px-4 py-2 text-sm bg-brand-500 text-white rounded-soft hover:bg-brand-600 shadow-soft disabled:opacity-50 transition-all duration-150">
+                        <button type="submit" disabled={processing} className="px-4 py-2 text-sm bg-brand-600 text-white rounded-soft hover:bg-brand-700 shadow-soft disabled:opacity-50 transition-all duration-150">
                             {t('subscription.confirm_change')}
                         </button>
                     </div>
@@ -168,7 +168,7 @@ export default function SubscriptionShow({ subscription, canCancel, canUpgrade, 
                                                 {t('common.active')}
                                             </span>
                                         ) : (
-                                            <span className="inline-flex items-center gap-1 rounded-full bg-neutral-100 dark:bg-neutral-700 px-2 py-0.5 text-xs font-medium text-neutral-600 dark:text-neutral-400 capitalize">
+                                            <span className="inline-flex items-center gap-1 rounded-full bg-neutral-100 dark:bg-neutral-700 px-2 py-0.5 text-xs font-medium text-neutral-600 dark:text-neutral-200 capitalize">
                                                 {subscription.status}
                                             </span>
                                         )}
@@ -182,7 +182,7 @@ export default function SubscriptionShow({ subscription, canCancel, canUpgrade, 
                                             t('subscription.ends_on', { date: formatDate(subscription.ends_at) })}
                                     </p>
                                     {subscription.managed_by_admin && (
-                                        <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                                        <p className="text-xs text-amber-700 dark:text-amber-400 mt-1">
                                             {t('client.managed_by_admin') || 'Managed by your organization admin'}
                                         </p>
                                     )}
@@ -193,7 +193,7 @@ export default function SubscriptionShow({ subscription, canCancel, canUpgrade, 
                                     <button
                                         type="button"
                                         onClick={() => setShowChangePlan(true)}
-                                        className="inline-flex items-center gap-2 rounded-soft bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 shadow-soft transition-all duration-150"
+                                        className="inline-flex items-center gap-2 rounded-soft bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 shadow-soft transition-all duration-150"
                                     >
                                         <RefreshCw className="h-4 w-4" />
                                         {t('client.change_plan') || 'Change Plan'}
@@ -227,7 +227,7 @@ export default function SubscriptionShow({ subscription, canCancel, canUpgrade, 
                         </p>
                         <Link
                             href={route('client.pricing')}
-                            className="inline-flex items-center gap-2 rounded-soft bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 shadow-soft transition-all duration-150"
+                            className="inline-flex items-center gap-2 rounded-soft bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 shadow-soft transition-all duration-150"
                         >
                             <CreditCard className="h-4 w-4" />
                             {t('client.view_plans') || 'View plans'}
@@ -259,7 +259,7 @@ export default function SubscriptionShow({ subscription, canCancel, canUpgrade, 
                                         <td className="px-4 py-3 text-neutral-700 dark:text-neutral-300">
                                             {formatCurrency(tx.amount_cents, tx.currency)}
                                             {tx.refunded_cents && (
-                                                <span className="ml-2 text-xs text-coral-600">
+                                                <span className="ml-2 text-xs text-coral-600 dark:text-coral-400">
                                                     {t('subscription.refunded_note', { amount: formatCurrency(tx.refunded_cents, tx.currency) })}
                                                 </span>
                                             )}
@@ -268,7 +268,7 @@ export default function SubscriptionShow({ subscription, canCancel, canUpgrade, 
                                             <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium capitalize ${
                                                 tx.status === 'paid' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
                                                 tx.status === 'refunded' ? 'bg-coral-100 text-coral-700 dark:bg-coral-900/30 dark:text-coral-400' :
-                                                'bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-400'
+                                                'bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-200'
                                             }`}>
                                                 {tx.status}
                                             </span>

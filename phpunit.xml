@@ -38,6 +38,9 @@
         <env name="DB_DATABASE" value="wm3_test"/>
         <env name="DB_PASSWORD" value=""/>
         <env name="MAIL_MAILER" value="array"/>
+        <!-- Never call the live Have I Been Pwned API from the suite; rule tests
+             opt back in and fake the HTTP client. -->
+        <env name="PASSWORD_BREACH_CHECK" value="false"/>
         <env name="PULSE_ENABLED" value="false"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="BROADCAST_CONNECTION" value="log"/>

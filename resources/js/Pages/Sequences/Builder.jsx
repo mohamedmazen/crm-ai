@@ -26,7 +26,7 @@ function Toggle({ label, hint, checked, onChange }) {
                 type="checkbox"
                 checked={checked}
                 onChange={(event) => onChange(event.target.checked)}
-                className="mt-1 h-4 w-4 rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
+                className="mt-1 h-4 w-4 rounded border-neutral-300 text-brand-600 dark:text-brand-400 focus:ring-brand-500"
             />
         </label>
     );
@@ -134,7 +134,7 @@ export default function SequenceBuilder({
                     <div className="flex items-start gap-3">
                         <Link
                             href={route('client.sales.sequences.index')}
-                            className="mt-1 rounded-lg p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
+                            className="mt-1 rounded-lg p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-neutral-800 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
                         >
                             <ArrowLeft className="h-5 w-5" />
                         </Link>
@@ -142,7 +142,7 @@ export default function SequenceBuilder({
                             <h1 className="flex items-center gap-2 text-xl font-bold text-neutral-900 dark:text-neutral-100">
                                 <Mail className="h-5 w-5 text-brand-600 dark:text-brand-400" />
                                 {sequence.name}
-                                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold capitalize ${statusStyles[sequence.status] || statusStyles.draft}`}>
+                                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-2xs font-semibold capitalize ${statusStyles[sequence.status] || statusStyles.draft}`}>
                                     {sequence.status}
                                 </span>
                             </h1>
@@ -214,7 +214,7 @@ export default function SequenceBuilder({
                                                     type="button"
                                                     onClick={() => moveStep(index, -1)}
                                                     disabled={index === 0}
-                                                    className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 disabled:opacity-30 dark:hover:bg-neutral-800"
+                                                    className="rounded-lg p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 disabled:opacity-30 dark:hover:bg-neutral-800"
                                                 >
                                                     <ArrowUp className="h-4 w-4" />
                                                 </button>
@@ -222,14 +222,14 @@ export default function SequenceBuilder({
                                                     type="button"
                                                     onClick={() => moveStep(index, 1)}
                                                     disabled={index === form.data.steps.length - 1}
-                                                    className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 disabled:opacity-30 dark:hover:bg-neutral-800"
+                                                    className="rounded-lg p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 disabled:opacity-30 dark:hover:bg-neutral-800"
                                                 >
                                                     <ArrowDown className="h-4 w-4" />
                                                 </button>
                                                 <button
                                                     type="button"
                                                     onClick={() => removeStep(index)}
-                                                    className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30"
+                                                    className="rounded-lg p-1.5 text-neutral-500 dark:text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30"
                                                 >
                                                     <Trash2 className="h-4 w-4" />
                                                 </button>
@@ -256,7 +256,7 @@ export default function SequenceBuilder({
                                                     {t('sequences.delay_hours') || 'Delay (hours after the previous step)'}
                                                 </label>
                                                 <div className="relative mt-1">
-                                                    <Clock className="pointer-events-none absolute start-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-400" />
+                                                    <Clock className="pointer-events-none absolute start-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-500 dark:text-neutral-400" />
                                                     <input
                                                         type="number"
                                                         min="0"
@@ -296,7 +296,7 @@ export default function SequenceBuilder({
                                                 placeholder={t('sequences.body_placeholder') || 'Hi {{contact.first_name}}, …'}
                                                 className="mt-1 w-full rounded-lg border-soft bg-white p-2.5 text-sm dark:bg-neutral-800 dark:text-neutral-100"
                                             />
-                                            <p className="mt-1 text-[11px] text-neutral-400">
+                                            <p className="mt-1 text-2xs text-neutral-500 dark:text-neutral-400">
                                                 {t('sequences.tokens_hint') || 'Tokens: {{contact.first_name}}, {{contact.name}}, {{contact.email}}, {{contact.phone}}'}
                                             </p>
                                         </div>
@@ -312,10 +312,10 @@ export default function SequenceBuilder({
                             </div>
 
                             {form.errors.steps && (
-                                <p className="mt-3 text-xs font-medium text-red-600">{form.errors.steps}</p>
+                                <p className="mt-3 text-xs font-medium text-red-700 dark:text-red-400">{form.errors.steps}</p>
                             )}
                             {Object.entries(form.errors).filter(([key]) => key.startsWith('steps.')).map(([key, message]) => (
-                                <p key={key} className="mt-1 text-xs font-medium text-red-600">{message}</p>
+                                <p key={key} className="mt-1 text-xs font-medium text-red-700 dark:text-red-400">{message}</p>
                             ))}
                         </section>
                     </div>
@@ -337,7 +337,7 @@ export default function SequenceBuilder({
                                     onChange={(event) => form.setData('name', event.target.value)}
                                     className="mt-1 w-full rounded-lg border-soft bg-white p-2.5 text-sm dark:bg-neutral-800 dark:text-neutral-100"
                                 />
-                                {form.errors.name && <p className="mt-1 text-xs text-red-600">{form.errors.name}</p>}
+                                {form.errors.name && <p className="mt-1 text-xs text-red-700 dark:text-red-400">{form.errors.name}</p>}
                             </div>
 
                             <div>
@@ -353,7 +353,7 @@ export default function SequenceBuilder({
                                     <option value="active">{t('sequences.status_active') || 'Active'}</option>
                                     <option value="paused">{t('sequences.status_paused') || 'Paused'}</option>
                                 </select>
-                                {form.errors.status && <p className="mt-1 text-xs text-red-600">{form.errors.status}</p>}
+                                {form.errors.status && <p className="mt-1 text-xs text-red-700 dark:text-red-400">{form.errors.status}</p>}
                             </div>
 
                             <Toggle
@@ -399,11 +399,11 @@ export default function SequenceBuilder({
                                                 <span className="block truncate font-medium text-neutral-800 dark:text-neutral-100">
                                                     {enrollment.lead?.name || `#${enrollment.lead_id}`}
                                                 </span>
-                                                <span className="block truncate text-[11px] text-neutral-400">
+                                                <span className="block truncate text-2xs text-neutral-500 dark:text-neutral-400">
                                                     {enrollment.lead?.email || ''}
                                                 </span>
                                             </span>
-                                            <span className="shrink-0 text-[11px] font-semibold capitalize text-neutral-500 dark:text-neutral-400">
+                                            <span className="shrink-0 text-2xs font-semibold capitalize text-neutral-500 dark:text-neutral-400">
                                                 {enrollment.status} · {enrollment.current_step}
                                             </span>
                                         </li>
@@ -440,11 +440,11 @@ export default function SequenceBuilder({
                                         type="checkbox"
                                         checked={selectedLeads.includes(lead.id)}
                                         onChange={() => toggleLead(lead.id)}
-                                        className="h-4 w-4 rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
+                                        className="h-4 w-4 rounded border-neutral-300 text-brand-600 dark:text-brand-400 focus:ring-brand-500"
                                     />
                                     <span className="min-w-0">
                                         <span className="block truncate text-sm font-medium text-neutral-800 dark:text-neutral-100">{lead.name}</span>
-                                        <span className="block truncate text-[11px] text-neutral-400">{lead.email || lead.phone || '—'}</span>
+                                        <span className="block truncate text-2xs text-neutral-500 dark:text-neutral-400">{lead.email || lead.phone || '—'}</span>
                                     </span>
                                 </label>
                             ))}

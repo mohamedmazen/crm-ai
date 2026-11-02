@@ -84,7 +84,7 @@ export default function BookingCancel({
                 {!isCancelled && (
                     <form onSubmit={submit} className="space-y-4">
                         {form.errors.reason && (
-                            <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-xl text-xs text-rose-600 dark:text-rose-400 flex items-center gap-2">
+                            <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-xl text-xs text-rose-700 dark:text-rose-400 flex items-center gap-2">
                                 <AlertTriangle className="h-4 w-4 shrink-0" />
                                 <span>{form.errors.reason}</span>
                             </div>
@@ -116,7 +116,7 @@ export default function BookingCancel({
                 <div className="text-center">
                     <a
                         href={backUrl}
-                        className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                        className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
                     >
                         <ArrowLeft className="h-3.5 w-3.5" />
                         Back to booking

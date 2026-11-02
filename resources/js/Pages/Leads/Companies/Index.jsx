@@ -194,7 +194,7 @@ export default function CompaniesIndex({
                 <div className="rounded-xl border border-soft bg-white p-4 shadow-xs dark:bg-neutral-900">
                     <form onSubmit={handleSearchSubmit} className="flex flex-wrap items-center gap-3">
                         <div className="relative min-w-[220px] flex-1">
-                            <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+                            <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500 dark:text-neutral-400" />
                             <input
                                 type="text"
                                 value={search}
@@ -210,6 +210,7 @@ export default function CompaniesIndex({
                                 setIndustry(e.target.value);
                                 applyFilters({ industry: e.target.value });
                             }}
+                            aria-label={t('companies.all_industries') || 'All Industries'}
                             className="rounded-lg border-soft bg-neutral-50 py-2 px-3 text-sm text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 focus:bg-white"
                         >
                             <option value="">{t('companies.all_industries') || 'All Industries'}</option>
@@ -224,6 +225,7 @@ export default function CompaniesIndex({
                                 setSize(e.target.value);
                                 applyFilters({ size: e.target.value });
                             }}
+                            aria-label={t('companies.all_sizes') || 'All Sizes'}
                             className="rounded-lg border-soft bg-neutral-50 py-2 px-3 text-sm text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 focus:bg-white"
                         >
                             <option value="">{t('companies.all_sizes') || 'All Sizes'}</option>
@@ -238,6 +240,7 @@ export default function CompaniesIndex({
                                 setOwnerId(e.target.value);
                                 applyFilters({ owner_id: e.target.value });
                             }}
+                            aria-label={t('companies.all_owners') || 'All Owners'}
                             className="rounded-lg border-soft bg-neutral-50 py-2 px-3 text-sm text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 focus:bg-white"
                         >
                             <option value="">{t('companies.all_owners') || 'All Owners'}</option>
@@ -255,7 +258,7 @@ export default function CompaniesIndex({
                             <button
                                 type="button"
                                 onClick={handleClearFilters}
-                                className="inline-flex items-center gap-1 text-xs text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200"
+                                className="inline-flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200"
                             >
                                 <X className="h-3.5 w-3.5" />
                                 {t('common.clear') || 'Clear'}
@@ -268,12 +271,12 @@ export default function CompaniesIndex({
                 <div className="overflow-hidden rounded-xl border border-soft bg-white shadow-xs dark:bg-neutral-900">
                     {companies.data.length === 0 ? (
                         <div className="py-16 text-center">
-                            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-neutral-100 text-neutral-400 dark:bg-neutral-800">
+                            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-neutral-100 text-neutral-600 dark:text-neutral-400 dark:bg-neutral-800">
                                 <Building2 className="h-6 w-6" />
                             </div>
-                            <h3 className="mt-3 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                            <h2 className="mt-3 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                                 {hasActiveFilters ? (t('companies.no_matches') || 'No matching companies') : (t('companies.empty_title') || 'No companies yet')}
-                            </h3>
+                            </h2>
                             <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
                                 {hasActiveFilters ? (t('companies.try_filters') || 'Try clearing or modifying your search filters.') : (t('companies.empty_subtitle') || 'Create companies to group leads, track organizational deals, and centralize communications.')}
                             </p>
@@ -316,7 +319,7 @@ export default function CompaniesIndex({
                                                         </Link>
                                                         <div className="flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400">
                                                             {company.domain && (
-                                                                <span className="font-mono text-[11px] text-neutral-400">{company.domain}</span>
+                                                                <span className="font-mono text-2xs text-neutral-500 dark:text-neutral-400">{company.domain}</span>
                                                             )}
                                                             {company.website && (
                                                                 <a
@@ -330,7 +333,7 @@ export default function CompaniesIndex({
                                                                 </a>
                                                             )}
                                                             {company.phone && (
-                                                                <span className="text-neutral-400 flex items-center gap-1">
+                                                                <span className="text-neutral-500 dark:text-neutral-400 flex items-center gap-1">
                                                                     <Phone className="h-2.5 w-2.5" />
                                                                     {company.phone}
                                                                 </span>
@@ -346,7 +349,7 @@ export default function CompaniesIndex({
                                                         {company.industry || '—'}
                                                     </span>
                                                     {company.size && (
-                                                        <div className="text-[11px] text-neutral-400">
+                                                        <div className="text-2xs text-neutral-500 dark:text-neutral-400">
                                                             {sizes[company.size] || company.size}
                                                         </div>
                                                     )}
@@ -370,7 +373,7 @@ export default function CompaniesIndex({
                                                         {company.owner.name}
                                                     </span>
                                                 ) : (
-                                                    <span className="text-neutral-400 italic">{t('leads.unassigned') || 'Unassigned'}</span>
+                                                    <span className="text-neutral-500 dark:text-neutral-400 italic">{t('leads.unassigned') || 'Unassigned'}</span>
                                                 )}
                                             </td>
 
@@ -378,7 +381,7 @@ export default function CompaniesIndex({
                                                 <div className="flex items-center justify-end gap-1">
                                                     <Link
                                                         href={route('client.leads.companies.show', company.id)}
-                                                        className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
+                                                        className="rounded-lg p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
                                                         title={t('common.view') || 'View'}
                                                     >
                                                         <ExternalLink className="h-4 w-4" />
@@ -386,7 +389,7 @@ export default function CompaniesIndex({
                                                     <button
                                                         type="button"
                                                         onClick={() => openEditModal(company)}
-                                                        className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
+                                                        className="rounded-lg p-1.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
                                                         title={t('common.edit') || 'Edit'}
                                                     >
                                                         <Edit2 className="h-4 w-4" />
@@ -394,7 +397,7 @@ export default function CompaniesIndex({
                                                     <button
                                                         type="button"
                                                         onClick={() => setDeletingCompany(company)}
-                                                        className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400"
+                                                        className="rounded-lg p-1.5 text-neutral-500 dark:text-neutral-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400"
                                                         title={t('common.delete') || 'Delete'}
                                                     >
                                                         <Trash2 className="h-4 w-4" />
@@ -411,7 +414,7 @@ export default function CompaniesIndex({
                     {/* Pagination */}
                     {companies.links && companies.links.length > 3 && (
                         <div className="flex items-center justify-between border-t border-soft px-5 py-3 bg-neutral-50/50 dark:bg-neutral-800/30">
-                            <div className="text-xs text-neutral-500">
+                            <div className="text-xs text-neutral-500 dark:text-neutral-400">
                                 {t('common.total') || 'Total'}: <span className="font-semibold text-neutral-800 dark:text-neutral-200">{companies.total}</span>
                             </div>
                             <div className="flex items-center gap-1">
@@ -423,7 +426,7 @@ export default function CompaniesIndex({
                                             dangerouslySetInnerHTML={{ __html: link.label }}
                                             className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
                                                 link.active
-                                                    ? 'bg-brand-500 text-white'
+                                                    ? 'bg-brand-600 text-white'
                                                     : 'text-neutral-600 hover:bg-neutral-200/60 dark:text-neutral-300 dark:hover:bg-neutral-700'
                                             }`}
                                         />
@@ -431,7 +434,7 @@ export default function CompaniesIndex({
                                         <span
                                             key={i}
                                             dangerouslySetInnerHTML={{ __html: link.label }}
-                                            className="px-2 py-1 text-xs text-neutral-400 cursor-not-allowed"
+                                            className="px-2 py-1 text-xs text-neutral-500 dark:text-neutral-400 cursor-not-allowed"
                                         />
                                     )
                                 ))}
@@ -452,7 +455,7 @@ export default function CompaniesIndex({
                         <button
                             type="button"
                             onClick={() => setShowModal(false)}
-                            className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
+                            className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
                         >
                             &times;
                         </button>
@@ -594,7 +597,7 @@ export default function CompaniesIndex({
             {/* Delete Confirmation Modal */}
             <Modal show={!!deletingCompany} onClose={() => setDeletingCompany(null)} maxWidth="sm">
                 <div className="p-6">
-                    <div className="flex items-center gap-3 text-red-600 dark:text-red-400">
+                    <div className="flex items-center gap-3 text-red-700 dark:text-red-400">
                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-950/50">
                             <Trash2 className="h-5 w-5" />
                         </div>

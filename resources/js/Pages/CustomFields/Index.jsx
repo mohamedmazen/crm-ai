@@ -117,7 +117,7 @@ export default function CustomFieldsIndex({
                 <div className="flex flex-wrap items-center justify-between gap-4">
                     <div>
                         <h1 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
-                            <Sliders className="h-5 w-5 text-brand-600" />
+                            <Sliders className="h-5 w-5 text-brand-600 dark:text-brand-400" />
                             {t('custom_fields.title') || 'Custom Fields'}
                         </h1>
                         <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
@@ -174,9 +174,9 @@ export default function CustomFieldsIndex({
                     {fields.length === 0 ? (
                         <div className="p-12 text-center">
                             <Sliders className="mx-auto h-10 w-10 text-neutral-300 dark:text-neutral-600" />
-                            <h3 className="mt-3 text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+                            <h2 className="mt-3 text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                                 {t('custom_fields.empty_title') || 'No custom fields yet'}
-                            </h3>
+                            </h2>
                             <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
                                 {t('custom_fields.empty_subtitle') || `Add fields to capture unique attributes for your ${currentEntityType} records.`}
                             </p>
@@ -191,11 +191,11 @@ export default function CustomFieldsIndex({
                         <table className="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700 text-sm">
                             <thead className="bg-neutral-50 dark:bg-neutral-800/80">
                                 <tr>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-500">{t('custom_fields.label') || 'Field Label'}</th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-500">{t('custom_fields.key') || 'System Key'}</th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-500">{t('custom_fields.type') || 'Type'}</th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-500">{t('custom_fields.options') || 'Options / Validation'}</th>
-                                    <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-neutral-500">{t('common.actions')}</th>
+                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">{t('custom_fields.label') || 'Field Label'}</th>
+                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">{t('custom_fields.key') || 'System Key'}</th>
+                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">{t('custom_fields.type') || 'Type'}</th>
+                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">{t('custom_fields.options') || 'Options / Validation'}</th>
+                                    <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">{t('common.actions')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
@@ -205,7 +205,7 @@ export default function CustomFieldsIndex({
                                             <div className="flex items-center gap-2">
                                                 <span>{field.label}</span>
                                                 {field.required && (
-                                                    <span className="rounded bg-red-100 px-1.5 py-0.2 text-[10px] font-semibold text-red-700 dark:bg-red-950/40 dark:text-red-400">
+                                                    <span className="rounded bg-red-100 px-1.5 py-0.2 text-3xs font-semibold text-red-700 dark:bg-red-950/40 dark:text-red-400">
                                                         {t('common.required') || 'Required'}
                                                     </span>
                                                 )}
@@ -223,7 +223,7 @@ export default function CustomFieldsIndex({
                                             {field.options && field.options.length > 0 ? (
                                                 <div className="flex flex-wrap gap-1">
                                                     {field.options.map((opt, i) => (
-                                                        <span key={i} className="rounded bg-neutral-100 px-1.5 py-0.2 text-[11px] dark:bg-neutral-800">
+                                                        <span key={i} className="rounded bg-neutral-100 px-1.5 py-0.2 text-2xs dark:bg-neutral-800">
                                                             {opt}
                                                         </span>
                                                     ))}
@@ -237,7 +237,7 @@ export default function CustomFieldsIndex({
                                                 <button
                                                     type="button"
                                                     onClick={() => setEditingField({ ...field, optionsText: field.options?.join(', ') ?? '' })}
-                                                    className="rounded p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800"
+                                                    className="rounded p-1 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800"
                                                     title={t('common.edit')}
                                                 >
                                                     <Edit2 className="h-4 w-4" />
@@ -245,7 +245,7 @@ export default function CustomFieldsIndex({
                                                 <button
                                                     type="button"
                                                     onClick={() => handleDelete(field)}
-                                                    className="rounded p-1 text-neutral-400 hover:bg-neutral-100 hover:text-red-600 dark:hover:bg-neutral-800"
+                                                    className="rounded p-1 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 hover:text-red-600 dark:hover:bg-neutral-800"
                                                     title={t('common.delete')}
                                                 >
                                                     <Trash2 className="h-4 w-4" />
@@ -334,7 +334,7 @@ export default function CustomFieldsIndex({
                                     type="checkbox"
                                     checked={required}
                                     onChange={(e) => setRequired(e.target.checked)}
-                                    className="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
+                                    className="rounded border-neutral-300 text-brand-600 dark:text-brand-400 focus:ring-brand-500"
                                 />
                                 <span className="text-sm text-neutral-700 dark:text-neutral-300">
                                     {t('custom_fields.is_required') || 'Required field'}
@@ -395,7 +395,7 @@ export default function CustomFieldsIndex({
                                     type="checkbox"
                                     checked={editingField.required}
                                     onChange={(e) => setEditingField({ ...editingField, required: e.target.checked })}
-                                    className="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
+                                    className="rounded border-neutral-300 text-brand-600 dark:text-brand-400 focus:ring-brand-500"
                                 />
                                 <span className="text-sm text-neutral-700 dark:text-neutral-300">
                                     {t('custom_fields.is_required') || 'Required field'}

@@ -43,7 +43,7 @@ export default function AutomationReportIndex({ runsByStatus, runsPerAutomation,
                     </div>
                     <div className="flex items-center gap-2">
                         <DatePicker value={from} onChange={setFrom} className="w-40" />
-                        <span className="text-gray-500">—</span>
+                        <span className="text-gray-500 dark:text-gray-400">—</span>
                         <DatePicker value={to} onChange={setTo} className="w-40" />
                         <button onClick={applyRange} className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-500">{t('reports.apply')}</button>
                     </div>
@@ -52,11 +52,11 @@ export default function AutomationReportIndex({ runsByStatus, runsPerAutomation,
                 {/* Charts */}
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
                     <div className="lg:col-span-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-                        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.runs_per_day')}</h3>
+                        <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.runs_per_day')}</h2>
                         <BarChart data={runsByStatus} xKey="date" yKeys={statusKeys} stacked height={260} />
                     </div>
                     <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-                        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.overall_status')}</h3>
+                        <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.overall_status')}</h2>
                         {donutData.length > 0 ? (
                             <DonutChart data={donutData} nameKey="name" valueKey="value" height={260} />
                         ) : (
@@ -67,14 +67,14 @@ export default function AutomationReportIndex({ runsByStatus, runsPerAutomation,
 
                 {/* Per-automation table */}
                 <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-                    <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.runs_per_automation')}</h3>
+                    <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.runs_per_automation')}</h2>
                     <table className="w-full text-sm">
                         <thead>
                             <tr className="border-b border-gray-200 dark:border-gray-700">
-                                <th className="pb-2 text-left text-xs text-gray-500">{t('reports.col_automation')}</th>
-                                <th className="pb-2 text-right text-xs text-gray-500">{t('reports.col_total_runs')}</th>
-                                <th className="pb-2 text-right text-xs text-gray-500">{t('reports.col_completed')}</th>
-                                <th className="pb-2 text-right text-xs text-gray-500">{t('reports.col_failed')}</th>
+                                <th className="pb-2 text-left text-xs text-gray-500 dark:text-gray-400">{t('reports.col_automation')}</th>
+                                <th className="pb-2 text-right text-xs text-gray-500 dark:text-gray-400">{t('reports.col_total_runs')}</th>
+                                <th className="pb-2 text-right text-xs text-gray-500 dark:text-gray-400">{t('reports.col_completed')}</th>
+                                <th className="pb-2 text-right text-xs text-gray-500 dark:text-gray-400">{t('reports.col_failed')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">
@@ -82,7 +82,7 @@ export default function AutomationReportIndex({ runsByStatus, runsPerAutomation,
                                 <tr key={r.automation_id}>
                                     <td className="py-2 font-medium text-gray-800 dark:text-gray-200">{r.name}</td>
                                     <td className="py-2 text-right text-gray-600 dark:text-gray-400">{r.runs}</td>
-                                    <td className="py-2 text-right text-emerald-600">{r.completed}</td>
+                                    <td className="py-2 text-right text-emerald-700 dark:text-emerald-400">{r.completed}</td>
                                     <td className="py-2 text-right text-red-500">{r.failed}</td>
                                 </tr>
                             ))}
@@ -96,12 +96,12 @@ export default function AutomationReportIndex({ runsByStatus, runsPerAutomation,
                 {/* Top errors */}
                 {topErrors.length > 0 && (
                     <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-                        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.top_errors')}</h3>
+                        <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">{t('reports.top_errors')}</h2>
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b border-gray-200 dark:border-gray-700">
-                                    <th className="pb-2 text-left text-xs text-gray-500">{t('reports.col_error')}</th>
-                                    <th className="pb-2 text-right text-xs text-gray-500">{t('reports.col_count')}</th>
+                                    <th className="pb-2 text-left text-xs text-gray-500 dark:text-gray-400">{t('reports.col_error')}</th>
+                                    <th className="pb-2 text-right text-xs text-gray-500 dark:text-gray-400">{t('reports.col_count')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">

@@ -46,7 +46,7 @@ function MediaCard({ file, onDelete }) {
             <div className="aspect-square bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center overflow-hidden relative">
                 {isImage
                     ? <img src={file.url} alt={file.filename} className="w-full h-full object-cover" />
-                    : <div className="flex flex-col items-center gap-2 text-neutral-400">
+                    : <div className="flex flex-col items-center gap-2 text-neutral-500 dark:text-neutral-400">
                         <Image className="h-8 w-8" />
                         <span className="text-xs">{file.mime_type}</span>
                     </div>
@@ -62,7 +62,7 @@ function MediaCard({ file, onDelete }) {
             </div>
             <div className="p-2">
                 <p className="text-xs font-medium text-neutral-700 dark:text-neutral-300 truncate">{file.filename}</p>
-                <p className="text-xs text-neutral-400">{formatBytes(file.size_bytes)}</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">{formatBytes(file.size_bytes)}</p>
             </div>
         </div>
     );
@@ -123,7 +123,7 @@ export default function MediaIndex({ files, usedBytes, quotaBytes }) {
                             <button
                                 onClick={() => fileRef.current?.click()}
                                 disabled={uploading}
-                                className="inline-flex items-center gap-2 rounded-soft bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 shadow-soft transition-all duration-150 disabled:opacity-50"
+                                className="inline-flex items-center gap-2 rounded-soft bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 shadow-soft transition-all duration-150 disabled:opacity-50"
                             >
                                 <Upload className="h-4 w-4" />
                                 {uploading ? t('media.uploading') : t('media.upload_file')}
@@ -139,7 +139,7 @@ export default function MediaIndex({ files, usedBytes, quotaBytes }) {
                 )}
 
                 {files.data?.length === 0 && (
-                    <div className="text-center py-16 text-neutral-400 dark:text-neutral-500">
+                    <div className="text-center py-16 text-neutral-500 dark:text-neutral-400">
                         <Image className="h-12 w-12 mx-auto mb-3 opacity-30" />
                         <p>{t('media.no_files')}</p>
                     </div>

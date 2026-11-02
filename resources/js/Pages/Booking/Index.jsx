@@ -153,7 +153,7 @@ export default function BookingIndex({
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
                         <div className="flex items-center gap-2">
-                            <span className="p-2 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 rounded-xl">
+                            <span className="p-2 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 rounded-xl">
                                 <CalendarIcon className="h-6 w-6" />
                             </span>
                             <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
@@ -184,8 +184,8 @@ export default function BookingIndex({
                         onClick={() => setActiveTab('types')}
                         className={`pb-3 text-sm font-medium flex items-center gap-2 border-b-2 transition-colors ${
                             activeTab === 'types'
-                                ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400 font-semibold'
-                                : 'border-transparent text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
+                                ? 'border-indigo-600 text-indigo-700 dark:text-indigo-400 font-semibold'
+                                : 'border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300'
                         }`}
                     >
                         <CalendarIcon className="h-4 w-4" />
@@ -200,8 +200,8 @@ export default function BookingIndex({
                         onClick={() => setActiveTab('bookings')}
                         className={`pb-3 text-sm font-medium flex items-center gap-2 border-b-2 transition-colors ${
                             activeTab === 'bookings'
-                                ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400 font-semibold'
-                                : 'border-transparent text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
+                                ? 'border-indigo-600 text-indigo-700 dark:text-indigo-400 font-semibold'
+                                : 'border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300'
                         }`}
                     >
                         <Clock className="h-4 w-4" />
@@ -218,8 +218,8 @@ export default function BookingIndex({
                         onClick={() => setActiveTab('availability')}
                         className={`pb-3 text-sm font-medium flex items-center gap-2 border-b-2 transition-colors ${
                             activeTab === 'availability'
-                                ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400 font-semibold'
-                                : 'border-transparent text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
+                                ? 'border-indigo-600 text-indigo-700 dark:text-indigo-400 font-semibold'
+                                : 'border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300'
                         }`}
                     >
                         <Globe className="h-4 w-4" />
@@ -242,9 +242,9 @@ export default function BookingIndex({
                                                 className="w-3.5 h-3.5 rounded-full"
                                                 style={{ backgroundColor: type.color || '#6366f1' }}
                                             />
-                                            <h3 className="font-bold text-zinc-900 dark:text-zinc-100 text-base">
+                                            <h2 className="font-bold text-zinc-900 dark:text-zinc-100 text-base">
                                                 {type.name}
-                                            </h3>
+                                            </h2>
                                         </div>
                                         <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
                                             type.status === 'active'
@@ -396,7 +396,7 @@ export default function BookingIndex({
                                                             href={b.meet_link}
                                                             target="_blank"
                                                             rel="noreferrer"
-                                                            className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline inline-flex items-center gap-1"
+                                                            className="text-xs text-indigo-700 dark:text-indigo-400 hover:underline inline-flex items-center gap-1"
                                                         >
                                                             <Video className="h-3 w-3" />
                                                             {t('booking.meet_link', 'Join Call')}
@@ -408,7 +408,7 @@ export default function BookingIndex({
                                                         <button
                                                             type="button"
                                                             onClick={() => handleCancelBooking(b)}
-                                                            className="text-xs text-rose-600 hover:text-rose-800 font-medium"
+                                                            className="text-xs text-rose-700 dark:text-rose-400 hover:text-rose-800 font-medium"
                                                         >
                                                             {t('booking.cancel_booking', 'Cancel')}
                                                         </button>
@@ -436,7 +436,7 @@ export default function BookingIndex({
                             <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">
                                 {t('booking.working_hours', 'Weekly Working Hours')}
                             </h2>
-                            <p className="text-xs text-zinc-500 mt-1">
+                            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
                                 {t('booking.availability_subtitle', 'Define standard weekly working windows when leads are allowed to book appointments with you.')}
                             </p>
                         </div>
@@ -472,7 +472,7 @@ export default function BookingIndex({
                                                     updated[idx].enabled = e.target.checked;
                                                     setAvailDays(updated);
                                                 }}
-                                                className="rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4"
+                                                className="rounded text-indigo-700 dark:text-indigo-400 focus:ring-indigo-500 h-4 w-4"
                                             />
                                             <label
                                                 htmlFor={`day-${day.day_of_week}`}
