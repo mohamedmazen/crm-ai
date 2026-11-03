@@ -6,7 +6,7 @@ import { formatInTz } from '@/Utils/datetime';
 
 export default function AdminPaymentsIndex({ payments, filters = {} }) {
     const { t } = useTranslation();
-    const adminTz = usePage().props.timezone || 'Asia/Dhaka';
+    const adminTz = usePage().props.timezone || 'Africa/Cairo';
     return (
         <AdminLayout title={t('admin.payments')}>
             <Head title={`${t('admin.payments')} · ${t('head.admin')}`} />

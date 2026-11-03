@@ -128,7 +128,7 @@ function CouponForm({ coupon = null, onClose }) {
 
 export default function CouponsIndex({ coupons }) {
     const { t } = useTranslation();
-    const adminTz = usePage().props.timezone || 'Asia/Dhaka';
+    const adminTz = usePage().props.timezone || 'Africa/Cairo';
     const [showCreate, setShowCreate] = useState(false);
     const [editing, setEditing] = useState(null);
 

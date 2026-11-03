@@ -93,6 +93,10 @@ class Updater
             }
             Artisan::call('optimize:clear');
 
+            // Long-running workers (queues, Octane) keep the old code in memory
+            // after the files are swapped, so restart them to pick up the update.
+            Artisan::call('queue:restart');
+
             return ['ok' => true, 'message' => 'Updated successfully'.($newVersion !== '' ? " to v{$newVersion}" : '').'.'];
         } catch (\Throwable $e) {
             Log::error('License update failed: '.$e->getMessage(), ['exception' => $e]);

@@ -5,6 +5,7 @@ namespace App\Modules\Inbox\Services;
 use App\Modules\Integrations\Services\CredentialResolver;
 use App\Modules\Shared\Models\ChannelAccount;
 use App\Modules\Shared\Models\Message;
+use App\Support\MetaGraph;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -25,8 +26,6 @@ use Illuminate\Support\Facades\Log;
  */
 class MetaWebhookSubscriptionService
 {
-    private const BASE = 'https://graph.facebook.com/v20.0';
-
     private const APP_FIELDS = [
         'page' => 'messages,messaging_postbacks,messaging_optins,message_deliveries,message_reads',
         'instagram' => 'messages,messaging_postbacks,message_reactions',
@@ -66,7 +65,7 @@ class MetaWebhookSubscriptionService
         $callbackUrl = route('webhooks.meta.receive', ['token' => $verifyToken]);
 
         try {
-            $res = Http::post(self::BASE."/{$appId}/subscriptions", [
+            $res = Http::post(MetaGraph::base()."/{$appId}/subscriptions", [
                 'access_token' => $appId.'|'.$appSecret,
                 'object' => $object,
                 'callback_url' => $callbackUrl,
@@ -118,7 +117,7 @@ class MetaWebhookSubscriptionService
 
         try {
             $res = Http::withToken($pageToken)
-                ->post(self::BASE."/{$pageId}/subscribed_apps", [
+                ->post(MetaGraph::base()."/{$pageId}/subscribed_apps", [
                     'subscribed_fields' => self::PAGE_FIELDS[$object] ?? 'messages',
                 ]);
 
@@ -254,7 +253,7 @@ class MetaWebhookSubscriptionService
         $expectedUrl = route('webhooks.meta.receive', ['token' => $verifyToken]);
 
         try {
-            $res = Http::get(self::BASE."/{$appId}/subscriptions", [
+            $res = Http::get(MetaGraph::base()."/{$appId}/subscriptions", [
                 'access_token' => $appId.'|'.$appSecret,
             ]);
 
@@ -327,7 +326,7 @@ class MetaWebhookSubscriptionService
     private function checkPageSubscription(string $pageId, string $pageToken, string $appId): array
     {
         try {
-            $res = Http::withToken($pageToken)->get(self::BASE."/{$pageId}/subscribed_apps");
+            $res = Http::withToken($pageToken)->get(MetaGraph::base()."/{$pageId}/subscribed_apps");
 
             if (! $res->successful()) {
                 $code = (int) $res->json('error.code');
@@ -449,7 +448,7 @@ class MetaWebhookSubscriptionService
         // Legacy connect: only the IG account id was stored. The stored token is
         // the Page token, so /me resolves to the page itself.
         try {
-            $res = Http::withToken($token)->get(self::BASE.'/me', ['fields' => 'id']);
+            $res = Http::withToken($token)->get(MetaGraph::base().'/me', ['fields' => 'id']);
             $pageId = (string) ($res->json('id') ?? '');
 
             if ($res->successful() && $pageId !== '' && $pageId !== (string) ($meta['instagram_page_id'] ?? '')) {

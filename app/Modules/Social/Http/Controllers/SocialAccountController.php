@@ -11,6 +11,7 @@ use App\Modules\Social\Services\Drivers\TikTokDriver;
 use App\Modules\Social\Services\Drivers\TwitterDriver;
 use App\Modules\Social\Services\Drivers\YoutubeDriver;
 use App\Modules\Social\Services\OAuth\OAuthManager;
+use App\Support\MetaGraph;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -81,12 +82,12 @@ class SocialAccountController extends Controller
         $isMetaPage = in_array($network, ['facebook', 'instagram'], true);
 
         $validated = $request->validate([
-            'access_token'  => ['required', 'string', 'max:2048'],
+            'access_token' => ['required', 'string', 'max:2048'],
             'refresh_token' => ['nullable', 'string', 'max:2048'],
-            'page_id'       => [$isMetaPage ? 'required' : 'nullable', 'string', 'max:64'],
+            'page_id' => [$isMetaPage ? 'required' : 'nullable', 'string', 'max:64'],
         ]);
 
-        $wid   = $this->workspaceId($request);
+        $wid = $this->workspaceId($request);
         $token = trim($validated['access_token']);
 
         if ($isMetaPage) {
@@ -97,9 +98,9 @@ class SocialAccountController extends Controller
             $info = $this->drivers[$network]->fetchAccountInfo($token);
         } catch (\Throwable $e) {
             Log::warning('Social manual connect: account info fetch threw', [
-                'network'      => $network,
+                'network' => $network,
                 'workspace_id' => $wid,
-                'error'        => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
             $info = ['account_id' => ''];
         }
@@ -115,7 +116,7 @@ class SocialAccountController extends Controller
 
         // Keep a previously stored refresh token on re-connect when none is pasted.
         $pastedRefresh = trim((string) ($validated['refresh_token'] ?? ''));
-        $refreshToken  = $pastedRefresh !== '' ? $pastedRefresh : $existing?->refresh_token;
+        $refreshToken = $pastedRefresh !== '' ? $pastedRefresh : $existing?->refresh_token;
 
         // With a refresh token, attempt an immediate refresh: success proves the
         // platform OAuth client can renew this token and yields the real expiry,
@@ -127,17 +128,17 @@ class SocialAccountController extends Controller
             try {
                 $refreshed = $this->oauth->refresh($network, $refreshToken);
                 if (! empty($refreshed['access_token'])) {
-                    $token        = $refreshed['access_token'];
+                    $token = $refreshed['access_token'];
                     $refreshToken = $refreshed['refresh_token'] ?? $refreshToken;
-                    $expiresAt    = isset($refreshed['expires_in'])
+                    $expiresAt = isset($refreshed['expires_in'])
                         ? now()->addSeconds((int) $refreshed['expires_in'])
                         : null;
                 }
             } catch (\Throwable $e) {
                 Log::info('Social manual connect: immediate token refresh unavailable — storing pasted token without expiry', [
-                    'network'      => $network,
+                    'network' => $network,
                     'workspace_id' => $wid,
-                    'error'        => $e->getMessage(),
+                    'error' => $e->getMessage(),
                 ]);
             }
         }
@@ -145,12 +146,12 @@ class SocialAccountController extends Controller
         SocialAccount::updateOrCreate(
             ['workspace_id' => $wid, 'network' => $network, 'account_id' => $info['account_id']],
             [
-                'name'             => $info['name'] !== '' ? $info['name'] : $info['account_id'],
-                'picture_url'      => $info['picture_url'] ?? null,
-                'access_token'     => $token,
-                'refresh_token'    => $refreshToken,
+                'name' => $info['name'] !== '' ? $info['name'] : $info['account_id'],
+                'picture_url' => $info['picture_url'] ?? null,
+                'access_token' => $token,
+                'refresh_token' => $refreshToken,
                 'token_expires_at' => $expiresAt,
-                'active'           => true,
+                'active' => true,
             ]
         );
 
@@ -170,19 +171,19 @@ class SocialAccountController extends Controller
             ? 'id,name,access_token,picture,instagram_business_account{id,name,username,profile_picture_url}'
             : 'id,name,access_token,picture';
 
-        $res = Http::get("https://graph.facebook.com/v19.0/{$pageId}", [
+        $res = Http::get(MetaGraph::url("{$pageId}"), [
             'access_token' => $token,
-            'fields'       => $fields,
+            'fields' => $fields,
         ])->json();
 
         if (isset($res['error']) || empty($res['id'])) {
             $msg = $res['error']['message'] ?? 'Unknown Graph API error.';
 
             Log::warning('Social manual connect: page fetch failed', [
-                'network'      => $network,
+                'network' => $network,
                 'workspace_id' => $wid,
-                'page_id'      => $pageId,
-                'response'     => $res,
+                'page_id' => $pageId,
+                'response' => $res,
             ]);
 
             return back()->with('error', 'Could not fetch the Facebook Page: '.$msg
@@ -207,12 +208,12 @@ class SocialAccountController extends Controller
             SocialAccount::updateOrCreate(
                 ['workspace_id' => $wid, 'network' => 'instagram', 'account_id' => $ig['id']],
                 [
-                    'name'             => $igName,
-                    'picture_url'      => $ig['profile_picture_url'] ?? ($res['picture']['data']['url'] ?? null),
-                    'access_token'     => $pageToken,
-                    'refresh_token'    => null,
+                    'name' => $igName,
+                    'picture_url' => $ig['profile_picture_url'] ?? ($res['picture']['data']['url'] ?? null),
+                    'access_token' => $pageToken,
+                    'refresh_token' => null,
                     'token_expires_at' => null,
-                    'active'           => true,
+                    'active' => true,
                 ]
             );
 
@@ -223,12 +224,12 @@ class SocialAccountController extends Controller
         SocialAccount::updateOrCreate(
             ['workspace_id' => $wid, 'network' => 'facebook', 'account_id' => (string) $res['id']],
             [
-                'name'             => $res['name'] ?? $pageId,
-                'picture_url'      => $res['picture']['data']['url'] ?? null,
-                'access_token'     => $pageToken,
-                'refresh_token'    => null,
+                'name' => $res['name'] ?? $pageId,
+                'picture_url' => $res['picture']['data']['url'] ?? null,
+                'access_token' => $pageToken,
+                'refresh_token' => null,
                 'token_expires_at' => null,
-                'active'           => true,
+                'active' => true,
             ]
         );
 
@@ -274,7 +275,7 @@ class SocialAccountController extends Controller
             // /me/accounts is paginated — follow paging.next so users with many
             // Pages are not silently capped at the first batch.
             $pages = [];
-            $url = 'https://graph.facebook.com/v19.0/me/accounts';
+            $url = MetaGraph::url('me/accounts');
             $query = array_filter([
                 'access_token' => $tokens['access_token'],
                 'appsecret_proof' => $proof,
@@ -385,7 +386,7 @@ class SocialAccountController extends Controller
             ? ['pages_show_list', 'instagram_basic', 'instagram_content_publish']
             : ['pages_show_list', 'pages_read_engagement', 'pages_manage_posts'];
 
-        $perms = Http::get('https://graph.facebook.com/v19.0/me/permissions', array_filter([
+        $perms = Http::get(MetaGraph::url('me/permissions'), array_filter([
             'access_token' => $accessToken,
             'appsecret_proof' => $proof,
         ]))->json('data') ?? [];

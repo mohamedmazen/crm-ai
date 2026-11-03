@@ -33,7 +33,7 @@ function Avatar({ name, staff = false }) {
 
 export default function SupportShow({ ticket }) {
     const { flash, timezone } = usePage().props;
-    const userTz = timezone || 'Asia/Dhaka';
+    const userTz = timezone || 'Africa/Cairo';
     const formatTime = (iso) => formatInTz(iso, userTz, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZoneName: undefined });
     const { t } = useTranslation();
     const { data, setData, post, processing, errors, reset } = useForm({ message: '' });

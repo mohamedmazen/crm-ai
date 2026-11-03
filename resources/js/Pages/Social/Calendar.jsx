@@ -149,7 +149,7 @@ function buildUrl(month, filters) {
 export default function SocialCalendar({ posts, month, accounts = [], filters = {} }) {
     const { t } = useTranslation();
     const { props } = usePage();
-    const userTz = props.timezone || browserTz() || 'Asia/Dhaka';
+    const userTz = props.timezone || browserTz() || 'Africa/Cairo';
     const [year, monthIdx] = month.split('-').map(Number);
     const grid = buildCalendarGrid(year, monthIdx - 1);
 

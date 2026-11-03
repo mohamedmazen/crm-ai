@@ -40,4 +40,15 @@ class PlanLimitAlignmentTest extends TestCase
 
         $this->assertEquals(1, $total);
     }
+
+    public function test_usage_meter_accumulates_across_calls(): void
+    {
+        $ctx = $this->createWorkspaceContext([], ['email_verified_at' => now()]);
+        $workspace = $ctx['workspace'];
+
+        UsageMeter::track($workspace->id, 'whatsapp_messages', 3);
+        UsageMeter::track($workspace->id, 'whatsapp_messages', 2);
+
+        $this->assertSame(5, UsageMeter::current($workspace->id, 'whatsapp_messages'));
+    }
 }

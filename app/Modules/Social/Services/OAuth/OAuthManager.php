@@ -3,6 +3,7 @@
 namespace App\Modules\Social\Services\OAuth;
 
 use App\Modules\Integrations\Services\CredentialResolver;
+use App\Support\MetaGraph;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 
@@ -114,12 +115,12 @@ class OAuthManager
                 : 'pages_manage_posts,pages_read_engagement,pages_show_list,business_management';
         }
 
-        return 'https://www.facebook.com/v19.0/dialog/oauth?'.http_build_query($params);
+        return MetaGraph::dialog().'/dialog/oauth?'.http_build_query($params);
     }
 
     private function facebookExchange($creds, string $code, string $redirect): array
     {
-        $res = Http::get('https://graph.facebook.com/v19.0/oauth/access_token', [
+        $res = Http::get(MetaGraph::url('oauth/access_token'), [
             'client_id' => $creds->clientId() ?? '',
             'client_secret' => $creds->clientSecret() ?? '',
             'redirect_uri' => $redirect,
@@ -133,7 +134,7 @@ class OAuthManager
         // short-lived user token expire within 1-2 hours, which would silently break
         // scheduled publishing shortly after connecting.
         if ($token) {
-            $long = Http::get('https://graph.facebook.com/v19.0/oauth/access_token', [
+            $long = Http::get(MetaGraph::url('oauth/access_token'), [
                 'grant_type' => 'fb_exchange_token',
                 'client_id' => $creds->clientId() ?? '',
                 'client_secret' => $creds->clientSecret() ?? '',

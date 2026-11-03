@@ -112,9 +112,26 @@ return [
     | will be used by the PHP date and date-time functions. The timezone
     | is set to "UTC" by default as it is suitable for most use cases.
     |
+    | Timestamps are stored in UTC; user-facing dates are rendered in the
+    | user's own timezone, falling back to `default_timezone` below.
+    |
     */
 
     'timezone' => 'UTC',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default User Timezone
+    |--------------------------------------------------------------------------
+    |
+    | Timezone assumed for users who have not picked one yet (new signups,
+    | legacy accounts, admins). This is a display/interpretation default only —
+    | storage stays in UTC via the `timezone` setting above. Override with
+    | APP_DEFAULT_TIMEZONE in .env.
+    |
+    */
+
+    'default_timezone' => env('APP_DEFAULT_TIMEZONE', 'Africa/Cairo'),
 
     /*
     |--------------------------------------------------------------------------

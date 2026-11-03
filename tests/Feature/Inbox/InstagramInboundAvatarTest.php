@@ -97,7 +97,7 @@ class InstagramInboundAvatarTest extends TestCase
     {
         Http::preventStrayRequests();
         Http::fake([
-            'graph.facebook.com/v20.0/'.self::IGSID.'*' => Http::response([
+            'graph.facebook.com/*/'.self::IGSID.'*' => Http::response([
                 'id' => self::IGSID,
                 'name' => 'Jane Doe',
                 'username' => 'jane.doe',

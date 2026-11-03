@@ -811,8 +811,9 @@ function AccountRow({ account, channel, chatbots }) {
 /* ─────────────────── Meta Embedded Signup helpers ─────────────────── */
 
 /**
- * Listens for the WA_EMBEDDED_SIGNUP postMessage that Meta sends when
- * sessionInfoVersion:'3' is set. Resolves with { waba_id, phone_number_id }.
+ * Listens for the WA_EMBEDDED_SIGNUP postMessage Meta sends when
+ * sessionInfoVersion:'4' is set. Resolves with { waba_id, phone_number_id }
+ * once the FINISH event (or a payload carrying a waba_id) arrives.
  */
 function waitForWabaSessionInfo(timeout = 120000) {
     return new Promise((resolve, reject) => {
@@ -828,17 +829,23 @@ function waitForWabaSessionInfo(timeout = 120000) {
             try {
                 const parsed = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
                 if (parsed?.type === 'WA_EMBEDDED_SIGNUP') {
-                    clearTimeout(timer);
-                    window.removeEventListener('message', handler);
                     const data = parsed.data ?? {};
                     if (data.event === 'CANCEL' || data.event === 'ERROR') {
-                        reject(Object.assign(new Error('Embedded signup was not completed'), {
+                        clearTimeout(timer);
+                        window.removeEventListener('message', handler);
+                        reject(Object.assign(new Error(data.error_message || 'Embedded signup was not completed'), {
                             wasCancelled: true,
                             step: data.current_step ?? null,
                         }));
                         return;
                     }
-                    resolve(data);
+                    // v4 ends with a FINISH event; some intermediates already carry
+                    // the ids. Wait for either rather than resolving too early.
+                    if (data.event === 'FINISH' || data.waba_id) {
+                        clearTimeout(timer);
+                        window.removeEventListener('message', handler);
+                        resolve(data);
+                    }
                 }
             } catch (_) {}
         }
@@ -847,10 +854,10 @@ function waitForWabaSessionInfo(timeout = 120000) {
     });
 }
 
-function initFbSdk(appId) {
+function initFbSdk(appId, version) {
     if (typeof window.FB === 'undefined' || !appId) return false;
     try {
-        FB.init({ appId, autoLogAppEvents: true, xfbml: false, version: 'v20.0' });
+        FB.init({ appId, autoLogAppEvents: true, xfbml: false, version: version || 'v25.0' });
         window.__fbSdkReady = true;
         return true;
     } catch (_) {
@@ -862,7 +869,7 @@ function initFbSdk(appId) {
  * Loads the Facebook JS SDK on demand and resolves when FB.init() is done.
  * Safe to call multiple times — returns immediately if SDK is already ready.
  */
-function loadFbSdk(appId) {
+function loadFbSdk(appId, version) {
     if (!appId) {
         return Promise.reject(new Error(
             'Meta App ID is not configured. Ask your administrator to set App ID in Admin → Integrations → Meta App.'
@@ -873,7 +880,7 @@ function loadFbSdk(appId) {
         return Promise.resolve();
     }
 
-    if (typeof window.FB !== 'undefined' && initFbSdk(appId)) {
+    if (typeof window.FB !== 'undefined' && initFbSdk(appId, version)) {
         return Promise.resolve();
     }
 
@@ -898,7 +905,7 @@ function loadFbSdk(appId) {
                 settle(resolve);
                 return true;
             }
-            if (typeof window.FB !== 'undefined' && initFbSdk(appId)) {
+            if (typeof window.FB !== 'undefined' && initFbSdk(appId, version)) {
                 settle(resolve);
                 return true;
             }
@@ -918,7 +925,7 @@ function loadFbSdk(appId) {
         if (!alreadyInjected) {
             window.fbAsyncInit = () => {
                 try {
-                    initFbSdk(appId);
+                    initFbSdk(appId, version);
                     settle(resolve);
                 } catch (e) {
                     settle(reject, e);
@@ -950,6 +957,7 @@ function EmbeddedSignupButton({ configId, appId, channel, label, color, onCode, 
     const { t } = useTranslation();
     const { props } = usePage();
     const resolvedAppId = appId || props.metaAppId;
+    const graphVersion = props.metaGraphVersion || 'v25.0';
     const [loading, setLoading] = useState(false);
     const [error, setError]     = useState(null);
 
@@ -964,7 +972,7 @@ function EmbeddedSignupButton({ configId, appId, channel, label, color, onCode, 
         setLoading(true);
 
         try {
-            await loadFbSdk(resolvedAppId);
+            await loadFbSdk(resolvedAppId, graphVersion);
         } catch (e) {
             setLoading(false);
             setError(e?.message ?? t('inbox.could_not_load_fb_sdk'));
@@ -975,7 +983,7 @@ function EmbeddedSignupButton({ configId, appId, channel, label, color, onCode, 
         const sessionInfoPromise = isWhatsapp ? waitForWabaSessionInfo() : Promise.resolve(null);
 
         const extrasMap = {
-            whatsapp:  { setup: {}, featureType: '', sessionInfoVersion: '3' },
+            whatsapp:  { setup: {}, featureType: '', sessionInfoVersion: '4' },
             instagram: { feature_type: 'instagram_management' },
             messenger: { feature_type: 'messenger_chat' },
         };

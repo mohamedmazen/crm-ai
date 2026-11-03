@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function QueueIndex({ tab, failedJobs, batches }) {
     const { t } = useTranslation();
-    const adminTz = usePage().props.timezone || 'Asia/Dhaka';
+    const adminTz = usePage().props.timezone || 'Africa/Cairo';
     const tabs = [
         { id: 'failed', label: t('queue.failed_jobs') },
         { id: 'batches', label: t('queue.job_batches') },

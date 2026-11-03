@@ -51,7 +51,7 @@ function FieldError({ message }) {
 }
 
 function defaultInitialData(campaign, userTz) {
-    const fallbackTz = userTz || browserTz() || 'Asia/Dhaka';
+    const fallbackTz = userTz || browserTz() || 'Africa/Cairo';
     if (campaign) {
         const tz = campaign.timezone || fallbackTz;
         return {
@@ -260,7 +260,7 @@ export default function CampaignForm({
     });
     const [testTo, setTestTo] = useState({ phone_e164: '', email: '', sending: false, result: null });
 
-    const userTz = usePage().props.timezone || browserTz() || 'Asia/Dhaka';
+    const userTz = usePage().props.timezone || browserTz() || 'Africa/Cairo';
     const initialData = useMemo(() => defaultInitialData(campaign, userTz), [campaign?.id]);
     const { data, setData, post, patch, processing, errors, transform } = useForm(initialData);
 

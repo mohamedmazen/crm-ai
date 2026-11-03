@@ -1,6 +1,6 @@
 import { Head, router, usePage, Link, useForm } from '@inertiajs/react';
 import ClientLayout from '@/Layouts/ClientLayout';
-import { MessageSquare, Check, Link2, Phone, Webhook, Copy, Inbox, AlertTriangle, RefreshCw, Plus, Trash2, ShieldCheck, ShieldAlert } from 'lucide-react';
+import { MessageSquare, Check, Link2, Phone, Webhook, Copy, Inbox, AlertTriangle, RefreshCw, Plus, Trash2, ShieldCheck, ShieldAlert, CreditCard } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 
@@ -347,6 +347,17 @@ export default function WhatsappSetup({ wabas, webhookUrl, webhookTokensByWaba, 
                 {flash.success && (
                     <div className="rounded-lg bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200 px-4 py-3 text-sm">
                         {flash.success}
+                    </div>
+                )}
+
+                {/* Meta now bills service messages, so a payment method is required. */}
+                {wabas.length > 0 && (
+                    <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
+                        <CreditCard className="h-4 w-4 mt-0.5 shrink-0" />
+                        <div>
+                            <p className="font-medium">{t('whatsapp.setup_billing_title')}</p>
+                            <p className="mt-0.5 text-xs">{t('whatsapp.setup_billing_body')}</p>
+                        </div>
                     </div>
                 )}
 

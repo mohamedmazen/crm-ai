@@ -16,7 +16,7 @@ const STATUS_COLORS = {
 
 export default function SocialReportIndex({ postsByNetwork, postsByStatus, recentPosts, dateRange }) {
     const { t } = useTranslation();
-    const userTz = usePage().props.timezone || 'Asia/Dhaka';
+    const userTz = usePage().props.timezone || 'Africa/Cairo';
     const [from, setFrom] = useState(dateRange.from);
     const [to, setTo] = useState(dateRange.to);
 

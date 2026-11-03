@@ -279,7 +279,7 @@ export default function PostsIndex({ posts, accounts, filters }) {
     const { t } = useTranslation();
     const { props } = usePage();
     const flash = props.flash ?? {};
-    const userTz = props.timezone || browserTz() || 'Asia/Dhaka';
+    const userTz = props.timezone || browserTz() || 'Africa/Cairo';
 
     const [plannerOpen, setPlannerOpen] = useState(false);
     const [detailPost, setDetailPost] = useState(null);

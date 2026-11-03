@@ -27,22 +27,22 @@ class ManualChannelConnectTest extends TestCase
     private function fakeWhatsappGraph(): void
     {
         Http::fake([
-            'graph.facebook.com/v20.0/111222333/phone_numbers*' => Http::response([
+            'graph.facebook.com/*/111222333/phone_numbers*' => Http::response([
                 'data' => [[
                     'id' => '999888777',
                     'display_phone_number' => '+1 555-0100',
                     'verified_name' => 'Test Biz',
                 ]],
             ]),
-            'graph.facebook.com/v20.0/999888777/register' => Http::response(['success' => true]),
-            'graph.facebook.com/v20.0/999888777*' => Http::response([
+            'graph.facebook.com/*/999888777/register' => Http::response(['success' => true]),
+            'graph.facebook.com/*/999888777*' => Http::response([
                 'id' => '999888777',
                 'display_phone_number' => '+1 555-0100',
                 'verified_name' => 'Test Biz',
                 'quality_rating' => 'GREEN',
             ]),
-            'graph.facebook.com/v20.0/111222333/subscribed_apps' => Http::response(['success' => true]),
-            'graph.facebook.com/v20.0/111222333*' => Http::response([
+            'graph.facebook.com/*/111222333/subscribed_apps' => Http::response(['success' => true]),
+            'graph.facebook.com/*/111222333*' => Http::response([
                 'id' => '111222333',
                 'name' => 'Manual WABA',
                 'currency' => 'USD',
@@ -126,8 +126,8 @@ class ManualChannelConnectTest extends TestCase
     public function test_instagram_manual_connect_creates_channel_account(): void
     {
         Http::fake([
-            'graph.facebook.com/v20.0/555000/subscribed_apps*' => Http::response(['success' => true]),
-            'graph.facebook.com/v20.0/555000*' => Http::response([
+            'graph.facebook.com/*/555000/subscribed_apps*' => Http::response(['success' => true]),
+            'graph.facebook.com/*/555000*' => Http::response([
                 'id' => '555000',
                 'name' => 'Test Page',
                 'access_token' => 'PAGE_TOKEN_ABC',
@@ -158,7 +158,7 @@ class ManualChannelConnectTest extends TestCase
     public function test_instagram_manual_connect_requires_linked_ig_account(): void
     {
         Http::fake([
-            'graph.facebook.com/v20.0/555000*' => Http::response([
+            'graph.facebook.com/*/555000*' => Http::response([
                 'id' => '555000',
                 'name' => 'Test Page',
             ]),
@@ -180,9 +180,9 @@ class ManualChannelConnectTest extends TestCase
     public function test_messenger_manual_connect_accepts_page_token(): void
     {
         Http::fake([
-            'graph.facebook.com/v20.0/me*' => Http::response(['id' => '555000']),
-            'graph.facebook.com/v20.0/555000/subscribed_apps*' => Http::response(['success' => true]),
-            'graph.facebook.com/v20.0/555000*' => Http::response([
+            'graph.facebook.com/*/me*' => Http::response(['id' => '555000']),
+            'graph.facebook.com/*/555000/subscribed_apps*' => Http::response(['success' => true]),
+            'graph.facebook.com/*/555000*' => Http::response([
                 'id' => '555000',
                 'name' => 'Test Page',
                 // page node fetched with its own token does not echo access_token
@@ -210,8 +210,8 @@ class ManualChannelConnectTest extends TestCase
     {
         Http::fake([
             // /me resolves to a user id, not the page — token is not a Page token
-            'graph.facebook.com/v20.0/me*' => Http::response(['id' => '42']),
-            'graph.facebook.com/v20.0/555000*' => Http::response([
+            'graph.facebook.com/*/me*' => Http::response(['id' => '42']),
+            'graph.facebook.com/*/555000*' => Http::response([
                 'id' => '555000',
                 'name' => 'Test Page',
             ]),

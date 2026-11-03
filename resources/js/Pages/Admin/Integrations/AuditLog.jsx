@@ -16,7 +16,7 @@ const ACTION_COLORS = {
 
 export default function IntegrationsAuditLog({ logs }) {
     const { t } = useTranslation();
-    const adminTz = usePage().props.timezone || 'Asia/Dhaka';
+    const adminTz = usePage().props.timezone || 'Africa/Cairo';
     return (
         <AdminLayout title={t('integrations.audit_log_title')}>
             <Head title={`${t('integrations.audit_log_head')} · ${t('head.admin')}`} />

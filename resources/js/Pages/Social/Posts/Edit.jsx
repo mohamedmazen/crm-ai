@@ -35,7 +35,7 @@ function toLocalDatetime(utcStr, tz) {
 export default function EditPost({ post, accounts }) {
     const { t } = useTranslation();
     const { props } = usePage();
-    const userTz = props.timezone || browserTz() || 'Asia/Dhaka';
+    const userTz = props.timezone || browserTz() || 'Africa/Cairo';
     const postTz = post.timezone || userTz;
 
     const { data, setData, put, processing, errors } = useForm({

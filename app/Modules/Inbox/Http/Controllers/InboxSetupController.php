@@ -8,6 +8,7 @@ use App\Modules\Inbox\Services\MetaWebhookSubscriptionService;
 use App\Modules\Integrations\Services\CredentialResolver;
 use App\Modules\Shared\Models\ChannelAccount;
 use App\Modules\Whatsapp\Models\WhatsappBusinessAccount;
+use App\Support\MetaGraph;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -117,7 +118,7 @@ class InboxSetupController extends Controller
 
         // Fetch pages the user manages with Instagram accounts connected
         $pagesRes = Http::withToken($longToken)
-            ->get('https://graph.facebook.com/v20.0/me/accounts', [
+            ->get(MetaGraph::url('me/accounts'), [
                 'fields' => 'id,name,access_token,instagram_business_account{id,name,username}',
                 'limit' => 50,
             ]);
@@ -254,7 +255,7 @@ class InboxSetupController extends Controller
         $longToken = $this->exchangeForLongLivedToken($accessToken);
 
         $pagesRes = Http::withToken($longToken)
-            ->get('https://graph.facebook.com/v20.0/me/accounts', [
+            ->get(MetaGraph::url('me/accounts'), [
                 'fields' => 'id,name,access_token',
                 'limit' => 50,
             ]);
@@ -295,7 +296,7 @@ class InboxSetupController extends Controller
             // cannot resolve page-scoped PSIDs and yields Graph error 100.
             if (! $pageToken) {
                 $tokenRes = Http::withToken($longToken)
-                    ->get("https://graph.facebook.com/v20.0/{$pageId}", ['fields' => 'access_token']);
+                    ->get(MetaGraph::url("{$pageId}"), ['fields' => 'access_token']);
                 $pageToken = $tokenRes->json('access_token');
             }
 
@@ -379,7 +380,7 @@ class InboxSetupController extends Controller
         $token = $this->exchangeForLongLivedToken(trim($validated['access_token']));
 
         $pageRes = Http::withToken($token)
-            ->get("https://graph.facebook.com/v20.0/{$pageId}", [
+            ->get(MetaGraph::url("{$pageId}"), [
                 'fields' => 'id,name,access_token,instagram_business_account{id,name,username}',
             ]);
 
@@ -478,7 +479,7 @@ class InboxSetupController extends Controller
         $token = $this->exchangeForLongLivedToken(trim($validated['access_token']));
 
         $pageRes = Http::withToken($token)
-            ->get("https://graph.facebook.com/v20.0/{$pageId}", [
+            ->get(MetaGraph::url("{$pageId}"), [
                 'fields' => 'id,name,access_token',
             ]);
 
@@ -504,7 +505,7 @@ class InboxSetupController extends Controller
         // Page token — accept it only when /me resolves to this page.
         if (! $pageToken) {
             $meRes = Http::withToken($token)
-                ->get('https://graph.facebook.com/v20.0/me', ['fields' => 'id']);
+                ->get(MetaGraph::url('me'), ['fields' => 'id']);
             if ($meRes->successful() && (string) $meRes->json('id') === $pageId) {
                 $pageToken = $token;
             }
@@ -596,7 +597,7 @@ class InboxSetupController extends Controller
             return null;
         }
 
-        $res = Http::get('https://graph.facebook.com/v20.0/oauth/access_token', [
+        $res = Http::get(MetaGraph::url('oauth/access_token'), [
             'client_id' => $meta->appId(),
             'client_secret' => $meta->appSecret(),
             'code' => $code,
@@ -621,7 +622,7 @@ class InboxSetupController extends Controller
             return $shortToken;
         }
 
-        $res = Http::get('https://graph.facebook.com/v20.0/oauth/access_token', [
+        $res = Http::get(MetaGraph::url('oauth/access_token'), [
             'grant_type' => 'fb_exchange_token',
             'client_id' => $meta->appId(),
             'client_secret' => $meta->appSecret(),

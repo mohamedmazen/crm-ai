@@ -37,6 +37,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Meta / Facebook Graph API
+    |--------------------------------------------------------------------------
+    |
+    | Graph API version used by every WhatsApp, Messenger, Instagram and social
+    | posting call. Meta deprecates versions on a fixed schedule, so the version
+    | lives in one place (here) instead of being hardcoded per call site. Override
+    | with META_GRAPH_VERSION in .env.
+    */
+    'meta' => [
+        'graph_version' => env('META_GRAPH_VERSION', 'v25.0'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Socialite Providers
     |--------------------------------------------------------------------------
     */

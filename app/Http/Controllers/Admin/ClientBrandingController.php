@@ -19,7 +19,6 @@ class ClientBrandingController extends Controller
             'logo' => ['nullable', 'image', 'mimes:png,jpg,jpeg,gif,webp', 'max:2048'],
             'primary_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'tagline' => ['nullable', 'string', 'max:255'],
-            'custom_domain' => ['nullable', 'string', 'max:255'],
             'support_email' => ['nullable', 'email', 'max:255'],
         ]);
 

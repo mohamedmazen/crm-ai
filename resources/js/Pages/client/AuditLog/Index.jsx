@@ -7,7 +7,7 @@ import { formatInTz } from '@/Utils/datetime';
 
 export default function ClientAuditLogIndex({ logs, filters = {} }) {
     const { t } = useTranslation();
-    const userTz = usePage().props.timezone || 'Asia/Dhaka';
+    const userTz = usePage().props.timezone || 'Africa/Cairo';
     const formatDate = (iso) => formatInTz(iso, userTz, { dateStyle: undefined, timeStyle: undefined, year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZoneName: undefined });
     const [actionFilter, setActionFilter] = useState(filters.action ?? '');
 

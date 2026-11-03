@@ -177,7 +177,7 @@ function NewTokenDisplay({ token, onClose }) {
 
 export default function ApiTokens({ tokens: initialTokens }) {
     const { t } = useTranslation();
-    const userTz = usePage().props.timezone || 'Asia/Dhaka';
+    const userTz = usePage().props.timezone || 'Africa/Cairo';
     const formatDate = (iso) => iso ? formatDateTz(iso, userTz) : t('api.never');
     const [tokens, setTokens] = useState(initialTokens ?? []);
     const [showCreate, setShowCreate] = useState(false);

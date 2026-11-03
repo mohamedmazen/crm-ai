@@ -11,14 +11,13 @@ use App\Modules\Shared\Models\Conversation;
 use App\Modules\Shared\Models\Message;
 use App\Modules\Shared\Services\ContactService;
 use App\Services\WebhookIdempotencyService;
+use App\Support\MetaGraph;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class MessengerDriver implements ChannelDriverInterface
 {
-    private const BASE = 'https://graph.facebook.com/v20.0';
-
     public function __construct(private ContactService $contactService) {}
 
     public function send(Message $message): string
@@ -62,7 +61,7 @@ class MessengerDriver implements ChannelDriverInterface
     {
         $resp = Http::withToken($accessToken)
             ->timeout(15)
-            ->post(self::BASE.'/me/messages', [
+            ->post(MetaGraph::base().'/me/messages', [
                 'recipient' => $recipient,
                 'message' => $message,
                 'messaging_type' => 'RESPONSE',
@@ -295,7 +294,7 @@ class MessengerDriver implements ChannelDriverInterface
         try {
             $resp = Http::withToken($pageToken)
                 ->timeout(10)
-                ->get(self::BASE."/{$psid}", [
+                ->get(MetaGraph::base()."/{$psid}", [
                     'fields' => 'first_name,last_name,profile_pic',
                 ]);
 
@@ -336,7 +335,7 @@ class MessengerDriver implements ChannelDriverInterface
             try {
                 $conv = Http::withToken($pageToken)
                     ->timeout(10)
-                    ->get(self::BASE."/{$pageId}/conversations", [
+                    ->get(MetaGraph::base()."/{$pageId}/conversations", [
                         'platform' => 'messenger',
                         'user_id' => $psid,
                         'fields' => 'participants',

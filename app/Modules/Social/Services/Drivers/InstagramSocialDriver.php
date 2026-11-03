@@ -4,6 +4,7 @@ namespace App\Modules\Social\Services\Drivers;
 
 use App\Modules\Social\Exceptions\PermanentPublishException;
 use App\Modules\Social\Models\SocialAccount;
+use App\Support\MetaGraph;
 use Illuminate\Support\Facades\Http;
 
 class InstagramSocialDriver implements SocialNetworkInterface
@@ -41,7 +42,7 @@ class InstagramSocialDriver implements SocialNetworkInterface
             throw new PermanentPublishException('Instagram posts require at least one image.');
         }
 
-        $container = Http::timeout(30)->post("https://graph.facebook.com/v19.0/{$igUserId}/media", $containerPayload)->json();
+        $container = Http::timeout(30)->post(MetaGraph::url("{$igUserId}/media"), $containerPayload)->json();
         $creationId = $container['id'] ?? null;
         if (! $creationId) {
             throw new \RuntimeException('Instagram container creation failed: '.json_encode($container));
@@ -52,7 +53,7 @@ class InstagramSocialDriver implements SocialNetworkInterface
         $this->waitForContainer($creationId, $token);
 
         // Step 3: Publish
-        $res = Http::timeout(30)->post("https://graph.facebook.com/v19.0/{$igUserId}/media_publish", [
+        $res = Http::timeout(30)->post(MetaGraph::url("{$igUserId}/media_publish"), [
             'creation_id' => $creationId,
             'access_token' => $token,
         ])->json();
@@ -63,7 +64,7 @@ class InstagramSocialDriver implements SocialNetworkInterface
     private function waitForContainer(string $creationId, string $token, int $maxAttempts = 10): void
     {
         for ($i = 0; $i < $maxAttempts; $i++) {
-            $res = Http::timeout(15)->get("https://graph.facebook.com/v19.0/{$creationId}", [
+            $res = Http::timeout(15)->get(MetaGraph::url("{$creationId}"), [
                 'fields' => 'status_code',
                 'access_token' => $token,
             ])->json();

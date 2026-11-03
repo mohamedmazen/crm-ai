@@ -13,7 +13,7 @@ class TwoFactorAuthTest extends TestCase
     private function clientUser(array $attrs = []): User
     {
         return User::factory()->create(array_merge([
-            'role'              => 'client',
+            'role' => 'client',
             'email_verified_at' => now(),
         ], $attrs));
     }
@@ -39,8 +39,8 @@ class TwoFactorAuthTest extends TestCase
     public function test_2fa_disable_requires_password(): void
     {
         $user = $this->clientUser([
-            'two_factor_secret'          => encrypt('TESTSECRET'),
-            'two_factor_recovery_codes'  => encrypt(json_encode(['code1', 'code2'])),
+            'two_factor_secret' => encrypt('TESTSECRET'),
+            'two_factor_recovery_codes' => encrypt(json_encode(['code1', 'code2'])),
         ]);
 
         // No password submitted — expect validation error
@@ -53,5 +53,23 @@ class TwoFactorAuthTest extends TestCase
     {
         $this->get(route('client.profile.2fa'))
             ->assertRedirect(route('login'));
+    }
+
+    public function test_2fa_disable_clears_secrets_with_correct_password(): void
+    {
+        $user = $this->clientUser([
+            'two_factor_secret' => encrypt('TESTSECRET'),
+            'two_factor_recovery_codes' => encrypt(json_encode(['code1', 'code2'])),
+            'two_factor_confirmed_at' => now(),
+        ]);
+
+        $this->actingAs($user)
+            ->post(route('client.profile.2fa.disable'), ['password' => 'password'])
+            ->assertRedirect(route('client.profile.2fa'));
+
+        $user->refresh();
+        $this->assertNull($user->two_factor_secret);
+        $this->assertNull($user->two_factor_recovery_codes);
+        $this->assertNull($user->two_factor_confirmed_at);
     }
 }

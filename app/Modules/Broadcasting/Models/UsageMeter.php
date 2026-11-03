@@ -18,14 +18,14 @@ class UsageMeter extends Model
     public static function track(int $workspaceId, string $metric, int $by = 1): void
     {
         $period = (int) now()->format('Ym');
-        static::updateOrCreate(
+
+        // firstOrCreate seeds the row once; increment then accumulates on top of
+        // the stored value. Seeding with updateOrCreate reset the counter to 0 on
+        // every call, so monthly usage never accumulated past the last event.
+        static::firstOrCreate(
             ['workspace_id' => $workspaceId, 'metric' => $metric, 'period' => $period],
             ['value' => 0]
-        );
-        static::where('workspace_id', $workspaceId)
-            ->where('metric', $metric)
-            ->where('period', $period)
-            ->increment('value', $by);
+        )->increment('value', $by);
     }
 
     public static function current(int $workspaceId, string $metric): int

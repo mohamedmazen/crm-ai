@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function WebhookDeliveries({ endpoint, deliveries }) {
     const { t } = useTranslation();
-    const userTz = usePage().props.timezone || 'Asia/Dhaka';
+    const userTz = usePage().props.timezone || 'Africa/Cairo';
     return (
         <ClientLayout title={t('webhook.deliveries_title')}>
             <Head title={t('webhook.deliveries_title')} />

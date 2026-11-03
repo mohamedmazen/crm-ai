@@ -63,6 +63,18 @@ class Plan extends Model
         };
     }
 
+    /**
+     * Whether the plan is free — both billing cycles cost nothing.
+     *
+     * Mirrors the price shown on the pricing page, so registration, pricing and
+     * checkout all agree on what counts as a free plan.
+     */
+    public function isFree(): bool
+    {
+        return (int) ($this->priceCentsForCycle('month') ?? 0) === 0
+            && (int) ($this->priceCentsForCycle('year') ?? 0) === 0;
+    }
+
     public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class, 'currency_code', 'code');

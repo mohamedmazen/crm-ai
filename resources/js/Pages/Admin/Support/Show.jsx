@@ -29,7 +29,7 @@ function Avatar({ name, staff = false }) {
 
 export default function AdminSupportShow({ ticket }) {
     const { flash, timezone } = usePage().props;
-    const adminTz = timezone || 'Asia/Dhaka';
+    const adminTz = timezone || 'Africa/Cairo';
     const formatTime = (iso) => formatInTz(iso, adminTz, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZoneName: undefined });
     const { t } = useTranslation();
     const { data, setData, post, processing, errors, reset } = useForm({ message: '' });

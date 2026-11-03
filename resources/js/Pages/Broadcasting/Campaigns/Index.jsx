@@ -40,7 +40,7 @@ export default function CampaignsIndex({ campaigns, filters }) {
     const { t } = useTranslation();
     const { props } = usePage();
     const flash = props.flash ?? {};
-    const userTz = props.timezone || browserTz() || 'Asia/Dhaka';
+    const userTz = props.timezone || browserTz() || 'Africa/Cairo';
     const loading = useInertiaLoading();
 
     const handleFilter = (key, val) =>

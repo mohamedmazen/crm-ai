@@ -15,7 +15,7 @@ export default function Register({ plan_id = null, cycle = 'month' }) {
         agree_terms:           false,
         plan_id:               plan_id ?? '',
         cycle:                 cycle,
-        timezone:              browserTz() || 'Asia/Dhaka',
+        timezone:              browserTz() || 'Africa/Cairo',
     });
 
     const submit = (e) => {

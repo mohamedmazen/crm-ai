@@ -18,6 +18,8 @@ use Illuminate\Support\Str;
  * @property string $uuid
  * @property int $workspace_id
  * @property string|null $phone_e164
+ * @property string|null $wa_username
+ * @property string|null $wa_user_id
  * @property string|null $email
  * @property string|null $first_name
  * @property string|null $last_name
@@ -80,7 +82,7 @@ class Contact extends Model
     protected $appends = ['full_name', 'avatar_url'];
 
     protected $fillable = [
-        'workspace_id', 'phone_e164', 'email', 'first_name', 'last_name',
+        'workspace_id', 'phone_e164', 'wa_user_id', 'wa_username', 'email', 'first_name', 'last_name',
         'avatar', 'country', 'language', 'opt_in_whatsapp', 'opt_in_sms', 'opt_in_email',
         'custom_fields', 'last_seen_at', 'source', 'lead_id',
     ];

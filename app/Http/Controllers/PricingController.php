@@ -50,7 +50,7 @@ class PricingController extends Controller
                     'white_label_enabled' => (bool) $plan->white_label_enabled,
                     'popular' => (bool) $plan->popular,
                     'featured' => (bool) $plan->featured,
-                    'is_free' => ($monthlyCents ?? 0) === 0 && ($yearlyCents ?? 0) === 0,
+                    'is_free' => $plan->isFree(),
                     'trial_days' => $plan->trial_days,
                 ];
             });

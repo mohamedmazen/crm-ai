@@ -4,6 +4,7 @@ namespace App\Modules\Integrations\Services;
 
 use App\Modules\Integrations\Models\IntegrationConfig;
 use App\Services\StorageManager;
+use App\Support\MetaGraph;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http as HttpFacade;
 use Illuminate\Support\Facades\Storage;
@@ -44,7 +45,7 @@ class ConnectionTester
         if (empty($token)) {
             return ['ok' => false, 'message' => 'System user token is not configured.'];
         }
-        $resp = HttpFacade::timeout(10)->get('https://graph.facebook.com/v20.0/me', ['access_token' => $token]);
+        $resp = HttpFacade::timeout(10)->get(MetaGraph::url('me'), ['access_token' => $token]);
         if ($resp->successful() && isset($resp->json()['id'])) {
             return ['ok' => true, 'message' => 'Connected. User ID: '.$resp->json()['id']];
         }

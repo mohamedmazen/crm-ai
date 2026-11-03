@@ -98,6 +98,7 @@ const SETUP_GUIDES = {
                     'Go to Facebook Login for Business → Configurations → Create Configuration.',
                     'WhatsApp config: set Permissions to whatsapp_business_management + whatsapp_business_messaging. Copy the config_id → paste into "Embedded Signup Config ID (WhatsApp)" below.',
                     'Social config (Instagram + Messenger): set the permissions listed below. Copy the config_id → paste into "Embedded Signup Config ID (Instagram / Messenger)" below.',
+                    'Embedded Signup v4 is required (sessionInfoVersion 4). Use the current "Embedded Signup" configuration in the Meta dashboard; older v2/v3 sessions are no longer accepted.',
                 ],
                 permissions: [
                     'instagram_basic',

@@ -195,7 +195,7 @@ function CreateSubscriptionModal({ show, onClose, plans }) {
 export default function AdminSubscriptionsIndex({ subscriptions, filters = {}, plans = [] }) {
     const { t } = useTranslation();
     const { auth, timezone } = usePage().props;
-    const adminTz = timezone || 'Asia/Dhaka';
+    const adminTz = timezone || 'Africa/Cairo';
     const canManage = (auth?.permissions ?? []).includes('manage_subscriptions');
     const [showCreate, setShowCreate] = useState(false);
 

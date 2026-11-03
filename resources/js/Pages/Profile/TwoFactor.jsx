@@ -21,7 +21,7 @@ export default function TwoFactor({ enabled, qrCode, secretKey, recoveryCodes = 
 
     const handleDisable = (e) => {
         e.preventDefault();
-        disableForm.delete(route('client.profile.2fa.disable'), { preserveScroll: true });
+        disableForm.post(route('client.profile.2fa.disable'), { preserveScroll: true });
     };
 
     const handleRegen = (e) => {

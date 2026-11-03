@@ -15,7 +15,7 @@ export default function BillingIndex({ transactions }) {
     const { t } = useTranslation();
     const { timezone } = usePage().props;
     const { url } = usePage();
-    const userTz = timezone || 'Asia/Dhaka';
+    const userTz = timezone || 'Africa/Cairo';
     const formatDate = (iso) => formatDateTz(iso, userTz);
     const hasCheckoutSuccess = url.includes('checkout=success');
 

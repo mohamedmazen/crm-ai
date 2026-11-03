@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Social;
 
+use App\Modules\Integrations\Models\IntegrationConfig;
 use App\Modules\Social\Models\SocialAccount;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
@@ -30,16 +31,16 @@ class ManualSocialAccountConnectTest extends TestCase
     public function test_facebook_manual_connect_stores_page_with_page_token(): void
     {
         Http::fake([
-            'graph.facebook.com/v19.0/555000*' => Http::response([
-                'id'           => '555000',
-                'name'         => 'Test Page',
+            'graph.facebook.com/*/555000*' => Http::response([
+                'id' => '555000',
+                'name' => 'Test Page',
                 'access_token' => 'PAGE_TOKEN_ABC',
-                'picture'      => ['data' => ['url' => 'https://example.com/p.png']],
+                'picture' => ['data' => ['url' => 'https://example.com/p.png']],
             ]),
         ]);
 
         $response = $this->manualConnect('facebook', [
-            'page_id'      => '555000',
+            'page_id' => '555000',
             'access_token' => 'USER_TOKEN',
         ]);
 
@@ -66,7 +67,7 @@ class ManualSocialAccountConnectTest extends TestCase
         ]);
 
         $response = $this->manualConnect('facebook', [
-            'page_id'      => '555000',
+            'page_id' => '555000',
             'access_token' => 'BAD_TOKEN',
         ]);
 
@@ -79,20 +80,20 @@ class ManualSocialAccountConnectTest extends TestCase
     public function test_instagram_manual_connect_stores_linked_ig_account(): void
     {
         Http::fake([
-            'graph.facebook.com/v19.0/555000*' => Http::response([
-                'id'                         => '555000',
-                'name'                       => 'Test Page',
-                'access_token'               => 'PAGE_TOKEN_ABC',
+            'graph.facebook.com/*/555000*' => Http::response([
+                'id' => '555000',
+                'name' => 'Test Page',
+                'access_token' => 'PAGE_TOKEN_ABC',
                 'instagram_business_account' => [
-                    'id'                  => '17840000000',
-                    'username'            => 'testbiz',
+                    'id' => '17840000000',
+                    'username' => 'testbiz',
                     'profile_picture_url' => 'https://example.com/ig.png',
                 ],
             ]),
         ]);
 
         $response = $this->manualConnect('instagram', [
-            'page_id'      => '555000',
+            'page_id' => '555000',
             'access_token' => 'USER_TOKEN',
         ]);
 
@@ -109,14 +110,14 @@ class ManualSocialAccountConnectTest extends TestCase
     public function test_instagram_manual_connect_requires_linked_ig_account(): void
     {
         Http::fake([
-            'graph.facebook.com/v19.0/555000*' => Http::response([
-                'id'   => '555000',
+            'graph.facebook.com/*/555000*' => Http::response([
+                'id' => '555000',
                 'name' => 'Test Page',
             ]),
         ]);
 
         $response = $this->manualConnect('instagram', [
-            'page_id'      => '555000',
+            'page_id' => '555000',
             'access_token' => 'USER_TOKEN',
         ]);
 
@@ -136,7 +137,7 @@ class ManualSocialAccountConnectTest extends TestCase
         ]);
 
         $response = $this->manualConnect('twitter', [
-            'access_token'  => 'X_TOKEN',
+            'access_token' => 'X_TOKEN',
             'refresh_token' => 'X_REFRESH',
         ]);
 
@@ -152,19 +153,19 @@ class ManualSocialAccountConnectTest extends TestCase
 
     public function test_twitter_manual_connect_with_configured_client_refreshes_immediately(): void
     {
-        \App\Modules\Integrations\Models\IntegrationConfig::create([
-            'provider'    => 'oauth_twitter',
-            'label'       => 'X (Twitter) OAuth',
-            'mode'        => 'live',
-            'enabled'     => true,
+        IntegrationConfig::create([
+            'provider' => 'oauth_twitter',
+            'label' => 'X (Twitter) OAuth',
+            'mode' => 'live',
+            'enabled' => true,
             'credentials' => ['client_id' => 'cid', 'client_secret' => 'csec'],
         ]);
 
         Http::fake([
             'api.twitter.com/2/oauth2/token' => Http::response([
-                'access_token'  => 'FRESH_TOKEN',
+                'access_token' => 'FRESH_TOKEN',
                 'refresh_token' => 'ROTATED_REFRESH',
-                'expires_in'    => 7200,
+                'expires_in' => 7200,
             ]),
             'api.twitter.com/2/users/me*' => Http::response([
                 'data' => ['id' => '42', 'name' => 'Test User'],
@@ -172,7 +173,7 @@ class ManualSocialAccountConnectTest extends TestCase
         ]);
 
         $this->manualConnect('twitter', [
-            'access_token'  => 'X_TOKEN',
+            'access_token' => 'X_TOKEN',
             'refresh_token' => 'X_REFRESH',
         ])->assertSessionHas('success');
 
@@ -194,13 +195,13 @@ class ManualSocialAccountConnectTest extends TestCase
         ]);
 
         SocialAccount::create([
-            'workspace_id'  => $this->ctx['workspace']->id,
-            'network'       => 'twitter',
-            'account_id'    => '42',
-            'name'          => 'Test User',
-            'access_token'  => 'OLD_TOKEN',
+            'workspace_id' => $this->ctx['workspace']->id,
+            'network' => 'twitter',
+            'account_id' => '42',
+            'name' => 'Test User',
+            'access_token' => 'OLD_TOKEN',
             'refresh_token' => 'OLD_REFRESH',
-            'active'        => true,
+            'active' => true,
         ]);
 
         $this->manualConnect('twitter', ['access_token' => 'NEW_TOKEN'])

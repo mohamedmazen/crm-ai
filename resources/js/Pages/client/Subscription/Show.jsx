@@ -108,7 +108,7 @@ function ChangePlanModal({ subscription, plans, onClose }) {
 export default function SubscriptionShow({ subscription, canCancel, canUpgrade, plans = [], transactions = [] }) {
     const { t } = useTranslation();
     const { flash, timezone } = usePage().props;
-    const userTz = timezone || 'Asia/Dhaka';
+    const userTz = timezone || 'Africa/Cairo';
     const formatDate = (iso) => formatDateTz(iso, userTz);
     const [showChangePlan, setShowChangePlan] = useState(false);
 

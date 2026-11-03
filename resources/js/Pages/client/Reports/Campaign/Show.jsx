@@ -34,7 +34,7 @@ export default function CampaignReportShow({
     filters,
 }) {
     const { t } = useTranslation();
-    const userTz = usePage().props.timezone || 'Asia/Dhaka';
+    const userTz = usePage().props.timezone || 'Africa/Cairo';
     const [statusFilter, setStatusFilter] = useState(filters.status ?? '');
 
     const applyFilter = (status) => {

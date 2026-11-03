@@ -163,7 +163,7 @@ export default function CustomFieldsIndex({
                                         : 'bg-white text-neutral-600 hover:bg-neutral-100 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-800'
                                 }`}
                             >
-                                {eType === 'lead' ? (t('leads.title') || 'Leads') : eType === 'company' ? (t('companies.title') || 'Companies') : (t('contacts.title') || 'Contacts')}
+                                {eType === 'lead' ? (t('custom_fields.tab_leads') || 'Leads') : eType === 'company' ? (t('custom_fields.tab_companies') || 'Companies') : (t('custom_fields.tab_contacts') || 'Contacts')}
                             </button>
                         );
                     })}

@@ -12,6 +12,7 @@ import {
     CheckCircle,
     LogIn,
     Trash2,
+    Globe,
 } from 'lucide-react';
 import axios from 'axios';
 import useInertiaLoading from '@/hooks/useInertiaLoading';
@@ -35,7 +36,52 @@ function ActionIcon({ onClick, title, icon: Icon, className = 'text-brand-500 ho
     );
 }
 
-export default function AdminClientsIndex({ clients, plans = [], filters = {} }) {
+function DomainFields({ form, tenantBaseDomain, tenantBaseDomainEnabled, t }) {
+    return (
+        <div className="rounded-soft border border-neutral-200 p-4 dark:border-neutral-700">
+            <h3 className="mb-1 flex items-center gap-2 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                <Globe className="h-4 w-4" /> {t('admin.domains')}
+            </h3>
+            <p className="mb-3 text-xs text-neutral-500 dark:text-neutral-400">{t('admin.domains_hint')}</p>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                    <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('admin.subdomain')}</label>
+                    <div className="flex items-stretch">
+                        <input
+                            type="text"
+                            value={form.data.subdomain}
+                            onChange={(e) => form.setData('subdomain', e.target.value.toLowerCase())}
+                            disabled={!tenantBaseDomainEnabled}
+                            placeholder="acme"
+                            className="min-w-0 flex-1 rounded-l-soft border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm disabled:opacity-60"
+                        />
+                        <span className="flex items-center rounded-r-soft border border-l-0 border-neutral-300 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800/60 px-3 font-mono text-xs text-neutral-500 dark:text-neutral-400">
+                            .{tenantBaseDomain || 'example.com'}
+                        </span>
+                    </div>
+                    <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+                        {tenantBaseDomainEnabled ? t('admin.subdomain_hint') : t('admin.subdomains_disabled')}
+                    </p>
+                    {form.errors.subdomain && <p className="mt-0.5 text-xs text-red-500">{form.errors.subdomain}</p>}
+                </div>
+                <div>
+                    <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('admin.custom_domain')}</label>
+                    <input
+                        type="text"
+                        value={form.data.custom_domain}
+                        onChange={(e) => form.setData('custom_domain', e.target.value.toLowerCase())}
+                        placeholder="crm.yourcompany.com"
+                        className="w-full rounded-soft border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm"
+                    />
+                    <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">{t('admin.custom_domain_hint')}</p>
+                    {form.errors.custom_domain && <p className="mt-0.5 text-xs text-red-500">{form.errors.custom_domain}</p>}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default function AdminClientsIndex({ clients, plans = [], filters = {}, tenantBaseDomain = null, tenantBaseDomainEnabled = false }) {
     const { t } = useTranslation();
     const page = usePage();
     const pageFlash = page.props.flash || {};
@@ -75,6 +121,8 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {} })
         base_currency: '',
         currency_symbol: '',
         currency_position: '',
+        subdomain: '',
+        custom_domain: '',
     });
 
     const editClientForm = useForm({
@@ -86,6 +134,8 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {} })
         base_currency: '',
         currency_symbol: '',
         currency_position: '',
+        subdomain: '',
+        custom_domain: '',
     });
 
     const addUserForm = useForm({
@@ -125,6 +175,8 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {} })
             base_currency: c.base_currency ?? '',
             currency_symbol: c.currency_symbol ?? '',
             currency_position: c.currency_position ?? '',
+            subdomain: c.subdomain ?? '',
+            custom_domain: c.custom_domain ?? '',
         });
         setEditClientOpen(true);
     };
@@ -439,6 +491,7 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {} })
                                 </select>
                             </div>
                         </div>
+                        <DomainFields form={addClientForm} tenantBaseDomain={tenantBaseDomain} tenantBaseDomainEnabled={tenantBaseDomainEnabled} t={t} />
                     </Modal.Body>
                     <Modal.Footer>
                         <Button type="button" variant="outline" onClick={() => setAddClientOpen(false)}>{t('common.cancel')}</Button>
@@ -537,6 +590,7 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {} })
                                     </select>
                                 </div>
                             </div>
+                            <DomainFields form={editClientForm} tenantBaseDomain={tenantBaseDomain} tenantBaseDomainEnabled={tenantBaseDomainEnabled} t={t} />
                         </Modal.Body>
                         <Modal.Footer>
                             <Button type="button" variant="outline" onClick={() => setEditClientOpen(false)}>{t('common.cancel')}</Button>

@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next';
 
 const ALL_TIMEZONES = Intl.supportedValuesOf
     ? Intl.supportedValuesOf('timeZone')
-    : ['UTC', 'Asia/Dhaka', 'America/New_York', 'America/Los_Angeles', 'Europe/London',
+    : ['UTC', 'Africa/Cairo', 'America/New_York', 'America/Los_Angeles', 'Europe/London',
        'Asia/Kolkata', 'Asia/Dubai', 'Asia/Bangkok', 'Asia/Tokyo', 'Australia/Sydney',
        'Pacific/Auckland', 'America/Chicago', 'America/Sao_Paulo', 'Europe/Paris',
-       'Europe/Berlin', 'Africa/Cairo', 'Asia/Singapore', 'Asia/Shanghai'];
+       'Europe/Berlin', 'Asia/Singapore', 'Asia/Shanghai'];
 
 function getUtcOffset(tz) {
     try {

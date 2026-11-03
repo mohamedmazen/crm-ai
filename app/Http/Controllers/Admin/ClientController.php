@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\ResolveTenantDomain;
 use App\Models\Client;
 use App\Models\ClientSubscription;
 use App\Models\Plan;
 use App\Models\User;
+use App\Rules\CustomDomain;
 use App\Rules\NotBreachedPassword;
+use App\Rules\WorkspaceSubdomain;
 use App\Services\AuditLogService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -51,6 +54,8 @@ class ClientController extends Controller
                 'base_currency' => $c->base_currency,
                 'currency_symbol' => $c->currency_symbol,
                 'currency_position' => $c->currency_position,
+                'subdomain' => $c->subdomain,
+                'custom_domain' => $c->custom_domain,
                 'subscription' => $plan ? ['name' => $plan->name] : null,
             ];
         });
@@ -68,6 +73,8 @@ class ClientController extends Controller
                 'yearly_price_cents' => $p->yearly_price_cents,
             ]),
             'filters' => $request->only(['search']),
+            'tenantBaseDomain' => config('tenancy.base_domain'),
+            'tenantBaseDomainEnabled' => (bool) config('tenancy.enabled', true) && filled(config('tenancy.base_domain')),
         ]);
     }
 
@@ -84,12 +91,14 @@ class ClientController extends Controller
             'base_currency' => ['nullable', 'string', 'max:10'],
             'currency_symbol' => ['nullable', 'string', 'max:16'],
             'currency_position' => ['nullable', 'string', 'in:before,after'],
+            'subdomain' => ['nullable', 'string', 'max:63', new WorkspaceSubdomain],
+            'custom_domain' => ['nullable', 'string', 'max:255', new CustomDomain],
         ]);
 
         $validated['status'] = $validated['status'] ?? 'active';
         // Currency fields left null inherit the platform default currency.
 
-        $client = Client::create($validated);
+        $client = Client::create($this->normalizeDomains($validated));
 
         $this->auditLog->logAdmin('client.created', Client::class, (int) $client->id, ['name' => $client->name]);
 
@@ -109,9 +118,11 @@ class ClientController extends Controller
             'base_currency' => ['nullable', 'string', 'max:10'],
             'currency_symbol' => ['nullable', 'string', 'max:16'],
             'currency_position' => ['nullable', 'string', 'in:before,after'],
+            'subdomain' => ['nullable', 'string', 'max:63', new WorkspaceSubdomain($client)],
+            'custom_domain' => ['nullable', 'string', 'max:255', new CustomDomain($client)],
         ]);
 
-        $client->update($validated);
+        $client->update($this->normalizeDomains($validated));
 
         $this->auditLog->logAdmin('client.updated', Client::class, (int) $client->id, ['name' => $client->name]);
 
@@ -359,5 +370,27 @@ class ClientController extends Controller
 
             fclose($handle);
         }, 'clients_'.now()->format('Ymd_His').'.csv', ['Content-Type' => 'text/csv']);
+    }
+
+    /**
+     * Normalise domain inputs so storage matches what the tenant resolver
+     * compares against the Host header. Blank values become null.
+     *
+     * @param  array<string, mixed>  $validated
+     * @return array<string, mixed>
+     */
+    private function normalizeDomains(array $validated): array
+    {
+        if (array_key_exists('subdomain', $validated)) {
+            $subdomain = strtolower(trim((string) $validated['subdomain']));
+            $validated['subdomain'] = $subdomain === '' ? null : $subdomain;
+        }
+
+        if (array_key_exists('custom_domain', $validated)) {
+            $domain = ResolveTenantDomain::normalizeDomain((string) $validated['custom_domain']);
+            $validated['custom_domain'] = $domain === '' ? null : $domain;
+        }
+
+        return $validated;
     }
 }

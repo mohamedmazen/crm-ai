@@ -21,7 +21,7 @@ const emptyPlan = (currency = 'USD') => ({
     sort_order: 0,
 });
 
-export default function PlanModal({ show, onClose, plan = null, currencies = [], defaultCurrency = 'USD' }) {
+export default function PlanModal({ show, onClose, plan = null, currencies = [], defaultCurrency = 'USD', limitKeys }) {
     const { t } = useTranslation();
     const isEdit = !!plan?.id;
 
@@ -66,6 +66,7 @@ export default function PlanModal({ show, onClose, plan = null, currencies = [],
                     onCancel={onClose}
                     isEdit={isEdit}
                     currencies={currencies}
+                    limitKeys={limitKeys}
                 />
             </Modal.Body>
         </Modal>

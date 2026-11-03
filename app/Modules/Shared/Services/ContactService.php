@@ -15,8 +15,12 @@ class ContactService
     public function __construct(private StorageManager $storageManager) {}
 
     /**
-     * Upsert a contact by phone (E.164) within a workspace.
-     * Falls back to email lookup if phone is absent.
+     * Upsert a contact within a workspace.
+     *
+     * Lookup order is phone (E.164) → WhatsApp BSUID → email, so a WhatsApp user
+     * who hides their number is still matched by their business-scoped user ID
+     * once it is known, and a later-shared phone number merges into the same
+     * record instead of creating a duplicate.
      *
      * @param  bool  $dispatchCreatedEvent  Set false for bulk imports/syncs to avoid
      *                                      firing contact.created automations + outbound
@@ -24,21 +28,35 @@ class ContactService
      */
     public function upsert(int $workspaceId, array $data, bool $dispatchCreatedEvent = true): Contact
     {
-        $lookup = [];
+        $candidates = [];
 
         if (! empty($data['phone_e164'])) {
-            $lookup = ['workspace_id' => $workspaceId, 'phone_e164' => $data['phone_e164']];
-        } elseif (! empty($data['email'])) {
-            $lookup = ['workspace_id' => $workspaceId, 'email' => $data['email']];
+            $candidates[] = ['workspace_id' => $workspaceId, 'phone_e164' => $data['phone_e164']];
+        }
+        if (! empty($data['wa_user_id'])) {
+            $candidates[] = ['workspace_id' => $workspaceId, 'wa_user_id' => $data['wa_user_id']];
+        }
+        if (! empty($data['email'])) {
+            $candidates[] = ['workspace_id' => $workspaceId, 'email' => $data['email']];
         }
 
-        if (empty($lookup)) {
+        if ($candidates === []) {
             $contact = Contact::create(array_merge($data, ['workspace_id' => $workspaceId]));
             if ($dispatchCreatedEvent) {
                 ContactCreated::dispatch($contact);
             }
 
             return $contact;
+        }
+
+        // Prefer an existing match in lookup order; fall back to the strongest
+        // available key (phone) when nothing exists yet.
+        $lookup = $candidates[0];
+        foreach ($candidates as $candidate) {
+            if (Contact::withTrashed()->where($candidate)->exists()) {
+                $lookup = $candidate;
+                break;
+            }
         }
 
         $exists = Contact::withTrashed()->where($lookup)->exists();

@@ -1,7 +1,7 @@
 import { Button, Input } from '@/Components/ui';
 import { useTranslation } from 'react-i18next';
 
-const LIMIT_KEYS = [
+const DEFAULT_LIMIT_KEYS = [
     'users',
     'storage',
     'whatsapp_accounts',
@@ -39,11 +39,10 @@ const LABELS = {
     automations: 'Automations',
 };
 
-const DEFAULT_LIMITS = Object.fromEntries(LIMIT_KEYS.map((k) => [k, null]));
-
-export default function PlanLimits({ limits = {}, onChange }) {
+export default function PlanLimits({ limits = {}, limitKeys, onChange }) {
     const { t } = useTranslation();
-    const value = { ...DEFAULT_LIMITS, ...limits };
+    const LIMIT_KEYS = limitKeys?.length ? limitKeys : DEFAULT_LIMIT_KEYS;
+    const value = { ...Object.fromEntries(LIMIT_KEYS.map((k) => [k, null])), ...limits };
 
     const update = (key, v) => {
         const next = { ...value, [key]: v === '' || v === undefined ? null : Number(v) };

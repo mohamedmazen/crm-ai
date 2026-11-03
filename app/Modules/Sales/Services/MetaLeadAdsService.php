@@ -3,6 +3,7 @@
 namespace App\Modules\Sales\Services;
 
 use App\Modules\Sales\Models\LeadSource;
+use App\Support\MetaGraph;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -77,7 +78,7 @@ class MetaLeadAdsService
                 } elseif ($leadgenId && ! empty($source->config['page_access_token'])) {
                     // Call Meta Graph API to fetch full lead submission
                     try {
-                        $graphResponse = Http::timeout(10)->get("https://graph.facebook.com/v21.0/{$leadgenId}", [
+                        $graphResponse = Http::timeout(10)->get(MetaGraph::url("{$leadgenId}"), [
                             'access_token' => $source->config['page_access_token'],
                         ]);
 

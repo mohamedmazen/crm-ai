@@ -38,7 +38,7 @@ function StatCard({ icon: Icon, label, value, iconCls }) {
 
 export default function SupportIndex({ tickets, stats }) {
     const { flash, timezone } = usePage().props;
-    const userTz = timezone || 'Asia/Dhaka';
+    const userTz = timezone || 'Africa/Cairo';
     const { data = [] } = tickets;
     const { t } = useTranslation();
 

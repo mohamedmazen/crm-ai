@@ -216,7 +216,7 @@ export default function SocialComposer({ accounts }) {
     const { t } = useTranslation();
     const { props } = usePage();
     const flash = props.flash ?? {};
-    const userTz = props.timezone || browserTz() || 'Asia/Dhaka';
+    const userTz = props.timezone || browserTz() || 'Africa/Cairo';
 
     const { data, setData, post, processing, reset, errors, transform } = useForm({
         body:            '',

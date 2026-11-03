@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Currency;
 use App\Models\Plan;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -13,12 +14,43 @@ use Inertia\Response;
 
 class PlanController extends Controller
 {
-    public static function defaultLimits(): array
+    /**
+     * Canonical plan limit keys. This is the single source of truth for the
+     * admin plan form too: it is passed to the frontend as `limitKeys`, so the
+     * form renders and saves exactly the keys validated here.
+     *
+     * @return list<string>
+     */
+    public static function limitKeys(): array
     {
         return [
-            'users' => null,
-            'storage' => null,
+            'users',
+            'storage',
+            'whatsapp_accounts',
+            'whatsapp_templates',
+            'whatsapp_messages_per_month',
+            'campaigns_per_month',
+            'sms_per_month',
+            'emails_per_month',
+            'inbox_agents',
+            'ai_tokens_per_month',
+            'knowledge_bases',
+            'chatbots',
+            'social_accounts',
+            'social_posts_per_month',
+            'lead_credits_per_month',
+            'automations',
         ];
+    }
+
+    /**
+     * Null (unlimited) default for every limit key — used when a plan has no
+     * limits saved yet. Every key is present so the form never shows a saved
+     * limit as "Unlimited" after a round-trip.
+     */
+    public static function defaultLimits(): array
+    {
+        return array_fill_keys(self::limitKeys(), null);
     }
 
     /** Enabled currencies for the plan form dropdown. */
@@ -36,6 +68,9 @@ class PlanController extends Controller
         $limits = $p->limits;
         if (! is_array($limits)) {
             $limits = self::defaultLimits();
+        } else {
+            // Fill in any key the plan predates so the form shows every field.
+            $limits = array_merge(self::defaultLimits(), $limits);
         }
 
         return [
@@ -67,10 +102,11 @@ class PlanController extends Controller
             'plans' => $plans,
             'currencies' => $this->currencyOptions(),
             'defaultCurrency' => Currency::defaultCode() ?? 'USD',
+            'limitKeys' => self::limitKeys(),
         ]);
     }
 
-    public function store(Request $request): \Illuminate\Http\RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $validated = $this->validatePlan($request, null);
         $validated['slug'] = $validated['slug'] ?: Str::slug($validated['name']);
@@ -87,10 +123,11 @@ class PlanController extends Controller
             'plan' => $this->planToArray($plan),
             'currencies' => $this->currencyOptions(),
             'defaultCurrency' => Currency::defaultCode() ?? 'USD',
+            'limitKeys' => self::limitKeys(),
         ]);
     }
 
-    public function update(Request $request, Plan $plan): \Illuminate\Http\RedirectResponse
+    public function update(Request $request, Plan $plan): RedirectResponse
     {
         $validated = $this->validatePlan($request, $plan);
         $plan->update($this->mapValidatedToAttributes($validated));
@@ -98,14 +135,14 @@ class PlanController extends Controller
         return redirect()->route('admin.plans.index')->with('success', __('Plan updated successfully.'));
     }
 
-    public function destroy(Plan $plan): \Illuminate\Http\RedirectResponse
+    public function destroy(Plan $plan): RedirectResponse
     {
         $plan->delete();
 
         return redirect()->route('admin.plans.index')->with('success', __('Plan deleted successfully.'));
     }
 
-    public function duplicate(Plan $plan): \Illuminate\Http\RedirectResponse
+    public function duplicate(Plan $plan): RedirectResponse
     {
         $copy = $plan->replicate();
         $copy->name = $plan->name.' (Copy)';
@@ -118,7 +155,7 @@ class PlanController extends Controller
             ->with('openEditPlanId', $copy->id);
     }
 
-    public function reorder(Request $request): \Illuminate\Http\RedirectResponse
+    public function reorder(Request $request): RedirectResponse
     {
         $request->validate(['order' => ['required', 'array'], 'order.*' => ['integer', 'exists:plans,id']]);
 

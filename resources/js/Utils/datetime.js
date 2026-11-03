@@ -4,7 +4,7 @@
  * The backend stores campaign `schedule_at` as UTC. Browsers' native
  * `<input type="datetime-local">` reads & writes wall-clock strings (no
  * timezone). These helpers bridge the two while honouring the campaign's
- * chosen IANA timezone (e.g. "Asia/Dhaka") instead of the browser's.
+ * chosen IANA timezone (e.g. "Africa/Cairo") instead of the browser's.
  */
 
 const DATETIME_LOCAL_RE = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/;
@@ -60,7 +60,7 @@ function tzOffsetAt(utcMs, tz) {
  * expressed in `tz` to a UTC ISO 8601 string suitable for sending to the
  * backend.
  *
- *   tzLocalToUtcIso('2026-05-04T15:30', 'Asia/Dhaka')
+ *   tzLocalToUtcIso('2026-05-04T15:30', 'Africa/Cairo')
  *     -> '2026-05-04T09:30:00.000Z'
  */
 export function tzLocalToUtcIso(localStr, tz) {
@@ -84,7 +84,7 @@ export function tzLocalToUtcIso(localStr, tz) {
  * Convert a UTC ISO string back to a wall-clock `datetime-local` value
  * formatted in `tz`. Suitable for prefilling an `<input type="datetime-local">`.
  *
- *   utcToTzLocal('2026-05-04T09:30:00Z', 'Asia/Dhaka')
+ *   utcToTzLocal('2026-05-04T09:30:00Z', 'Africa/Cairo')
  *     -> '2026-05-04T15:30'
  */
 export function utcToTzLocal(utcStr, tz) {
@@ -115,7 +115,7 @@ export function utcToTzLocal(utcStr, tz) {
 /**
  * Pretty-print a UTC ISO string in the given timezone, including the timezone abbreviation.
  *
- *   formatInTz('2026-05-04T09:30:00Z', 'Asia/Dhaka')
+ *   formatInTz('2026-05-04T09:30:00Z', 'Africa/Cairo')
  *     -> 'May 4, 2026, 3:30 PM GMT+6'
  */
 export function formatInTz(utcStr, tz, options = {}) {
@@ -138,7 +138,7 @@ export function formatInTz(utcStr, tz, options = {}) {
 /**
  * Format only the time portion (HH:MM) in the given timezone.
  *
- *   formatTimeTz('2026-05-04T09:30:00Z', 'Asia/Dhaka')
+ *   formatTimeTz('2026-05-04T09:30:00Z', 'Africa/Cairo')
  *     -> '3:30 PM'
  */
 export function formatTimeTz(utcStr, tz) {
@@ -155,7 +155,7 @@ export function formatTimeTz(utcStr, tz) {
 /**
  * Format only the date portion in the given timezone.
  *
- *   formatDateTz('2026-05-04T09:30:00Z', 'Asia/Dhaka')
+ *   formatDateTz('2026-05-04T09:30:00Z', 'Africa/Cairo')
  *     -> 'May 4, 2026'
  */
 export function formatDateTz(utcStr, tz) {

@@ -39,10 +39,33 @@ class PublicPricingTest extends TestCase
             'email' => 'newuser@example.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',
+            'agree_terms' => '1',
             'plan_id' => $plan->id,
             'cycle' => 'monthly',
         ]);
 
-        $response->assertRedirect();
+        $response->assertRedirect(route('client.pricing'));
+    }
+
+    public function test_register_with_free_plan_goes_to_dashboard(): void
+    {
+        $plan = Plan::factory()->create([
+            'slug' => 'free',
+            'price_cents' => 0,
+            'monthly_price_cents' => 0,
+            'yearly_price_cents' => 0,
+        ]);
+
+        $response = $this->post(route('register'), [
+            'name' => 'Free User',
+            'email' => 'freeuser@example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'agree_terms' => '1',
+            'plan_id' => $plan->id,
+            'cycle' => 'monthly',
+        ]);
+
+        $response->assertRedirect(route('client.dashboard', absolute: false));
     }
 }

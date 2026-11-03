@@ -49,7 +49,7 @@ class RegisteredUserController extends Controller
             'agree_terms.accepted' => 'You must accept the Terms & Conditions to create an account.',
         ]);
 
-        // Use browser-detected timezone from signup; fall back to Bangladesh Standard Time.
+        // Use browser-detected timezone from signup; fall back to the app default.
         $timezone = $this->resolveTimezone($request->input('timezone'));
 
         $user = DB::transaction(function () use ($request, $timezone) {
@@ -83,7 +83,7 @@ class RegisteredUserController extends Controller
         $cycle = $request->input('cycle', 'month');
         if ($planId) {
             $plan = Plan::find($planId);
-            if ($plan && ! $plan->is_free) {
+            if ($plan && ! $plan->isFree()) {
                 return redirect()->route('client.pricing')->with([
                     'plan_id' => $planId,
                     'cycle' => $cycle,
@@ -97,7 +97,7 @@ class RegisteredUserController extends Controller
 
     private function resolveTimezone(?string $tz): string
     {
-        $default = 'Asia/Dhaka';
+        $default = config('app.default_timezone', 'Africa/Cairo');
         if (! $tz) {
             return $default;
         }

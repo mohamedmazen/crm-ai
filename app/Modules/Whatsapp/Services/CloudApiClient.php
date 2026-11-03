@@ -4,14 +4,13 @@ namespace App\Modules\Whatsapp\Services;
 
 use App\Modules\Whatsapp\Models\WhatsappBusinessAccount;
 use App\Modules\Whatsapp\Models\WhatsappPhoneNumber;
+use App\Support\MetaGraph;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class CloudApiClient
 {
-    private const BASE = 'https://graph.facebook.com/v20.0';
-
     public function __construct(
         private readonly string $phoneNumberId,
         private readonly string $accessToken,
@@ -85,30 +84,47 @@ class CloudApiClient
         return $this->phoneNumberId;
     }
 
+    /**
+     * Addressing fields for an outbound message.
+     *
+     * A business-scoped user ID (BSUID) looks like "US.13491208655302741918":
+     * an ISO country code, a period, then up to 128 alphanumeric characters.
+     * BSUIDs cannot be sent via `to`; Meta requires `recipient_type: individual`
+     * with `recipient`. Phone numbers keep using `to`.
+     *
+     * @return array<string, string>
+     */
+    private static function addressing(string $to): array
+    {
+        if (str_contains($to, '.')) {
+            return ['recipient_type' => 'individual', 'recipient' => $to];
+        }
+
+        return ['to' => $to];
+    }
+
     /** Send a text message. */
     public function sendText(string $to, string $body, bool $previewUrl = false): Response
     {
-        return $this->post("/{$this->phoneNumberId}/messages", [
+        return $this->post("/{$this->phoneNumberId}/messages", array_merge([
             'messaging_product' => 'whatsapp',
-            'to' => $to,
             'type' => 'text',
             'text' => ['body' => $body, 'preview_url' => $previewUrl],
-        ]);
+        ], self::addressing($to)));
     }
 
     /** Send a template message. */
     public function sendTemplate(string $to, string $templateName, string $language, array $components = []): Response
     {
-        $payload = [
+        $payload = array_merge([
             'messaging_product' => 'whatsapp',
-            'to' => $to,
             'type' => 'template',
             'template' => [
                 'name' => $templateName,
                 'language' => ['code' => $language],
                 'components' => $components,
             ],
-        ];
+        ], self::addressing($to));
 
         return $this->post("/{$this->phoneNumberId}/messages", $payload);
     }
@@ -132,7 +148,7 @@ class CloudApiClient
     {
         $resp = Http::withToken($accessToken)
             ->timeout(30)
-            ->get(self::BASE."/{$wabaId}/phone_numbers", [
+            ->get(MetaGraph::base()."/{$wabaId}/phone_numbers", [
                 'fields' => 'id,display_phone_number,verified_name,quality_rating,throughput',
             ]);
 
@@ -154,7 +170,7 @@ class CloudApiClient
     {
         $resp = Http::withToken($accessToken)
             ->timeout(15)
-            ->get(self::BASE."/{$phoneNumberId}", [
+            ->get(MetaGraph::base()."/{$phoneNumberId}", [
                 'fields' => 'id,display_phone_number,verified_name,quality_rating,throughput,code_verification_status,name_status,requested_verified_name,account_mode',
             ]);
 
@@ -182,7 +198,7 @@ class CloudApiClient
     {
         $resp = Http::withToken($accessToken)
             ->timeout(30)
-            ->post(self::BASE."/{$phoneNumberId}/register", [
+            ->post(MetaGraph::base()."/{$phoneNumberId}/register", [
                 'messaging_product' => 'whatsapp',
                 'pin' => $pin,
             ]);
@@ -199,7 +215,7 @@ class CloudApiClient
     {
         $resp = Http::withToken($this->accessToken)
             ->timeout(30)
-            ->get(self::BASE."/{$wabaId}/message_templates", ['limit' => 200]);
+            ->get(MetaGraph::base()."/{$wabaId}/message_templates", ['limit' => 200]);
 
         return $resp->json('data', []);
     }
@@ -234,7 +250,7 @@ class CloudApiClient
     {
         $resp = Http::withToken($token)
             ->timeout(15)
-            ->post(self::BASE."/{$phoneNumberId}", [
+            ->post(MetaGraph::base()."/{$phoneNumberId}", [
                 'verified_name' => $newName,
             ]);
 
@@ -250,7 +266,7 @@ class CloudApiClient
     {
         return Http::withToken($this->accessToken)
             ->timeout(30)
-            ->post(self::BASE."/{$wabaId}/message_templates", $template);
+            ->post(MetaGraph::base()."/{$wabaId}/message_templates", $template);
     }
 
     /**
@@ -269,7 +285,7 @@ class CloudApiClient
 
         return Http::withToken($this->accessToken)
             ->timeout(30)
-            ->post(self::BASE."/{$metaTemplateId}", $payload);
+            ->post(MetaGraph::base()."/{$metaTemplateId}", $payload);
     }
 
     /** Delete a template from Meta by name (removes every language for that name). */
@@ -277,7 +293,7 @@ class CloudApiClient
     {
         return Http::withToken($this->accessToken)
             ->timeout(30)
-            ->delete(self::BASE."/{$wabaId}/message_templates", ['name' => $name]);
+            ->delete(MetaGraph::base()."/{$wabaId}/message_templates", ['name' => $name]);
     }
 
     /** Upload a media file to the WhatsApp media endpoint. Returns the media ID. */
@@ -286,7 +302,7 @@ class CloudApiClient
         $resp = Http::withToken($this->accessToken)
             ->timeout(60)
             ->attach('file', file_get_contents($filePath), basename($filePath), ['Content-Type' => $mimeType])
-            ->post(self::BASE."/{$this->phoneNumberId}/media", [
+            ->post(MetaGraph::base()."/{$this->phoneNumberId}/media", [
                 'messaging_product' => 'whatsapp',
             ]);
 
@@ -302,7 +318,7 @@ class CloudApiClient
     {
         $resp = Http::withToken($this->accessToken)
             ->timeout(15)
-            ->get(self::BASE."/{$mediaId}", ['phone_number_id' => $this->phoneNumberId]);
+            ->get(MetaGraph::base()."/{$mediaId}", ['phone_number_id' => $this->phoneNumberId]);
 
         if (! $resp->successful()) {
             throw new \RuntimeException('WhatsApp media lookup failed: '.$resp->body());
@@ -338,12 +354,11 @@ class CloudApiClient
             $mediaPayload['filename'] = $filename;
         }
 
-        return $this->post("/{$this->phoneNumberId}/messages", [
+        return $this->post("/{$this->phoneNumberId}/messages", array_merge([
             'messaging_product' => 'whatsapp',
-            'to' => $to,
             'type' => $type,
             $type => $mediaPayload,
-        ]);
+        ], self::addressing($to)));
     }
 
     /** Send a location (map pin) message. */
@@ -357,23 +372,21 @@ class CloudApiClient
             $location['address'] = $address;
         }
 
-        return $this->post("/{$this->phoneNumberId}/messages", [
+        return $this->post("/{$this->phoneNumberId}/messages", array_merge([
             'messaging_product' => 'whatsapp',
-            'to' => $to,
             'type' => 'location',
             'location' => $location,
-        ]);
+        ], self::addressing($to)));
     }
 
     /** Send an interactive (button / list) message. */
     public function sendInteractive(string $to, array $interactive): Response
     {
-        return $this->post("/{$this->phoneNumberId}/messages", [
+        return $this->post("/{$this->phoneNumberId}/messages", array_merge([
             'messaging_product' => 'whatsapp',
-            'to' => $to,
             'type' => 'interactive',
             'interactive' => $interactive,
-        ]);
+        ], self::addressing($to)));
     }
 
     /** Verify that the access token and WABA are valid. */
@@ -381,7 +394,7 @@ class CloudApiClient
     {
         $resp = Http::withToken($this->accessToken)
             ->timeout(10)
-            ->get(self::BASE."/{$wabaId}", ['fields' => 'id,name']);
+            ->get(MetaGraph::base()."/{$wabaId}", ['fields' => 'id,name']);
 
         return $resp->successful() && ! empty($resp->json('id'));
     }
@@ -399,7 +412,7 @@ class CloudApiClient
 
         $sessionResp = Http::withToken($accessToken)
             ->timeout(30)
-            ->post(self::BASE."/{$appId}/uploads", [
+            ->post(MetaGraph::base()."/{$appId}/uploads", [
                 'file_length' => $fileSize,
                 'file_type' => $mimeType,
             ]);
@@ -421,7 +434,7 @@ class CloudApiClient
         ])
             ->timeout(120)
             ->withBody($fileContents, $mimeType)
-            ->post(self::BASE.'/'.$sessionId);
+            ->post(MetaGraph::base().'/'.$sessionId);
 
         if (! $uploadResp->successful()) {
             throw new \RuntimeException('Meta resumable upload failed ('.$uploadResp->status().'): '.$uploadResp->body());
@@ -439,6 +452,6 @@ class CloudApiClient
     {
         return Http::withToken($this->accessToken)
             ->timeout(30)
-            ->post(self::BASE.$path, $data);
+            ->post(MetaGraph::base().$path, $data);
     }
 }

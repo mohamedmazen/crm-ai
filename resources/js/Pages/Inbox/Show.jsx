@@ -299,7 +299,7 @@ function galleryImageSrc(msg, conversationId) {
 
 function ImageGallery({ messages, conversationId }) {
     const { props: pageProps } = usePage();
-    const bubbleTz = pageProps.timezone || 'Asia/Dhaka';
+    const bubbleTz = pageProps.timezone || 'Africa/Cairo';
     const [lightbox, setLightbox] = useState(null);
 
     const isOut = messages[0].direction === 'out';
@@ -712,7 +712,7 @@ function SoundPrefsMenu() {
 
 function MessageBubble({ msg, conversationId }) {
     const { props: pageProps } = usePage();
-    const bubbleTz = pageProps.timezone || 'Asia/Dhaka';
+    const bubbleTz = pageProps.timezone || 'Africa/Cairo';
     const isOut = msg.direction === 'out';
     const p     = msg.payload ?? {};
 
@@ -1473,7 +1473,7 @@ export default function InboxShow({
     const { props } = usePage();
     const flash = props.flash ?? {};
     const authUser = props.auth?.user;
-    const userTz = props.timezone || 'Asia/Dhaka';
+    const userTz = props.timezone || 'Africa/Cairo';
     // Prefer the active workspace (user can switch between accessible workspaces);
     // fall back to the user's primary workspace if not present.
     const workspaceId = props.currentWorkspace?.id ?? authUser?.workspace_id;

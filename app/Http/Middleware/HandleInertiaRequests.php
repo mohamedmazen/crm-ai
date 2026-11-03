@@ -15,6 +15,7 @@ use App\Services\I18n\I18nFileService;
 use App\Services\OnboardingService;
 use App\Services\StorageManager;
 use App\Support\Brand;
+use App\Support\MetaGraph;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -423,7 +424,7 @@ class HandleInertiaRequests extends Middleware
             'unreadNotificationsCount' => $unreadNotificationsCount,
             'impersonation' => $impersonation,
             'theme' => $user?->theme ?? 'light',
-            'timezone' => $user?->timezone ?? 'UTC',
+            'timezone' => $user?->timezone ?? config('app.default_timezone', 'Africa/Cairo'),
             'currentWorkspace' => $currentWorkspace,
             'workspaces' => $workspacesForSwitcher,
             'plan' => $plan ? ['name' => $plan->name, 'slug' => $plan->slug] : null,
@@ -458,6 +459,7 @@ class HandleInertiaRequests extends Middleware
             'onesignal' => $this->oneSignalPublicConfig(),
             'firebase' => $this->firebasePublicConfig(),
             'metaAppId' => $this->metaAppId(),
+            'metaGraphVersion' => MetaGraph::version(),
         ];
     }
 

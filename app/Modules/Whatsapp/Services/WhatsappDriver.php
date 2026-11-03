@@ -5,6 +5,7 @@ namespace App\Modules\Whatsapp\Services;
 use App\Events\MessageReceived;
 use App\Events\MessageStatusUpdated;
 use App\Modules\Broadcasting\Models\CampaignRecipient;
+use App\Modules\Sales\Services\LeadAutoCaptureService;
 use App\Modules\Shared\Contracts\ChannelDriverInterface;
 use App\Modules\Shared\Models\ChannelAccount;
 use App\Modules\Shared\Models\Contact;
@@ -27,7 +28,14 @@ class WhatsappDriver implements ChannelDriverInterface
     {
         $conversation = $message->conversation;
         $contact = $conversation->contact;
-        $phone = $contact->phone_e164;
+
+        // Prefer the phone number; fall back to the business-scoped user ID
+        // (BSUID) for users who hide their number.
+        $phone = $contact->phone_e164 ?: $contact->wa_user_id;
+
+        if (! $phone) {
+            throw new \RuntimeException('Contact has no WhatsApp phone number or user ID.');
+        }
 
         // Prefer the phone number tied to this conversation's channel account so
         // outbound replies go from the same number the customer wrote to.
@@ -97,6 +105,12 @@ class WhatsappDriver implements ChannelDriverInterface
 
                 foreach ($value['messages'] ?? [] as $msg) {
                     try {
+                        if (($msg['type'] ?? '') === 'system') {
+                            $this->processSystemMessage($value, $msg);
+
+                            continue;
+                        }
+
                         $processed[] = $this->processInboundMessage($value, $msg);
                     } catch (\Throwable $e) {
                         Log::error('WhatsApp webhook processing failed', ['error' => $e->getMessage(), 'msg' => $msg]);
@@ -222,7 +236,6 @@ class WhatsappDriver implements ChannelDriverInterface
         }
 
         $phoneId = $value['metadata']['phone_number_id'] ?? '';
-        $fromPhone = $msg['from'] ?? '';
 
         $channelAccount = ChannelAccount::where('phone_number_id', $phoneId)
             ->where('channel', 'whatsapp')
@@ -231,7 +244,7 @@ class WhatsappDriver implements ChannelDriverInterface
         if (! $channelAccount) {
             Log::warning('WhatsApp inbound dropped — no channel_account match', [
                 'phone_number_id' => $phoneId,
-                'from' => $fromPhone,
+                'from' => $msg['from'] ?? null,
                 'msg_id' => $msg['id'] ?? null,
                 'hint' => 'The phone_number_id received from Meta does not exist in channel_accounts. Re-run the WhatsApp setup or verify the configured number id.',
             ]);
@@ -243,15 +256,28 @@ class WhatsappDriver implements ChannelDriverInterface
 
         $workspaceId = (int) $channelAccount->workspace_id;
 
-        $contact = $this->contactService->upsert($workspaceId, [
-            'phone_e164' => '+'.$fromPhone,
+        $identity = $this->resolveWhatsappIdentity($value, $msg);
+
+        if ($identity['phone_e164'] === null && $identity['wa_user_id'] === null) {
+            throw new \RuntimeException('WhatsApp inbound message has no sender identity');
+        }
+
+        $contact = $this->contactService->upsert($workspaceId, array_filter([
+            'phone_e164' => $identity['phone_e164'],
+            'wa_user_id' => $identity['wa_user_id'],
+            'wa_username' => $identity['wa_username'],
             'opt_in_whatsapp' => true,
             'source' => 'whatsapp_inbound',
-        ]);
+        ], fn ($value) => $value !== null && $value !== ''));
+
+        // Never clobber a manually edited name: only backfill when empty.
+        if ($identity['profile_name'] && ! $contact->first_name) {
+            $contact->update(['first_name' => $identity['profile_name']]);
+        }
 
         $conversation = Conversation::firstOrCreate(
             ['workspace_id' => $workspaceId, 'contact_id' => $contact->id, 'channel_account_id' => $channelAccount?->id],
-            ['status' => 'open', 'external_thread_id' => $fromPhone]
+            ['status' => 'open', 'external_thread_id' => $identity['address']]
         );
 
         $type = $msg['type'] ?? 'text';
@@ -294,10 +320,10 @@ class WhatsappDriver implements ChannelDriverInterface
 
         // Auto-capture or link lead in Sales CRM
         try {
-            app(\App\Modules\Sales\Services\LeadAutoCaptureService::class)->captureFromWhatsapp(
+            app(LeadAutoCaptureService::class)->captureFromWhatsapp(
                 $workspaceId,
                 $contact,
-                $fromPhone,
+                $identity['phone_e164'] ?? $identity['address'],
                 $body,
                 $conversation->id
             );
@@ -336,6 +362,138 @@ class WhatsappDriver implements ChannelDriverInterface
         MessageReceived::dispatch($message);
 
         return $message;
+    }
+
+    /**
+     * Resolve the sender identity from a WhatsApp inbound message.
+     *
+     * Modern webhooks put the sender in value.contacts[0]:
+     *   { profile: { name, username }, user_id: <BSUID>, wa_id: <phone> }
+     * `wa_id` (and the message's `from`) are omitted when the user hides their
+     * phone number, so the BSUID becomes the only usable address.
+     *
+     * @return array{address: string, phone_e164: ?string, wa_user_id: ?string, wa_username: ?string, profile_name: ?string}
+     */
+    private function resolveWhatsappIdentity(array $value, array $msg): array
+    {
+        $contactEntry = $value['contacts'][0] ?? [];
+        $from = (string) ($msg['from'] ?? '');
+        $fromUserId = $msg['from_user_id'] ?? ($contactEntry['user_id'] ?? null);
+
+        $isBsuid = static fn (?string $candidate): bool => is_string($candidate) && str_contains($candidate, '.');
+
+        $waUserId = $fromUserId ?: ($isBsuid($from) ? $from : null);
+
+        // Prefer contacts[].wa_id; fall back to the message `from` when it is a
+        // plain phone number. Hidden-number users disclose neither.
+        $phone = null;
+        foreach ([$contactEntry['wa_id'] ?? null, $from] as $candidate) {
+            if (is_string($candidate) && $candidate !== '' && ! $isBsuid($candidate)) {
+                $phone = '+'.ltrim($candidate, '+');
+                break;
+            }
+        }
+
+        return [
+            'address' => $phone ?? $waUserId ?? $from,
+            'phone_e164' => $phone,
+            'wa_user_id' => $waUserId,
+            'wa_username' => $contactEntry['profile']['username'] ?? null,
+            'profile_name' => $contactEntry['profile']['name'] ?? null,
+        ];
+    }
+
+    /**
+     * Apply a WhatsApp system message: the user changed their phone number
+     * (`user_changed_number`) or their business-scoped user ID
+     * (`user_changed_user_id`). System messages carry no `contacts` array.
+     */
+    private function processSystemMessage(array $value, array $msg): void
+    {
+        $msgId = $msg['id'] ?? null;
+        if ($msgId && ! app(WebhookIdempotencyService::class)->isNewEvent('whatsapp_system', $msgId)) {
+            return;
+        }
+
+        $phoneId = $value['metadata']['phone_number_id'] ?? '';
+        $channelAccount = ChannelAccount::where('phone_number_id', $phoneId)
+            ->where('channel', 'whatsapp')
+            ->first();
+
+        if (! $channelAccount) {
+            Log::warning('WhatsApp system message dropped — no channel_account match', [
+                'phone_number_id' => $phoneId,
+                'type' => $msg['system']['type'] ?? null,
+            ]);
+
+            return;
+        }
+
+        $workspaceId = (int) $channelAccount->workspace_id;
+        $system = is_array($msg['system'] ?? null) ? $msg['system'] : [];
+        $type = $system['type'] ?? '';
+        $from = (string) ($msg['from'] ?? '');
+
+        if ($type === 'user_changed_user_id') {
+            $newId = $system['user_id'] ?? null;
+            $previousId = $system['previous_user_id'] ?? null;
+
+            if (! $newId) {
+                return;
+            }
+
+            $contact = $previousId
+                ? Contact::where('workspace_id', $workspaceId)->where('wa_user_id', $previousId)->first()
+                : $this->findContactByAddress($workspaceId, $from);
+
+            if ($contact) {
+                $contact->update(['wa_user_id' => $newId]);
+                Log::info('whatsapp.contact.user_id_changed', [
+                    'contact_id' => $contact->id,
+                    'previous' => $previousId,
+                    'current' => $newId,
+                ]);
+            }
+
+            return;
+        }
+
+        if ($type === 'user_changed_number') {
+            $waId = $system['wa_id'] ?? null;
+            $userId = $system['user_id'] ?? null;
+
+            if (! is_string($waId) || $waId === '') {
+                return;
+            }
+
+            $newPhone = '+'.ltrim($waId, '+');
+
+            $contact = $userId
+                ? Contact::where('workspace_id', $workspaceId)->where('wa_user_id', $userId)->first()
+                : $this->findContactByAddress($workspaceId, $from);
+
+            if ($contact) {
+                $contact->update(['phone_e164' => $newPhone]);
+                Log::info('whatsapp.contact.number_changed', [
+                    'contact_id' => $contact->id,
+                    'phone_e164' => $newPhone,
+                ]);
+            }
+        }
+    }
+
+    /** Find a contact by phone (E.164) or WhatsApp BSUID. */
+    private function findContactByAddress(int $workspaceId, string $address): ?Contact
+    {
+        if ($address === '') {
+            return null;
+        }
+
+        $query = Contact::where('workspace_id', $workspaceId);
+
+        return str_contains($address, '.')
+            ? $query->where('wa_user_id', $address)->first()
+            : $query->where('phone_e164', '+'.ltrim($address, '+'))->first();
     }
 
     private function processStatusUpdate(array $status): void

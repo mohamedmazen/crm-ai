@@ -57,7 +57,7 @@ function calc(target) {
 export default function CampaignShow({ campaign, sample = [], reportUrl }) {
     const { t } = useTranslation();
     const { props } = usePage();
-    const userTz = props.timezone || browserTz() || 'Asia/Dhaka';
+    const userTz = props.timezone || browserTz() || 'Africa/Cairo';
     const totals = campaign.totals_json ?? {};
     const total = totals.total || 1;
 

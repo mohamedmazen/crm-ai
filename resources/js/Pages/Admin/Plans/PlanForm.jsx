@@ -12,6 +12,7 @@ export default function PlanForm({
     onCancel,
     isEdit,
     currencies = [],
+    limitKeys,
 }) {
     const { t } = useTranslation();
     const yearlyEnabled = data.yearly_price_cents != null && data.yearly_price_cents !== '';
@@ -164,7 +165,7 @@ export default function PlanForm({
             {/* Plan Limits */}
             <section>
                 <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">{t('admin.plan_limits')}</h4>
-                <PlanLimits limits={data.limits} onChange={(limits) => setData('limits', limits)} />
+                <PlanLimits limits={data.limits} limitKeys={limitKeys} onChange={(limits) => setData('limits', limits)} />
             </section>
 
             {/* Feature List */}

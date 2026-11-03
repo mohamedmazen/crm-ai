@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Client;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 use PHPUnit\Framework\Attributes\Test;
@@ -153,14 +152,16 @@ class TenantDomainTest extends TestCase
     }
 
     #[Test]
-    public function a_client_administrator_can_save_their_domains(): void
+    public function an_admin_can_save_workspace_domains(): void
     {
-        ['user' => $user, 'client' => $client] = $this->createWorkspaceContext();
+        ['client' => $client] = $this->createWorkspaceContext();
 
-        $this->actingAs($user)
-            ->put(route('client.settings.update'), [
-                'client_subdomain' => 'Acme-Team',
-                'client_custom_domain' => 'https://CRM.Example.com/',
+        $this->actingAs($this->createSuperAdmin(), 'admin')
+            ->put(route('admin.clients.update', $client), [
+                'name' => $client->name,
+                'status' => 'active',
+                'subdomain' => 'Acme-Team',
+                'custom_domain' => 'https://CRM.Example.com/',
             ])
             ->assertRedirect()
             ->assertSessionHasNoErrors();
@@ -172,63 +173,101 @@ class TenantDomainTest extends TestCase
     }
 
     #[Test]
+    public function an_admin_can_set_workspace_domains_when_creating_a_client(): void
+    {
+        $this->actingAs($this->createSuperAdmin(), 'admin')
+            ->post(route('admin.clients.store'), [
+                'name' => 'Acme Trading',
+                'status' => 'active',
+                'subdomain' => 'Acme',
+                'custom_domain' => 'crm.acme.com',
+            ])
+            ->assertSessionHasNoErrors();
+
+        $client = Client::where('name', 'Acme Trading')->firstOrFail();
+
+        $this->assertSame('acme', $client->subdomain);
+        $this->assertSame('crm.acme.com', $client->custom_domain);
+    }
+
+    #[Test]
     public function an_invalid_subdomain_is_rejected(): void
     {
-        ['user' => $user] = $this->createWorkspaceContext();
+        ['client' => $client] = $this->createWorkspaceContext();
 
-        $this->actingAs($user)
-            ->put(route('client.settings.update'), ['client_subdomain' => 'bad_subdomain'])
-            ->assertSessionHasErrors('client_subdomain');
+        $this->actingAs($this->createSuperAdmin(), 'admin')
+            ->put(route('admin.clients.update', $client), [
+                'name' => $client->name,
+                'status' => 'active',
+                'subdomain' => 'bad_subdomain',
+            ])
+            ->assertSessionHasErrors('subdomain');
     }
 
     #[Test]
     public function a_reserved_subdomain_is_rejected(): void
     {
-        ['user' => $user] = $this->createWorkspaceContext();
+        ['client' => $client] = $this->createWorkspaceContext();
 
-        $this->actingAs($user)
-            ->put(route('client.settings.update'), ['client_subdomain' => 'admin'])
-            ->assertSessionHasErrors('client_subdomain');
+        $this->actingAs($this->createSuperAdmin(), 'admin')
+            ->put(route('admin.clients.update', $client), [
+                'name' => $client->name,
+                'status' => 'active',
+                'subdomain' => 'admin',
+            ])
+            ->assertSessionHasErrors('subdomain');
     }
 
     #[Test]
     public function a_subdomain_already_used_by_another_workspace_is_rejected(): void
     {
         $this->clientWithSubdomain('taken');
-        ['user' => $user] = $this->createWorkspaceContext();
+        ['client' => $client] = $this->createWorkspaceContext();
 
-        $this->actingAs($user)
-            ->put(route('client.settings.update'), ['client_subdomain' => 'taken'])
-            ->assertSessionHasErrors('client_subdomain');
+        $this->actingAs($this->createSuperAdmin(), 'admin')
+            ->put(route('admin.clients.update', $client), [
+                'name' => $client->name,
+                'status' => 'active',
+                'subdomain' => 'taken',
+            ])
+            ->assertSessionHasErrors('subdomain');
     }
 
     #[Test]
     public function a_custom_domain_already_used_by_another_workspace_is_rejected(): void
     {
         $this->clientWithSubdomain('taken', ['custom_domain' => 'crm.example.com']);
-        ['user' => $user] = $this->createWorkspaceContext();
+        ['client' => $client] = $this->createWorkspaceContext();
 
-        $this->actingAs($user)
-            ->put(route('client.settings.update'), ['client_custom_domain' => 'crm.example.com'])
-            ->assertSessionHasErrors('client_custom_domain');
+        $this->actingAs($this->createSuperAdmin(), 'admin')
+            ->put(route('admin.clients.update', $client), [
+                'name' => $client->name,
+                'status' => 'active',
+                'custom_domain' => 'crm.example.com',
+            ])
+            ->assertSessionHasErrors('custom_domain');
     }
 
     #[Test]
     public function a_malformed_custom_domain_is_rejected(): void
     {
-        ['user' => $user] = $this->createWorkspaceContext();
+        ['client' => $client] = $this->createWorkspaceContext();
 
-        $this->actingAs($user)
-            ->put(route('client.settings.update'), ['client_custom_domain' => 'not a domain'])
-            ->assertSessionHasErrors('client_custom_domain');
+        $this->actingAs($this->createSuperAdmin(), 'admin')
+            ->put(route('admin.clients.update', $client), [
+                'name' => $client->name,
+                'status' => 'active',
+                'custom_domain' => 'not a domain',
+            ])
+            ->assertSessionHasErrors('custom_domain');
     }
 
     #[Test]
-    public function a_staff_member_cannot_change_the_workspace_domains(): void
+    public function a_workspace_cannot_change_its_own_domains_from_client_settings(): void
     {
-        ['user' => $staff, 'client' => $client] = $this->createWorkspaceContext([], ['client_role' => User::CLIENT_ROLE_STAFF]);
+        ['user' => $user, 'client' => $client] = $this->createWorkspaceContext();
 
-        $this->actingAs($staff)
+        $this->actingAs($user)
             ->put(route('client.settings.update'), ['client_subdomain' => 'staff-owned'])
             ->assertRedirect();
 

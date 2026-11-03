@@ -224,7 +224,7 @@ export default function InboxIndex({ conversations: initialConversations, filter
     const { props } = usePage();
     const authUser = props.auth?.user;
     const workspaceId = props.currentWorkspace?.id ?? authUser?.workspace_id;
-    const userTz = props.timezone || 'Asia/Dhaka';
+    const userTz = props.timezone || 'Africa/Cairo';
 
     const [conversations, setConversations] = useState(initialConversations);
     const [flashingIds, setFlashingIds]     = useState(new Set());

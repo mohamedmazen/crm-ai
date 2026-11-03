@@ -6,7 +6,7 @@ import { formatInTz } from '@/Utils/datetime';
 
 export default function AdminAuditLogIndex({ logs, filters = {} }) {
     const { t } = useTranslation();
-    const adminTz = usePage().props.timezone || 'Asia/Dhaka';
+    const adminTz = usePage().props.timezone || 'Africa/Cairo';
     return (
         <AdminLayout title={t('admin.audit_log')}>
             <Head title={`${t('admin.audit_log')} · ${t('head.admin')}`} />

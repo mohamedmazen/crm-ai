@@ -59,13 +59,27 @@ class MediaService
     }
 
     /**
-     * Get storage quota in bytes from plan limits (storage_gb).
+     * Get storage quota in bytes from the effective plan's `storage` limit,
+     * which is stored in megabytes (e.g. 5120 = 5 GB).
      */
     public function quotaBytes(User $user): int
     {
-        $plan = $user->effectiveSubscription()?->plan;
-        $gb = $plan?->limitValue('storage_gb') ?? 1;
+        // Resolve the plan the same way limits/feature gates do: admin-assigned
+        // subscriptions take precedence, then self-serve subscriptions.
+        $plan = $user->effectivePlan();
 
-        return (int) ($gb * 1024 * 1024 * 1024);
+        // No plan in effect keeps the old conservative 1 GB floor.
+        if (! $plan) {
+            return 1024 * 1024 * 1024;
+        }
+
+        $storageMb = $plan->limitValue('storage');
+
+        // A null limit means unlimited.
+        if ($storageMb === null) {
+            return PHP_INT_MAX;
+        }
+
+        return (int) $storageMb * 1024 * 1024;
     }
 }

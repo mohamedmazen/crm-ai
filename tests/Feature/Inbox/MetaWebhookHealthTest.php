@@ -61,7 +61,7 @@ class MetaWebhookHealthTest extends TestCase
 
         Http::fake([
             // App-level subscription exists, active, correct callback
-            'graph.facebook.com/v20.0/'.self::APP_ID.'/subscriptions*' => Http::response([
+            'graph.facebook.com/*/'.self::APP_ID.'/subscriptions*' => Http::response([
                 'data' => [[
                     'object' => 'page',
                     'active' => true,
@@ -70,7 +70,7 @@ class MetaWebhookHealthTest extends TestCase
                 ]],
             ]),
             // Page has NO subscribed apps
-            'graph.facebook.com/v20.0/111222333/subscribed_apps' => Http::response(['data' => []]),
+            'graph.facebook.com/*/111222333/subscribed_apps' => Http::response(['data' => []]),
         ]);
 
         $res = $this->actingAs($this->ctx['user'])
@@ -91,7 +91,7 @@ class MetaWebhookHealthTest extends TestCase
         $account = $this->makeMessengerAccount();
 
         Http::fake([
-            'graph.facebook.com/v20.0/'.self::APP_ID.'/subscriptions*' => Http::response([
+            'graph.facebook.com/*/'.self::APP_ID.'/subscriptions*' => Http::response([
                 'data' => [[
                     'object' => 'page',
                     'active' => true,
@@ -99,7 +99,7 @@ class MetaWebhookHealthTest extends TestCase
                     'fields' => [['name' => 'messages']],
                 ]],
             ]),
-            'graph.facebook.com/v20.0/111222333/subscribed_apps' => Http::response([
+            'graph.facebook.com/*/111222333/subscribed_apps' => Http::response([
                 'data' => [['id' => self::APP_ID, 'subscribed_fields' => ['messages']]],
             ]),
         ]);
@@ -121,7 +121,7 @@ class MetaWebhookHealthTest extends TestCase
         $account = $this->makeMessengerAccount();
 
         Http::fake([
-            'graph.facebook.com/v20.0/'.self::APP_ID.'/subscriptions*' => Http::response([
+            'graph.facebook.com/*/'.self::APP_ID.'/subscriptions*' => Http::response([
                 'data' => [[
                     'object' => 'page',
                     'active' => true,
@@ -129,7 +129,7 @@ class MetaWebhookHealthTest extends TestCase
                     'fields' => [['name' => 'messages']],
                 ]],
             ]),
-            'graph.facebook.com/v20.0/111222333/subscribed_apps' => Http::response([
+            'graph.facebook.com/*/111222333/subscribed_apps' => Http::response([
                 'data' => [['id' => self::APP_ID, 'subscribed_fields' => ['messages']]],
             ]),
         ]);
@@ -147,8 +147,8 @@ class MetaWebhookHealthTest extends TestCase
         $account = $this->makeMessengerAccount();
 
         Http::fake([
-            'graph.facebook.com/v20.0/'.self::APP_ID.'/subscriptions' => Http::response(['success' => true]),
-            'graph.facebook.com/v20.0/111222333/subscribed_apps' => Http::response(['success' => true]),
+            'graph.facebook.com/*/'.self::APP_ID.'/subscriptions' => Http::response(['success' => true]),
+            'graph.facebook.com/*/111222333/subscribed_apps' => Http::response(['success' => true]),
         ]);
 
         $this->actingAs($this->ctx['user'])
@@ -178,9 +178,9 @@ class MetaWebhookHealthTest extends TestCase
         ]);
 
         Http::fake([
-            'graph.facebook.com/v20.0/'.self::APP_ID.'/subscriptions' => Http::response(['success' => true]),
-            'graph.facebook.com/v20.0/me*' => Http::response(['id' => '444555666']),
-            'graph.facebook.com/v20.0/444555666/subscribed_apps' => Http::response(['success' => true]),
+            'graph.facebook.com/*/'.self::APP_ID.'/subscriptions' => Http::response(['success' => true]),
+            'graph.facebook.com/*/me*' => Http::response(['id' => '444555666']),
+            'graph.facebook.com/*/444555666/subscribed_apps' => Http::response(['success' => true]),
         ]);
 
         $this->actingAs($this->ctx['user'])

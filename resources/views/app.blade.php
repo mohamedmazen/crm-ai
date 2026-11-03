@@ -220,7 +220,7 @@
                     appId: '{{ e($metaAppId) }}',
                     autoLogAppEvents: true,
                     xfbml: false,
-                    version: 'v20.0',
+                    version: '{{ \App\Support\MetaGraph::version() }}',
                 });
                 window.__fbSdkReady = true;
             };

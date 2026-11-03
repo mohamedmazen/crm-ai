@@ -95,7 +95,7 @@ function EndpointForm({ endpoint = null, onClose }) {
 export default function WebhooksIndex({ endpoints }) {
     const { t } = useTranslation();
     const { flash, timezone } = usePage().props;
-    const userTz = timezone || 'Asia/Dhaka';
+    const userTz = timezone || 'Africa/Cairo';
     const [showCreate, setShowCreate] = useState(false);
     const [editing, setEditing] = useState(null);
     const [revealedSecret, setRevealedSecret] = useState({});

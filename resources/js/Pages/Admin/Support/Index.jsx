@@ -41,7 +41,7 @@ function StatCard({ icon: Icon, label, value, iconCls }) {
 
 export default function AdminSupportIndex({ tickets, stats, filters }) {
     const { t } = useTranslation();
-    const adminTz = usePage().props.timezone || 'Asia/Dhaka';
+    const adminTz = usePage().props.timezone || 'Africa/Cairo';
     const [activeTab, setActiveTab] = useState(filters?.status ?? 'all');
     const TABS = TAB_VALUES.map(v => ({ value: v, label: v === 'all' ? t('support_tickets.tab_all') : t(`support_tickets.${v}`) }));
 

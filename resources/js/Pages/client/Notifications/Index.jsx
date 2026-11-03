@@ -84,7 +84,7 @@ function PreferencesPanel({ preferences }) {
 export default function NotificationsIndex({ notifications, preferences }) {
     const { t } = useTranslation();
     const { flash, timezone } = usePage().props;
-    const userTz = timezone || 'Asia/Dhaka';
+    const userTz = timezone || 'Africa/Cairo';
     const [showPrefs, setShowPrefs] = useState(false);
 
     const markRead = (id) => {
