@@ -55,7 +55,8 @@
         "copy": "Copy",
         "copied": "Copied!",
         "hide": "Hide",
-        "show": "Show"
+        "show": "Show",
+        "custom": "Custom"
     },
     "nav": {
         "home": "Home",
@@ -3760,7 +3761,13 @@
         "health_${check": {
             "key}": "Key}"
         },
-        "assign_chatbot": "Assign Chatbot"
+        "assign_chatbot": "Assign Chatbot",
+        "whatsapp_health_${health": {
+            "state}": "State}"
+        },
+        "whatsapp_health_reason_${health": {
+            "reason}": "Reason}"
+        }
     },
     "notifications": {
         "preferences_title": "Notification Preferences",
@@ -5570,7 +5577,7 @@
         "label": "Field Label",
         "key": "System Key",
         "type": "Type",
-        "options": "Options / Validation",
+        "options": "Options \/ Validation",
         "options_comma": "Comma-separated options (e.g. Small, Medium, Large)",
         "is_required": "Required field",
         "edit_title": "Edit Custom Field",
@@ -5654,7 +5661,8 @@
     "Processor": "Processor",
     "Contact": "Contact",
     "2": {
-        " Scope and purpose": " Scope And Purpose"
+        " Scope and purpose": " Scope And Purpose",
+        "2": "2"
     },
     "The Processor processes personal data only to provide the services requested by the Controller: CRM records, sales pipeline management, messaging, automation and reporting": {
         " Processing is carried out on documented instructions from the Controller and for the duration of the subscription": {
@@ -5743,7 +5751,7 @@
     "Prepared for": "Prepared For",
     "Discount": "Discount",
     "Terms": "Terms",
-    "v20": [
+    "v25": [
         "0"
     ]
 }

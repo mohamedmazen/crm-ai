@@ -49,7 +49,8 @@
         "copy": "نسخ",
         "copied": "تم النسخ!",
         "hide": "Hide",
-        "show": "Show"
+        "show": "Show",
+        "custom": "Custom"
     },
     "nav": {
         "home": "الرئيسية",
@@ -3682,7 +3683,13 @@
         "manual_page_id_help": "Found in your Facebook Page → About → Page transparency, or in Meta Business Suite → Pages.",
         "manual_page_token": "Page Access Token",
         "connected_with_warnings": "Connected, but with warnings — inbound messages may not arrive:",
-        "assign_chatbot": "Assign Chatbot"
+        "assign_chatbot": "Assign Chatbot",
+        "whatsapp_health_${health": {
+            "state}": "State}"
+        },
+        "whatsapp_health_reason_${health": {
+            "reason}": "Reason}"
+        }
     },
     "notifications": {
         "preferences_title": "تفضيلات الإشعارات",
@@ -5554,7 +5561,7 @@
         "label": "اسم الحقل",
         "key": "المعرف البرمجي (Key)",
         "type": "نوع الحقل",
-        "options": "الخيارات / التحقق",
+        "options": "الخيارات \/ التحقق",
         "options_comma": "خيارات مفصولة بفواصل (مثل: صغير, متوسط, كبير)",
         "is_required": "حقل إجباري",
         "edit_title": "تعديل الحقل المخصص",
@@ -5638,7 +5645,8 @@
     "Processor": "Processor",
     "Contact": "Contact",
     "2": {
-        " Scope and purpose": " Scope And Purpose"
+        " Scope and purpose": " Scope And Purpose",
+        "2": "2"
     },
     "The Processor processes personal data only to provide the services requested by the Controller: CRM records, sales pipeline management, messaging, automation and reporting": {
         " Processing is carried out on documented instructions from the Controller and for the duration of the subscription": {
@@ -5727,7 +5735,7 @@
     "Prepared for": "Prepared For",
     "Discount": "Discount",
     "Terms": "Terms",
-    "v20": [
+    "v25": [
         "0"
     ]
 }
