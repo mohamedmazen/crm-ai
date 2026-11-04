@@ -135,7 +135,11 @@ class IndexDocumentJob implements ShouldQueue
         if (empty($url)) {
             return '';
         }
-        $resp = Http::retry(2, 500)->timeout(30)->get($url);
+        $http = Http::retry(2, 500)->timeout(30);
+        if (! app()->isProduction()) {
+            $http = $http->withoutVerifying();
+        }
+        $resp = $http->get($url);
         if (! $resp->successful()) {
             return '';
         }
@@ -237,7 +241,11 @@ class IndexDocumentJob implements ShouldQueue
         if (empty($sitemapUrl)) {
             return '';
         }
-        $resp = Http::retry(2, 500)->timeout(20)->get($sitemapUrl);
+        $http = Http::retry(2, 500)->timeout(20);
+        if (! app()->isProduction()) {
+            $http = $http->withoutVerifying();
+        }
+        $resp = $http->get($sitemapUrl);
         if (! $resp->successful()) {
             return '';
         }
