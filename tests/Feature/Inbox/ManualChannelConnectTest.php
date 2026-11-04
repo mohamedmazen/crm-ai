@@ -238,6 +238,123 @@ class ManualChannelConnectTest extends TestCase
         $this->assertDatabaseMissing('whatsapp_business_accounts', ['waba_id' => '111222333']);
     }
 
+    public function test_whatsapp_manual_connect_rejects_a_business_portfolio_id(): void
+    {
+        // A Business Portfolio ID answers id/name like a WABA, but has no
+        // phone_numbers edge. That must be rejected before an account is made.
+        Http::fake(function ($request) {
+            $url = $request->url();
+
+            if (str_contains($url, '/111222333/phone_numbers')) {
+                return Http::response(['error' => [
+                    'message' => '(#100) Tried accessing nonexisting field (phone_numbers)',
+                    'code' => 100,
+                ]], 400);
+            }
+
+            if (str_contains($url, '/111222333/owned_whatsapp_business_accounts')) {
+                return Http::response(['data' => [
+                    ['id' => '555000111', 'name' => 'Real WABA'],
+                ]]);
+            }
+
+            if (str_contains($url, '/111222333/client_whatsapp_business_accounts')) {
+                return Http::response(['data' => []]);
+            }
+
+            if (str_contains($url, '/111222333')) {
+                return Http::response(['id' => '111222333', 'name' => 'Acme Business Portfolio']);
+            }
+
+            return Http::response(['success' => true]);
+        });
+
+        $response = $this->actingAs($this->ctx['user'])->postJson(route('client.whatsapp.setup.manual'), [
+            'waba_id' => '111222333',
+            'access_token' => 'MANUAL_TOKEN_123',
+        ]);
+
+        $response->assertStatus(422);
+        $this->assertStringContainsString('Business Portfolio', $response->json('message'));
+        $this->assertStringContainsString('555000111', $response->json('message'));
+        $this->assertStringContainsString('Real WABA', $response->json('message'));
+        $this->assertDatabaseMissing('whatsapp_business_accounts', ['waba_id' => '111222333']);
+        $this->assertDatabaseMissing('channel_accounts', ['business_account_id' => '111222333']);
+    }
+
+    public function test_whatsapp_manual_connect_explains_a_phone_number_id(): void
+    {
+        Http::fake(function ($request) {
+            $url = $request->url();
+
+            if (str_contains($url, '/111222333/phone_numbers')
+                || str_contains($url, '/111222333/owned_whatsapp_business_accounts')
+                || str_contains($url, '/111222333/client_whatsapp_business_accounts')) {
+                return Http::response(['error' => [
+                    'message' => '(#100) Tried accessing nonexisting field (phone_numbers)',
+                    'code' => 100,
+                ]], 400);
+            }
+
+            if (str_contains($url, '/111222333')) {
+                return Http::response(['id' => '111222333', 'display_phone_number' => '+1 555-0100']);
+            }
+
+            return Http::response(['success' => true]);
+        });
+
+        $response = $this->actingAs($this->ctx['user'])->postJson(route('client.whatsapp.setup.manual'), [
+            'waba_id' => '111222333',
+            'access_token' => 'MANUAL_TOKEN_123',
+        ]);
+
+        $response->assertStatus(422);
+        $this->assertStringContainsString('Phone Number ID', $response->json('message'));
+        $this->assertDatabaseMissing('whatsapp_business_accounts', ['waba_id' => '111222333']);
+    }
+
+    public function test_whatsapp_manual_connect_warns_when_phone_numbers_cannot_be_listed(): void
+    {
+        // A WABA whose token cannot list phone numbers (management scope
+        // missing) should still connect: sending may work even though syncing
+        // numbers does not. The user gets a warning instead of a hard failure.
+        Http::fake(function ($request) {
+            $url = $request->url();
+
+            if (str_contains($url, '/phone_numbers') || str_contains($url, '_whatsapp_business_accounts')) {
+                return Http::response(['error' => [
+                    'message' => '(#100) Tried accessing nonexisting field (phone_numbers)',
+                    'code' => 100,
+                ]], 400);
+            }
+
+            if (str_contains($url, 'display_phone_number')) {
+                return Http::response(['error' => [
+                    'message' => '(#100) Tried accessing nonexisting field (display_phone_number)',
+                    'code' => 100,
+                ]], 400);
+            }
+
+            if (str_contains($url, '/111222333')) {
+                return Http::response(['id' => '111222333', 'name' => 'Manual WABA']);
+            }
+
+            return Http::response(['success' => true]);
+        });
+
+        $response = $this->actingAs($this->ctx['user'])->postJson(route('client.whatsapp.setup.manual'), [
+            'waba_id' => '111222333',
+            'access_token' => 'MANUAL_TOKEN_123',
+        ]);
+
+        $response->assertOk()->assertJson(['success' => true, 'name' => 'Manual WABA']);
+        $this->assertStringContainsString('did not allow listing', (string) $response->json('webhook_warning'));
+        $this->assertDatabaseHas('whatsapp_business_accounts', [
+            'waba_id' => '111222333',
+            'workspace_id' => $this->ctx['workspace']->id,
+        ]);
+    }
+
     public function test_whatsapp_manual_connect_rejects_waba_owned_by_other_workspace(): void
     {
         $this->fakeWhatsappGraph();

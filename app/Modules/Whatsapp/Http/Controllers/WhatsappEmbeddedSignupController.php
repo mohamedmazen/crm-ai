@@ -86,8 +86,9 @@ class WhatsappEmbeddedSignupController extends Controller
             ? $longTokenRes->json('access_token')
             : $shortToken;
 
-        // Fetch WABA details from Meta
-        $wabaFetch = $this->fetchWabaMetadata($validated['waba_id'], $accessToken);
+        // Fetch WABA details from Meta. The ID comes from Meta's own signup
+        // session, so no /phone_numbers type check is needed here.
+        $wabaFetch = $this->fetchWabaMetadata($validated['waba_id'], $accessToken, verifyIsWaba: false);
 
         if ($wabaFetch['error'] !== null) {
             Log::warning('WhatsApp embedded signup: WABA fetch failed', [
@@ -229,10 +230,7 @@ class WhatsappEmbeddedSignupController extends Controller
 
             return response()->json([
                 'message' => 'Could not verify the WABA with Meta: '.$wabaFetch['error']
-                    .' — make sure the ID is the WhatsApp Business Account ID (WhatsApp Manager → Account overview), '
-                    .'not your Business Portfolio ID or a phone number ID, that the System User has this WABA assigned '
-                    .'with full control in Business Settings, and that the token includes whatsapp_business_management '
-                    .'(Advanced access is required for WABAs your app does not own).',
+                    .' — '.$this->wabaRejectionHint($wabaFetch),
             ], 422);
         }
 
@@ -342,8 +340,10 @@ class WhatsappEmbeddedSignupController extends Controller
 
         $warnings = array_filter([
             $webhookWarning,
-            $syncError,
-            $phoneCount === 0 ? 'No phone numbers were synced. Check the Phone Number ID or use Sync from Meta on Channel Setup.' : null,
+            $wabaFetch['warning'] ?? $syncError,
+            $wabaFetch['warning'] === null && $phoneCount === 0
+                ? 'No phone numbers were synced. Check the Phone Number ID or use Sync from Meta on Channel Setup.'
+                : null,
         ]);
 
         $this->audit->log('whatsapp.connected', $waba, null, [
@@ -369,22 +369,73 @@ class WhatsappEmbeddedSignupController extends Controller
     /**
      * Fetch and validate the WABA node from Meta.
      *
+     * /phone_numbers only exists on a WhatsApp Business Account. A Business
+     * Portfolio ID from Business Settings (which also has `id` and `name`) or a
+     * phone number ID answers
+     * "(#100) Tried accessing nonexisting field (phone_numbers)", so probing it
+     * is what tells users they pasted the wrong ID.
+     *
+     * A probe failure is only fatal when the ID is provably a Business
+     * portfolio or a phone number. Otherwise the token may just lack
+     * whatsapp_business_management for this account, so the connection is
+     * accepted with a warning rather than blocking a messaging-only setup.
+     *
      * `currency` / `timezone_id` are Business-level fields and answer
      * "(#200) Requires business_management permission to manage the object"
      * for tokens scoped to WhatsApp only, so they are requested separately and
      * never block the connection.
      *
-     * When even `id,name` is rejected (a token can manage WhatsApp assets
-     * without being allowed to read the WABA node), fall back to
-     * /phone_numbers, which only exists on a real WhatsApp Business Account and
-     * uses whatsapp_business_management. That keeps valid WABAs connectable
-     * while still rejecting Business Portfolio IDs and phone number IDs.
-     *
-     * @return array{data: array<string, mixed>, error: string|null, attempts: list<string>}
+     * @return array{
+     *     data: array<string, mixed>,
+     *     error: string|null,
+     *     attempts: list<string>,
+     *     warning: string|null,
+     *     reason?: string,
+     *     wabas?: list<array<string, mixed>>
+     * }
      */
-    private function fetchWabaMetadata(string $wabaId, string $accessToken): array
+    private function fetchWabaMetadata(string $wabaId, string $accessToken, bool $verifyIsWaba = true): array
     {
         $attempts = [];
+        $warning = null;
+        $probedPhone = null;
+
+        if ($verifyIsWaba) {
+            $probe = $this->fetchFirstWabaPhone($wabaId, $accessToken);
+
+            if ($probe['error'] === null) {
+                $probedPhone = $probe['phone'];
+            } else {
+                $attempts[] = "{$wabaId}/phone_numbers → {$probe['error']}";
+
+                $businessWabas = $this->fetchBusinessWabas($wabaId, $accessToken);
+
+                if ($businessWabas !== null) {
+                    return [
+                        'data' => [],
+                        'error' => $probe['error'],
+                        'attempts' => $attempts,
+                        'warning' => null,
+                        'reason' => 'business_portfolio',
+                        'wabas' => $businessWabas,
+                    ];
+                }
+
+                if ($this->looksLikePhoneNumberId($wabaId, $accessToken)) {
+                    return [
+                        'data' => [],
+                        'error' => $probe['error'],
+                        'attempts' => $attempts,
+                        'warning' => null,
+                        'reason' => 'phone_number_id',
+                    ];
+                }
+
+                $warning = "Meta did not allow listing this account's phone numbers: {$probe['error']} "
+                    .'The account was connected — verify the WABA ID and that the System User is assigned to it, '
+                    .'then use Sync from Meta.';
+            }
+        }
 
         $node = Http::withToken($accessToken)
             ->timeout(20)
@@ -395,35 +446,119 @@ class WhatsappEmbeddedSignupController extends Controller
                 'data' => array_merge((array) $node->json(), $this->fetchOptionalWabaFields($wabaId, $accessToken)),
                 'error' => null,
                 'attempts' => $attempts,
+                'warning' => $warning,
             ];
         }
 
-        $error = (string) ($node->json('error.message') ?? 'HTTP '.$node->status());
-        $attempts[] = "{$wabaId}?fields=id,name → {$error}";
+        $nodeError = (string) ($node->json('error.message') ?? 'HTTP '.$node->status());
+        $attempts[] = "{$wabaId}?fields=id,name → {$nodeError}";
 
-        $phones = Http::withToken($accessToken)
+        if ($probedPhone !== null) {
+            // The phone edge proved this is a WABA even though the token cannot
+            // read the node itself; use the number's verified name.
+            return [
+                'data' => array_filter([
+                    'id' => $wabaId,
+                    'name' => $probedPhone['verified_name'] ?? null,
+                ], fn ($value) => $value !== null),
+                'error' => null,
+                'attempts' => $attempts,
+                'warning' => $warning,
+            ];
+        }
+
+        return ['data' => [], 'error' => $nodeError, 'attempts' => $attempts, 'warning' => $warning];
+    }
+
+    /**
+     * @return array{phone: array<string, mixed>|null, error: string|null}
+     */
+    private function fetchFirstWabaPhone(string $wabaId, string $accessToken): array
+    {
+        $response = Http::withToken($accessToken)
             ->timeout(20)
             ->get(MetaGraph::url("{$wabaId}/phone_numbers"), [
                 'fields' => 'id,display_phone_number,verified_name',
                 'limit' => 1,
             ]);
 
-        if ($phones->successful()) {
-            $phone = $phones->json('data.0');
-
+        if (! $response->successful()) {
             return [
-                'data' => array_filter([
-                    'id' => $wabaId,
-                    'name' => is_array($phone) ? ($phone['verified_name'] ?? null) : null,
-                ], fn ($value) => $value !== null),
-                'error' => null,
-                'attempts' => $attempts,
+                'phone' => null,
+                'error' => (string) ($response->json('error.message') ?? 'HTTP '.$response->status()),
             ];
         }
 
-        $attempts[] = "{$wabaId}/phone_numbers → ".(string) ($phones->json('error.message') ?? 'HTTP '.$phones->status());
+        $first = $response->json('data.0');
 
-        return ['data' => [], 'error' => $error, 'attempts' => $attempts];
+        return ['phone' => is_array($first) ? $first : null, 'error' => null];
+    }
+
+    /**
+     * Turn a rejected fetch into an actionable hint. When the pasted ID is a
+     * Business Portfolio, show the WABA IDs the token can actually use.
+     *
+     * @param  array{error: string|null, reason?: string, wabas?: list<array<string, mixed>>}  $fetch
+     */
+    private function wabaRejectionHint(array $fetch): string
+    {
+        if (($fetch['reason'] ?? null) === 'business_portfolio') {
+            $businessWabas = $fetch['wabas'] ?? [];
+
+            if ($businessWabas === []) {
+                return 'That is a Business Portfolio ID, not a WhatsApp Business Account, and the token cannot list its WABAs. '
+                    .'Open WhatsApp Manager → Account overview and copy the WhatsApp Business Account ID.';
+            }
+
+            $list = collect($businessWabas)
+                ->filter(fn ($waba) => ! empty($waba['id']))
+                ->map(fn ($waba) => trim(($waba['name'] ?? 'WABA').' ('.$waba['id'].')'))
+                ->implode('; ');
+
+            return 'That is a Business Portfolio ID, not a WhatsApp Business Account. '
+                .'This token can access these WABAs — use one of these IDs: '.$list.'.';
+        }
+
+        if (($fetch['reason'] ?? null) === 'phone_number_id') {
+            return 'That is a Phone Number ID, not a WhatsApp Business Account. Open WhatsApp Manager → Account overview '
+                .'and copy the WhatsApp Business Account ID.';
+        }
+
+        return 'Make sure the System User has this WABA assigned with full control in Business Settings and that the '
+            .'token includes whatsapp_business_management (Advanced access is required for WABAs your app does not own).';
+    }
+
+    /**
+     * Only a Business Portfolio node exposes these edges. Returns null when the
+     * ID is not a Business portfolio.
+     *
+     * @return list<array<string, mixed>>|null
+     */
+    private function fetchBusinessWabas(string $businessId, string $accessToken): ?array
+    {
+        foreach (['owned_whatsapp_business_accounts', 'client_whatsapp_business_accounts'] as $edge) {
+            $response = Http::withToken($accessToken)
+                ->timeout(15)
+                ->get(MetaGraph::url("{$businessId}/{$edge}"), [
+                    'fields' => 'id,name',
+                    'limit' => 25,
+                ]);
+
+            if ($response->successful()) {
+                return array_values((array) $response->json('data', []));
+            }
+        }
+
+        return null;
+    }
+
+    private function looksLikePhoneNumberId(string $id, string $accessToken): bool
+    {
+        $response = Http::withToken($accessToken)
+            ->timeout(15)
+            ->get(MetaGraph::url($id), ['fields' => 'display_phone_number']);
+
+        return $response->successful() && $response->json('display_phone_number') !== null;
     }
 
     /**
