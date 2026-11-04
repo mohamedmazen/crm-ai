@@ -87,24 +87,21 @@ class WhatsappEmbeddedSignupController extends Controller
             : $shortToken;
 
         // Fetch WABA details from Meta
-        $wabaRes = Http::withToken($accessToken)
-            ->get(MetaGraph::url("{$validated['waba_id']}"), [
-                'fields' => 'id,name,currency,timezone_id',
-            ]);
+        $wabaFetch = $this->fetchWabaMetadata($validated['waba_id'], $accessToken);
 
-        if (! $wabaRes->successful()) {
+        if ($wabaFetch['error'] !== null) {
             Log::warning('WhatsApp embedded signup: WABA fetch failed', [
                 'workspace_id' => $workspaceId,
                 'waba_id' => $validated['waba_id'],
-                'response' => $wabaRes->json(),
+                'attempts' => $wabaFetch['attempts'],
             ]);
 
             return response()->json([
-                'message' => 'Connected but could not fetch WABA details: '.($wabaRes->json('error.message') ?? 'unknown error'),
+                'message' => 'Connected but could not fetch WABA details: '.$wabaFetch['error'],
             ], 422);
         }
 
-        $wabaData = $wabaRes->json();
+        $wabaData = $wabaFetch['data'];
 
         if (WhatsappBusinessAccount::where('waba_id', $validated['waba_id'])
             ->where('workspace_id', '!=', $workspaceId)
@@ -221,25 +218,25 @@ class WhatsappEmbeddedSignupController extends Controller
         $wabaId = trim($validated['waba_id']);
 
         // Validate the token by fetching the WABA it claims access to
-        $wabaRes = Http::withToken($accessToken)
-            ->get(MetaGraph::url("{$wabaId}"), [
-                'fields' => 'id,name,currency,timezone_id',
-            ]);
+        $wabaFetch = $this->fetchWabaMetadata($wabaId, $accessToken);
 
-        if (! $wabaRes->successful()) {
+        if ($wabaFetch['error'] !== null) {
             Log::warning('WhatsApp manual connect: WABA fetch failed', [
                 'workspace_id' => $workspaceId,
                 'waba_id' => $wabaId,
-                'response' => $wabaRes->json(),
+                'attempts' => $wabaFetch['attempts'],
             ]);
 
             return response()->json([
-                'message' => 'Could not verify the WABA with Meta: '.($wabaRes->json('error.message') ?? 'unknown error')
-                    .' — check the WABA ID and that the token has the whatsapp_business_management and whatsapp_business_messaging permissions.',
+                'message' => 'Could not verify the WABA with Meta: '.$wabaFetch['error']
+                    .' — make sure the ID is the WhatsApp Business Account ID (WhatsApp Manager → Account overview), '
+                    .'not your Business Portfolio ID or a phone number ID, that the System User has this WABA assigned '
+                    .'with full control in Business Settings, and that the token includes whatsapp_business_management '
+                    .'(Advanced access is required for WABAs your app does not own).',
             ], 422);
         }
 
-        $wabaData = $wabaRes->json();
+        $wabaData = $wabaFetch['data'];
 
         if (WhatsappBusinessAccount::where('waba_id', $wabaId)
             ->where('workspace_id', '!=', $workspaceId)
@@ -367,6 +364,94 @@ class WhatsappEmbeddedSignupController extends Controller
             'webhook_url' => route('webhooks.whatsapp.receive', ['token' => $verifyToken]),
             'webhook_verify_token' => $verifyToken,
         ]);
+    }
+
+    /**
+     * Fetch and validate the WABA node from Meta.
+     *
+     * `currency` / `timezone_id` are Business-level fields and answer
+     * "(#200) Requires business_management permission to manage the object"
+     * for tokens scoped to WhatsApp only, so they are requested separately and
+     * never block the connection.
+     *
+     * When even `id,name` is rejected (a token can manage WhatsApp assets
+     * without being allowed to read the WABA node), fall back to
+     * /phone_numbers, which only exists on a real WhatsApp Business Account and
+     * uses whatsapp_business_management. That keeps valid WABAs connectable
+     * while still rejecting Business Portfolio IDs and phone number IDs.
+     *
+     * @return array{data: array<string, mixed>, error: string|null, attempts: list<string>}
+     */
+    private function fetchWabaMetadata(string $wabaId, string $accessToken): array
+    {
+        $attempts = [];
+
+        $node = Http::withToken($accessToken)
+            ->timeout(20)
+            ->get(MetaGraph::url($wabaId), ['fields' => 'id,name']);
+
+        if ($node->successful()) {
+            return [
+                'data' => array_merge((array) $node->json(), $this->fetchOptionalWabaFields($wabaId, $accessToken)),
+                'error' => null,
+                'attempts' => $attempts,
+            ];
+        }
+
+        $error = (string) ($node->json('error.message') ?? 'HTTP '.$node->status());
+        $attempts[] = "{$wabaId}?fields=id,name → {$error}";
+
+        $phones = Http::withToken($accessToken)
+            ->timeout(20)
+            ->get(MetaGraph::url("{$wabaId}/phone_numbers"), [
+                'fields' => 'id,display_phone_number,verified_name',
+                'limit' => 1,
+            ]);
+
+        if ($phones->successful()) {
+            $phone = $phones->json('data.0');
+
+            return [
+                'data' => array_filter([
+                    'id' => $wabaId,
+                    'name' => is_array($phone) ? ($phone['verified_name'] ?? null) : null,
+                ], fn ($value) => $value !== null),
+                'error' => null,
+                'attempts' => $attempts,
+            ];
+        }
+
+        $attempts[] = "{$wabaId}/phone_numbers → ".(string) ($phones->json('error.message') ?? 'HTTP '.$phones->status());
+
+        return ['data' => [], 'error' => $error, 'attempts' => $attempts];
+    }
+
+    /**
+     * Enrichment only: `currency` is exposed only for WABAs with a payment
+     * method configured and both fields need business_management, so failure is
+     * expected for WhatsApp-only tokens and must stay non-fatal.
+     *
+     * @return array<string, mixed>
+     */
+    private function fetchOptionalWabaFields(string $wabaId, string $accessToken): array
+    {
+        $response = Http::withToken($accessToken)
+            ->timeout(20)
+            ->get(MetaGraph::url($wabaId), ['fields' => 'currency,timezone_id']);
+
+        if (! $response->successful()) {
+            Log::info('WhatsApp WABA optional fields unavailable', [
+                'waba_id' => $wabaId,
+                'error' => $response->json('error.message'),
+            ]);
+
+            return [];
+        }
+
+        return array_filter(
+            (array) $response->json(),
+            fn ($value) => $value !== null
+        );
     }
 
     public function reregisterWebhook(Request $request, WhatsappBusinessAccount $waba): JsonResponse

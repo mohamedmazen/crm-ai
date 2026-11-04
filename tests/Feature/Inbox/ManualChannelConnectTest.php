@@ -100,6 +100,144 @@ class ManualChannelConnectTest extends TestCase
         $this->assertDatabaseMissing('whatsapp_business_accounts', ['waba_id' => '111222333']);
     }
 
+    public function test_whatsapp_manual_connect_survives_business_level_field_rejection(): void
+    {
+        // `currency` / `timezone_id` need business_management; WhatsApp-only
+        // tokens answer "(#200) Requires business_management permission".
+        // Connecting must ignore that enrichment failure instead of aborting.
+        Http::fake(function ($request) {
+            $url = $request->url();
+
+            if (str_contains($url, '/111222333/phone_numbers')) {
+                return Http::response(['data' => [[
+                    'id' => '999888777',
+                    'display_phone_number' => '+1 555-0100',
+                    'verified_name' => 'Test Biz',
+                ]]]);
+            }
+
+            if (str_contains($url, '/111222333/subscribed_apps')) {
+                return Http::response(['success' => true]);
+            }
+
+            if (str_contains($url, '/999888777')) {
+                return Http::response([
+                    'id' => '999888777',
+                    'display_phone_number' => '+1 555-0100',
+                    'verified_name' => 'Test Biz',
+                ]);
+            }
+
+            if (str_contains($url, '/111222333')) {
+                if (str_contains($url, 'currency')) {
+                    return Http::response(['error' => [
+                        'message' => '(#200) Requires business_management permission to manage the object',
+                        'code' => 200,
+                    ]], 400);
+                }
+
+                return Http::response(['id' => '111222333', 'name' => 'Manual WABA']);
+            }
+
+            return Http::response(['success' => true]);
+        });
+
+        $response = $this->actingAs($this->ctx['user'])->postJson(route('client.whatsapp.setup.manual'), [
+            'waba_id' => '111222333',
+            'access_token' => 'MANUAL_TOKEN_123',
+        ]);
+
+        $response->assertOk()->assertJson([
+            'success' => true,
+            'waba_id' => '111222333',
+            'name' => 'Manual WABA',
+            'phone_count' => 1,
+        ]);
+
+        $waba = WhatsappBusinessAccount::where('waba_id', '111222333')->sole();
+        $this->assertSame('Manual WABA', $waba->meta_json['display_name']);
+        $this->assertNull($waba->meta_json['timezone_id']);
+        $this->assertNull($waba->meta_json['currency']);
+    }
+
+    public function test_whatsapp_manual_connect_falls_back_to_phone_numbers_when_waba_node_is_restricted(): void
+    {
+        // Tokens that can manage WhatsApp assets but not read the WABA node get
+        // "(#200) Requires business_management permission". The phone numbers
+        // endpoint still proves the ID is a WhatsApp Business Account.
+        Http::fake(function ($request) {
+            $url = $request->url();
+
+            if (str_contains($url, '/111222333/phone_numbers')) {
+                return Http::response(['data' => [[
+                    'id' => '999888777',
+                    'display_phone_number' => '+1 555-0100',
+                    'verified_name' => 'Restricted WABA',
+                ]]]);
+            }
+
+            if (str_contains($url, '/111222333/subscribed_apps')) {
+                return Http::response(['success' => true]);
+            }
+
+            if (str_contains($url, '/999888777')) {
+                return Http::response([
+                    'id' => '999888777',
+                    'display_phone_number' => '+1 555-0100',
+                    'verified_name' => 'Restricted WABA',
+                ]);
+            }
+
+            if (str_contains($url, '/111222333')) {
+                return Http::response(['error' => [
+                    'message' => '(#200) Requires business_management permission to manage the object',
+                    'code' => 200,
+                ]], 400);
+            }
+
+            return Http::response(['success' => true]);
+        });
+
+        $response = $this->actingAs($this->ctx['user'])->postJson(route('client.whatsapp.setup.manual'), [
+            'waba_id' => '111222333',
+            'access_token' => 'MANUAL_TOKEN_123',
+        ]);
+
+        $response->assertOk()->assertJson([
+            'success' => true,
+            'waba_id' => '111222333',
+            'name' => 'Restricted WABA',
+            'phone_count' => 1,
+        ]);
+
+        $this->assertDatabaseHas('whatsapp_business_accounts', [
+            'waba_id' => '111222333',
+            'workspace_id' => $this->ctx['workspace']->id,
+        ]);
+    }
+
+    public function test_whatsapp_manual_connect_rejects_an_id_that_is_not_a_waba(): void
+    {
+        // A Business Portfolio ID / phone number ID fails both the WABA node and
+        // the phone_numbers probe, so no account is created.
+        Http::fake([
+            'graph.facebook.com/*/111222333*' => Http::response(['error' => [
+                'message' => '(#200) Requires business_management permission to manage the object',
+                'code' => 200,
+            ]], 400),
+            'graph.facebook.com/*' => Http::response(['success' => true]),
+        ]);
+
+        $response = $this->actingAs($this->ctx['user'])->postJson(route('client.whatsapp.setup.manual'), [
+            'waba_id' => '111222333',
+            'access_token' => 'MANUAL_TOKEN_123',
+        ]);
+
+        $response->assertStatus(422);
+        $this->assertStringContainsString('business_management', $response->json('message'));
+        $this->assertDatabaseMissing('whatsapp_business_accounts', ['waba_id' => '111222333']);
+    }
+
     public function test_whatsapp_manual_connect_rejects_waba_owned_by_other_workspace(): void
     {
         $this->fakeWhatsappGraph();
