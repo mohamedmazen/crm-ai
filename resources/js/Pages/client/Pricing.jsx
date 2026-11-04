@@ -62,6 +62,9 @@ export default function Pricing({
                         <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
                             {t('pricing.transparent')}
                         </p>
+                        <p className="mt-1 text-sm font-medium text-brand-600 dark:text-brand-400">
+                            {t('pricing.trial_days', { days: 60 })}
+                        </p>
                     </div>
                     <div className="flex items-center gap-2 rounded-soft-lg border border-soft border-neutral-200 bg-neutral-50 p-1 dark:bg-neutral-800 dark:border-neutral-700">
                         <button

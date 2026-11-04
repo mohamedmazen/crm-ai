@@ -170,7 +170,7 @@ class InboxSetupController extends Controller
                 $warnings[] = "Page {$pageId} could not be subscribed to messaging webhooks — inbound messages for it will NOT arrive: ".$pageSub['error'];
             }
 
-            // Persisted shape mirrors InboxDemoSeeder + what InstagramDriver expects:
+            // Persisted shape mirrors DemoTenantSeeder + what InstagramDriver expects:
             // - credentials.instagram_account_id / access_token  → used by send()
             // - meta_json.instagram_page_id (= IG account id, matches webhook entry.id)
             // - meta_json.instagram_account_id / facebook_page_id → diagnostics + lookup

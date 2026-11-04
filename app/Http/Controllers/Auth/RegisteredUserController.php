@@ -8,6 +8,7 @@ use App\Models\Plan;
 use App\Models\SmtpConfiguration;
 use App\Models\User;
 use App\Rules\NotBreachedPassword;
+use App\Services\Billing\TrialService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -60,7 +61,7 @@ class RegisteredUserController extends Controller
                 // Currency left null: inherit the platform default currency.
             ]);
 
-            return User::create([
+            $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
@@ -73,6 +74,13 @@ class RegisteredUserController extends Controller
                 // so auto-verify the account instead of trapping the user.
                 'email_verified_at' => SmtpConfiguration::isConfigured() ? null : now(),
             ]);
+
+            // Every new signup starts the platform-wide free trial (60 days,
+            // every feature unlocked) so the product is fully explorable before
+            // checkout. No-op when the trial plan has not been seeded.
+            app(TrialService::class)->startFor($user);
+
+            return $user;
         });
 
         event(new Registered($user));

@@ -2,6 +2,9 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\Subscription;
+use App\Models\User;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -28,5 +31,54 @@ class RegistrationTest extends TestCase
 
         $this->assertAuthenticated();
         $response->assertRedirect(route('client.dashboard', absolute: false));
+    }
+
+    public function test_new_users_receive_a_60_day_full_feature_trial(): void
+    {
+        $this->seed(PlanSeeder::class);
+
+        $this->post('/register', [
+            'name' => 'Trial User',
+            'email' => 'trial@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+            'agree_terms' => true,
+        ]);
+
+        $user = User::where('email', 'trial@example.com')->firstOrFail();
+
+        $subscription = $user->subscriptions()->where('status', 'trialing')->first();
+
+        $this->assertNotNull($subscription, 'Registration should start a trialing subscription.');
+        $this->assertSame('trial', $subscription->plan->slug);
+        $this->assertNotNull($subscription->trial_ends_at);
+        $this->assertEqualsWithDelta(60, now()->diffInDays($subscription->trial_ends_at), 1);
+
+        $plan = $user->client->effectivePlan();
+
+        $this->assertNotNull($plan);
+        $this->assertSame('trial', $plan->slug);
+        // 100% of features are unlocked, with no numeric ceilings.
+        $this->assertTrue($plan->hasFeature('ai_sdr'));
+        $this->assertTrue($plan->hasFeature('white_label'));
+        $this->assertTrue($plan->hasFeature('sales_reports'));
+        $this->assertNull($plan->limitValue('users'));
+        $this->assertNull($plan->limitValue('ai_tokens_per_month'));
+    }
+
+    public function test_registration_succeeds_when_no_trial_plan_is_seeded(): void
+    {
+        // Fresh installs without PlanSeeder must still register users; the
+        // trial simply does not start rather than breaking the request.
+        $response = $this->post('/register', [
+            'name' => 'No Trial User',
+            'email' => 'notrial@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+            'agree_terms' => true,
+        ]);
+
+        $response->assertRedirect(route('client.dashboard', absolute: false));
+        $this->assertSame(0, Subscription::count());
     }
 }

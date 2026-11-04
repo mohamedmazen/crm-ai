@@ -50,7 +50,7 @@ class LandingPageController extends Controller
             'landing.hero_cta_primary' => 'Start Your Free Trial',
             'landing.hero_cta_secondary' => 'Book a Demo',
             'landing.hero_trust_1' => 'No credit card required',
-            'landing.hero_trust_2' => '14-day free trial',
+            'landing.hero_trust_2' => '60-day free trial',
             'landing.hero_trust_3' => 'Official Meta Business APIs',
 
             // ── Metrics (numbers band) ──────────────────────────────
@@ -241,7 +241,7 @@ class LandingPageController extends Controller
             'landing.faq_2_q' => 'Do I need a WhatsApp Business API account?',
             'landing.faq_2_a' => 'Yes — :brand connects through the official Meta WhatsApp Cloud API. Our guided setup walks you through it in minutes.',
             'landing.faq_3_q' => 'Can I try :brand before paying?',
-            'landing.faq_3_a' => 'Absolutely. Every plan includes a 14-day free trial with no credit card required.',
+            'landing.faq_3_a' => 'Absolutely. Every plan includes a 60-day free trial with no credit card required.',
             'landing.faq_4_q' => 'Do the AI chatbots understand my business?',
             'landing.faq_4_a' => 'Yes. Train chatbots on your own documents, FAQs and product catalog using RAG so answers are accurate and on-brand.',
             'landing.faq_5_q' => 'Is my data secure and compliant?',

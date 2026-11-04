@@ -71,6 +71,10 @@ export default function Pricing({ landing = {}, plans = [], canRegister }) {
                         {t('pricing.choose_plan_no_fees')}
                     </p>
 
+                    <div className="mt-4 flex justify-center">
+                        <Badge text={t('pricing.trial_days', { days: 60 })} />
+                    </div>
+
                     {/* Billing toggle */}
                     <div className="mt-8 inline-flex items-center gap-1 rounded-xl p-1" style={{ background: 'rgba(255,255,255,0.08)' }}>
                         <button

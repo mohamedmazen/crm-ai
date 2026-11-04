@@ -9,7 +9,40 @@ class PlanSeeder extends Seeder
 {
     public function run(): void
     {
+        // Every feature gate resolved to `null` means "enabled, unlimited" (see
+        // Plan::hasFeature / Plan::featureLimit), so the trial unlocks 100% of
+        // the product without having to keep a second feature list in sync.
+        $trialFeatureFlags = array_fill_keys(array_keys(config('features.labels', [])), null);
+
         $plans = [
+            // Self-serve 60-day trial. Hidden from the pricing page (enabled=false)
+            // because it is not a plan anyone buys — new signups are auto-attached
+            // to it by App\Services\Billing\TrialService on registration.
+            [
+                'name' => 'Free Trial',
+                'slug' => 'trial',
+                'description' => '60 days of full access — every feature, no limits.',
+                'currency_code' => 'USD',
+                'price_cents' => 0,
+                'interval' => 'month',
+                'monthly_price_cents' => 0,
+                'yearly_price_cents' => 0,
+                'trial_days' => 60,
+                'features' => [
+                    'Every feature unlocked for 60 days',
+                    'Unlimited team members',
+                    'Unlimited WhatsApp, campaigns, AI & automations',
+                    'No credit card required',
+                ],
+                // null limits + null feature flags = unlimited and fully enabled.
+                'limits' => null,
+                'white_label_enabled' => true,
+                'feature_flags' => $trialFeatureFlags,
+                'sort_order' => 0,
+                'enabled' => false,
+                'featured' => false,
+                'popular' => false,
+            ],
             [
                 'name' => 'Starter',
                 'slug' => 'starter',
@@ -81,7 +114,7 @@ class PlanSeeder extends Seeder
                 'interval' => 'month',
                 'monthly_price_cents' => 2900,
                 'yearly_price_cents' => 29000,
-                'trial_days' => 14,
+                'trial_days' => 0,
                 'features' => ['Up to 10 team members', '50 GB storage', 'Priority support', 'Advanced analytics'],
                 'limits' => [
                     'users' => 10,
@@ -136,7 +169,7 @@ class PlanSeeder extends Seeder
                 'interval' => 'month',
                 'monthly_price_cents' => 9900,
                 'yearly_price_cents' => 99000,
-                'trial_days' => 14,
+                'trial_days' => 0,
                 'features' => ['Unlimited team members', '500 GB storage', 'Dedicated support', 'White-label branding', 'Custom domain', 'SLA'],
                 'limits' => [
                     'users' => null,

@@ -29,9 +29,13 @@ class DatabaseSeeder extends Seeder
             LandingPageSeeder::class,
             CmsPageSeeder::class,
 
-            // Comprehensive demo content: one fully-populated client
-            // (SpaGreen Wellness) across every module, plus light secondaries.
-            DemoSeeder::class,
+            // Lightweight, tier-specific demo tenants so sales can run live
+            // proposals: Starter (1 pipeline, WhatsApp), Pro (+IG/Messenger,
+            // 2 pipelines, small team) and Business (full channels + team).
+            // Each seeder prints its login on completion.
+            DemoStarterSeeder::class,
+            DemoProSeeder::class,
+            DemoBusinessSeeder::class,
         ]);
 
         // User::factory(10)->create();
