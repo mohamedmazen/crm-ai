@@ -40,9 +40,14 @@ class OpenRouterProvider implements LlmProviderInterface
 
         $json = $resp->json();
         $latency = (int) ((microtime(true) - $start) * 1000);
+        $choiceMsg = $json['choices'][0]['message'] ?? [];
+        $content = $choiceMsg['content'] ?? '';
+        if (trim($content) === '' && ! empty($choiceMsg['reasoning'])) {
+            $content = $choiceMsg['reasoning'];
+        }
 
         return new LlmResponse(
-            content: $json['choices'][0]['message']['content'] ?? '',
+            content: $content,
             promptTokens: $json['usage']['prompt_tokens'] ?? 0,
             completionTokens: $json['usage']['completion_tokens'] ?? 0,
             model: $json['model'] ?? $this->chatModel,
