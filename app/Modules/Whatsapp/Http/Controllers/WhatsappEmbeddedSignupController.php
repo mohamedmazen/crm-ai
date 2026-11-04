@@ -572,7 +572,7 @@ class WhatsappEmbeddedSignupController extends Controller
     {
         $response = Http::withToken($accessToken)
             ->timeout(20)
-            ->get(MetaGraph::url($wabaId), ['fields' => 'currency,timezone_id']);
+            ->get(MetaGraph::url($wabaId), ['fields' => 'timezone_id']);
 
         if (! $response->successful()) {
             Log::info('WhatsApp WABA optional fields unavailable', [
