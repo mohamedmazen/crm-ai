@@ -92,8 +92,20 @@ class ChatbotRunner
 
             return $response->content;
         } catch (\Throwable $e) {
-            // Fallback
-            return $bot->fallback_reply ?? null;
+            \Illuminate\Support\Facades\Log::error('ChatbotRunner chat failed: '.$e->getMessage(), [
+                'bot_id' => $bot->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            if (! empty($bot->fallback_reply)) {
+                return $bot->fallback_reply;
+            }
+
+            if (($inboundMessage->channel ?? '') === 'playground') {
+                return '⚠️ خطأ في مزود الذكاء الاصطناعي: ' . $e->getMessage();
+            }
+
+            return null;
         }
     }
 

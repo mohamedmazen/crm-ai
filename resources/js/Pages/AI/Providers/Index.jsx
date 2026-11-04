@@ -38,6 +38,15 @@ const SETUP_GUIDES = {
         link: 'https://aistudio.google.com/app/apikey',
         linkLabelKey: 'ai.guide_gemini_link',
     },
+    openrouter: {
+        steps: [
+            'ai.guide_openrouter_step1',
+            'ai.guide_openrouter_step2',
+            'ai.guide_openrouter_step3',
+        ],
+        link: 'https://openrouter.ai/keys',
+        linkLabelKey: 'ai.guide_openrouter_link',
+    },
 };
 
 function SetupGuide({ providerKey }) {
@@ -100,7 +109,27 @@ const GeminiLogo = () => (
     </svg>
 );
 
+const OpenRouterLogo = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#6366F1" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+
 const PROVIDER_INFO = {
+    openrouter: {
+        label: 'OpenRouter (Free Models)',
+        Icon: OpenRouterLogo,
+        allowCustomModel: true,
+        models: [
+            'openrouter/free',
+            'google/gemma-4-31b-it:free',
+            'google/gemma-4-26b-a4b-it:free',
+            'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+            'nvidia/nemotron-3.5-lightning:free',
+            'liquid/lfm-2.5-2.6b:free',
+            'xingchen-agi/xing4.0-29b-a4b:free',
+        ],
+    },
     openai:    { label: 'OpenAI',    Icon: OpenAILogo,    models: ['gpt-4o', 'gpt-4o-mini', 'gpt-3.5-turbo'] },
     anthropic: { label: 'Anthropic', Icon: AnthropicLogo, models: ['claude-3-opus-20240229', 'claude-3-sonnet-20240229', 'claude-3-haiku-20240307'] },
     gemini:    { label: 'Gemini',    Icon: GeminiLogo,    models: ['gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-1.0-pro'] },
@@ -151,9 +180,28 @@ function ProviderCard({ provider }) {
                 </div>
                 <div>
                     <label htmlFor={`ai-chat-${provider.provider}`} className="text-xs font-medium text-neutral-500 dark:text-neutral-400">{t('ai.default_chat_model')}</label>
-                    <select id={`ai-chat-${provider.provider}`} value={data.default_model_chat} onChange={e => setData('default_model_chat', e.target.value)} className="mt-1 w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm">
+                    <select
+                        id={`ai-chat-${provider.provider}`}
+                        value={info.models?.includes(data.default_model_chat) ? data.default_model_chat : '__custom__'}
+                        onChange={e => {
+                            if (e.target.value !== '__custom__') {
+                                setData('default_model_chat', e.target.value);
+                            }
+                        }}
+                        className="mt-1 w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm"
+                    >
                         {info.models?.map(m => <option key={m} value={m}>{m}</option>)}
+                        {info.allowCustomModel && <option value="__custom__">{t('common.custom', { defaultValue: 'Custom model...' })}</option>}
                     </select>
+                    {info.allowCustomModel && (
+                        <input
+                            type="text"
+                            value={data.default_model_chat}
+                            onChange={e => setData('default_model_chat', e.target.value)}
+                            placeholder="e.g. google/gemma-4-31b:free"
+                            className="mt-1.5 w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-1.5 text-xs font-mono"
+                        />
+                    )}
                 </div>
                 <label className="flex items-center gap-2 text-sm cursor-pointer">
                     <input type="checkbox" checked={data.enabled} onChange={e => setData('enabled', e.target.checked)} className="rounded" />

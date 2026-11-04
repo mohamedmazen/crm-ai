@@ -17,7 +17,7 @@ class LlmManager
     {
         $config = AiProviderConfig::where('workspace_id', $workspaceId)
             ->where('enabled', true)
-            ->orderByRaw("FIELD(provider, 'openai', 'anthropic', 'gemini')")
+            ->orderByRaw("FIELD(provider, 'openrouter', 'openai', 'anthropic', 'gemini')")
             ->first();
 
         if ($config && ! empty($config->credentials['api_key'] ?? '')) {
@@ -28,7 +28,7 @@ class LlmManager
         }
 
         $workspace = app(Workspace::class)->find($workspaceId);
-        foreach (['openai', 'anthropic', 'gemini'] as $provider) {
+        foreach (['openrouter', 'openai', 'anthropic', 'gemini'] as $provider) {
             $creds = CredentialResolver::for($workspace)->llm($provider);
             if ($creds) {
                 return static::build($provider, $creds->toArray());
@@ -93,6 +93,7 @@ class LlmManager
             ),
             'anthropic' => new AnthropicProvider($creds['api_key'] ?? '', $models['chat'] ?? 'claude-3-haiku-20240307'),
             'gemini' => new GeminiProvider($creds['api_key'] ?? '', $models['chat'] ?? 'gemini-1.5-flash', $models['embed'] ?? 'text-embedding-004'),
+            'openrouter' => new OpenRouterProvider($creds['api_key'] ?? '', $models['chat'] ?? 'openrouter/free'),
             default => throw new \RuntimeException("Unknown LLM provider: {$provider}"),
         };
     }

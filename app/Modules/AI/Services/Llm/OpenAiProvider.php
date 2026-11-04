@@ -23,7 +23,12 @@ class OpenAiProvider implements LlmProviderInterface
             $headers['OpenAI-Organization'] = $this->organization;
         }
 
-        $resp = Http::withHeaders($headers)->retry(2, 500)->timeout(60)->post(self::BASE.'/chat/completions', [
+        $client = Http::withHeaders($headers)->retry(2, 500)->timeout(60);
+        if (! app()->isProduction()) {
+            $client = $client->withoutVerifying();
+        }
+
+        $resp = $client->post(self::BASE.'/chat/completions', [
             'model' => $opts['model'] ?? $this->chatModel,
             'messages' => $messages,
             'max_tokens' => $opts['max_tokens'] ?? 1024,

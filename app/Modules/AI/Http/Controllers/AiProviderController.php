@@ -16,7 +16,7 @@ class AiProviderController extends Controller
         $workspaceId = $request->user()->current_workspace_id ?? $request->user()->workspace_id;
         $configs = AiProviderConfig::where('workspace_id', $workspaceId)->get()->keyBy('provider');
 
-        $providers = ['openai', 'anthropic', 'gemini'];
+        $providers = ['openrouter', 'openai', 'anthropic', 'gemini'];
         $list = collect($providers)->map(fn ($p) => [
             'provider' => $p,
             'enabled' => $configs->get($p)?->enabled ?? false,
@@ -29,12 +29,12 @@ class AiProviderController extends Controller
 
     public function update(Request $request, string $provider): RedirectResponse
     {
-        abort_unless(in_array($provider, ['openai', 'anthropic', 'gemini'], true), 404);
+        abort_unless(in_array($provider, ['openrouter', 'openai', 'anthropic', 'gemini'], true), 404);
         $workspaceId = $request->user()->current_workspace_id ?? $request->user()->workspace_id;
 
         $validated = $request->validate([
             'api_key' => ['nullable', 'string', 'max:512'],
-            'default_model_chat' => ['nullable', 'string', 'max:64'],
+            'default_model_chat' => ['nullable', 'string', 'max:128'],
             'default_model_embed' => ['nullable', 'string', 'max:64'],
             'enabled' => ['boolean'],
         ]);

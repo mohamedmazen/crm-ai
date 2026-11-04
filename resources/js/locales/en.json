@@ -4235,6 +4235,10 @@
         "guide_gemini_step3": "Copy the generated API key.",
         "guide_gemini_step4": "Paste the key above and choose a Gemini model.",
         "guide_gemini_link": "Open Google AI Studio",
+        "guide_openrouter_step1": "Go to openrouter.ai and sign in (no credit card required).",
+        "guide_openrouter_step2": "Go to Keys → Create Key to generate a free API key.",
+        "guide_openrouter_step3": "Paste the key above and select any free model (ending with :free).",
+        "guide_openrouter_link": "Open OpenRouter Keys",
         "document_count": "Document Count",
         "doc_status_${doc": {
             "status}": "Status}"

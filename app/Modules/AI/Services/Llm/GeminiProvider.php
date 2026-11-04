@@ -41,8 +41,12 @@ class GeminiProvider implements LlmProviderInterface
             $body['systemInstruction'] = $systemInstruction;
         }
 
-        $resp = Http::retry(2, 500)->timeout(60)
-            ->post(self::BASE."/models/{$model}:generateContent?key={$this->apiKey}", $body);
+        $client = Http::retry(2, 500)->timeout(60);
+        if (! app()->isProduction()) {
+            $client = $client->withoutVerifying();
+        }
+
+        $resp = $client->post(self::BASE."/models/{$model}:generateContent?key={$this->apiKey}", $body);
 
         if (! $resp->successful()) {
             throw new \RuntimeException('Gemini chat failed: '.$resp->body());
@@ -73,7 +77,12 @@ class GeminiProvider implements LlmProviderInterface
             'content' => ['parts' => [['text' => $text]]],
         ], $texts);
 
-        $resp = Http::retry(2, 500)->timeout(60)->post(
+        $client = Http::retry(2, 500)->timeout(60);
+        if (! app()->isProduction()) {
+            $client = $client->withoutVerifying();
+        }
+
+        $resp = $client->post(
             self::BASE."/models/{$this->embedModel}:batchEmbedContents?key={$this->apiKey}",
             ['requests' => $requests]
         );

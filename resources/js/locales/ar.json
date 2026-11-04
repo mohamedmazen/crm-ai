@@ -5302,6 +5302,10 @@
         "guide_gemini_step3": "انسخ مفتاح API الذي تم إنشاؤه.",
         "guide_gemini_step4": "الصق المفتاح أعلاه واختر نموذج Gemini.",
         "guide_gemini_link": "فتح Google AI Studio",
+        "guide_openrouter_step1": "ادخل على موقع openrouter.ai وسجل دخولك (بدون الحاجة لبطاقة بنكية).",
+        "guide_openrouter_step2": "توجه إلى قسم Keys واضغط Create Key لإنشاء مفتاح مجاني.",
+        "guide_openrouter_step3": "الصق المفتاح في الخانة واختر أي موديل مجاني (ينتهي بـ :free).",
+        "guide_openrouter_link": "فتح لوحة مفاتيح OpenRouter",
         "document_count": "Document Count",
         "doc_status_${doc": {
             "status}": "Status}"
