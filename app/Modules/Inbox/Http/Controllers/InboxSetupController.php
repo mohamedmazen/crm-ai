@@ -8,6 +8,7 @@ use App\Modules\Inbox\Services\MetaWebhookSubscriptionService;
 use App\Modules\Integrations\Services\CredentialResolver;
 use App\Modules\Shared\Models\ChannelAccount;
 use App\Modules\Whatsapp\Models\WhatsappBusinessAccount;
+use App\Modules\Whatsapp\Services\WhatsappConnectionHealth;
 use App\Support\MetaGraph;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -19,7 +20,10 @@ use Inertia\Response;
 
 class InboxSetupController extends Controller
 {
-    public function __construct(private MetaWebhookSubscriptionService $webhooks) {}
+    public function __construct(
+        private MetaWebhookSubscriptionService $webhooks,
+        private WhatsappConnectionHealth $whatsappHealth,
+    ) {}
 
     public function index(Request $request): Response
     {
@@ -38,8 +42,10 @@ class InboxSetupController extends Controller
         $webhookTokensByWaba = [];
         $channelAccountPhoneIdsByWaba = [];
         $channelAccountsByWaba = [];
+        $wabaHealth = [];
         foreach ($wabas as $waba) {
             $webhookTokensByWaba[$waba->id] = $waba->makeVisible('webhook_verify_token')->webhook_verify_token;
+            $wabaHealth[$waba->id] = $this->whatsappHealth->for($waba);
             $accounts = $whatsappChannelAccounts->where('business_account_id', $waba->waba_id)->values();
             $channelAccountPhoneIdsByWaba[$waba->id] = $accounts->pluck('phone_number_id')->all();
             $channelAccountsByWaba[$waba->id] = $accounts->map(fn ($a) => [
@@ -76,6 +82,7 @@ class InboxSetupController extends Controller
             'whatsappWebhookUrl' => url('/webhooks/whatsapp'),
             'whatsappWebhookGlobalUrl' => route('webhooks.whatsapp.global.receive'),
             'webhookTokensByWaba' => $webhookTokensByWaba,
+            'wabaHealth' => $wabaHealth,
             'channelAccountPhoneIdsByWaba' => $channelAccountPhoneIdsByWaba,
             'channelAccountsByWaba' => $channelAccountsByWaba,
             'instagramAccounts' => $instagramAccounts,

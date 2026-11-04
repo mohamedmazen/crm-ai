@@ -378,7 +378,47 @@ function CodeField({ label, value, icon: Icon }) {
     );
 }
 
-function WabaCard({ waba, webhookGlobalUrl, webhookBaseUrl, webhookToken, channelAccounts, chatbots }) {
+const WABA_HEALTH_STYLE = {
+    needs_attention: 'bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+    reauth_required: 'bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+    error: 'bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-300 border-red-200 dark:border-red-900',
+    disconnected: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700',
+};
+
+function WabaHealthBanner({ health, onReconnect }) {
+    const { t } = useTranslation();
+
+    if (!health || health.state === 'ok') return null;
+
+    const canReconnect = ['needs_attention', 'reauth_required', 'error'].includes(health.state);
+
+    return (
+        <div className={`flex items-start gap-2 px-4 py-2.5 text-xs border-b ${WABA_HEALTH_STYLE[health.state] ?? WABA_HEALTH_STYLE.disconnected}`}>
+            {health.state === 'disconnected'
+                ? <WifiOff className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+                : <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" />}
+            <div className="flex-1 min-w-0">
+                <p className="font-semibold">{t(`inbox.whatsapp_health_${health.state}`)}</p>
+                {health.reason && (
+                    <p className="mt-0.5 opacity-90">
+                        {t(`inbox.whatsapp_health_reason_${health.reason}`)}
+                        {health.reason === 'token_expiring' && health.token_expires_at && (
+                            <span> — {t('inbox.whatsapp_health_expires_on', { date: new Date(health.token_expires_at).toLocaleDateString() })}</span>
+                        )}
+                    </p>
+                )}
+            </div>
+            {canReconnect && onReconnect && (
+                <button type="button" onClick={onReconnect}
+                    className="shrink-0 rounded-lg border border-current px-2 py-1 font-medium hover:bg-white/40 dark:hover:bg-black/20 transition">
+                    {t('inbox.reconnect')}
+                </button>
+            )}
+        </div>
+    );
+}
+
+function WabaCard({ waba, webhookGlobalUrl, webhookBaseUrl, webhookToken, channelAccounts, chatbots, health = null, onReconnect }) {
     const { t } = useTranslation();
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [deleting, setDeleting]           = useState(false);
@@ -482,6 +522,8 @@ function WabaCard({ waba, webhookGlobalUrl, webhookBaseUrl, webhookToken, channe
                 </div>
             )}
 
+            <WabaHealthBanner health={health} onReconnect={onReconnect} />
+
             <div className="p-4 space-y-4">
                 {/* Webhook — global for embedded signup, per-WABA for manual connections */}
                 <div className="space-y-2">
@@ -552,7 +594,7 @@ function WabaCard({ waba, webhookGlobalUrl, webhookBaseUrl, webhookToken, channe
     );
 }
 
-function WhatsAppSection({ wabas, webhookGlobalUrl, webhookBaseUrl, webhookTokensByWaba, channelAccountsByWaba, chatbots, showForm, setShowForm, metaConfigIdWhatsapp, metaAppId }) {
+function WhatsAppSection({ wabas, webhookGlobalUrl, webhookBaseUrl, webhookTokensByWaba, channelAccountsByWaba, chatbots, showForm, setShowForm, metaConfigIdWhatsapp, metaAppId, wabaHealth = {} }) {
     const { t } = useTranslation();
     const [waApiError, setWaApiError] = useState(null);
     const [waSubmitting, setWaSubmitting] = useState(false);
@@ -608,6 +650,8 @@ function WhatsAppSection({ wabas, webhookGlobalUrl, webhookBaseUrl, webhookToken
                             webhookToken={webhookTokensByWaba?.[waba.id] ?? null}
                             channelAccounts={channelAccountsByWaba?.[waba.id] ?? []}
                             chatbots={chatbots}
+                            health={wabaHealth?.[waba.id] ?? null}
+                            onReconnect={() => setShowForm(true)}
                         />
                     ))}
                 </div>
@@ -1457,7 +1501,7 @@ export default function ChannelSetup({
     wabas, whatsappWebhookGlobalUrl, whatsappWebhookUrl, webhookTokensByWaba,
     channelAccountsByWaba, instagramAccounts, messengerAccounts, metaWebhookUrl,
     metaAppId = null, metaConfigIdWhatsapp = null, metaConfigIdSocial = null,
-    chatbots = [],
+    chatbots = [], wabaHealth = {},
 }) {
     const { t } = useTranslation();
     const { props } = usePage();
@@ -1532,6 +1576,7 @@ export default function ChannelSetup({
                     webhookTokensByWaba={webhookTokensByWaba ?? {}}
                     channelAccountsByWaba={channelAccountsByWaba ?? {}}
                     chatbots={chatbots}
+                    wabaHealth={wabaHealth}
                     showForm={false}
                     setShowForm={() => {}}
                     metaConfigIdWhatsapp={metaConfigIdWhatsapp}
@@ -1659,6 +1704,7 @@ export default function ChannelSetup({
                     webhookTokensByWaba={webhookTokensByWaba ?? {}}
                     channelAccountsByWaba={channelAccountsByWaba ?? {}}
                     chatbots={chatbots}
+                    wabaHealth={wabaHealth}
                     showForm={showWabaForm}
                     setShowForm={setShowWabaForm}
                     metaConfigIdWhatsapp={metaConfigIdWhatsapp}

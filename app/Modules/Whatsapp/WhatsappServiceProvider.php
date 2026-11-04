@@ -3,6 +3,9 @@
 namespace App\Modules\Whatsapp;
 
 use App\Modules\Shared\Services\ChannelManager;
+use App\Modules\Whatsapp\Console\WhatsappCheckConnectionHealthCommand;
+use App\Modules\Whatsapp\Console\WhatsappPruneWebhookEventsCommand;
+use App\Modules\Whatsapp\Console\WhatsappReplayWebhookEventsCommand;
 use App\Modules\Whatsapp\Services\WhatsappDriver;
 use Illuminate\Support\ServiceProvider;
 
@@ -17,5 +20,13 @@ class WhatsappServiceProvider extends ServiceProvider
         // when sending outbound replies via ChannelManager::driver('whatsapp').
         $this->app->make(ChannelManager::class)
             ->register('whatsapp', WhatsappDriver::class);
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                WhatsappCheckConnectionHealthCommand::class,
+                WhatsappReplayWebhookEventsCommand::class,
+                WhatsappPruneWebhookEventsCommand::class,
+            ]);
+        }
     }
 }

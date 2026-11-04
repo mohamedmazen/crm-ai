@@ -2,6 +2,7 @@
 
 namespace App\Modules\Whatsapp\Jobs;
 
+use App\Modules\Whatsapp\Models\WhatsappWebhookEvent;
 use App\Modules\Whatsapp\Services\WhatsappDriver;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -32,19 +33,41 @@ class ProcessInboundMessageJob implements ShouldQueue
     public function __construct(
         private readonly array $payload,
         private readonly string $verifyToken,
+        private readonly ?int $webhookEventId = null,
     ) {}
 
     public function handle(WhatsappDriver $driver): void
     {
-        $driver->processWebhookPayload($this->payload, $this->verifyToken);
+        $event = $this->webhookEvent();
+        $event?->increment('attempts');
+
+        try {
+            $driver->processWebhookPayload($this->payload, $this->verifyToken);
+        } catch (\Throwable $e) {
+            $event?->markFailed($e->getMessage());
+
+            throw $e;
+        }
+
+        $event?->markProcessed();
     }
 
     public function failed(\Throwable $e): void
     {
+        $this->webhookEvent()?->markFailed($e->getMessage());
+
         Log::error('ProcessInboundMessageJob failed permanently', [
             'error'        => $e->getMessage(),
             'verify_token' => substr($this->verifyToken, 0, 8).'…',
             'entry_ids'    => collect($this->payload['entry'] ?? [])->pluck('id')->all(),
+            'event_id'     => $this->webhookEventId,
         ]);
+    }
+
+    private function webhookEvent(): ?WhatsappWebhookEvent
+    {
+        return $this->webhookEventId
+            ? WhatsappWebhookEvent::find($this->webhookEventId)
+            : null;
     }
 }

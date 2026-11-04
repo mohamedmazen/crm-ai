@@ -17,6 +17,7 @@ use App\Modules\Shared\Services\ChannelManager;
 use App\Modules\Whatsapp\Models\WhatsappTemplate;
 use App\Modules\Whatsapp\Services\CloudApiClient;
 use App\Notifications\ConversationHandoverNotification;
+use App\Services\AuditLogService;
 use App\Services\FeatureGate;
 use App\Services\StorageManager;
 use App\Support\Demo;
@@ -35,6 +36,7 @@ class InboxController extends Controller
     public function __construct(
         private ChannelManager $channelManager,
         private StorageManager $storageManager,
+        private AuditLogService $audit,
     ) {}
 
     public function index(Request $request): Response
@@ -284,6 +286,21 @@ class InboxController extends Controller
 
         // Re-load the relation so the broadcast event can resolve workspace_id
         $message->load('conversation');
+
+        if ($channel === 'whatsapp') {
+            $this->audit->log(
+                $sendError ? 'whatsapp.message_failed' : 'whatsapp.message_sent',
+                $message,
+                null,
+                [
+                    'workspace_id' => $conversation->workspace_id,
+                    'conversation_id' => $conversation->id,
+                    'type' => $msgType,
+                    'provider_message_id' => $message->provider_message_id,
+                    'error' => $sendError ? mb_substr($sendError, 0, 500) : null,
+                ],
+            );
+        }
 
         MessageSent::dispatch($message);
 

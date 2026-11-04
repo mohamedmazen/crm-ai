@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\Integrations\Services\CredentialResolver;
 use App\Modules\Whatsapp\Jobs\ProcessInboundMessageJob;
 use App\Modules\Whatsapp\Models\WhatsappBusinessAccount;
+use App\Modules\Whatsapp\Services\WhatsappWebhookEventStore;
 use App\Services\WebhookIdempotencyService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -74,8 +75,6 @@ class WhatsappWebhookController extends Controller
             return response()->json(['status' => 'ok']);
         }
 
-        $payload = array_merge($request->all(), ['entry' => $newEntries]);
-
         Log::info('whatsapp.webhook.global.received', [
             'entry_count'  => count($newEntries),
             'waba_ids'     => collect($newEntries)->pluck('id')->all(),
@@ -92,7 +91,12 @@ class WhatsappWebhookController extends Controller
         ]);
 
         return $this->flushWebhookOkThen(
-            fn () => ProcessInboundMessageJob::dispatch($payload, '')->onQueue('whatsapp')
+            fn () => $this->queueEntries(
+                $newEntries,
+                (string) $request->input('object', 'whatsapp_business_account'),
+                null,
+                ''
+            )
         );
     }
 
@@ -156,8 +160,6 @@ class WhatsappWebhookController extends Controller
             return response()->json(['status' => 'ok']);
         }
 
-        $payload = array_merge($request->all(), ['entry' => $newEntries]);
-
         Log::info('whatsapp.webhook.received', [
             'workspace_id' => $waba->workspace_id,
             'waba_id'      => $waba->waba_id,
@@ -167,8 +169,61 @@ class WhatsappWebhookController extends Controller
         ]);
 
         return $this->flushWebhookOkThen(
-            fn () => ProcessInboundMessageJob::dispatch($payload, $token)->onQueue('whatsapp')
+            fn () => $this->queueEntries(
+                $newEntries,
+                (string) $request->input('object', 'whatsapp_business_account'),
+                $waba->workspace_id,
+                $token
+            )
         );
+    }
+
+    /**
+     * Persist each entry, then queue it on its own so one bad payload cannot
+     * fail its siblings and every failure is individually replayable.
+     *
+     * @param  array<int, array<string, mixed>>  $entries
+     */
+    private function queueEntries(array $entries, string $object, ?int $workspaceId, string $verifyToken): void
+    {
+        $store = app(WhatsappWebhookEventStore::class);
+
+        foreach ($entries as $entry) {
+            $event = $store->record(
+                entry: $entry,
+                object: $object,
+                workspaceId: $workspaceId,
+                eventKey: $this->entryEventKey($entry),
+                phoneNumberId: $this->entryPhoneNumberId($entry),
+            );
+
+            // Null means another endpoint already stored this exact entry.
+            if ($event === null) {
+                continue;
+            }
+
+            ProcessInboundMessageJob::dispatch(
+                ['object' => $object, 'entry' => [$entry]],
+                $verifyToken,
+                $event->id,
+            )->onQueue('whatsapp');
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $entry
+     */
+    private function entryPhoneNumberId(array $entry): ?string
+    {
+        foreach ($entry['changes'] ?? [] as $change) {
+            $phoneNumberId = $change['value']['metadata']['phone_number_id'] ?? null;
+
+            if ($phoneNumberId) {
+                return (string) $phoneNumberId;
+            }
+        }
+
+        return null;
     }
 
     /**

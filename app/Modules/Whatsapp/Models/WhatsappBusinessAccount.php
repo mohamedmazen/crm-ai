@@ -22,6 +22,7 @@ class WhatsappBusinessAccount extends Model
 
     protected $fillable = [
         'workspace_id', 'waba_id', 'credentials', 'webhook_verify_token', 'webhook_verify_token_hash', 'status', 'meta_json',
+        'token_expires_at', 'token_checked_at', 'last_error_at', 'last_error_code', 'last_error_message',
     ];
 
     protected $hidden = ['credentials', 'webhook_verify_token'];
@@ -32,6 +33,9 @@ class WhatsappBusinessAccount extends Model
             'credentials' => 'encrypted:array',
             'webhook_verify_token' => 'encrypted',
             'meta_json' => 'array',
+            'token_expires_at' => 'datetime',
+            'token_checked_at' => 'datetime',
+            'last_error_at' => 'datetime',
         ];
     }
 

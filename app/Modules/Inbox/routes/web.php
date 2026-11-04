@@ -13,12 +13,12 @@ Route::middleware(['web', 'client-app'])->prefix('app/inbox')->name('client.inbo
     Route::get('/contacts/search', [InboxController::class, 'contactSearch'])->name('contacts.search');
     Route::get('/channel-accounts', [InboxController::class, 'channelAccounts'])->name('channel-accounts');
     Route::get('/templates', [InboxController::class, 'templates'])->name('templates');
-    Route::post('/conversations/{conversation}/upload-media', [InboxController::class, 'uploadMedia'])->name('upload-media');
+    Route::post('/conversations/{conversation}/upload-media', [InboxController::class, 'uploadMedia'])->name('upload-media')->middleware('throttle:whatsapp-send');
     Route::get('/conversations/{conversation}/messages/{message}/media', [InboxController::class, 'serveMedia'])->name('message-media');
-    Route::post('/conversations/start', [InboxController::class, 'startConversation'])->name('start');
+    Route::post('/conversations/start', [InboxController::class, 'startConversation'])->name('start')->middleware('throttle:whatsapp-send');
     Route::get('/conversations/{conversation}', [InboxController::class, 'show'])->name('show');
-    Route::post('/conversations/{conversation}/reply', [InboxController::class, 'reply'])->name('reply')->middleware('limit:whatsapp_messages_per_month,whatsapp_messages');
-    Route::post('/conversations/{conversation}/share-product', [InboxController::class, 'shareProduct'])->name('share-product')->middleware('limit:whatsapp_messages_per_month,whatsapp_messages');
+    Route::post('/conversations/{conversation}/reply', [InboxController::class, 'reply'])->name('reply')->middleware(['limit:whatsapp_messages_per_month,whatsapp_messages', 'throttle:whatsapp-send']);
+    Route::post('/conversations/{conversation}/share-product', [InboxController::class, 'shareProduct'])->name('share-product')->middleware(['limit:whatsapp_messages_per_month,whatsapp_messages', 'throttle:whatsapp-send']);
     Route::post('/conversations/{conversation}/assign', [InboxController::class, 'assign'])->name('assign');
     Route::post('/conversations/{conversation}/status', [InboxController::class, 'updateStatus'])->name('status');
     // Conversation intelligence (Phase 3): turning a chat into a CRM lead is

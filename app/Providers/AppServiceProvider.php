@@ -147,6 +147,19 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute((int) $perMinute)->by((string) $workspaceId);
         });
 
+        // Outbound WhatsApp messages: a per-user burst guard on top of each
+        // plan's monthly quota (`limit:` middleware), plus a workspace ceiling
+        // shared by all agents and automation.
+        RateLimiter::for('whatsapp-send', function (Request $request) {
+            $user = $request->user();
+            $workspaceId = $user?->current_workspace_id ?? $user?->workspace_id;
+
+            return [
+                Limit::perMinute(30)->by('user:'.($user?->id ?? $request->ip())),
+                Limit::perMinute(120)->by('workspace:'.$workspaceId),
+            ];
+        });
+
         // ── Scramble / OpenAPI ──────────────────────────────────────────────
         Scramble::configure()
             ->withDocumentTransformers(function (OpenApi $openApi) {

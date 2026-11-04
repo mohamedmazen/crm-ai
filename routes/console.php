@@ -38,6 +38,21 @@ Schedule::call(function () {
     });
 })->daily()->name('sync-whatsapp-templates');
 
+// Inspect WhatsApp access tokens so expiring/invalid connections surface in
+// Channel Setup before outbound sends start failing.
+Schedule::command('whatsapp:check-connection-health')
+    ->dailyAt('02:30')
+    ->name('whatsapp-check-connection-health')
+    ->withoutOverlapping()
+    ->onOneServer();
+
+// Prune processed webhook events; failed ones are kept for manual replay.
+Schedule::command('whatsapp:prune-webhook-events --days=30')
+    ->weekly()
+    ->name('whatsapp-prune-webhook-events')
+    ->withoutOverlapping()
+    ->onOneServer();
+
 // Dispatch scheduled social posts (every minute)
 Schedule::job(new DispatchScheduledPostsJob, 'social')
     ->everyMinute()

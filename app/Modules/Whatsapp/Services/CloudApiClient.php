@@ -448,6 +448,76 @@ class CloudApiClient
         return $handle;
     }
 
+    /**
+     * Inspect an access token via Meta's /debug_token endpoint.
+     *
+     * `expires_at` is a unix timestamp; 0 means the token never expires
+     * (typical for system user tokens).
+     *
+     * @return array{valid: bool, expires_at: int, scopes: list<string>, error: string|null}|null
+     */
+    public static function inspectToken(string $inputToken, string $appToken): ?array
+    {
+        try {
+            $resp = Http::withToken($appToken)
+                ->timeout(15)
+                ->get(MetaGraph::base().'/debug_token', ['input_token' => $inputToken]);
+
+            if (! $resp->successful()) {
+                Log::warning('WhatsApp debug_token failed', [
+                    'status' => $resp->status(),
+                    'error' => $resp->json('error.message'),
+                ]);
+
+                return null;
+            }
+
+            $data = $resp->json('data');
+
+            if (! is_array($data)) {
+                return null;
+            }
+
+            return [
+                'valid' => (bool) ($data['is_valid'] ?? false),
+                'expires_at' => (int) ($data['expires_at'] ?? 0),
+                'scopes' => array_values((array) ($data['scopes'] ?? [])),
+                'error' => $data['error']['message'] ?? null,
+            ];
+        } catch (\Throwable $e) {
+            Log::warning('WhatsApp debug_token exception', ['error' => $e->getMessage()]);
+
+            return null;
+        }
+    }
+
+    /**
+     * Unsubscribe our app from a WABA's webhooks (best-effort tenant offboarding).
+     * Does not invalidate the token — system user tokens are owned by the customer.
+     *
+     * @return array{success: bool, status: int, response: array<string, mixed>}
+     */
+    public static function unsubscribeWaba(string $wabaId, string $accessToken): array
+    {
+        try {
+            $resp = Http::withToken($accessToken)
+                ->timeout(15)
+                ->delete(MetaGraph::base()."/{$wabaId}/subscribed_apps");
+
+            return [
+                'success' => $resp->successful(),
+                'status' => $resp->status(),
+                'response' => $resp->json() ?? [],
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'success' => false,
+                'status' => 0,
+                'response' => ['error' => ['message' => $e->getMessage()]],
+            ];
+        }
+    }
+
     private function post(string $path, array $data): Response
     {
         return Http::withToken($this->accessToken)

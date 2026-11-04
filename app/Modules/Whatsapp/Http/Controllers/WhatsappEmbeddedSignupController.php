@@ -10,6 +10,8 @@ use App\Modules\Whatsapp\Jobs\TemplateSyncJob;
 use App\Modules\Whatsapp\Models\WhatsappBusinessAccount;
 use App\Modules\Whatsapp\Models\WhatsappPhoneNumber;
 use App\Modules\Whatsapp\Services\CloudApiClient;
+use App\Modules\Whatsapp\Services\WhatsappTokenInspector;
+use App\Services\AuditLogService;
 use App\Support\MetaGraph;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,6 +21,11 @@ use Illuminate\Support\Str;
 
 class WhatsappEmbeddedSignupController extends Controller
 {
+    public function __construct(
+        private readonly WhatsappTokenInspector $tokenInspector,
+        private readonly AuditLogService $audit,
+    ) {}
+
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -121,6 +128,9 @@ class WhatsappEmbeddedSignupController extends Controller
                 ],
                 'webhook_verify_token' => $verifyToken,
                 'status' => 'active',
+                'last_error_at' => null,
+                'last_error_code' => null,
+                'last_error_message' => null,
                 'meta_json' => array_merge($existing?->meta_json ?? [], [
                     'display_name' => $wabaData['name'] ?? $validated['waba_id'],
                     'currency' => $wabaData['currency'] ?? null,
@@ -129,6 +139,13 @@ class WhatsappEmbeddedSignupController extends Controller
                 ]),
             ]
         );
+
+        $tokenExpiresAt = $this->tokenInspector->expiresAt($accessToken, $meta);
+
+        $waba->forceFill([
+            'token_expires_at' => $tokenExpiresAt,
+            'token_checked_at' => now(),
+        ])->save();
 
         // Subscribe the app to this WABA for webhooks and register callback URL
         $webhookError = $this->subscribeWabaWebhooks($validated['waba_id'], $accessToken, $waba->webhook_verify_token, $meta);
@@ -166,6 +183,14 @@ class WhatsappEmbeddedSignupController extends Controller
         }
 
         $warnings = array_filter([$webhookError, $syncError, $phoneCount === 0 ? 'No phone numbers were synced. Use Sync from Meta on Channel Setup or reconnect.' : null]);
+
+        $this->audit->log('whatsapp.connected', $waba, null, [
+            'waba_id' => $validated['waba_id'],
+            'workspace_id' => $workspaceId,
+            'via' => 'embedded_signup',
+            'phone_count' => $phoneCount,
+            'token_expires_at' => $tokenExpiresAt?->toIso8601String(),
+        ]);
 
         return response()->json([
             'success' => true,
@@ -238,6 +263,9 @@ class WhatsappEmbeddedSignupController extends Controller
                 ],
                 'webhook_verify_token' => $verifyToken,
                 'status' => 'active',
+                'last_error_at' => null,
+                'last_error_code' => null,
+                'last_error_message' => null,
                 'meta_json' => array_merge($existing?->meta_json ?? [], [
                     'display_name' => $wabaData['name'] ?? $wabaId,
                     'currency' => $wabaData['currency'] ?? null,
@@ -249,6 +277,13 @@ class WhatsappEmbeddedSignupController extends Controller
 
         $meta = CredentialResolver::system()->meta();
         $hasAppCreds = $meta && $meta->appId() && $meta->appSecret();
+
+        $tokenExpiresAt = $this->tokenInspector->expiresAt($accessToken, $meta);
+
+        $waba->forceFill([
+            'token_expires_at' => $tokenExpiresAt,
+            'token_checked_at' => now(),
+        ])->save();
 
         // Best-effort webhook wiring. With platform Meta App credentials we reuse
         // the embedded-signup registration (app subscription + global callback).
@@ -312,6 +347,14 @@ class WhatsappEmbeddedSignupController extends Controller
             $webhookWarning,
             $syncError,
             $phoneCount === 0 ? 'No phone numbers were synced. Check the Phone Number ID or use Sync from Meta on Channel Setup.' : null,
+        ]);
+
+        $this->audit->log('whatsapp.connected', $waba, null, [
+            'waba_id' => $wabaId,
+            'workspace_id' => $workspaceId,
+            'via' => 'manual',
+            'phone_count' => $phoneCount,
+            'token_expires_at' => $tokenExpiresAt?->toIso8601String(),
         ]);
 
         return response()->json([

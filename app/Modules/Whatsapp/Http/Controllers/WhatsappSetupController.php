@@ -8,6 +8,7 @@ use App\Modules\Shared\Models\ChannelAccount;
 use App\Modules\Whatsapp\Models\WhatsappBusinessAccount;
 use App\Modules\Whatsapp\Models\WhatsappPhoneNumber;
 use App\Modules\Whatsapp\Services\CloudApiClient;
+use App\Services\AuditLogService;
 use Illuminate\Http\Client\ConnectionException as HttpConnectionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -16,6 +17,8 @@ use Illuminate\Support\Facades\Log;
 
 class WhatsappSetupController extends Controller
 {
+    public function __construct(private readonly AuditLogService $audit) {}
+
     public function syncPhoneNumbers(Request $request, WhatsappBusinessAccount $waba): RedirectResponse
     {
         $workspaceId = $request->user()->current_workspace_id ?? $request->user()->workspace_id;
@@ -59,6 +62,35 @@ class WhatsappSetupController extends Controller
         $workspaceId = $request->user()->current_workspace_id ?? $request->user()->workspace_id;
         $this->authorizeWaba($waba, $workspaceId);
 
+        // Revoke at Meta first (best-effort). Deleting local rows without
+        // unsubscribing leaves Meta delivering events we can no longer route.
+        $token = (string) ($waba->accessToken() ?? '');
+        $unsubscribed = false;
+        $revocationError = null;
+
+        if ($token !== '') {
+            $result = CloudApiClient::unsubscribeWaba($waba->waba_id, $token);
+            $unsubscribed = $result['success'];
+
+            if (! $unsubscribed) {
+                $revocationError = $result['response']['error']['message']
+                    ?? ('Meta returned HTTP '.$result['status']);
+
+                Log::warning('WhatsApp disconnect: app unsubscribe failed', [
+                    'workspace_id' => $workspaceId,
+                    'waba_id' => $waba->waba_id,
+                    'error' => $revocationError,
+                ]);
+            }
+        }
+
+        $this->audit->log('whatsapp.disconnected', $waba, null, [
+            'waba_id' => $waba->waba_id,
+            'workspace_id' => $workspaceId,
+            'app_unsubscribed' => $unsubscribed,
+            'revocation_error' => $revocationError,
+        ]);
+
         ChannelAccount::where('workspace_id', $workspaceId)
             ->where('channel', 'whatsapp')
             ->where('business_account_id', $waba->waba_id)
@@ -68,7 +100,14 @@ class WhatsappSetupController extends Controller
 
         $waba->delete();
 
-        return back()->with('success', 'WhatsApp Business Account disconnected.');
+        $message = 'WhatsApp Business Account disconnected.';
+
+        if (! $unsubscribed) {
+            $message .= ' Meta could not be notified, so its webhook subscription may still be active — '
+                .($revocationError ?? 'no access token was available').'.';
+        }
+
+        return back()->with('success', $message);
     }
 
     public function refreshPhoneStatus(Request $request, WhatsappBusinessAccount $waba, string $phoneNumberId): JsonResponse
