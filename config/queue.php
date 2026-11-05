@@ -39,7 +39,10 @@ return [
             'connection' => env('DB_QUEUE_CONNECTION'),
             'table' => env('DB_QUEUE_TABLE', 'jobs'),
             'queue' => env('DB_QUEUE', 'default'),
-            'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 400),
+            // Must exceed the longest job `$timeout`. Leads and automation jobs
+            // declare 900s, so anything lower lets a still-running job become
+            // visible again and be worked twice.
+            'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 1200),
             'after_commit' => false,
         ],
 
@@ -67,7 +70,9 @@ return [
             'driver' => 'redis',
             'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
             'queue' => env('REDIS_QUEUE', 'default'),
-            'retry_after' => (int) env('REDIS_QUEUE_RETRY_AFTER', 400),
+            // Must exceed the longest job `$timeout` (900s for lead scoring and
+            // automation scans). See DB_QUEUE_RETRY_AFTER above.
+            'retry_after' => (int) env('REDIS_QUEUE_RETRY_AFTER', 1200),
             'block_for' => null,
             'after_commit' => false,
         ],
