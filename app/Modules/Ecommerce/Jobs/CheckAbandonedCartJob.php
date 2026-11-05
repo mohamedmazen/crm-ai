@@ -5,6 +5,8 @@ namespace App\Modules\Ecommerce\Jobs;
 use App\Events\CommerceEventReceived;
 use App\Modules\Ecommerce\Models\EcommerceCart;
 use App\Modules\Ecommerce\Models\EcommerceOrder;
+use App\Modules\Shared\Models\Contact;
+use App\Support\Tenancy\TenantGuard;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
@@ -24,6 +26,13 @@ class CheckAbandonedCartJob implements ShouldQueue
     {
         $cart = EcommerceCart::find($this->cartId);
         if (! $cart || $cart->recovered_at || $cart->recovery_triggered_at || ! $cart->contact_id) {
+            return;
+        }
+
+        // The contact id is only meaningful inside the cart's own workspace.
+        // Without this check a stale or tampered cart could fire an abandoned
+        // cart automation against another tenant's contact.
+        if (! TenantGuard::findOwned((int) $cart->workspace_id, Contact::class, (int) $cart->contact_id)) {
             return;
         }
 

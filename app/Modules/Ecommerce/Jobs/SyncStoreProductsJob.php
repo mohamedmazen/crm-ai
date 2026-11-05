@@ -6,6 +6,8 @@ use App\Modules\Ecommerce\Models\EcommerceProduct;
 use App\Modules\Ecommerce\Models\EcommerceStore;
 use App\Modules\Ecommerce\Services\Clients\StoreClientFactory;
 use App\Modules\Ecommerce\Services\PayloadNormalizer;
+use App\Support\Queue\Middleware\LimitTenantConcurrency;
+use App\Support\Queue\TenantAwareJob;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
@@ -15,7 +17,7 @@ use Illuminate\Support\Facades\Log;
  * chaining the next page via re-dispatch. On the final page, prunes products the
  * store no longer returns and sets products_synced_at.
  */
-class SyncStoreProductsJob implements ShouldQueue
+class SyncStoreProductsJob implements ShouldQueue, TenantAwareJob
 {
     use Queueable;
 
@@ -27,6 +29,14 @@ class SyncStoreProductsJob implements ShouldQueue
     public array $backoff = [30, 120, 300];
 
     /**
+     * Owning workspace; null only for jobs queued before this field existed.
+     *
+     * Declared outside the constructor so legacy payloads restore the default
+     * instead of leaving a promoted property uninitialized.
+     */
+    public ?int $workspaceId = null;
+
+    /**
      * @param  string|null  $runStartedAt  Set when chaining; marks rows touched by this run.
      * @param  int  $seen  Products upserted by earlier pages of this run.
      */
@@ -35,7 +45,31 @@ class SyncStoreProductsJob implements ShouldQueue
         public readonly ?string $cursor = null,
         public readonly ?string $runStartedAt = null,
         public readonly int $seen = 0,
-    ) {}
+        ?int $workspaceId = null,
+    ) {
+        $this->workspaceId = $workspaceId;
+    }
+
+    public function tenantWorkspaceId(): ?int
+    {
+        return $this->workspaceId ?? EcommerceStore::find($this->storeId)?->workspace_id;
+    }
+
+    /**
+     * A full catalogue sync is long-running: one page per workspace at a time.
+     *
+     * @return array<int, object>
+     */
+    public function middleware(): array
+    {
+        return [
+            new LimitTenantConcurrency(
+                maxConcurrent: (int) config('queue.tenant_limits.concurrent_ecommerce_jobs', 1),
+                bucket: 'ecommerce',
+                lockSeconds: 360,
+            ),
+        ];
+    }
 
     public function failed(\Throwable $e): void
     {
@@ -74,7 +108,7 @@ class SyncStoreProductsJob implements ShouldQueue
         }
 
         if ($page['next'] !== null && $page['next'] !== $this->cursor) {
-            self::dispatch($store->id, $page['next'], $runStartedAt, $seen);
+            self::dispatch($store->id, $page['next'], $runStartedAt, $seen, $this->workspaceId);
 
             return;
         }

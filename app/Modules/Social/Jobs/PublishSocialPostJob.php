@@ -4,11 +4,14 @@ namespace App\Modules\Social\Jobs;
 
 use App\Modules\Social\Models\SocialPost;
 use App\Modules\Social\Services\SocialPublisher;
+use App\Support\Queue\Middleware\LimitTenantConcurrency;
+use App\Support\Queue\TenantAwareJob;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Support\Facades\Log;
 
-class PublishSocialPostJob implements ShouldQueue
+class PublishSocialPostJob implements ShouldQueue, TenantAwareJob
 {
     use Queueable;
 
@@ -18,7 +21,41 @@ class PublishSocialPostJob implements ShouldQueue
     // short enough for the worker to kill legitimate runs mid-publish.
     public int $timeout = 300;
 
-    public function __construct(public readonly int $postId) {}
+    /**
+     * Workspace that owns the post. Null only for jobs queued before this
+     * field existed; then it is resolved from the post itself.
+     */
+    public ?int $workspaceId = null;
+
+    public function __construct(
+        public readonly int $postId,
+        ?int $workspaceId = null,
+    ) {
+        $this->workspaceId = $workspaceId;
+    }
+
+    public function tenantWorkspaceId(): ?int
+    {
+        return $this->workspaceId ?? SocialPost::find($this->postId)?->workspace_id;
+    }
+
+    /**
+     * Publishing is slow and calls third-party APIs: one post per workspace at
+     * a time, and no more than the configured posts per minute.
+     *
+     * @return array<int, object>
+     */
+    public function middleware(): array
+    {
+        return [
+            new RateLimited('tenant-social'),
+            new LimitTenantConcurrency(
+                maxConcurrent: (int) config('queue.tenant_limits.concurrent_social_jobs', 1),
+                bucket: 'social',
+                lockSeconds: 360,
+            ),
+        ];
+    }
 
     /** @return array<int, int> */
     public function backoff(): array

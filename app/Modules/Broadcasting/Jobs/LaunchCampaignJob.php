@@ -10,6 +10,7 @@ use App\Modules\Shared\Services\ContactService;
 use App\Modules\Shared\Services\SegmentResolver;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -31,11 +32,25 @@ class LaunchCampaignJob implements ShouldQueue
             return;
         }
 
+        // Fairness: a workspace may only keep a couple of campaigns in flight.
+        // The job goes back onto the queue instead of occupying a broadcast
+        // worker while every other tenant waits.
+        $maxActive = (int) config('queue.tenant_limits.max_active_campaigns', 2);
+        if ($maxActive > 0 && $this->activeCampaignCount($campaign) >= $maxActive) {
+            $this->release(60);
+
+            return;
+        }
+
         $campaign->update(['status' => 'sending']);
 
-        $contactIds = $this->resolveAudience($campaign);
+        // Materialise recipients in pages so a million-contact audience never
+        // lives in PHP memory.
+        $this->materializeRecipients($campaign);
 
-        if (empty($contactIds)) {
+        $totalRecipients = CampaignRecipient::where('campaign_id', $campaign->id)->count();
+
+        if ($totalRecipients === 0) {
             $campaign->update([
                 'status' => 'failed',
                 'totals_json' => array_merge($campaign->totals_json ?? [], [
@@ -54,79 +69,135 @@ class LaunchCampaignJob implements ShouldQueue
             return;
         }
 
-        // Idempotent recipient insert. Unique (campaign_id, contact_id) index enforces this.
-        $now = now();
-        $totalChunks = 0;
-        $totalNewContacts = 0;
+        $queuedRecipients = CampaignRecipient::where('campaign_id', $campaign->id)
+            ->where('status', 'queued')
+            ->count();
 
-        collect($contactIds)->chunk(1000)->each(function ($chunk, $i) use ($campaign, $now, &$totalChunks, &$totalNewContacts) {
-            $rows = $chunk->map(fn ($contactId) => [
-                'campaign_id' => $campaign->id,
-                'contact_id' => $contactId,
-                'status' => 'queued',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ])->values()->all();
-
-            // insertOrIgnore is required so re-launching a paused campaign
-            // doesn't violate the unique (campaign_id, contact_id) index.
-            CampaignRecipient::insertOrIgnore($rows);
-
-            // Re-query rows that are still queued for this campaign in this chunk only.
-            $contactIdsInChunk = $chunk->values()->all();
-            $queuedContactIds = CampaignRecipient::where('campaign_id', $campaign->id)
-                ->where('status', 'queued')
-                ->whereIn('contact_id', $contactIdsInChunk)
-                ->pluck('contact_id')
-                ->all();
-
-            if (empty($queuedContactIds)) {
-                return;
-            }
-
-            $totalNewContacts += count($queuedContactIds);
-            $totalChunks++;
-
-            DispatchCampaignChunkJob::dispatch($campaign->id, $queuedContactIds)
-                ->onQueue('broadcast')
-                ->delay(now()->addSeconds($i * 5));
-        });
-
-        if ($totalNewContacts === 0) {
-            // All recipients were already processed previously (resume of completed campaign).
-            $campaign->updateTotals();
+        if ($queuedRecipients === 0) {
+            // Every recipient was already processed by an earlier run; let the
+            // finalizer settle the campaign status.
+            FinalizeCampaignJob::dispatch($campaign->id)->onQueue('broadcast');
 
             return;
         }
 
-        // Schedule a finalizer 60s after the last chunk's expected dispatch start.
-        // It will self-reschedule if anything is still queued/sending.
-        $finalDelay = max(60, $totalChunks * 5 + 60);
+        // Progressive dispatch: exactly one chunk is in flight per campaign, and
+        // each chunk chains the next one after its own pacing window.
+        DispatchCampaignChunkJob::dispatch($campaign->id)->onQueue('broadcast');
+
+        // Independent safety net: polls every 60s until every recipient settles.
+        // It self-reschedules, so a throttled multi-hour campaign stays tracked.
         FinalizeCampaignJob::dispatch($campaign->id)
             ->onQueue('broadcast')
-            ->delay(now()->addSeconds($finalDelay));
+            ->delay(now()->addSeconds(60));
     }
 
     /**
-     * Resolve audience to a list of contact IDs that are eligible for this campaign's channel.
-     *
-     * @return array<int, int>
+     * How many other campaigns this workspace already has sending.
      */
-    private function resolveAudience(Campaign $campaign): array
+    private function activeCampaignCount(Campaign $campaign): int
     {
-        $contactIds = match ($campaign->audience_type) {
-            'segment' => $this->resolveSegment($campaign),
-            'tag' => $this->resolveTag($campaign),
-            'contact_list' => $this->resolveAllContacts($campaign),
-            'csv' => $this->resolveCsv($campaign),
-            default => [],
-        };
+        return Campaign::where('workspace_id', $campaign->workspace_id)
+            ->where('status', 'sending')
+            ->whereKeyNot($campaign->id)
+            ->count();
+    }
 
-        if (empty($contactIds)) {
-            return [];
+    /**
+     * Insert a campaign_recipient row for every eligible contact, page by page.
+     */
+    private function materializeRecipients(Campaign $campaign): void
+    {
+        if ($campaign->audience_type === 'csv') {
+            foreach (array_chunk($this->resolveCsv($campaign), 1000) as $contactIds) {
+                $this->insertRecipients($campaign, $this->eligibleContactIds($campaign, $contactIds));
+            }
+
+            return;
         }
 
-        // Apply per-channel opt-in filter so we never blast contacts who opted out.
+        $query = $this->audienceQuery($campaign);
+
+        if ($query === null) {
+            return;
+        }
+
+        $query->select('id')->chunkById(1000, function ($contacts) use ($campaign) {
+            $this->insertRecipients($campaign, $contacts->pluck('id')->all());
+        });
+    }
+
+    /**
+     * @param  array<int, int|string>  $contactIds
+     */
+    private function insertRecipients(Campaign $campaign, array $contactIds): void
+    {
+        if ($contactIds === []) {
+            return;
+        }
+
+        $now = now();
+
+        $rows = array_map(fn ($contactId) => [
+            'campaign_id' => $campaign->id,
+            'contact_id' => (int) $contactId,
+            'status' => 'queued',
+            'created_at' => $now,
+            'updated_at' => $now,
+        ], $contactIds);
+
+        // insertOrIgnore is required so re-launching a paused campaign
+        // doesn't violate the unique (campaign_id, contact_id) index.
+        CampaignRecipient::insertOrIgnore($rows);
+    }
+
+    /**
+     * Query of contacts matching the campaign's audience, before channel filters.
+     */
+    private function audienceQuery(Campaign $campaign): ?Builder
+    {
+        $query = match ($campaign->audience_type) {
+            'segment' => $this->segmentAudienceQuery($campaign),
+            'tag' => $this->tagAudienceQuery($campaign),
+            'contact_list' => Contact::query(),
+            default => null,
+        };
+
+        if ($query === null) {
+            return null;
+        }
+
+        return $this->applyChannelFilters(
+            $query->where('workspace_id', $campaign->workspace_id),
+            $campaign,
+        );
+    }
+
+    private function segmentAudienceQuery(Campaign $campaign): ?Builder
+    {
+        $segment = Segment::where('workspace_id', $campaign->workspace_id)
+            ->find($campaign->audience_ref);
+
+        return $segment
+            ? app(SegmentResolver::class)->query($segment)
+            : null;
+    }
+
+    private function tagAudienceQuery(Campaign $campaign): ?Builder
+    {
+        if (! $campaign->audience_ref) {
+            return null;
+        }
+
+        return Contact::whereHas(
+            'tags',
+            fn ($q) => $q->where('contact_tags.id', $campaign->audience_ref),
+        );
+    }
+
+    private function applyChannelFilters(Builder $query, Campaign $campaign): Builder
+    {
+        // Never blast contacts who opted out of the campaign's channel.
         $optInColumn = match ($campaign->channel) {
             'whatsapp' => 'opt_in_whatsapp',
             'sms' => 'opt_in_sms',
@@ -134,72 +205,36 @@ class LaunchCampaignJob implements ShouldQueue
             default => null,
         };
 
-        $query = Contact::query()
-            ->where('workspace_id', $campaign->workspace_id)
-            ->whereIn('id', $contactIds);
-
-        if ($optInColumn) {
+        if ($optInColumn !== null) {
             $query->where($optInColumn, true);
         }
 
-        // Email channel additionally requires a non-empty email; SMS/WhatsApp require a phone.
+        // Email additionally requires a non-empty email; SMS/WhatsApp require a phone.
         if ($campaign->channel === 'email') {
             $query->whereNotNull('email')->where('email', '!=', '');
         } else {
             $query->whereNotNull('phone_e164')->where('phone_e164', '!=', '');
         }
 
-        return $query->pluck('id')->all();
+        return $query;
     }
 
-    /** @return array<int, int> */
-    private function resolveSegment(Campaign $campaign): array
+    /**
+     * Re-check a CSV batch against the same channel filters used for queries.
+     *
+     * @param  array<int, int|string>  $contactIds
+     * @return array<int, int>
+     */
+    private function eligibleContactIds(Campaign $campaign, array $contactIds): array
     {
-        $segment = Segment::where('workspace_id', $campaign->workspace_id)
-            ->find($campaign->audience_ref);
-
-        if (! $segment) {
+        if ($contactIds === []) {
             return [];
         }
 
-        if ($segment->type === 'static') {
-            return $segment->contacts()->pluck('contacts.id')->all();
-        }
-
-        return app(SegmentResolver::class)
-            ->query($segment)
-            ->pluck('id')
-            ->all();
-    }
-
-    /** @return array<int, int> */
-    private function resolveTag(Campaign $campaign): array
-    {
-        if (! $campaign->audience_ref) {
-            return [];
-        }
-
-        return Contact::where('workspace_id', $campaign->workspace_id)
-            ->whereHas('tags', fn ($q) => $q->where('contact_tags.id', $campaign->audience_ref))
-            ->pluck('id')
-            ->all();
-    }
-
-    /** @return array<int, int> */
-    private function resolveAllContacts(Campaign $campaign): array
-    {
-        // Use a lazy cursor instead of plucking every ID at once — workspaces
-        // with millions of contacts would otherwise exhaust PHP memory.
-        $ids = [];
-        Contact::where('workspace_id', $campaign->workspace_id)
-            ->select('id')
-            ->orderBy('id')
-            ->lazy(2000)
-            ->each(function (Contact $c) use (&$ids) {
-                $ids[] = $c->id;
-            });
-
-        return $ids;
+        return $this->applyChannelFilters(
+            Contact::where('workspace_id', $campaign->workspace_id)->whereIn('id', $contactIds),
+            $campaign,
+        )->pluck('id')->all();
     }
 
     /**
@@ -221,7 +256,7 @@ class LaunchCampaignJob implements ShouldQueue
         ) {
             Log::channel('json')->warning('campaign.csv.invalid_path', [
                 'campaign_id' => $campaign->id,
-                'path'        => $path,
+                'path' => $path,
             ]);
 
             return [];

@@ -17,7 +17,7 @@ class DispatchScheduledPostsJob implements ShouldQueue
         // scheduler tick cannot pick up the same post and dispatch it twice.
         $affected = SocialPost::where('status', 'scheduled')
             ->where('scheduled_at', '<=', now())
-            ->get(['id']);
+            ->get(['id', 'workspace_id']);
 
         foreach ($affected as $post) {
             // updateOrFail pattern: only dispatch if we are the one who flipped the status.
@@ -26,7 +26,7 @@ class DispatchScheduledPostsJob implements ShouldQueue
                 ->update(['status' => 'publishing']);
 
             if ($updated) {
-                PublishSocialPostJob::dispatch($post->id)->onQueue('social');
+                PublishSocialPostJob::dispatch($post->id, (int) $post->workspace_id)->onQueue('social');
             }
         }
 
@@ -42,7 +42,7 @@ class DispatchScheduledPostsJob implements ShouldQueue
     {
         SocialPost::where('status', 'publishing')
             ->where('updated_at', '<', now()->subMinutes(30))
-            ->get(['id', 'updated_at'])
+            ->get(['id', 'workspace_id', 'updated_at'])
             ->each(function (SocialPost $post) {
                 Log::warning('Requeueing social post stuck in publishing', ['post_id' => $post->id]);
 
@@ -50,7 +50,7 @@ class DispatchScheduledPostsJob implements ShouldQueue
                 // the same post every minute while it waits in the queue.
                 $post->touch();
 
-                PublishSocialPostJob::dispatch($post->id)->onQueue('social');
+                PublishSocialPostJob::dispatch($post->id, (int) $post->workspace_id)->onQueue('social');
             });
     }
 }

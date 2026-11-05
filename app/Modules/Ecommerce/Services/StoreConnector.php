@@ -56,8 +56,8 @@ class StoreConnector
             if (! ($store->external_meta['webhooks_registered'] ?? false)) {
                 RegisterStoreWebhooksJob::dispatch($store->id);
             }
-            SyncStoreCustomersJob::dispatch($store->id);
-            SyncStoreProductsJob::dispatch($store->id);
+            SyncStoreCustomersJob::dispatch($store->id, null, (int) $store->workspace_id);
+            SyncStoreProductsJob::dispatch($store->id, null, null, 0, (int) $store->workspace_id);
         }
 
         return ['ok' => $result['ok'], 'message' => $result['message'], 'store' => $store];

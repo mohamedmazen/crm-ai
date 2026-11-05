@@ -92,7 +92,7 @@ class AiKnowledgeBaseApiController extends WorkspaceScopedController
         }
 
         $doc = AiKbDocument::create(array_merge($validated, ['kb_id' => $kb->id, 'status' => 'pending']));
-        IndexDocumentJob::dispatch($doc->id)->onQueue('ai');
+        IndexDocumentJob::dispatch($doc->id, (int) $kb->workspace_id)->onQueue('ai');
 
         return response()->json($this->formatDoc($doc), 201);
     }

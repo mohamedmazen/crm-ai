@@ -12,6 +12,7 @@ use App\Modules\Ecommerce\Services\StoreConnector;
 use App\Modules\Integrations\Models\IntegrationConfig;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -119,8 +120,8 @@ class StoreController extends Controller
     public function sync(Request $request, EcommerceStore $store): RedirectResponse
     {
         $this->authorizeStore($request, $store);
-        SyncStoreCustomersJob::dispatch($store->id);
-        SyncStoreProductsJob::dispatch($store->id);
+        SyncStoreCustomersJob::dispatch($store->id, null, (int) $store->workspace_id);
+        SyncStoreProductsJob::dispatch($store->id, null, null, 0, (int) $store->workspace_id);
 
         return back()->with('success', 'Customer & product sync started.');
     }
@@ -133,7 +134,7 @@ class StoreController extends Controller
         try {
             StoreClientFactory::for($store)->deregisterWebhooks(EcommerceStore::webhookUrlFor($store));
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('ecommerce.webhook.deregister_failed', [
+            Log::warning('ecommerce.webhook.deregister_failed', [
                 'store' => $store->id, 'message' => $e->getMessage(),
             ]);
         }

@@ -8,6 +8,8 @@ use App\Modules\AI\Services\EmbeddingStore;
 use App\Modules\AI\Services\Llm\LlmManager;
 use App\Modules\AI\Services\LlmGateway;
 use App\Services\StorageManager;
+use App\Support\Queue\Middleware\LimitTenantConcurrency;
+use App\Support\Queue\TenantAwareJob;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -18,7 +20,7 @@ use Illuminate\Support\Facades\Log;
 use League\HTMLToMarkdown\HtmlConverter;
 use Smalot\PdfParser\Parser;
 
-class IndexDocumentJob implements ShouldQueue
+class IndexDocumentJob implements ShouldQueue, TenantAwareJob
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -26,7 +28,43 @@ class IndexDocumentJob implements ShouldQueue
 
     public int $timeout = 120;
 
-    public function __construct(public readonly int $documentId) {}
+    /**
+     * Owning workspace; null only for jobs queued before this field existed.
+     *
+     * Declared outside the constructor on purpose: a promoted property's default
+     * is a constructor-argument default, and unserialize() does not invoke the
+     * constructor, so a legacy payload would leave it uninitialized.
+     */
+    public ?int $workspaceId = null;
+
+    public function __construct(
+        public readonly int $documentId,
+        ?int $workspaceId = null,
+    ) {
+        $this->workspaceId = $workspaceId;
+    }
+
+    public function tenantWorkspaceId(): ?int
+    {
+        return $this->workspaceId ?? AiKbDocument::find($this->documentId)?->knowledgeBase?->workspace_id;
+    }
+
+    /**
+     * Indexing is CPU- and API-heavy: one document per workspace at a time so a
+     * bulk upload cannot occupy every worker.
+     *
+     * @return array<int, object>
+     */
+    public function middleware(): array
+    {
+        return [
+            new LimitTenantConcurrency(
+                maxConcurrent: (int) config('queue.tenant_limits.concurrent_ai_jobs', 1),
+                bucket: 'ai',
+                lockSeconds: 180,
+            ),
+        ];
+    }
 
     public function handle(LlmGateway $llm, EmbeddingStore $store, StorageManager $storage): void
     {

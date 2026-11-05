@@ -3,6 +3,7 @@
 namespace App\Modules\Broadcasting\Jobs;
 
 use App\Events\MessageSent;
+use App\Models\SmtpConfiguration;
 use App\Modules\Broadcasting\Models\Campaign;
 use App\Modules\Broadcasting\Models\CampaignRecipient;
 use App\Modules\Broadcasting\Models\UsageMeter;
@@ -15,20 +16,24 @@ use App\Modules\Shared\Models\Conversation;
 use App\Modules\Shared\Models\Message;
 use App\Modules\Whatsapp\Models\WhatsappTemplate;
 use App\Modules\Whatsapp\Services\CloudApiClient;
+use App\Services\Mail\MailService;
+use App\Support\Cache\TenantCache;
+use App\Support\Queue\Middleware\LimitTenantConcurrency;
+use App\Support\Queue\TenantAwareJob;
+use App\Support\Tenancy\TenantGuard;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Queue\SerializesModels;
-use App\Models\SmtpConfiguration;
-use App\Services\Mail\MailService;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
-class SendCampaignMessageJob implements ShouldQueue
+class SendCampaignMessageJob implements ShouldQueue, TenantAwareJob
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -36,17 +41,70 @@ class SendCampaignMessageJob implements ShouldQueue
 
     public int $backoff = 60;
 
+    /**
+     * Workspace that owns the campaign. Carried in the payload so the queue
+     * middleware can throttle without a query; null only for jobs queued
+     * before this field existed.
+     */
+    public ?int $workspaceId = null;
+
     public function __construct(
         public readonly int $campaignId,
         public readonly int $contactId,
-    ) {}
+        ?int $workspaceId = null,
+    ) {
+        $this->workspaceId = $workspaceId;
+    }
+
+    public function tenantWorkspaceId(): ?int
+    {
+        return $this->workspaceId ?? Campaign::find($this->campaignId)?->workspace_id;
+    }
+
+    /**
+     * Cap how fast a single workspace can push campaign messages, whatever the
+     * number of campaigns or chunks it has in flight.
+     *
+     * @return array<int, object>
+     */
+    public function middleware(): array
+    {
+        return [
+            new RateLimited('tenant-broadcast'),
+            new LimitTenantConcurrency(
+                maxConcurrent: (int) config('queue.tenant_limits.concurrent_broadcast_jobs', 2),
+                bucket: 'broadcast',
+                lockSeconds: 180,
+            ),
+        ];
+    }
 
     public function handle(CampaignPersonalizer $personalizer): void
     {
         $campaign = Campaign::find($this->campaignId);
-        $contact = Contact::find($this->contactId);
 
-        if (! $campaign || ! $contact) {
+        if (! $campaign) {
+            return;
+        }
+
+        // The contact id arrives in a queue payload, so never trust it on its own:
+        // a campaign must only ever message contacts from its own workspace.
+        $contact = TenantGuard::findOwned((int) $campaign->workspace_id, Contact::class, $this->contactId);
+
+        if (! $contact) {
+            CampaignRecipient::where('campaign_id', $this->campaignId)
+                ->where('contact_id', $this->contactId)
+                ->update([
+                    'status' => 'failed',
+                    'failed_reason' => 'tenant_mismatch',
+                ]);
+
+            Log::channel('json')->warning('campaign.recipient.tenant_mismatch', [
+                'workspace_id' => $campaign->workspace_id,
+                'campaign_id' => $this->campaignId,
+                'contact_id' => $this->contactId,
+            ]);
+
             return;
         }
 
@@ -58,6 +116,13 @@ class SendCampaignMessageJob implements ShouldQueue
         $recipient = CampaignRecipient::where('campaign_id', $this->campaignId)
             ->where('contact_id', $this->contactId)
             ->first();
+
+        // Idempotency: a duplicate dispatch (for example a paused campaign resumed
+        // while an earlier batch's delayed jobs were still in flight) must not send
+        // a second message to a recipient that already reached a terminal state.
+        if ($recipient && $recipient->status !== 'queued') {
+            return;
+        }
 
         // Pre-flight opt-in check (defence in depth — LaunchCampaignJob already filters these).
         if ($this->isOptedOut($campaign, $contact)) {
@@ -180,7 +245,7 @@ class SendCampaignMessageJob implements ShouldQueue
         // the campaign reuse the same upload. We keep the original link-based
         // `$rendered` for the inbox mirror (so the header image still previews
         // there) and send with the media-id version.
-        $forSend = $this->resolveHeaderMediaIds($client, $rendered);
+        $forSend = $this->resolveHeaderMediaIds($client, $rendered, (int) $campaign->workspace_id);
 
         $phone = $contact->phone_e164;
         if (! str_starts_with($phone, '+')) {
@@ -270,9 +335,9 @@ class SendCampaignMessageJob implements ShouldQueue
      * @param  array<int, mixed>  $components
      * @return array<int, mixed>
      */
-    private function resolveHeaderMediaIds(CloudApiClient $client, array $components): array
+    private function resolveHeaderMediaIds(CloudApiClient $client, array $components, int $workspaceId): array
     {
-        return array_map(function ($component) use ($client) {
+        return array_map(function ($component) use ($client, $workspaceId) {
             if (! is_array($component) || strtolower((string) ($component['type'] ?? '')) !== 'header') {
                 return $component;
             }
@@ -280,13 +345,13 @@ class SendCampaignMessageJob implements ShouldQueue
                 return $component;
             }
 
-            $component['parameters'] = array_map(function ($param) use ($client) {
+            $component['parameters'] = array_map(function ($param) use ($client, $workspaceId) {
                 if (! is_array($param)) {
                     return $param;
                 }
                 foreach (['image', 'video', 'document'] as $mediaKey) {
                     if (isset($param[$mediaKey]['link']) && is_string($param[$mediaKey]['link']) && $param[$mediaKey]['link'] !== '') {
-                        $mediaId = $this->uploadHeaderMedia($client, (string) $param[$mediaKey]['link']);
+                        $mediaId = $this->uploadHeaderMedia($client, (string) $param[$mediaKey]['link'], $workspaceId);
                         $filename = $param[$mediaKey]['filename'] ?? null;
                         $param[$mediaKey] = array_filter(
                             ['id' => $mediaId, 'filename' => $filename],
@@ -306,11 +371,11 @@ class SendCampaignMessageJob implements ShouldQueue
      * Download a media URL and upload it to WhatsApp, returning the media id.
      * Cached per phone number + URL so a campaign uploads each asset once.
      */
-    private function uploadHeaderMedia(CloudApiClient $client, string $url): string
+    private function uploadHeaderMedia(CloudApiClient $client, string $url, int $workspaceId): string
     {
         $cacheKey = 'wa_header_media:'.$client->phoneNumberId().':'.sha1($url);
 
-        return Cache::remember($cacheKey, now()->addHours(6), function () use ($client, $url) {
+        return TenantCache::for($workspaceId)->remember($cacheKey, now()->addHours(6), function () use ($client, $url) {
             $resp = Http::timeout(30)->get($url);
             if (! $resp->successful()) {
                 throw new \RuntimeException("Could not download header media (HTTP {$resp->status()}) from {$url}");
@@ -391,7 +456,7 @@ class SendCampaignMessageJob implements ShouldQueue
         }
 
         $payload = $campaign->payload_json ?? [];
-        $trackOpens  = (bool) ($payload['track_opens'] ?? true);
+        $trackOpens = (bool) ($payload['track_opens'] ?? true);
         $trackClicks = (bool) ($payload['track_clicks'] ?? false);
 
         // Build the unsubscribe URL — required by CAN-SPAM / GDPR for every commercial email.
@@ -402,8 +467,8 @@ class SendCampaignMessageJob implements ShouldQueue
         // Render body with {{context.unsubscribe_url}} support so authors can place
         // the link themselves; we also inject a fallback footer below.
         $context = $unsubscribeUrl ? ['unsubscribe_url' => $unsubscribeUrl] : [];
-        $subject  = $personalizer->renderText($payload['subject'] ?? 'No subject', $contact);
-        $body     = $personalizer->renderText($payload['body'] ?? '', $contact, $context);
+        $subject = $personalizer->renderText($payload['subject'] ?? 'No subject', $contact);
+        $body = $personalizer->renderText($payload['body'] ?? '', $contact, $context);
 
         // ── Click tracking: wrap links with signed redirect URLs ──────────────
         if ($trackingToken !== null && $trackClicks) {
@@ -430,7 +495,7 @@ class SendCampaignMessageJob implements ShouldQueue
         // ── RFC 2369 / RFC 8058 List-Unsubscribe headers ──────────────────────
         $extraHeaders = [];
         if ($unsubscribeUrl) {
-            $extraHeaders['List-Unsubscribe']      = '<'.$unsubscribeUrl.'>, <mailto:'.($payload['reply_to'] ?? config('mail.from.address')).'?subject=unsubscribe>';
+            $extraHeaders['List-Unsubscribe'] = '<'.$unsubscribeUrl.'>, <mailto:'.($payload['reply_to'] ?? config('mail.from.address')).'?subject=unsubscribe>';
             $extraHeaders['List-Unsubscribe-Post'] = 'List-Unsubscribe=One-Click';
         }
 
@@ -438,8 +503,8 @@ class SendCampaignMessageJob implements ShouldQueue
             ?? SmtpConfiguration::getActive();
 
         $fromEmail = filled($payload['from_email'] ?? '') ? $payload['from_email'] : null;
-        $fromName  = filled($payload['from_name']  ?? '') ? $payload['from_name']  : null;
-        $replyTo   = filled($payload['reply_to']   ?? '') ? $payload['reply_to']   : null;
+        $fromName = filled($payload['from_name'] ?? '') ? $payload['from_name'] : null;
+        $replyTo = filled($payload['reply_to'] ?? '') ? $payload['reply_to'] : null;
 
         if ($smtp) {
             $mailService = app(MailService::class);
@@ -462,9 +527,9 @@ class SendCampaignMessageJob implements ShouldQueue
         $id = 'email:'.uniqid();
 
         return [
-            'id'      => $id,
-            'body'    => $subject,
-            'type'    => 'text',
+            'id' => $id,
+            'body' => $subject,
+            'type' => 'text',
             'payload' => ['subject' => $subject, 'body' => $body],
         ];
     }
@@ -480,7 +545,7 @@ class SendCampaignMessageJob implements ShouldQueue
             '/<a(\s[^>]*?)href=["\']([^"\']+)["\']/i',
             function (array $matches) use ($token): string {
                 $attrs = $matches[1];
-                $url   = $matches[2];
+                $url = $matches[2];
 
                 // Skip mailto, tel, anchor, and already-tracked links.
                 if (
@@ -493,7 +558,7 @@ class SendCampaignMessageJob implements ShouldQueue
                 }
 
                 // Signed route: the signature covers token + url, preventing tampering.
-                $trackUrl = \Illuminate\Support\Facades\URL::signedRoute(
+                $trackUrl = URL::signedRoute(
                     'track.email.click',
                     ['token' => $token, 'url' => $url],
                     absolute: true,
@@ -609,7 +674,7 @@ class SendCampaignMessageJob implements ShouldQueue
      * placeholders substituted), falling back to the first body parameter, then
      * to a `[template: name]` label.
      *
-     * @param  array<int, mixed>       $components
+     * @param  array<int, mixed>  $components
      * @param  array<int, mixed>|null  $definition
      */
     private function summariseTemplateForInbox(string $templateName, array $components, ?array $definition = null): string

@@ -73,7 +73,7 @@ class AiKnowledgeBaseController extends Controller
         $doc = AiKbDocument::create(array_merge($validated, ['kb_id' => $kb->id, 'status' => 'pending']));
 
         try {
-            IndexDocumentJob::dispatch($doc->id)->onQueue('ai');
+            IndexDocumentJob::dispatch($doc->id, (int) $kb->workspace_id)->onQueue('ai');
         } catch (\RuntimeException $e) {
             return back()->withErrors(['source_type' => $e->getMessage()]);
         }
@@ -88,7 +88,7 @@ class AiKnowledgeBaseController extends Controller
         $document->update(['status' => 'pending']);
 
         try {
-            IndexDocumentJob::dispatch($document->id)->onQueue('ai');
+            IndexDocumentJob::dispatch($document->id, (int) $kb->workspace_id)->onQueue('ai');
         } catch (\RuntimeException $e) {
             return back()->withErrors(['document' => $e->getMessage()]);
         }

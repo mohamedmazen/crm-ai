@@ -172,7 +172,7 @@ class SocialPostController extends Controller
         ]));
 
         if (! $validated['scheduled_at']) {
-            PublishSocialPostJob::dispatch($post->id)->onQueue('social');
+            PublishSocialPostJob::dispatch($post->id, (int) $post->workspace_id)->onQueue('social');
             $post->update(['status' => 'publishing']);
         }
 
@@ -234,7 +234,7 @@ class SocialPostController extends Controller
         abort_if($post->status === 'published', 422, 'Post is already published.');
 
         $post->update(['scheduled_at' => null, 'status' => 'publishing']);
-        PublishSocialPostJob::dispatch($post->id)->onQueue('social');
+        PublishSocialPostJob::dispatch($post->id, (int) $post->workspace_id)->onQueue('social');
 
         return back()->with('success', 'Post queued for immediate publishing.');
     }

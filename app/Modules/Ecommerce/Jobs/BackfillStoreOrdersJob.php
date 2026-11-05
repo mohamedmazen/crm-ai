@@ -10,6 +10,8 @@ use App\Modules\Ecommerce\Services\ContactEnricher;
 use App\Modules\Ecommerce\Services\PayloadNormalizer;
 use App\Modules\Shared\Models\Contact;
 use App\Modules\Shared\Services\ContactService;
+use App\Support\Queue\Middleware\LimitTenantConcurrency;
+use App\Support\Queue\TenantAwareJob;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
@@ -17,7 +19,7 @@ use Illuminate\Foundation\Queue\Queueable;
  * Imports historical orders so that order context (Inbox/AI) and enrichment
  * metrics are populated immediately after connecting. Does NOT fire automations.
  */
-class BackfillStoreOrdersJob implements ShouldQueue
+class BackfillStoreOrdersJob implements ShouldQueue, TenantAwareJob
 {
     use Queueable;
 
@@ -27,10 +29,42 @@ class BackfillStoreOrdersJob implements ShouldQueue
 
     public array $backoff = [30, 120, 300];
 
+    /**
+     * Owning workspace; null only for jobs queued before this field existed.
+     *
+     * Declared outside the constructor so legacy payloads restore the default
+     * instead of leaving a promoted property uninitialized.
+     */
+    public ?int $workspaceId = null;
+
     public function __construct(
         public readonly int $storeId,
         public readonly ?string $cursor = null,
-    ) {}
+        ?int $workspaceId = null,
+    ) {
+        $this->workspaceId = $workspaceId;
+    }
+
+    public function tenantWorkspaceId(): ?int
+    {
+        return $this->workspaceId ?? EcommerceStore::find($this->storeId)?->workspace_id;
+    }
+
+    /**
+     * Historical order backfills are heavy: one page per workspace at a time.
+     *
+     * @return array<int, object>
+     */
+    public function middleware(): array
+    {
+        return [
+            new LimitTenantConcurrency(
+                maxConcurrent: (int) config('queue.tenant_limits.concurrent_ecommerce_jobs', 1),
+                bucket: 'ecommerce',
+                lockSeconds: 180,
+            ),
+        ];
+    }
 
     public function handle(PayloadNormalizer $normalizer, ContactService $contacts, ContactEnricher $enricher, ContactCapacity $capacity): void
     {
@@ -73,7 +107,7 @@ class BackfillStoreOrdersJob implements ShouldQueue
         }
 
         if ($page['next'] !== null && $page['next'] !== $this->cursor) {
-            self::dispatch($store->id, $page['next']);
+            self::dispatch($store->id, $page['next'], $this->workspaceId);
 
             return;
         }

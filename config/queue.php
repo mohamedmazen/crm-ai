@@ -39,7 +39,7 @@ return [
             'connection' => env('DB_QUEUE_CONNECTION'),
             'table' => env('DB_QUEUE_TABLE', 'jobs'),
             'queue' => env('DB_QUEUE', 'default'),
-            'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 90),
+            'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 400),
             'after_commit' => false,
         ],
 
@@ -67,11 +67,42 @@ return [
             'driver' => 'redis',
             'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
             'queue' => env('REDIS_QUEUE', 'default'),
-            'retry_after' => (int) env('REDIS_QUEUE_RETRY_AFTER', 90),
+            'retry_after' => (int) env('REDIS_QUEUE_RETRY_AFTER', 400),
             'block_for' => null,
             'after_commit' => false,
         ],
 
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Per-Tenant Queue Limits
+    |--------------------------------------------------------------------------
+    |
+    | Bulk work is throttled per workspace so a single tenant cannot monopolise
+    | the shared workers. The `*_per_minute` values are enforced by the
+    | RateLimited job middleware; the `concurrent_*` caps are enforced with
+    | per-workspace cache locks by App\Support\Queue\Middleware\LimitTenantConcurrency.
+    |
+    */
+
+    'tenant_limits' => [
+        'messages_per_minute' => (int) env('QUEUE_TENANT_MESSAGES_PER_MINUTE', 120),
+        'social_posts_per_minute' => (int) env('QUEUE_TENANT_SOCIAL_POSTS_PER_MINUTE', 30),
+        'concurrent_broadcast_jobs' => (int) env('QUEUE_TENANT_CONCURRENT_BROADCAST_JOBS', 2),
+        'concurrent_social_jobs' => (int) env('QUEUE_TENANT_CONCURRENT_SOCIAL_JOBS', 1),
+        'concurrent_ai_jobs' => (int) env('QUEUE_TENANT_CONCURRENT_AI_JOBS', 1),
+        'concurrent_ecommerce_jobs' => (int) env('QUEUE_TENANT_CONCURRENT_ECOMMERCE_JOBS', 1),
+
+        // Campaigns a single workspace may keep in `sending` at once. Extra
+        // launches are released back onto the queue instead of consuming a
+        // worker. 0 disables the cap.
+        'max_active_campaigns' => (int) env('QUEUE_TENANT_MAX_ACTIVE_CAMPAIGNS', 2),
+
+        // Finalizer polls once a minute while recipients remain queued. The
+        // throttle makes big campaigns take days, so allow ~7 days (10080
+        // attempts) before giving up.
+        'campaign_finalize_max_attempts' => (int) env('QUEUE_TENANT_CAMPAIGN_FINALIZE_MAX_ATTEMPTS', 10080),
     ],
 
     /*

@@ -45,6 +45,7 @@ use App\Models\Workspace;
 use App\Modules\Shared\Services\ChannelManager;
 use App\Services\Billing\BillingGatewayRegistry;
 use App\Services\StorageManager;
+use App\Support\Queue\TenantAwareJob;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
@@ -158,6 +159,27 @@ class AppServiceProvider extends ServiceProvider
                 Limit::perMinute(30)->by('user:'.($user?->id ?? $request->ip())),
                 Limit::perMinute(120)->by('workspace:'.$workspaceId),
             ];
+        });
+
+        // ── Queue rate limiters (per tenant) ────────────────────────────────
+        // The RateLimited job middleware passes the job instance to these
+        // callbacks (not a Request), so each tenant gets its own bucket.
+        RateLimiter::for('tenant-broadcast', function (object $job) {
+            $workspaceId = $job instanceof TenantAwareJob ? $job->tenantWorkspaceId() : null;
+
+            return $workspaceId
+                ? Limit::perMinute((int) config('queue.tenant_limits.messages_per_minute', 120))
+                    ->by('broadcast:'.$workspaceId)
+                : Limit::none();
+        });
+
+        RateLimiter::for('tenant-social', function (object $job) {
+            $workspaceId = $job instanceof TenantAwareJob ? $job->tenantWorkspaceId() : null;
+
+            return $workspaceId
+                ? Limit::perMinute((int) config('queue.tenant_limits.social_posts_per_minute', 30))
+                    ->by('social:'.$workspaceId)
+                : Limit::none();
         });
 
         // ── Scramble / OpenAPI ──────────────────────────────────────────────

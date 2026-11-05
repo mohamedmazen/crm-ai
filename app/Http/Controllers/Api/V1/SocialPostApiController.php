@@ -66,7 +66,7 @@ class SocialPostApiController extends WorkspaceScopedController
         ]);
 
         if (! $validated['scheduled_at']) {
-            PublishSocialPostJob::dispatch($post->id)->onQueue('social');
+            PublishSocialPostJob::dispatch($post->id, (int) $post->workspace_id)->onQueue('social');
         }
 
         return response()->json([

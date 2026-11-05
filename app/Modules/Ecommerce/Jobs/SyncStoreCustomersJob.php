@@ -8,6 +8,8 @@ use App\Modules\Ecommerce\Services\Clients\StoreClientFactory;
 use App\Modules\Ecommerce\Services\ContactCapacity;
 use App\Modules\Ecommerce\Services\ContactEnricher;
 use App\Modules\Shared\Services\ContactService;
+use App\Support\Queue\Middleware\LimitTenantConcurrency;
+use App\Support\Queue\TenantAwareJob;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
@@ -17,7 +19,7 @@ use Illuminate\Support\Facades\Log;
  * the next page via re-dispatch to stay within queue timeouts. After the final
  * page, kicks off the order backfill (which recomputes enrichment metrics).
  */
-class SyncStoreCustomersJob implements ShouldQueue
+class SyncStoreCustomersJob implements ShouldQueue, TenantAwareJob
 {
     use Queueable;
 
@@ -28,10 +30,43 @@ class SyncStoreCustomersJob implements ShouldQueue
     /** Backoff (seconds) between retries — rides out rate limits / transient errors. */
     public array $backoff = [30, 120, 300];
 
+    /**
+     * Owning workspace; null only for jobs queued before this field existed.
+     *
+     * Declared outside the constructor so legacy payloads restore the default
+     * instead of leaving a promoted property uninitialized.
+     */
+    public ?int $workspaceId = null;
+
     public function __construct(
         public readonly int $storeId,
         public readonly ?string $cursor = null,
-    ) {}
+        ?int $workspaceId = null,
+    ) {
+        $this->workspaceId = $workspaceId;
+    }
+
+    public function tenantWorkspaceId(): ?int
+    {
+        return $this->workspaceId ?? EcommerceStore::find($this->storeId)?->workspace_id;
+    }
+
+    /**
+     * Contact import competes with product/order syncs for the same store API;
+     * one page per workspace at a time keeps the budget predictable.
+     *
+     * @return array<int, object>
+     */
+    public function middleware(): array
+    {
+        return [
+            new LimitTenantConcurrency(
+                maxConcurrent: (int) config('queue.tenant_limits.concurrent_ecommerce_jobs', 1),
+                bucket: 'ecommerce',
+                lockSeconds: 180,
+            ),
+        ];
+    }
 
     public function handle(ContactService $contacts, ContactEnricher $enricher, ContactCapacity $capacity): void
     {
@@ -46,7 +81,7 @@ class SyncStoreCustomersJob implements ShouldQueue
         if ($remaining !== null && $remaining <= 0) {
             Log::warning('ecommerce.sync.contact_limit_reached', ['store' => $store->id, 'workspace' => $store->workspace_id]);
             $store->update(['customers_synced_at' => now()]);
-            BackfillStoreOrdersJob::dispatch($store->id);
+            BackfillStoreOrdersJob::dispatch($store->id, null, $this->workspaceId);
 
             return;
         }
@@ -86,13 +121,13 @@ class SyncStoreCustomersJob implements ShouldQueue
         // Stop chaining if the cap was hit this page, or guard against a repeating cursor.
         $capReached = $remaining !== null && $remaining <= 0;
         if (! $capReached && $page['next'] !== null && $page['next'] !== $this->cursor) {
-            self::dispatch($store->id, $page['next']);
+            self::dispatch($store->id, $page['next'], $this->workspaceId);
 
             return;
         }
 
         $store->update(['customers_synced_at' => now()]);
-        BackfillStoreOrdersJob::dispatch($store->id);
+        BackfillStoreOrdersJob::dispatch($store->id, null, $this->workspaceId);
     }
 
     /**
