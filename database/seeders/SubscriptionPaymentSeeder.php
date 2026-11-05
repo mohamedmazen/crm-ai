@@ -13,7 +13,7 @@ class SubscriptionPaymentSeeder extends Seeder
 {
     public function run(): void
     {
-        $user = User::where('email', env('CLIENT_SEED_EMAIL', 'client@client.com'))->first();
+        $user = User::where('email', env('DEMO_CLIENT_EMAIL', 'starter@aydra.demo'))->first();
         if (! $user) {
             return;
         }

@@ -81,13 +81,13 @@ return [
     'demo_mode' => (bool) env('APP_DEMO_MODE', false),
 
     // Credentials offered by the one-click demo sign-in cards on the login screen
-    // while demo mode is active. The client pair mirrors the seeded demo client
-    // (database/seeders/UserSeeder.php) and the admin pair mirrors the seeded
-    // super admin (database/seeders/AdminUserSeeder.php) so a visitor lands in a
-    // populated account. When running a public demo, set CLIENT_SEED_* and
+    // while demo mode is active. The client card lands in the Starter demo tenant
+    // (database/seeders/DemoStarterSeeder.php) and the admin card in the seeded
+    // super admin (database/seeders/AdminUserSeeder.php), so a visitor lands in a
+    // populated account. When running a public demo, set DEMO_CLIENT_* and
     // ADMIN_SEED_* so the seeded accounts and these buttons share the same login.
-    'demo_email' => env('CLIENT_SEED_EMAIL', 'client@example.com'),
-    'demo_password' => env('CLIENT_SEED_PASSWORD', 'demo-password'),
+    'demo_email' => env('DEMO_CLIENT_EMAIL', 'starter@aydra.demo'),
+    'demo_password' => env('DEMO_CLIENT_PASSWORD', 'starter@aydra.demo'),
     'demo_admin_email' => env('ADMIN_SEED_EMAIL', 'admin@example.com'),
     'demo_admin_password' => env('ADMIN_SEED_PASSWORD', 'demo-password'),
 
