@@ -4,6 +4,7 @@ namespace App\Modules\Whatsapp\Models;
 
 use App\Modules\Integrations\Services\CredentialResolver;
 use App\Modules\Shared\Models\ChannelAccount;
+use App\Support\Tenancy\Byok;
 use Database\Factories\WhatsappBusinessAccountFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -79,6 +80,13 @@ class WhatsappBusinessAccount extends Model
             if ($token) {
                 return $token;
             }
+        }
+
+        // BYOK-only: the platform system-user token is the operator's WABA
+        // token — falling back to it would bill WhatsApp conversation fees to
+        // the operator. A workspace must connect (and authenticate) its own WABA.
+        if (Byok::only()) {
+            return null;
         }
 
         return CredentialResolver::system()->meta()?->systemUserToken();

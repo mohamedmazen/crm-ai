@@ -127,7 +127,7 @@ class KbAnalyticsTest extends TestCase
             'name' => 'Pivot bot',
             'enabled' => true,
         ]);
-        $bot->knowledgeBases()->sync([$kb->id]);
+        $bot->knowledgeBases()->syncWithPivotValues([$kb->id], ['workspace_id' => $workspace->id]);
 
         AiRun::create([
             'workspace_id' => $workspace->id,

@@ -103,7 +103,7 @@ class AiChatbotController extends Controller
         $validated['ai_kb_id'] = $kbIds->first();
 
         $chatbot->update($validated);
-        $chatbot->knowledgeBases()->sync($kbIds->all());
+        $chatbot->knowledgeBases()->syncWithPivotValues($kbIds->all(), ['workspace_id' => $wid]);
 
         return back()->with('success', 'Chatbot updated.');
     }

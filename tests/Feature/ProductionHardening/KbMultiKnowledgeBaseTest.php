@@ -8,6 +8,7 @@ use App\Modules\AI\Models\AiKbDocument;
 use App\Modules\AI\Models\AiKnowledgeBase;
 use App\Modules\AI\Models\AiProviderConfig;
 use App\Modules\AI\Services\ChatbotRunner;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
@@ -109,7 +110,7 @@ class KbMultiKnowledgeBaseTest extends TestCase
             'max_context_chunks' => 3,
             'enabled' => true,
         ]);
-        $bot->knowledgeBases()->sync([$billing->id, $shipping->id]);
+        $bot->knowledgeBases()->syncWithPivotValues([$billing->id, $shipping->id], ['workspace_id' => $workspace->id]);
 
         $capture = [];
         $this->fakeOpenAi($capture);
@@ -146,7 +147,7 @@ class KbMultiKnowledgeBaseTest extends TestCase
             'max_context_chunks' => 5,
             'enabled' => true,
         ]);
-        $bot->knowledgeBases()->sync([$support->id, $policies->id]);
+        $bot->knowledgeBases()->syncWithPivotValues([$support->id, $policies->id], ['workspace_id' => $workspace->id]);
 
         $capture = [];
         $this->fakeOpenAi($capture);
@@ -175,7 +176,7 @@ class KbMultiKnowledgeBaseTest extends TestCase
             'max_context_chunks' => 5,
             'enabled' => true,
         ]);
-        $bot->knowledgeBases()->sync([$matching->id, $other->id]);
+        $bot->knowledgeBases()->syncWithPivotValues([$matching->id, $other->id], ['workspace_id' => $workspace->id]);
 
         $capture = [];
         $this->fakeOpenAi($capture);
@@ -273,7 +274,7 @@ class KbMultiKnowledgeBaseTest extends TestCase
     }
 
     #[Test]
-    public function retrieval_ignores_foreign_workspace_bases_even_if_the_pivot_is_corrupt(): void
+    public function a_cross_tenant_pivot_row_is_rejected_by_the_database(): void
     {
         ['workspace' => $workspace] = $this->createWorkspaceContext();
         $otherWorkspace = $this->createWorkspaceContext()['workspace'];
@@ -287,15 +288,36 @@ class KbMultiKnowledgeBaseTest extends TestCase
             'enabled' => true,
         ]);
 
-        // Simulate a bad pivot row written outside the update endpoint.
-        $bot->knowledgeBases()->attach([$own->id, $foreign->id]);
+        // A legitimate link is stored with the chatbot's workspace on the pivot.
+        $bot->knowledgeBases()->syncWithPivotValues([$own->id], ['workspace_id' => $workspace->id]);
 
         $this->assertSame(
             [$own->id],
             $bot->fresh()->resolvedKnowledgeBases()->pluck('id')->all(),
         );
 
-        // The legacy single-base column must be filtered the same way.
+        $this->assertDatabaseHas('ai_chatbot_knowledge_base', [
+            'chatbot_id' => $bot->id,
+            'kb_id' => $own->id,
+            'workspace_id' => $workspace->id,
+        ]);
+
+        // The composite foreign keys make a cross-tenant row impossible: the
+        // pivot's workspace no longer matches the foreign base, so the insert
+        // is refused instead of silently stored.
+        $this->expectException(QueryException::class);
+
+        $bot->knowledgeBases()->syncWithPivotValues([$foreign->id], ['workspace_id' => $workspace->id]);
+    }
+
+    #[Test]
+    public function the_legacy_single_base_column_is_filtered_by_workspace(): void
+    {
+        ['workspace' => $workspace] = $this->createWorkspaceContext();
+        $otherWorkspace = $this->createWorkspaceContext()['workspace'];
+
+        $foreign = $this->seedKb($otherWorkspace->id, 'Foreign');
+
         $legacyBot = AiChatbot::create([
             'workspace_id' => $workspace->id,
             'name' => 'Legacy bot',

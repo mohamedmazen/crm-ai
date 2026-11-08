@@ -72,7 +72,12 @@ class AiChatbot extends Model
             'ai_chatbot_knowledge_base',
             'chatbot_id',
             'kb_id',
-        )->withTimestamps();
+        )
+            // Every pivot row carries the chatbot's workspace, which the
+            // composite foreign keys then require to match the knowledge
+            // base's workspace too. Writers stamp it via syncWithPivotValues().
+            ->withPivot('workspace_id')
+            ->withTimestamps();
     }
 
     /**
@@ -88,10 +93,10 @@ class AiChatbot extends Model
     {
         $this->loadMissing(['knowledgeBases', 'knowledgeBase']);
 
-        // Defence in depth: the pivot row carries no workspace_id, so a bad
-        // row (manual insert, seeder, future bug) could link this chatbot to
-        // another tenant's knowledge base. Never let retrieval cross that
-        // boundary, even though the controllers already validate ownership.
+        // Defence in depth: a composite foreign key now makes it impossible to
+        // store a pivot row whose workspace differs from the chatbot's, but the
+        // filter stays so retrieval never crosses a tenant boundary even if the
+        // constraint is ever dropped or bypassed.
         $owned = $this->knowledgeBases
             ->where('workspace_id', $this->workspace_id)
             ->values();

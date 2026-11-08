@@ -57,7 +57,10 @@ class SmsDriverManager
             }
         }
 
-        throw new RuntimeException('No SMS provider configured for workspace '.$workspaceId);
+        throw new RuntimeException(
+            'No SMS provider configured for workspace '.$workspaceId.
+            '. Add your own credentials under Broadcasts → SMS Gateways.'
+        );
     }
 
     /**

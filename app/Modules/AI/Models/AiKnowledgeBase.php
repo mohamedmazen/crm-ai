@@ -49,6 +49,8 @@ class AiKnowledgeBase extends Model
             'ai_chatbot_knowledge_base',
             'kb_id',
             'chatbot_id',
-        )->withTimestamps();
+        )
+            ->withPivot('workspace_id')
+            ->withTimestamps();
     }
 }

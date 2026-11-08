@@ -12,10 +12,16 @@ use App\Modules\Integrations\Services\Credentials\LlmCredentials;
 use App\Modules\Integrations\Services\Credentials\MetaCredentials;
 use App\Modules\Integrations\Services\Credentials\OAuthClientCredentials;
 use App\Modules\Integrations\Services\Credentials\SmsCredentials;
+use App\Support\Tenancy\Byok;
 
 /**
  * Resolves credentials for a given provider.
  * Lookup order: workspace override -> system default -> null.
+ *
+ * When `integrations.byok_only` is enabled the system-default step is skipped
+ * for tenant services (LLM and SMS here, plus the WhatsApp token and SMTP
+ * resolvers that read their own tables): a workspace without its own key gets
+ * null instead of the operator's shared credentials.
  *
  * Drivers must NEVER call config() or env() directly — only use this service.
  *
@@ -81,6 +87,11 @@ class CredentialResolver
             }
         }
 
+        // BYOK-only: never hand a tenant the operator's shared LLM key.
+        if (Byok::only()) {
+            return null;
+        }
+
         return $this->resolve('llm_'.$provider.'_default', LlmCredentials::class);
     }
 
@@ -93,6 +104,11 @@ class CredentialResolver
             if ($override) {
                 return new SmsCredentials($override);
             }
+        }
+
+        // BYOK-only: never send a tenant's SMS through the operator's gateway.
+        if (Byok::only()) {
+            return null;
         }
 
         return $this->resolve('sms_'.$provider.'_default', SmsCredentials::class);

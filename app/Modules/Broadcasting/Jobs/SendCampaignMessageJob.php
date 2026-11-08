@@ -3,11 +3,9 @@
 namespace App\Modules\Broadcasting\Jobs;
 
 use App\Events\MessageSent;
-use App\Models\SmtpConfiguration;
 use App\Modules\Broadcasting\Models\Campaign;
 use App\Modules\Broadcasting\Models\CampaignRecipient;
 use App\Modules\Broadcasting\Models\UsageMeter;
-use App\Modules\Broadcasting\Models\WorkspaceSmtpConfig;
 use App\Modules\Broadcasting\Services\CampaignPersonalizer;
 use App\Modules\Broadcasting\Services\Sms\SmsDriverManager;
 use App\Modules\Shared\Models\ChannelAccount;
@@ -17,6 +15,7 @@ use App\Modules\Shared\Models\Message;
 use App\Modules\Whatsapp\Models\WhatsappTemplate;
 use App\Modules\Whatsapp\Services\CloudApiClient;
 use App\Services\Mail\MailService;
+use App\Services\Mail\TenantSmtpResolver;
 use App\Support\Cache\TenantCache;
 use App\Support\Queue\Middleware\LimitTenantConcurrency;
 use App\Support\Queue\TenantAwareJob;
@@ -499,8 +498,9 @@ class SendCampaignMessageJob implements ShouldQueue, TenantAwareJob
             $extraHeaders['List-Unsubscribe-Post'] = 'List-Unsubscribe=One-Click';
         }
 
-        $smtp = WorkspaceSmtpConfig::forWorkspace($campaign->workspace_id)
-            ?? SmtpConfiguration::getActive();
+        // Tenant email must never fall back to the platform mailer in
+        // BYOK-only mode (resolveOrFail throws with an actionable message).
+        $smtp = TenantSmtpResolver::resolveOrFail($campaign->workspace_id);
 
         $fromEmail = filled($payload['from_email'] ?? '') ? $payload['from_email'] : null;
         $fromName = filled($payload['from_name'] ?? '') ? $payload['from_name'] : null;

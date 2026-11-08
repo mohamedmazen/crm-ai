@@ -3,8 +3,6 @@
 namespace App\Modules\Sales\Services;
 
 use App\Events\MessageSent;
-use App\Models\SmtpConfiguration;
-use App\Modules\Broadcasting\Models\WorkspaceSmtpConfig;
 use App\Modules\Leads\Models\Lead;
 use App\Modules\Sales\Models\Sequence;
 use App\Modules\Sales\Models\SequenceEnrollment;
@@ -15,6 +13,7 @@ use App\Modules\Shared\Models\Conversation;
 use App\Modules\Shared\Models\Message;
 use App\Modules\Whatsapp\Services\CloudApiClient;
 use App\Services\Mail\MailService;
+use App\Services\Mail\TenantSmtpResolver;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
@@ -117,8 +116,7 @@ class SequenceMessageSender
         $body = $this->render($step->body, $lead, $contact, $context);
         $body = $this->appendUnsubscribeFooter($body, $unsubscribeUrl);
 
-        $smtp = WorkspaceSmtpConfig::forWorkspace($sequence->workspace_id)
-            ?? SmtpConfiguration::getActive();
+        $smtp = TenantSmtpResolver::resolveOrFail($sequence->workspace_id);
 
         $headers = [
             'List-Unsubscribe' => '<'.$unsubscribeUrl.'>',
