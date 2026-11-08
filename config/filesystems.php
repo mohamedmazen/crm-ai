@@ -65,6 +65,18 @@ return [
             'throw' => false,
         ],
 
+        'r2' => [
+            'driver' => 's3',
+            'key' => null,
+            'secret' => null,
+            'region' => 'auto',
+            'bucket' => null,
+            'url' => null,
+            'endpoint' => null,
+            'use_path_style_endpoint' => true,
+            'throw' => false,
+        ],
+
         'do_spaces' => [
             'driver' => 's3',
             'key' => null,

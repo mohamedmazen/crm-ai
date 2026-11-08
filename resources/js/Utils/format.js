@@ -35,12 +35,12 @@ export function formatNumber(value, options = {}) {
     return new Intl.NumberFormat(getIntlLocale(), options).format(n);
 }
 
-export function formatCurrency(value, currency = 'USD', options = {}) {
+export function formatCurrency(value, currency = 'EGP', options = {}) {
     const n = toNumber(value);
     if (n === null) {
         return '';
     }
-    const code = (currency || 'USD').toUpperCase();
+    const code = (currency || 'EGP').toUpperCase();
     try {
         return new Intl.NumberFormat(getIntlLocale(), {
             style: 'currency',

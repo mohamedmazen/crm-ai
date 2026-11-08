@@ -79,7 +79,7 @@ class AdminSearchController extends Controller
             ->limit(5)
             ->get()
             ->each(function (Plan $plan) use (&$results) {
-                $code = $plan->currency_code ?: (Currency::defaultCode() ?? 'USD');
+                $code = $plan->currency_code ?: (Currency::defaultCode() ?? 'EGP');
                 $results[] = [
                     'type' => 'plan',
                     'label' => $plan->name,

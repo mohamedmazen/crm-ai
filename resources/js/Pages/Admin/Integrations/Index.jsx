@@ -28,6 +28,20 @@ const SETUP_GUIDES = {
         link: 'https://s3.console.aws.amazon.com',
         linkLabel: 'Open AWS Console',
     },
+    storage_r2: {
+        title: 'Cloudflare R2 Setup',
+        steps: [
+            'Log in to dash.cloudflare.com → R2 Object Storage.',
+            'Create a new bucket (e.g. "crm").',
+            'Go to "Manage R2 API Tokens" → "Create API Token".',
+            'Select permissions: "Object Read & Write", specify bucket or all buckets.',
+            'Copy the Access Key ID and Secret Access Key.',
+            'Copy the S3 API endpoint URL (e.g. https://<account_id>.r2.cloudflarestorage.com).',
+            '(Optional) In bucket settings, enable "Public Development URL" or add a custom domain for direct browser file links.',
+        ],
+        link: 'https://dash.cloudflare.com',
+        linkLabel: 'Open Cloudflare Dashboard',
+    },
     storage_do: {
         title: 'DigitalOcean Spaces Setup',
         steps: [
@@ -412,7 +426,7 @@ function SetupGuide({ provider }) {
     );
 }
 
-const STORAGE_PROVIDERS = ['storage_local', 'storage_s3', 'storage_do', 'storage_wasabi'];
+const STORAGE_PROVIDERS = ['storage_local', 'storage_s3', 'storage_r2', 'storage_do', 'storage_wasabi'];
 
 const CATEGORY_LABEL_KEYS = {
     'Storage': 'integrations.cat_storage',
@@ -442,6 +456,7 @@ const BRAND = {
         ),
     },
     storage_s3:      { bg: null, color: '#FF9900', logo: 'amazons3' },
+    storage_r2:      { bg: 'bg-amber-100 dark:bg-amber-900/30', color: '#F38020', icon: <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z"/></svg> },
     storage_do:      { bg: null, color: '#0080FF', logo: 'digitalocean' },
     storage_wasabi:  { bg: null, color: '#3CBA54', logo: 'wasabi' },
     meta_app:        { bg: null, color: '#0866FF', logo: 'meta' },

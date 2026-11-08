@@ -131,9 +131,26 @@ class IntegrationConfigController extends Controller
     {
         abort_unless(in_array($provider, IntegrationConfig::PROVIDERS, true), 404);
 
-        $config = IntegrationConfig::forProvider($provider);
-        if (! $config) {
-            return response()->json(['ok' => false, 'message' => 'Not configured yet.']);
+        $config = IntegrationConfig::forProvider($provider) ?? new IntegrationConfig([
+            'provider' => $provider,
+            'label' => IntegrationConfig::LABELS[$provider] ?? $provider,
+            'mode' => 'live',
+            'enabled' => false,
+        ]);
+
+        if ($request->has('credentials')) {
+            $incoming = $request->input('credentials', []);
+            $creds = $config->credentials ?? [];
+            foreach ($incoming as $k => $v) {
+                if ($v !== null && $v !== '' && ! preg_match('/^•+/', (string) $v)) {
+                    $creds[$k] = $v;
+                }
+            }
+            $config->credentials = $creds;
+        }
+
+        if (empty($config->credentials) && $provider !== 'storage_local') {
+            return response()->json(['ok' => false, 'message' => 'Please enter credentials before testing.']);
         }
 
         $result = app(ConnectionTester::class)->test($config);

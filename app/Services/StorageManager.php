@@ -183,19 +183,50 @@ class StorageManager
     private function buildDiskConfig(string $provider, array $creds): array
     {
         return match ($provider) {
-            'storage_s3' => [
-                'driver' => 's3',
-                'key' => $creds['key'] ?? null,
-                'secret' => $creds['secret'] ?? null,
-                'region' => $creds['region'] ?? 'us-east-1',
-                'bucket' => $creds['bucket'] ?? null,
-                'url' => $creds['url'] ?? null,
-                'endpoint' => $creds['endpoint'] ?? (
+            'storage_s3' => (function () use ($creds) {
+                $endpoint = $creds['endpoint'] ?? (
                     (! empty($creds['url']) && str_contains($creds['url'], 'cloudflarestorage.com')) ? $creds['url'] : null
-                ),
-                'use_path_style_endpoint' => false,
-                'throw' => false,
-            ],
+                );
+                $isR2 = (! empty($endpoint) && str_contains($endpoint, 'cloudflarestorage.com'))
+                    || (! empty($creds['url']) && str_contains($creds['url'], 'cloudflarestorage.com'));
+                $publicUrl = (! empty($creds['url']) && ! str_contains($creds['url'], 'cloudflarestorage.com'))
+                    ? $creds['url']
+                    : null;
+
+                return [
+                    'driver' => 's3',
+                    'key' => $creds['key'] ?? null,
+                    'secret' => $creds['secret'] ?? null,
+                    'region' => $creds['region'] ?? ($isR2 ? 'auto' : 'us-east-1'),
+                    'bucket' => $creds['bucket'] ?? null,
+                    'url' => $publicUrl,
+                    'endpoint' => $endpoint,
+                    'use_path_style_endpoint' => $isR2,
+                    'throw' => false,
+                    'http' => app()->isProduction() ? [] : ['verify' => false],
+                ];
+            })(),
+            'storage_r2' => (function () use ($creds) {
+                $endpoint = $creds['endpoint'] ?? (
+                    (! empty($creds['url']) && str_contains($creds['url'], 'cloudflarestorage.com')) ? $creds['url'] : null
+                );
+                $publicUrl = (! empty($creds['url']) && ! str_contains($creds['url'], 'cloudflarestorage.com'))
+                    ? $creds['url']
+                    : null;
+
+                return [
+                    'driver' => 's3',
+                    'key' => $creds['key'] ?? null,
+                    'secret' => $creds['secret'] ?? null,
+                    'region' => 'auto',
+                    'bucket' => $creds['bucket'] ?? null,
+                    'url' => $publicUrl,
+                    'endpoint' => $endpoint,
+                    'use_path_style_endpoint' => true,
+                    'throw' => false,
+                    'http' => app()->isProduction() ? [] : ['verify' => false],
+                ];
+            })(),
             'storage_do' => [
                 'driver' => 's3',
                 'key' => $creds['key'] ?? null,

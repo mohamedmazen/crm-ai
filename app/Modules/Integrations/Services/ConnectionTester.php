@@ -244,18 +244,27 @@ class ConnectionTester
             (! empty($creds['url']) && str_contains($creds['url'], 'cloudflarestorage.com')) ? $creds['url'] : null
         );
 
+        $isR2 = $config->provider === 'storage_r2'
+            || (! empty($endpoint) && str_contains($endpoint, 'cloudflarestorage.com'))
+            || (! empty($creds['url']) && str_contains($creds['url'], 'cloudflarestorage.com'));
+
+        $publicUrl = (! empty($creds['url']) && ! str_contains($creds['url'], 'cloudflarestorage.com'))
+            ? $creds['url']
+            : null;
+
         $diskCfg = [
             'driver' => 's3',
             'key' => $key,
             'secret' => $secret,
-            'region' => $creds['region'] ?? 'us-east-1',
+            'region' => $creds['region'] ?? ($isR2 ? 'auto' : 'us-east-1'),
             'bucket' => $bucket,
-            'url' => $creds['url'] ?? null,
+            'url' => $publicUrl,
             'endpoint' => $endpoint,
-            'use_path_style_endpoint' => false,
+            'use_path_style_endpoint' => $isR2,
             'throw' => true,
             'visibility' => 'private',
             'options' => [],
+            'http' => app()->isProduction() ? [] : ['verify' => false],
         ];
 
         Config::set("filesystems.disks.{$diskName}", $diskCfg);

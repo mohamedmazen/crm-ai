@@ -37,6 +37,7 @@ const LABELS = {
     social_posts_per_month: 'Social Posts / mo',
     lead_credits_per_month: 'Lead Credits / mo',
     automations: 'Automations',
+    max_contacts: 'Max Contacts',
 };
 
 export default function PlanLimits({ limits = {}, limitKeys, onChange }) {

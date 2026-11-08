@@ -191,21 +191,43 @@ npm run build
 1. في مشروعك: `deploy/supervisor/`
 2. في مجلد التنزيلات بجهازك بجانب ملفاتك السابقة: `C:\Users\Mazen\Downloads\profile\profile\`
 
-الملفات التي تم إنشاؤها:
-* **`crm-queue.ini`**: لتشغيل معالج طوابير الواتساب والـ AI والأتمتة والحملات.
-* **`crm-reverb.ini`**: لتشغيل خادم الـ WebSockets على المنفذ `8083`.
-* **`crm-schedule.ini`**: لتشغيل المهام المجدولة في الخلفية.
-* **`crm-octane.ini`**: (اختياري) لتشغيل خادم FrankenPHP على المنفذ `8002`.
+الملفات التي تم إنشاؤها في `deploy/supervisor/`:
+* **`crm-queue-interactive.ini`**: طوابير الواتساب والبريد والأتمتة والليدز (4 عمليات) — الأولوية للواتساب.
+* **`crm-queue-broadcast.ini`**: طابور الحملات فقط (عمليتان)، معزول حتى لا تستهلك الحملة الكبيرة باقي الطوابير.
+* **`crm-queue-social.ini`**: طابور النشر الاجتماعي (عملية واحدة).
+* **`crm-queue-ai.ini`**: طابور فهرسة الـ AI (عملية واحدة).
+
+> ملاحظة: برامج `crm-reverb` و`crm-schedule` و`crm-octane` تُضاف مباشرة عبر **Add Daemon** كما هو موضّح بالأسفل (لا تحتاج ملفات ini).
+>
+> `REDIS_QUEUE_RETRY_AFTER` يجب أن يبقى أكبر من أطول `$timeout` في الـ jobs (900s)، لذلك القيمة الافتراضية الآن `1200`.
 
 #### طريقة إضافتها في aaPanel:
 1. ادخل على: **App Store ➡️ Supervisor Manager ➡️ Settings**.
 2. اضغط على **Add Daemon** وأدخل بيانات كل خدمة (أو انسخ محتوى الملفات مباشرة إلى مسار إعدادات Supervisor بالسيرفر `/etc/supervisor/conf.d/` أو مسار البلاجن في aaPanel `/www/server/panel/plugin/supervisor/`):
-   - **Queue Daemon:**
-     - Name: `crm-queue`
+   - **Interactive Queue Pool** (`crm-queue-interactive.ini`):
+     - Name: `crm-queue-interactive`
      - Run User: `www`
      - Run Dir: `/www/wwwroot/crm`
-     - Command: `/www/server/php/82/bin/php artisan queue:work redis --queue=whatsapp,ai,automation,broadcast,leads,social,default --sleep=3 --tries=3 --max-time=3600`
+     - Command: `/www/server/php/82/bin/php artisan queue:work redis --queue=whatsapp,default,automation,leads --sleep=2 --tries=3 --timeout=120 --max-time=3600`
+     - Processes: `4`
+   - **Broadcast Queue Pool** (`crm-queue-broadcast.ini`):
+     - Name: `crm-queue-broadcast`
+     - Run User: `www`
+     - Run Dir: `/www/wwwroot/crm`
+     - Command: `/www/server/php/82/bin/php artisan queue:work redis --queue=broadcast --sleep=3 --tries=3 --timeout=120 --max-time=3600`
      - Processes: `2`
+   - **Social Queue Pool** (`crm-queue-social.ini`):
+     - Name: `crm-queue-social`
+     - Run User: `www`
+     - Run Dir: `/www/wwwroot/crm`
+     - Command: `/www/server/php/82/bin/php artisan queue:work redis --queue=social --sleep=5 --tries=3 --timeout=180 --max-time=3600`
+     - Processes: `1`
+   - **AI Queue Pool** (`crm-queue-ai.ini`):
+     - Name: `crm-queue-ai`
+     - Run User: `www`
+     - Run Dir: `/www/wwwroot/crm`
+     - Command: `/www/server/php/82/bin/php artisan queue:work redis --queue=ai --sleep=5 --tries=3 --timeout=300 --max-time=3600`
+     - Processes: `1`
    - **Reverb Daemon:**
      - Name: `crm-reverb`
      - Run User: `www`

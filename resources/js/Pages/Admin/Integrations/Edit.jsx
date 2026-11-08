@@ -19,6 +19,20 @@ const SETUP_GUIDES = {
         link: 'https://s3.console.aws.amazon.com',
         linkLabel: 'Open AWS Console',
     },
+    storage_r2: {
+        title: 'Cloudflare R2 Setup',
+        steps: [
+            'Log in to dash.cloudflare.com → R2 Object Storage.',
+            'Create a new bucket (e.g. "crm").',
+            'Go to "Manage R2 API Tokens" → "Create API Token".',
+            'Select permissions: "Object Read & Write", specify bucket or all buckets.',
+            'Copy the Access Key ID and Secret Access Key.',
+            'Copy the S3 API endpoint URL (e.g. https://<account_id>.r2.cloudflarestorage.com).',
+            '(Optional) In bucket settings, enable "Public Development URL" or add a custom domain for direct browser file links.',
+        ],
+        link: 'https://dash.cloudflare.com',
+        linkLabel: 'Open Cloudflare Dashboard',
+    },
     storage_do: {
         title: 'DigitalOcean Spaces Setup',
         steps: [
@@ -493,6 +507,7 @@ function SetupGuide({ provider }) {
 const BRAND = {
     storage_local:           { bg: 'bg-sky-100 dark:bg-sky-900/40', color: '#0ea5e9', icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path d="M2 7a2 2 0 012-2h12a2 2 0 012 2v1H2V7zm0 3h16v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4zm3 2a1 1 0 100 2 1 1 0 000-2zm3 0a1 1 0 100 2 1 1 0 000-2z" /></svg> },
     storage_s3:              { bg: 'bg-orange-100 dark:bg-orange-900/30', color: '#FF9900', icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path d="M10 2L4 5.8v8.4L10 18l6-3.8V5.8L10 2zm0 2.3l3.9 2.46-3.9 2.36L6.1 6.76 10 4.3zM5.5 8.1l3.9 2.36v4.7L5.5 12.8V8.1zm5.1 2.36l3.9-2.36V12.8l-3.9 2.36v-4.7z" /></svg> },
+    storage_r2:              { bg: 'bg-amber-100 dark:bg-amber-900/30', color: '#F38020', icon: <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z"/></svg> },
     storage_do:              { bg: 'bg-blue-100 dark:bg-blue-900/30', color: '#0080FF', icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path d="M10 2a8 8 0 110 16A8 8 0 0110 2zm0 2.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zm0 2a3.5 3.5 0 110 7 3.5 3.5 0 010-7zm0 2a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM6 15.5H4.5V14H6v1.5zm-2-2.5H2.5V11.5H4V13z" /></svg> },
     storage_wasabi:          { bg: 'bg-green-100 dark:bg-green-900/30', color: '#3CBA54', icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path d="M2.5 14.5L5 7l2.5 5 2.5-5 2.5 5 2.5-5 2.5 7.5h-2l-1-3-2 4-2-4-1 3h-2zm14-9A1.5 1.5 0 1114 7a1.5 1.5 0 012.5-1.5z" /></svg> },
     meta_app:                { bg: 'bg-blue-100 dark:bg-blue-900/30', color: '#0866FF', icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path d="M2.5 10C2.5 7.24 4.74 5 7.5 5c1.32 0 2.52.5 3.42 1.32A5 5 0 0114.5 5C17.26 5 19.5 7.24 19.5 10v.5c0 2.76-2.24 5-5 5a5 5 0 01-3.58-1.5A5 5 0 017.5 15.5C4.74 15.5 2.5 13.26 2.5 10.5V10zm5 3.5c1.38 0 2.5-1.12 2.5-2.5v-.5c0-1.38-1.12-2.5-2.5-2.5S5 9.12 5 10.5V11c0 1.38 1.12 2.5 2.5 2.5zm7 0c1.38 0 2.5-1.12 2.5-2.5V10c0-1.38-1.12-2.5-2.5-2.5S12 8.62 12 10v.5c0 1.38 1.12 2.5 2.5 2.5z" /></svg> },
@@ -559,7 +574,7 @@ function PlainField({ label, fieldKey, value, onChange, required, hint }) {
     );
 }
 
-const STORAGE_PROVIDERS = ['storage_local', 'storage_s3', 'storage_do', 'storage_wasabi'];
+const STORAGE_PROVIDERS = ['storage_local', 'storage_s3', 'storage_r2', 'storage_do', 'storage_wasabi'];
 
 function StorageBanner({ provider }) {
     const { t } = useTranslation();
@@ -613,7 +628,9 @@ export default function IntegrationsEdit({ provider, label, category, fields, co
         setTesting(true);
         setTestResult(null);
         try {
-            const { data: res } = await axios.post(route('admin.integrations.test', provider));
+            const { data: res } = await axios.post(route('admin.integrations.test', provider), {
+                credentials: data.credentials,
+            });
             setTestResult(res);
         } catch (e) {
             setTestResult({ ok: false, message: e?.response?.data?.message || t('integrations.request_failed') });

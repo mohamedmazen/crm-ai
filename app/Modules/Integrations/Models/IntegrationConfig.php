@@ -23,17 +23,19 @@ class IntegrationConfig extends Model
         'qdrant',
         'storage_local',
         'storage_s3',
+        'storage_r2',
         'storage_do',
         'storage_wasabi',
     ];
 
     /** The single provider slug that is the active storage backend. */
-    public const STORAGE_PROVIDERS = ['storage_local', 'storage_s3', 'storage_do', 'storage_wasabi'];
+    public const STORAGE_PROVIDERS = ['storage_local', 'storage_s3', 'storage_r2', 'storage_do', 'storage_wasabi'];
 
     /** Maps provider slug → Laravel disk name. */
     public const STORAGE_DISK_MAP = [
         'storage_local' => 'public',
         'storage_s3' => 's3',
+        'storage_r2' => 'r2',
         'storage_do' => 'do_spaces',
         'storage_wasabi' => 'wasabi',
     ];
@@ -55,6 +57,7 @@ class IntegrationConfig extends Model
         'qdrant' => 'Qdrant Vector Store',
         'storage_local' => 'Local Storage (server disk)',
         'storage_s3' => 'Amazon S3',
+        'storage_r2' => 'Cloudflare R2',
         'storage_do' => 'DigitalOcean Spaces',
         'storage_wasabi' => 'Wasabi Cloud Storage',
     ];
@@ -76,6 +79,7 @@ class IntegrationConfig extends Model
         'qdrant' => 'Vector Store',
         'storage_local' => 'Storage',
         'storage_s3' => 'Storage',
+        'storage_r2' => 'Storage',
         'storage_do' => 'Storage',
         'storage_wasabi' => 'Storage',
     ];
@@ -144,9 +148,19 @@ class IntegrationConfig extends Model
         'storage_s3' => [
             ['key' => 'key',                    'label' => 'Access Key ID',          'type' => 'text',     'required' => true],
             ['key' => 'secret',                 'label' => 'Secret Access Key',      'type' => 'password', 'required' => true],
-            ['key' => 'region',                 'label' => 'Region',                 'type' => 'text',     'required' => true],
+            ['key' => 'region',                 'label' => 'Region (e.g. us-east-1, auto for R2)', 'type' => 'text', 'required' => true],
             ['key' => 'bucket',                 'label' => 'Bucket Name',            'type' => 'text',     'required' => true],
-            ['key' => 'url',                    'label' => 'Custom URL (optional)',   'type' => 'text',     'required' => false],
+            ['key' => 'endpoint',               'label' => 'Endpoint URL (optional, for Cloudflare R2 / MinIO)', 'type' => 'text', 'required' => false],
+            ['key' => 'url',                    'label' => 'Public / Custom CDN URL (optional)', 'type' => 'text', 'required' => false],
+            ['key' => 'directory_prefix',       'label' => 'Directory Prefix',       'type' => 'text',     'required' => false],
+        ],
+
+        'storage_r2' => [
+            ['key' => 'key',                    'label' => 'Access Key ID',          'type' => 'text',     'required' => true],
+            ['key' => 'secret',                 'label' => 'Secret Access Key',      'type' => 'password', 'required' => true],
+            ['key' => 'endpoint',               'label' => 'Endpoint URL',           'type' => 'text',     'required' => true, 'hint' => 'From Cloudflare R2 settings, e.g. https://<account_id>.r2.cloudflarestorage.com'],
+            ['key' => 'bucket',                 'label' => 'Bucket Name',            'type' => 'text',     'required' => true],
+            ['key' => 'url',                    'label' => 'Public Development / Custom URL (optional)', 'type' => 'text', 'required' => false, 'hint' => 'e.g. https://pub-xxx.r2.dev or your custom domain'],
             ['key' => 'directory_prefix',       'label' => 'Directory Prefix',       'type' => 'text',     'required' => false],
         ],
 

@@ -13,8 +13,8 @@ class CurrencySeeder extends Seeder
      * Admin → Currencies.
      */
     private const CURRENCIES = [
-        ['code' => 'USD', 'symbol' => '$', 'decimals' => 2, 'exchange_rate' => 1.0, 'is_default' => true, 'enabled' => true],
-        ['code' => 'EGP', 'symbol' => 'ج.م', 'decimals' => 2, 'exchange_rate' => 0.02, 'is_default' => false, 'enabled' => true],
+        ['code' => 'USD', 'symbol' => '$', 'decimals' => 2, 'exchange_rate' => 1.0, 'is_default' => false, 'enabled' => true],
+        ['code' => 'EGP', 'symbol' => 'ج.م', 'decimals' => 2, 'exchange_rate' => 0.02, 'is_default' => true, 'enabled' => true],
         ['code' => 'SAR', 'symbol' => 'ر.س', 'decimals' => 2, 'exchange_rate' => 0.26666667, 'is_default' => false, 'enabled' => true],
         ['code' => 'AED', 'symbol' => 'د.إ', 'decimals' => 2, 'exchange_rate' => 0.27229408, 'is_default' => false, 'enabled' => true],
         ['code' => 'KWD', 'symbol' => 'د.ك', 'decimals' => 3, 'exchange_rate' => 3.2552, 'is_default' => false, 'enabled' => true],
@@ -35,9 +35,9 @@ class CurrencySeeder extends Seeder
             );
         }
 
-        // USD is the single platform default.
-        Currency::query()->where('code', '!=', 'USD')->update(['is_default' => false]);
-        Currency::query()->where('code', 'USD')->update(['is_default' => true, 'enabled' => true]);
+        // EGP is the single platform default.
+        Currency::query()->where('code', '!=', 'EGP')->update(['is_default' => false]);
+        Currency::query()->where('code', 'EGP')->update(['is_default' => true, 'enabled' => true]);
 
         // Retire the currencies we no longer offer.
         Currency::query()
