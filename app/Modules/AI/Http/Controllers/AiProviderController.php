@@ -22,6 +22,9 @@ class AiProviderController extends Controller
             'enabled' => $configs->get($p)?->enabled ?? false,
             'configured' => ! empty($configs->get($p)?->credentials),
             'default_model_chat' => $configs->get($p)?->default_model_chat ?? '',
+            // Anthropic and OpenRouter cannot produce embeddings, so a
+            // knowledge base needs an OpenAI or Gemini key to be searchable.
+            'supports_embeddings' => in_array($p, ['openai', 'gemini'], true),
         ]);
 
         return Inertia::render('AI/Providers/Index', ['providers' => $list]);

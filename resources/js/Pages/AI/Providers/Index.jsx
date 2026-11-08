@@ -3,7 +3,7 @@ import ClientLayout from '@/Layouts/ClientLayout';
 import EmptyState from '@/Components/EmptyState';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Eye, EyeOff, CheckCircle, Bot, BookOpen, ChevronDown, ChevronUp } from 'lucide-react';
+import { Eye, EyeOff, CheckCircle, Bot, BookOpen, ChevronDown, ChevronUp, AlertTriangle } from 'lucide-react';
 
 const SETUP_GUIDES = {
     openai: {
@@ -130,9 +130,9 @@ const PROVIDER_INFO = {
             'xingchen-agi/xing4.0-29b-a4b:free',
         ],
     },
-    openai:    { label: 'OpenAI',    Icon: OpenAILogo,    models: ['gpt-4o', 'gpt-4o-mini', 'gpt-3.5-turbo'] },
-    anthropic: { label: 'Anthropic', Icon: AnthropicLogo, models: ['claude-3-opus-20240229', 'claude-3-sonnet-20240229', 'claude-3-haiku-20240307'] },
-    gemini:    { label: 'Gemini',    Icon: GeminiLogo,    models: ['gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-1.0-pro'] },
+    openai:    { label: 'OpenAI',    Icon: OpenAILogo,    models: ['gpt-4o-mini', 'gpt-4o'] },
+    anthropic: { label: 'Anthropic', Icon: AnthropicLogo, models: ['claude-3-haiku-20240307', 'claude-3-5-sonnet-20241022'] },
+    gemini:    { label: 'Gemini',    Icon: GeminiLogo,    models: ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro'] },
 };
 
 function ProviderCard({ provider }) {
@@ -161,6 +161,13 @@ function ProviderCard({ provider }) {
                 {provider.configured && <span className="flex items-center gap-1 text-xs text-green-700 dark:text-green-400"><CheckCircle className="h-3.5 w-3.5" /> {t('ai.configured')}</span>}
             </div>
 
+            {provider.provider === 'openrouter' && provider.enabled && (
+                <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-900/30 dark:text-amber-200">
+                    <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                    <span>{t('ai.openrouter_no_embeddings')}</span>
+                </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-3">
                 <div>
                     <label htmlFor={`ai-key-${provider.provider}`} className="text-xs font-medium text-neutral-500 dark:text-neutral-400">{t('ai.api_key')}</label>
@@ -170,7 +177,7 @@ function ProviderCard({ provider }) {
                             type={showKey ? 'text' : 'password'}
                             value={data.api_key}
                             onChange={e => setData('api_key', e.target.value)}
-                            placeholder={provider.configured ? t('ai.api_key_encrypted_placeholder') : 'sk-…'}
+                            placeholder={provider.configured ? t('ai.api_key_encrypted_placeholder') : (provider.provider === 'gemini' ? 'AIzaSy…' : 'sk-…')}
                             className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 pr-10 text-sm"
                         />
                         <button type="button" onClick={() => setShowKey(v => !v)} aria-label={showKey ? t('common.hide', { defaultValue: 'Hide' }) : t('common.show', { defaultValue: 'Show' })} className="absolute right-1 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center text-neutral-500 dark:text-neutral-400 hover:text-neutral-600">
@@ -225,6 +232,8 @@ export default function AiProvidersIndex({ providers }) {
     const { props } = usePage();
     const flash = props.flash ?? {};
 
+    const hasEmbeddingProvider = providers.some(p => p.supports_embeddings && p.enabled && p.configured);
+
     return (
         <ClientLayout title={t('ai.providers_title')}>
             <Head title={t('ai.providers_title')} />
@@ -234,6 +243,12 @@ export default function AiProvidersIndex({ providers }) {
                     <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">{t('ai.provider_settings_subtitle')}</p>
                 </div>
                 {flash.success && <div className="rounded-lg bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200 px-4 py-2 text-sm">{flash.success}</div>}
+                {!hasEmbeddingProvider && (
+                    <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-900/30 dark:text-amber-200">
+                        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                        <span>{t('ai.no_embedding_provider_warning')}</span>
+                    </div>
+                )}
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {providers.length === 0 ? (
                         <div className="col-span-full">

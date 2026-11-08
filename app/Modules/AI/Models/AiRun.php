@@ -13,6 +13,7 @@ class AiRun extends Model
     protected $fillable = [
         'workspace_id', 'chatbot_id', 'conversation_id', 'feature',
         'prompt_tokens', 'completion_tokens', 'cost_cents', 'latency_ms', 'model', 'status',
+        'context_chunk_ids',
     ];
 
     protected function casts(): array
@@ -22,6 +23,7 @@ class AiRun extends Model
             'completion_tokens' => 'integer',
             'cost_cents' => 'integer',
             'latency_ms' => 'integer',
+            'context_chunk_ids' => 'array',
         ];
     }
 

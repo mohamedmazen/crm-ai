@@ -20,8 +20,9 @@ use Illuminate\Support\Facades\Storage;
  */
 class StorageManager
 {
-    private const CACHE_KEY    = 'storage_manager_resolved';
-    private const CACHE_TTL    = 60; // seconds
+    private const CACHE_KEY = 'storage_manager_resolved';
+
+    private const CACHE_TTL = 60; // seconds
 
     /**
      * Returns the active filesystem disk instance.
@@ -147,8 +148,8 @@ class StorageManager
 
                 if ($provider === 'storage_local') {
                     return [
-                        'provider'         => 'storage_local',
-                        'disk_config'      => [],
+                        'provider' => 'storage_local',
+                        'disk_config' => [],
                         'directory_prefix' => '',
                     ];
                 }
@@ -160,16 +161,16 @@ class StorageManager
                 $prefix = trim($creds['directory_prefix'] ?? '', '/');
 
                 return [
-                    'provider'         => $provider,
-                    'disk_config'      => $diskConfig,
+                    'provider' => $provider,
+                    'disk_config' => $diskConfig,
                     'directory_prefix' => $prefix !== '' ? $prefix.'/' : '',
                 ];
             }
 
             // Nothing enabled → use local public disk
             return [
-                'provider'         => null,
-                'disk_config'      => [],
+                'provider' => null,
+                'disk_config' => [],
                 'directory_prefix' => '',
             ];
         });
@@ -183,39 +184,41 @@ class StorageManager
     {
         return match ($provider) {
             'storage_s3' => [
-                'driver'                  => 's3',
-                'key'                     => $creds['key']    ?? null,
-                'secret'                  => $creds['secret'] ?? null,
-                'region'                  => $creds['region'] ?? 'us-east-1',
-                'bucket'                  => $creds['bucket'] ?? null,
-                'url'                     => $creds['url']    ?? null,
-                'endpoint'                => null,
+                'driver' => 's3',
+                'key' => $creds['key'] ?? null,
+                'secret' => $creds['secret'] ?? null,
+                'region' => $creds['region'] ?? 'us-east-1',
+                'bucket' => $creds['bucket'] ?? null,
+                'url' => $creds['url'] ?? null,
+                'endpoint' => $creds['endpoint'] ?? (
+                    (! empty($creds['url']) && str_contains($creds['url'], 'cloudflarestorage.com')) ? $creds['url'] : null
+                ),
                 'use_path_style_endpoint' => false,
-                'throw'                   => false,
+                'throw' => false,
             ],
             'storage_do' => [
-                'driver'                  => 's3',
-                'key'                     => $creds['key']      ?? null,
-                'secret'                  => $creds['secret']   ?? null,
-                'region'                  => $creds['region']   ?? 'nyc3',
-                'bucket'                  => $creds['bucket']   ?? null,
-                'url'                     => $creds['url']      ?? null,
-                'endpoint'                => $creds['endpoint'] ?? 'https://nyc3.digitaloceanspaces.com',
+                'driver' => 's3',
+                'key' => $creds['key'] ?? null,
+                'secret' => $creds['secret'] ?? null,
+                'region' => $creds['region'] ?? 'nyc3',
+                'bucket' => $creds['bucket'] ?? null,
+                'url' => $creds['url'] ?? null,
+                'endpoint' => $creds['endpoint'] ?? 'https://nyc3.digitaloceanspaces.com',
                 'use_path_style_endpoint' => false,
-                'throw'                   => false,
-                'visibility'              => 'public',
-                'options'                 => ['ACL' => 'public-read'],
+                'throw' => false,
+                'visibility' => 'public',
+                'options' => ['ACL' => 'public-read'],
             ],
             'storage_wasabi' => [
-                'driver'                  => 's3',
-                'key'                     => $creds['key']      ?? null,
-                'secret'                  => $creds['secret']   ?? null,
-                'region'                  => $creds['region']   ?? 'us-east-1',
-                'bucket'                  => $creds['bucket']   ?? null,
-                'url'                     => $creds['url']      ?? null,
-                'endpoint'                => $creds['endpoint'] ?? 'https://s3.wasabisys.com',
+                'driver' => 's3',
+                'key' => $creds['key'] ?? null,
+                'secret' => $creds['secret'] ?? null,
+                'region' => $creds['region'] ?? 'us-east-1',
+                'bucket' => $creds['bucket'] ?? null,
+                'url' => $creds['url'] ?? null,
+                'endpoint' => $creds['endpoint'] ?? 'https://s3.wasabisys.com',
                 'use_path_style_endpoint' => false,
-                'throw'                   => false,
+                'throw' => false,
             ],
             default => [],
         };

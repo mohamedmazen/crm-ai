@@ -92,7 +92,7 @@ class LlmManager
                 $creds['organization_id'] ?? null,
             ),
             'anthropic' => new AnthropicProvider($creds['api_key'] ?? '', $models['chat'] ?? 'claude-3-haiku-20240307'),
-            'gemini' => new GeminiProvider($creds['api_key'] ?? '', $models['chat'] ?? 'gemini-1.5-flash', $models['embed'] ?? 'text-embedding-004'),
+            'gemini' => new GeminiProvider($creds['api_key'] ?? '', $models['chat'] ?? 'gemini-1.5-flash', $models['embed'] ?? 'gemini-embedding-001'),
             'openrouter' => new OpenRouterProvider($creds['api_key'] ?? '', $models['chat'] ?? 'openrouter/free'),
             default => throw new \RuntimeException("Unknown LLM provider: {$provider}"),
         };

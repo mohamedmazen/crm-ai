@@ -29,32 +29,119 @@ function ToggleSwitch({ checked, onChange }) {
     );
 }
 
-function PlaygroundPanel({ chatbot }) {
+function PlaygroundPanel({ chatbot, streamingEnabled }) {
     const { t } = useTranslation();
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
+    const [streaming, setStreaming] = useState(false);
     const bottomRef = useRef(null);
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages, loading]);
 
+    const csrfToken = () => document.querySelector('meta[name=csrf-token]')?.content;
+
     const send = async () => {
         if (!input.trim() || loading) return;
+
         const userMsg = { role: 'user', content: input };
+        const history = messages;
         setMessages(prev => [...prev, userMsg]);
         setInput('');
         setLoading(true);
+        setStreaming(false);
+
+        // Streaming path: fill an assistant bubble as deltas arrive. If the
+        // stream never produces anything we fall back to the JSON endpoint
+        // below, so the playground works on every provider.
+        if (streamingEnabled) {
+            let hasBubble = false;
+            const append = (text) => {
+                if (!hasBubble) {
+                    hasBubble = true;
+                    setMessages(prev => [...prev, { role: 'assistant', content: text }]);
+                    return;
+                }
+                setMessages(prev => {
+                    const next = [...prev];
+                    next[next.length - 1] = { ...next[next.length - 1], content: next[next.length - 1].content + text };
+                    return next;
+                });
+            };
+
+            try {
+                const res = await fetch(route('client.ai.chatbots.playground.stream', chatbot.uuid), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'text/event-stream',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': csrfToken(),
+                    },
+                    body: JSON.stringify({ message: userMsg.content, history }),
+                });
+
+                if (res.ok && res.body) {
+                    const reader = res.body.getReader();
+                    const decoder = new TextDecoder();
+                    let buffer = '';
+
+                    for (;;) {
+                        const { value, done } = await reader.read();
+                        if (done) break;
+
+                        buffer += decoder.decode(value, { stream: true });
+                        const frames = buffer.split('\n\n');
+                        buffer = frames.pop() ?? '';
+
+                        for (const frame of frames) {
+                            const line = frame.split('\n').find(l => l.startsWith('data:'));
+                            if (!line) continue;
+
+                            const payload = line.slice(5).trim();
+                            if (payload === '[DONE]') continue;
+
+                            let event;
+                            try {
+                                event = JSON.parse(payload);
+                            } catch {
+                                continue;
+                            }
+
+                            if (typeof event.delta === 'string' && event.delta !== '') {
+                                setStreaming(true);
+                                append(event.delta);
+                            } else if (event.error) {
+                                setStreaming(true);
+                                append(`⚠️ ${event.error}`);
+                            }
+                        }
+                    }
+
+                    if (hasBubble) {
+                        setLoading(false);
+                        setStreaming(false);
+                        return;
+                    }
+                }
+            } catch {
+                // Network or stream error — fall through to the JSON endpoint.
+            }
+
+            setStreaming(false);
+        }
+
         try {
             const res = await fetch(route('client.ai.chatbots.playground', chatbot.uuid), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content,
+                    'X-CSRF-TOKEN': csrfToken(),
                 },
-                body: JSON.stringify({ message: userMsg.content, history: messages }),
+                body: JSON.stringify({ message: userMsg.content, history }),
             });
             const data = await res.json();
             setMessages(prev => [...prev, { role: 'assistant', content: data.reply ?? data.error ?? t('ai.playground_error') }]);
@@ -94,7 +181,7 @@ function PlaygroundPanel({ chatbot }) {
                         </div>
                     </div>
                 ))}
-                {loading && (
+                {loading && !streaming && (
                     <div className="flex gap-2">
                         <div className="shrink-0 w-7 h-7 rounded-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center">
                             <Bot className="h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400" />
@@ -132,7 +219,7 @@ function PlaygroundPanel({ chatbot }) {
     );
 }
 
-function ChatbotCard({ chatbot, knowledgeBases }) {
+function ChatbotCard({ chatbot, knowledgeBases, streamingEnabled }) {
     const { t } = useTranslation();
     const [tab, setTab] = useState(null); // null | 'settings' | 'playground'
 
@@ -142,9 +229,15 @@ function ChatbotCard({ chatbot, knowledgeBases }) {
         tone: chatbot.tone ?? 'professional',
         max_context_chunks: chatbot.max_context_chunks ?? 5,
         fallback_reply: chatbot.fallback_reply ?? '',
-        ai_kb_id: chatbot.ai_kb_id ?? '',
+        knowledge_base_ids: chatbot.knowledge_base_ids ?? (chatbot.ai_kb_id ? [chatbot.ai_kb_id] : []),
         enabled: chatbot.enabled,
     });
+
+    const toggleKnowledgeBase = (id) => {
+        setData('knowledge_base_ids', data.knowledge_base_ids.includes(id)
+            ? data.knowledge_base_ids.filter(kbId => kbId !== id)
+            : [...data.knowledge_base_ids, id]);
+    };
 
     const save = (e) => {
         e.preventDefault();
@@ -157,7 +250,7 @@ function ChatbotCard({ chatbot, knowledgeBases }) {
         }
     };
 
-    const linkedKb = knowledgeBases.find(kb => kb.id == chatbot.ai_kb_id);
+    const linkedKbs = knowledgeBases.filter(kb => (chatbot.knowledge_base_ids ?? []).includes(kb.id));
 
     const toggleTab = (t) => setTab(prev => prev === t ? null : t);
 
@@ -182,9 +275,9 @@ function ChatbotCard({ chatbot, knowledgeBases }) {
                         )}
                     </div>
                     <div className="flex items-center gap-3 mt-0.5">
-                        {linkedKb ? (
+                        {linkedKbs.length > 0 ? (
                             <span className="flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-400">
-                                <BookOpen className="h-3 w-3" /> {linkedKb.name}
+                                <BookOpen className="h-3 w-3" /> {linkedKbs.map(kb => kb.name).join(', ')}
                             </span>
                         ) : (
                             <span className="text-xs text-neutral-500 dark:text-neutral-400 italic">{t('ai.no_knowledge_base')}</span>
@@ -217,7 +310,7 @@ function ChatbotCard({ chatbot, knowledgeBases }) {
             {/* Expandable Panels */}
             {tab === 'playground' && (
                 <div className="border-t border-neutral-100 dark:border-neutral-800 px-5 pb-5 pt-4">
-                    <PlaygroundPanel chatbot={chatbot} />
+                    <PlaygroundPanel chatbot={chatbot} streamingEnabled={streamingEnabled} />
                 </div>
             )}
 
@@ -247,15 +340,32 @@ function ChatbotCard({ chatbot, knowledgeBases }) {
                         </div>
 
                         <div className="space-y-1">
-                            <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wide">{t('ai.knowledge_base')}</label>
-                            <select
-                                value={data.ai_kb_id}
-                                onChange={e => setData('ai_kb_id', e.target.value)}
-                                className="w-full rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 px-3 py-2 text-sm text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 transition"
-                            >
-                                <option value="">{t('ai.none')}</option>
-                                {knowledgeBases.map(kb => <option key={kb.id} value={kb.id}>{kb.name}</option>)}
-                            </select>
+                            <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wide">{t('ai.knowledge_bases')}</label>
+                            {knowledgeBases.length === 0 ? (
+                                <p className="text-xs text-neutral-500 dark:text-neutral-400 italic">{t('ai.no_knowledge_base')}</p>
+                            ) : (
+                                <div className="grid gap-1.5 sm:grid-cols-2 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 p-2">
+                                    {knowledgeBases.map(kb => {
+                                        const checked = data.knowledge_base_ids.includes(kb.id);
+
+                                        return (
+                                            <label
+                                                key={kb.id}
+                                                className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-neutral-800 dark:text-neutral-200 hover:bg-white dark:hover:bg-neutral-700/50 cursor-pointer transition"
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    checked={checked}
+                                                    onChange={() => toggleKnowledgeBase(kb.id)}
+                                                    className="h-3.5 w-3.5 rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
+                                                />
+                                                <span className="truncate">{kb.name}</span>
+                                            </label>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('ai.multi_kb_hint')}</p>
                         </div>
 
                         <div className="space-y-1">
@@ -322,7 +432,7 @@ function ChatbotCard({ chatbot, knowledgeBases }) {
     );
 }
 
-export default function AiChatbotsIndex({ chatbots, knowledgeBases }) {
+export default function AiChatbotsIndex({ chatbots, knowledgeBases, streamingEnabled = false }) {
     const { t } = useTranslation();
     const { props } = usePage();
     const flash = props.flash ?? {};
@@ -361,7 +471,7 @@ export default function AiChatbotsIndex({ chatbots, knowledgeBases }) {
                         {[
                             { label: t('ai.stat_total_bots'), value: chatbots.length, icon: Bot, color: 'text-brand-600 dark:text-brand-400', bg: 'bg-brand-50 dark:bg-brand-900/20' },
                             { label: t('common.active'), value: chatbots.filter(c => c.enabled).length, icon: Zap, color: 'text-green-700 dark:text-green-400', bg: 'bg-green-50 dark:bg-green-900/20' },
-                            { label: t('ai.stat_with_kb'), value: chatbots.filter(c => c.ai_kb_id).length, icon: BookOpen, color: 'text-purple-700 dark:text-purple-400', bg: 'bg-purple-50 dark:bg-purple-900/20' },
+                            { label: t('ai.stat_with_kb'), value: chatbots.filter(c => (c.knowledge_base_ids ?? []).length > 0).length, icon: BookOpen, color: 'text-purple-700 dark:text-purple-400', bg: 'bg-purple-50 dark:bg-purple-900/20' },
                         ].map(stat => (
                             <div key={stat.label} className="rounded-xl border border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4 flex items-center gap-3">
                                 <div className={`w-9 h-9 rounded-lg ${stat.bg} flex items-center justify-center shrink-0`}>
@@ -386,7 +496,7 @@ export default function AiChatbotsIndex({ chatbots, knowledgeBases }) {
                 {/* Chatbot list */}
                 <div className="space-y-3">
                     {chatbots.map(cb => (
-                        <ChatbotCard key={cb.id} chatbot={cb} knowledgeBases={knowledgeBases} />
+                        <ChatbotCard key={cb.id} chatbot={cb} knowledgeBases={knowledgeBases} streamingEnabled={streamingEnabled} />
                     ))}
                     {chatbots.length === 0 && (
                         <EmptyState

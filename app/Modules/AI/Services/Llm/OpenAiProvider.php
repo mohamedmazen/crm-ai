@@ -2,10 +2,13 @@
 
 namespace App\Modules\AI\Services\Llm;
 
+use App\Modules\AI\Services\Llm\Concerns\StreamsChatCompletions;
 use Illuminate\Support\Facades\Http;
 
-class OpenAiProvider implements LlmProviderInterface
+class OpenAiProvider implements LlmProviderInterface, SupportsStreaming
 {
+    use StreamsChatCompletions;
+
     private const BASE = 'https://api.openai.com/v1';
 
     public function __construct(
@@ -63,5 +66,26 @@ class OpenAiProvider implements LlmProviderInterface
         }
 
         return array_column($resp->json()['data'] ?? [], 'embedding');
+    }
+
+    /**
+     * @param  array<int, array{role: string, content: string}>  $messages
+     * @param  array<string, mixed>  $opts
+     * @return \Generator<int, string>
+     */
+    public function streamChat(array $messages, array $opts = []): \Generator
+    {
+        $headers = ['Authorization' => 'Bearer '.$this->apiKey];
+
+        if ($this->organization) {
+            $headers['OpenAI-Organization'] = $this->organization;
+        }
+
+        yield from $this->streamCompletions(self::BASE.'/chat/completions', $headers, [
+            'model' => $opts['model'] ?? $this->chatModel,
+            'messages' => $messages,
+            'max_tokens' => $opts['max_tokens'] ?? 1024,
+            'temperature' => $opts['temperature'] ?? 0.7,
+        ]);
     }
 }

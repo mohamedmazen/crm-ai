@@ -14,6 +14,8 @@ Route::middleware(['web', 'client-app'])->prefix('app/ai')->name('client.ai.')->
     Route::get('/knowledge-bases', [AiKnowledgeBaseController::class, 'index'])->name('knowledge-bases.index');
     Route::post('/knowledge-bases', [AiKnowledgeBaseController::class, 'store'])->name('knowledge-bases.store')->middleware('limit:knowledge_bases,knowledge_bases');
     Route::get('/knowledge-bases/{kb}', [AiKnowledgeBaseController::class, 'show'])->name('knowledge-bases.show');
+    Route::get('/knowledge-bases/{kb}/analytics', [AiKnowledgeBaseController::class, 'analytics'])->name('knowledge-bases.analytics');
+    Route::get('/knowledge-bases/{kb}/documents/{document}', [AiKnowledgeBaseController::class, 'document'])->name('knowledge-bases.documents.show');
     Route::post('/knowledge-bases/{kb}/documents', [AiKnowledgeBaseController::class, 'addDocument'])->name('knowledge-bases.documents.add');
     Route::post('/documents/{document}/reindex', [AiKnowledgeBaseController::class, 'reindex'])->name('documents.reindex');
     Route::delete('/documents/{document}', [AiKnowledgeBaseController::class, 'destroyDocument'])->name('documents.destroy');
@@ -24,4 +26,5 @@ Route::middleware(['web', 'client-app'])->prefix('app/ai')->name('client.ai.')->
     Route::put('/chatbots/{chatbot}', [AiChatbotController::class, 'update'])->name('chatbots.update');
     Route::delete('/chatbots/{chatbot}', [AiChatbotController::class, 'destroy'])->name('chatbots.destroy');
     Route::post('/chatbots/{chatbot}/playground', [AiChatbotController::class, 'playground'])->name('chatbots.playground')->middleware('limit:ai_tokens_per_month,ai_tokens');
+    Route::post('/chatbots/{chatbot}/playground/stream', [AiChatbotController::class, 'playgroundStream'])->name('chatbots.playground.stream')->middleware('limit:ai_tokens_per_month,ai_tokens');
 });

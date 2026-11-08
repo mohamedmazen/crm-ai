@@ -2,10 +2,13 @@
 
 namespace App\Modules\AI\Services\Llm;
 
+use App\Modules\AI\Services\Llm\Concerns\StreamsChatCompletions;
 use Illuminate\Support\Facades\Http;
 
-class OpenRouterProvider implements LlmProviderInterface
+class OpenRouterProvider implements LlmProviderInterface, SupportsStreaming
 {
+    use StreamsChatCompletions;
+
     private const BASE = 'https://openrouter.ai/api/v1';
 
     public function __construct(
@@ -58,5 +61,26 @@ class OpenRouterProvider implements LlmProviderInterface
     public function embed(array $texts): array
     {
         return [];
+    }
+
+    /**
+     * @param  array<int, array{role: string, content: string}>  $messages
+     * @param  array<string, mixed>  $opts
+     * @return \Generator<int, string>
+     */
+    public function streamChat(array $messages, array $opts = []): \Generator
+    {
+        $headers = [
+            'Authorization' => 'Bearer '.$this->apiKey,
+            'HTTP-Referer' => config('app.url', 'https://crm.test'),
+            'X-Title' => config('app.name', 'CRM'),
+        ];
+
+        yield from $this->streamCompletions(self::BASE.'/chat/completions', $headers, [
+            'model' => $opts['model'] ?? $this->chatModel,
+            'messages' => $messages,
+            'max_tokens' => $opts['max_tokens'] ?? 1024,
+            'temperature' => $opts['temperature'] ?? 0.7,
+        ]);
     }
 }

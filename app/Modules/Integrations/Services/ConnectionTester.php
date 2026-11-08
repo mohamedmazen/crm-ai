@@ -240,6 +240,10 @@ class ConnectionTester
             return ['ok' => false, 'message' => 'Unknown storage provider.'];
         }
 
+        $endpoint = $creds['endpoint'] ?? (
+            (! empty($creds['url']) && str_contains($creds['url'], 'cloudflarestorage.com')) ? $creds['url'] : null
+        );
+
         $diskCfg = [
             'driver' => 's3',
             'key' => $key,
@@ -247,7 +251,7 @@ class ConnectionTester
             'region' => $creds['region'] ?? 'us-east-1',
             'bucket' => $bucket,
             'url' => $creds['url'] ?? null,
-            'endpoint' => $creds['endpoint'] ?? null,
+            'endpoint' => $endpoint,
             'use_path_style_endpoint' => false,
             'throw' => true,
             'visibility' => 'private',

@@ -5,13 +5,17 @@ namespace App\Http\Controllers\Api\V1;
 use App\Modules\AI\Jobs\IndexDocumentJob;
 use App\Modules\AI\Models\AiKbDocument;
 use App\Modules\AI\Models\AiKnowledgeBase;
+use App\Modules\AI\Services\EmbeddingStore;
 use App\Services\StorageManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AiKnowledgeBaseApiController extends WorkspaceScopedController
 {
-    public function __construct(private StorageManager $storage) {}
+    public function __construct(
+        private StorageManager $storage,
+        private EmbeddingStore $embeddings,
+    ) {}
 
     /**
      * GET /api/v1/ai/knowledge-bases
@@ -91,6 +95,16 @@ class AiKnowledgeBaseApiController extends WorkspaceScopedController
             return response()->json(['error' => 'source_ref is required for source_type '.$validated['source_type'].'.'], 422);
         }
 
+        // Re-adding the same URL/text/FAQ doubles every chunk in the index.
+        // Files are exempt: each upload gets a fresh content-hashed path.
+        if ($validated['source_type'] !== 'file' && ! empty($validated['source_ref'])
+            && AiKbDocument::where('kb_id', $kb->id)
+                ->where('source_type', $validated['source_type'])
+                ->where('source_ref', $validated['source_ref'])
+                ->exists()) {
+            return response()->json(['error' => 'This source is already in the knowledge base.'], 422);
+        }
+
         $doc = AiKbDocument::create(array_merge($validated, ['kb_id' => $kb->id, 'status' => 'pending']));
         IndexDocumentJob::dispatch($doc->id, (int) $kb->workspace_id)->onQueue('ai');
 
@@ -113,6 +127,7 @@ class AiKnowledgeBaseApiController extends WorkspaceScopedController
             return response()->json(['error' => 'Document not found.'], 404);
         }
 
+        $this->embeddings->deleteForDocument($doc->id);
         $doc->chunks()->delete();
         $doc->delete();
 

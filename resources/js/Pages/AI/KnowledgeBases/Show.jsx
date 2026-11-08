@@ -1,7 +1,7 @@
 import { Head, Link, useForm, router, usePage } from '@inertiajs/react';
 import ClientLayout from '@/Layouts/ClientLayout';
 import EmptyState from '@/Components/EmptyState';
-import { ArrowLeft, Plus, RefreshCw, Trash2, Globe, FileText, Type, X, Upload, CheckCircle2, Clock, Zap, AlertCircle, HelpCircle, Trash } from 'lucide-react';
+import { ArrowLeft, Plus, RefreshCw, Trash2, Globe, FileText, Type, X, Upload, CheckCircle2, Clock, Zap, AlertCircle, AlertTriangle, HelpCircle, Trash, BarChart3, Eye } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 
@@ -20,7 +20,7 @@ const STATUS_CONFIG = {
     error:    { color: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',            icon: AlertCircle },
 };
 
-export default function AiKnowledgeBaseShow({ kb }) {
+export default function AiKnowledgeBaseShow({ kb, hasEmbeddingProvider = true }) {
     const { t } = useTranslation();
     const { props } = usePage();
     const flash = props.flash ?? {};
@@ -92,6 +92,12 @@ export default function AiKnowledgeBaseShow({ kb }) {
                     <div className="flex-1 min-w-0">
                         <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 truncate">{kb.name}</h2>
                     </div>
+                    <Link
+                        href={route('client.ai.knowledge-bases.analytics', kb.uuid)}
+                        className="flex items-center gap-1.5 rounded-lg border border-neutral-200 px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800 transition shrink-0"
+                    >
+                        <BarChart3 className="h-4 w-4" /> {t('ai.analytics')}
+                    </Link>
                     {(
                         <button
                             onClick={() => setShowAdd(true)}
@@ -105,6 +111,13 @@ export default function AiKnowledgeBaseShow({ kb }) {
                 {flash.success && (
                     <div className="rounded-lg bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 px-4 py-2.5 text-sm">
                         {flash.success}
+                    </div>
+                )}
+
+                {!hasEmbeddingProvider && (
+                    <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-900/30 dark:text-amber-200">
+                        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                        <span>{t('ai.no_embedding_provider_warning')}</span>
                     </div>
                 )}
 
@@ -168,6 +181,13 @@ export default function AiKnowledgeBaseShow({ kb }) {
                                             </td>
                                             <td className="px-4 py-3">
                                                 <div className="flex items-center gap-1 justify-end">
+                                                    <Link
+                                                        href={route('client.ai.knowledge-bases.documents.show', [kb.uuid, doc.uuid])}
+                                                        title={t('ai.preview')}
+                                                        className="rounded-md p-1.5 text-neutral-500 dark:text-neutral-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-brand-900/20 transition"
+                                                    >
+                                                        <Eye className="h-3.5 w-3.5" />
+                                                    </Link>
                                                     <button
                                                         onClick={() => handleReindex(doc.uuid)}
                                                         title={t('ai.reindex')}

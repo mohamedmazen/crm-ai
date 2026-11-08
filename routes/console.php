@@ -108,6 +108,14 @@ Schedule::command('ai-sdr:run')
     ->withoutOverlapping()
     ->onOneServer();
 
+// Refresh URL/sitemap knowledge-base sources. The indexing job sends
+// If-None-Match / If-Modified-Since, so unchanged pages are not re-embedded.
+Schedule::command('ai:refresh-knowledge-bases --hours=24')
+    ->dailyAt('03:15')
+    ->name('refresh-knowledge-base-urls')
+    ->withoutOverlapping()
+    ->onOneServer();
+
 // Bill Paymob subscriptions due for renewal (MIT save-card pattern)
 Schedule::command('billing:charge-recurring-paymob')
     ->hourly()

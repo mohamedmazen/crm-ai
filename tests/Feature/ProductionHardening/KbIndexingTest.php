@@ -3,12 +3,14 @@
 namespace Tests\Feature\ProductionHardening;
 
 use App\Modules\AI\Jobs\IndexDocumentJob;
+use App\Modules\AI\Models\AiKbChunk;
 use App\Modules\AI\Models\AiKbDocument;
 use App\Modules\AI\Models\AiKnowledgeBase;
 use App\Modules\AI\Models\AiProviderConfig;
 use App\Modules\AI\Services\EmbeddingStore;
 use App\Modules\AI\Services\LlmGateway;
 use App\Services\StorageManager;
+use App\Support\Http\SafeUrlFetcher;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -33,6 +35,7 @@ class KbIndexingTest extends TestCase
             app(LlmGateway::class),
             app(EmbeddingStore::class),
             app(StorageManager::class),
+            app(SafeUrlFetcher::class),
         );
     }
 
@@ -122,5 +125,51 @@ class KbIndexingTest extends TestCase
         // The raw JSON structure must not leak into the embedded text.
         $this->assertStringNotContainsString('"question"', $content);
         $this->assertStringNotContainsString('"answer"', $content);
+    }
+
+    public function test_indexing_with_a_different_embedding_width_fails_loudly(): void
+    {
+        $kb = $this->seedKb();
+
+        // The knowledge base already contains 3-dimensional vectors.
+        $sibling = AiKbDocument::create([
+            'kb_id' => $kb->id,
+            'title' => 'Existing',
+            'source_type' => 'text',
+            'source_ref' => 'Existing content.',
+            'status' => 'indexed',
+        ]);
+        AiKbChunk::create([
+            'kb_id' => $kb->id,
+            'document_id' => $sibling->id,
+            'ord' => 0,
+            'content' => 'Existing content.',
+            'tokens' => 2,
+            'embedding' => json_encode([0.1, 0.2, 0.3]),
+        ]);
+
+        Http::fake([
+            'api.openai.com/v1/embeddings' => Http::response([
+                'data' => [['embedding' => [0.1, 0.2, 0.3, 0.4, 0.5]]],
+            ], 200),
+        ]);
+
+        $doc = AiKbDocument::create([
+            'kb_id' => $kb->id,
+            'title' => 'New',
+            'source_type' => 'text',
+            'source_ref' => 'New content that would be embedded at the wrong width.',
+            'status' => 'pending',
+        ]);
+
+        try {
+            $this->runIndexer($doc->id);
+            $this->fail('Indexing should have refused a different embedding width.');
+        } catch (\RuntimeException $e) {
+            $this->assertStringContainsString('dimension mismatch', $e->getMessage());
+        }
+
+        $this->assertSame('error', $doc->fresh()->status);
+        $this->assertSame(0, $doc->chunks()->count(), 'Half-indexed chunks must be removed.');
     }
 }

@@ -1,11 +1,11 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import ClientLayout from '@/Layouts/ClientLayout';
 import EmptyState from '@/Components/EmptyState';
-import { Plus, BookOpen, FileText, Database, X } from 'lucide-react';
+import { Plus, BookOpen, FileText, Database, X, AlertTriangle } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export default function AiKnowledgeBasesIndex({ knowledgeBases }) {
+export default function AiKnowledgeBasesIndex({ knowledgeBases, hasEmbeddingProvider = true }) {
     const { t } = useTranslation();
     const { props } = usePage();
     const flash = props.flash ?? {};
@@ -68,6 +68,13 @@ export default function AiKnowledgeBasesIndex({ knowledgeBases }) {
                     </div>
                 )}
 
+                {!hasEmbeddingProvider && (
+                    <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-900/30 dark:text-amber-200">
+                        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                        <span>{t('ai.no_embedding_provider_warning')}</span>
+                    </div>
+                )}
+
                 {/* Grid */}
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {knowledgeBases.map(kb => (
@@ -83,9 +90,15 @@ export default function AiKnowledgeBasesIndex({ knowledgeBases }) {
                                 <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
                                     kb.status === 'active'
                                         ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
-                                        : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300'
+                                        : kb.status === 'error'
+                                            ? 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'
+                                            : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300'
                                 }`}>
-                                    {kb.status === 'active' ? t('common.active') : t('ai.kb_status_draft')}
+                                    {kb.status === 'active'
+                                        ? t('common.active')
+                                        : kb.status === 'error'
+                                            ? t('ai.kb_status_error')
+                                            : t('ai.kb_status_indexing')}
                                 </span>
                             </div>
                             <h3 className="font-semibold text-sm text-neutral-900 dark:text-neutral-100 mb-1 truncate">{kb.name}</h3>

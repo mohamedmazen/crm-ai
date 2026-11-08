@@ -17,6 +17,7 @@ class AiChatbotApiController extends WorkspaceScopedController
     public function index(Request $request): JsonResponse
     {
         $chatbots = AiChatbot::where('workspace_id', $this->workspaceId($request))
+            ->with(['knowledgeBase', 'knowledgeBases'])
             ->latest('id')
             ->get()
             ->map(fn ($b) => [
@@ -24,6 +25,7 @@ class AiChatbotApiController extends WorkspaceScopedController
                 'name' => $b->name,
                 'enabled' => $b->enabled,
                 'kb_id' => $b->ai_kb_id,
+                'kb_ids' => $b->resolvedKnowledgeBases()->pluck('id')->all(),
                 'channels' => $b->channels ?? [],
                 'created_at' => $b->created_at->toIso8601String(),
             ]);

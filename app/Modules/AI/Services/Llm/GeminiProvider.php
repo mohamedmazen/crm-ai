@@ -11,8 +11,12 @@ class GeminiProvider implements LlmProviderInterface
     public function __construct(
         private readonly string $apiKey,
         private readonly string $chatModel = 'gemini-1.5-flash',
-        private readonly string $embedModel = 'text-embedding-004',
-    ) {}
+        private string $embedModel = 'gemini-embedding-001',
+    ) {
+        if ($this->embedModel === 'text-embedding-004' || empty($this->embedModel)) {
+            $this->embedModel = 'gemini-embedding-001';
+        }
+    }
 
     public function chat(array $messages, array $opts = []): LlmResponse
     {

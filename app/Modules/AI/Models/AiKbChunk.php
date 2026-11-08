@@ -9,11 +9,11 @@ class AiKbChunk extends Model
 {
     protected $table = 'ai_kb_chunks';
 
-    protected $fillable = ['kb_id', 'document_id', 'ord', 'content', 'tokens', 'embedding'];
+    protected $fillable = ['kb_id', 'document_id', 'ord', 'content', 'tokens', 'embedding', 'meta'];
 
     protected function casts(): array
     {
-        return ['tokens' => 'integer', 'ord' => 'integer'];
+        return ['tokens' => 'integer', 'ord' => 'integer', 'meta' => 'array'];
     }
 
     public function document(): BelongsTo
