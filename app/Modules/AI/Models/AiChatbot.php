@@ -88,12 +88,22 @@ class AiChatbot extends Model
     {
         $this->loadMissing(['knowledgeBases', 'knowledgeBase']);
 
-        if ($this->knowledgeBases->isNotEmpty()) {
-            return $this->knowledgeBases;
+        // Defence in depth: the pivot row carries no workspace_id, so a bad
+        // row (manual insert, seeder, future bug) could link this chatbot to
+        // another tenant's knowledge base. Never let retrieval cross that
+        // boundary, even though the controllers already validate ownership.
+        $owned = $this->knowledgeBases
+            ->where('workspace_id', $this->workspace_id)
+            ->values();
+
+        if ($owned->isNotEmpty()) {
+            return $owned;
         }
 
-        return $this->knowledgeBase !== null
-            ? new Collection([$this->knowledgeBase])
+        $legacy = $this->knowledgeBase;
+
+        return $legacy !== null && (int) $legacy->workspace_id === (int) $this->workspace_id
+            ? new Collection([$legacy])
             : new Collection;
     }
 

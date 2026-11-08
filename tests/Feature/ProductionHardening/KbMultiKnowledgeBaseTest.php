@@ -271,4 +271,38 @@ class KbMultiKnowledgeBaseTest extends TestCase
         $this->assertSame([], $bot->knowledgeBases()->pluck('ai_knowledge_bases.id')->all());
         $this->assertNull($bot->fresh()->ai_kb_id);
     }
+
+    #[Test]
+    public function retrieval_ignores_foreign_workspace_bases_even_if_the_pivot_is_corrupt(): void
+    {
+        ['workspace' => $workspace] = $this->createWorkspaceContext();
+        $otherWorkspace = $this->createWorkspaceContext()['workspace'];
+
+        $own = $this->seedKb($workspace->id, 'Own');
+        $foreign = $this->seedKb($otherWorkspace->id, 'Foreign');
+
+        $bot = AiChatbot::create([
+            'workspace_id' => $workspace->id,
+            'name' => 'Bot',
+            'enabled' => true,
+        ]);
+
+        // Simulate a bad pivot row written outside the update endpoint.
+        $bot->knowledgeBases()->attach([$own->id, $foreign->id]);
+
+        $this->assertSame(
+            [$own->id],
+            $bot->fresh()->resolvedKnowledgeBases()->pluck('id')->all(),
+        );
+
+        // The legacy single-base column must be filtered the same way.
+        $legacyBot = AiChatbot::create([
+            'workspace_id' => $workspace->id,
+            'name' => 'Legacy bot',
+            'ai_kb_id' => $foreign->id,
+            'enabled' => true,
+        ]);
+
+        $this->assertCount(0, $legacyBot->fresh()->resolvedKnowledgeBases());
+    }
 }

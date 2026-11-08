@@ -225,7 +225,10 @@ class EmbeddingStore
                 return [];
             }
 
-            $chunks = AiKbChunk::whereIn('id', $chunkIds)->get()->keyBy('id');
+            // Re-apply the kb scope on the relational fetch too: Qdrant is a
+            // shared collection, and this keeps a malformed point from ever
+            // resolving to another base's chunk.
+            $chunks = AiKbChunk::where('kb_id', $kbId)->whereIn('id', $chunkIds)->get()->keyBy('id');
             $results = [];
             foreach ($resp->json('result', []) as $hit) {
                 $chunk = $chunks->get($hit['id']);

@@ -113,9 +113,22 @@ class ContactController extends Controller
         unset($validated['segment_ids']);
 
         $hasIdentifier = ! empty($validated['phone_e164']) || ! empty($validated['email']);
+
+        // The identifier match must stay inside a grouped sub-query. An
+        // ungrouped orWhere would compile to
+        // `workspace_id = ? OR phone = ? OR email = ?`, letting a contact in
+        // another workspace satisfy the check — and silently skip the plan's
+        // contact cap.
         $alreadyExists = $hasIdentifier && Contact::where('workspace_id', $workspaceId)
-            ->when($validated['phone_e164'] ?? null, fn ($q, $phone) => $q->orWhere('phone_e164', $phone))
-            ->when($validated['email'] ?? null, fn ($q, $email) => $q->orWhere('email', $email))
+            ->where(function ($query) use ($validated): void {
+                if (! empty($validated['phone_e164'])) {
+                    $query->where('phone_e164', $validated['phone_e164']);
+                }
+
+                if (! empty($validated['email'])) {
+                    $query->orWhere('email', $validated['email']);
+                }
+            })
             ->exists();
 
         $remaining = app(ContactCapacity::class)->remaining($workspaceId);
