@@ -5,14 +5,15 @@ namespace App\Http\Middleware;
 use App\Models\Client;
 use App\Models\Currency;
 use App\Models\Locale;
+use App\Models\Plan;
 use App\Models\SystemSetting;
 use App\Models\User;
 use App\Models\Workspace;
-use App\Modules\Broadcasting\Models\UsageMeter;
 use App\Modules\Integrations\Services\CredentialResolver;
 use App\Services\FeatureGate;
 use App\Services\I18n\I18nFileService;
 use App\Services\OnboardingService;
+use App\Services\PlanUsage;
 use App\Services\StorageManager;
 use App\Support\Brand;
 use App\Support\MetaGraph;
@@ -255,39 +256,20 @@ class HandleInertiaRequests extends Middleware
         }
     }
 
-    private function workspaceUsage(?int $workspaceId, mixed $plan): array
+    /**
+     * Usage for every limit on the effective plan, shaped for the SPA.
+     *
+     * Row-counted resources (contacts, seats, storage, ...) can be *over* the
+     * cap after a downgrade and carry `is_over` / `over_by`; monthly meters only
+     * approach their cap and reset each period.
+     */
+    private function workspaceUsage(?Workspace $workspace, ?Plan $plan): array
     {
-        if (! $workspaceId) {
+        if (! $workspace || ! $plan) {
             return [];
         }
 
-        $limits = $plan?->limits ?? [];
-        if (empty($limits)) {
-            return [];
-        }
-
-        $metricsMap = [
-            'campaigns_per_month' => 'campaigns',
-            'whatsapp_messages_per_month' => 'whatsapp_messages',
-            'social_posts_per_month' => 'social_posts',
-            'lead_credits_per_month' => 'lead_credits',
-        ];
-
-        $usage = [];
-        foreach ($limits as $limitKey => $limit) {
-            if ($limit === null) {
-                continue;
-            }
-            $meterKey = $metricsMap[$limitKey] ?? $limitKey;
-            $current = UsageMeter::current($workspaceId, $meterKey);
-            $usage[$limitKey] = [
-                'current' => $current,
-                'limit' => $limit,
-                'percent' => $limit > 0 ? min(100, round(($current / $limit) * 100)) : 0,
-            ];
-        }
-
-        return $usage;
+        return app(PlanUsage::class)->summary($workspace, $plan);
     }
 
     private function appShare(Request $request): array
@@ -333,6 +315,7 @@ class HandleInertiaRequests extends Middleware
         $currentWorkspace = null;
         $workspacesForSwitcher = [];
         $workspaceId = null;
+        $workspace = null;
         $plan = null;
         // Only real client users have workspaces. On admin routes the default guard
         // is `admin`, so $request->user() is an AdminUser — calling the workspace
@@ -442,7 +425,7 @@ class HandleInertiaRequests extends Middleware
             'currencies' => $currencies,
             'displayCurrency' => $displayCurrency,
             'demo_mode' => config('app.demo_mode', false),
-            'current_workspace_usage' => $this->workspaceUsage($workspaceId ?? null, $plan ?? null),
+            'current_workspace_usage' => $this->workspaceUsage($workspace, $plan),
             'app_version' => config('app.version', '1.0.0'),
             'onboardingSummary' => $onboardingSummary,
             'landingPageEnabled' => SystemSetting::get('landing.page_enabled', '1') === '1',

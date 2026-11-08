@@ -14,6 +14,39 @@ class PlanSeeder extends Seeder
         // the product without having to keep a second feature list in sync.
         $trialFeatureFlags = array_fill_keys(array_keys(config('features.labels', [])), null);
 
+        // Data limits shared by Business and the free trial. The trial is
+        // feature-complete, but its storage/row caps match the largest paid
+        // plan so a 60-day signup cannot grow the platform's bill without
+        // bound. Keeping one array means the two can never drift apart.
+        $businessLimits = [
+            'users' => 30,
+            'storage' => 256000,
+            'max_contacts' => 250000,
+            // WhatsApp
+            'whatsapp_accounts' => 10,
+            'whatsapp_templates' => 200,
+            'whatsapp_messages_per_month' => 100000,
+            // Broadcasting
+            'campaigns_per_month' => 100,
+            'sms_per_month' => 50000,
+            'emails_per_month' => 100000,
+            // Inbox
+            'inbox_agents' => 30,
+            // AI
+            'ai_tokens_per_month' => 10000000,
+            'knowledge_bases' => 25,
+            'chatbots' => 25,
+            // CRM
+            'pipelines' => null,
+            // Social
+            'social_accounts' => 50,
+            'social_posts_per_month' => 1000,
+            // Leads
+            'lead_credits_per_month' => 10000,
+            // Automations
+            'automations' => null,
+        ];
+
         // Regional prices live in plan_prices (cents). USD stays on the plan row
         // as the base/fallback price, so installs that predate plan_prices keep
         // working. Annual = 10 months, i.e. two months free.
@@ -45,7 +78,7 @@ class PlanSeeder extends Seeder
             [
                 'name' => 'Free Trial',
                 'slug' => 'trial',
-                'description' => '60 days of full access — every feature, no limits.',
+                'description' => '60 days of full access — every feature unlocked, with Business-level data limits.',
                 'currency_code' => 'USD',
                 'price_cents' => 0,
                 'interval' => 'month',
@@ -54,12 +87,14 @@ class PlanSeeder extends Seeder
                 'trial_days' => 60,
                 'features' => [
                     'Every feature unlocked for 60 days',
-                    'Unlimited team members',
-                    'Unlimited WhatsApp, campaigns, AI & automations',
+                    'Business-level data limits: 30 users · 250,000 contacts · 250 GB',
+                    '10 WhatsApp accounts · 100,000 messages/month · 25 chatbots',
                     'No credit card required',
                 ],
-                // null limits + null feature flags = unlimited and fully enabled.
-                'limits' => null,
+                // Feature flags stay null (unlimited) while data limits match
+                // Business, so the trial feels fully open without letting a
+                // single signup grow storage or row counts without bound.
+                'limits' => $businessLimits,
                 'white_label_enabled' => true,
                 'feature_flags' => $trialFeatureFlags,
                 'sort_order' => 0,
@@ -282,26 +317,7 @@ class PlanSeeder extends Seeder
                     'AI SDR · unlimited automations · 25 chatbots',
                     'Dedicated support + SLA + onboarding',
                 ],
-                'limits' => [
-                    'users' => 30,
-                    'storage' => 256000,
-                    'max_contacts' => 250000,
-                    'whatsapp_accounts' => 10,
-                    'whatsapp_templates' => 200,
-                    'whatsapp_messages_per_month' => 100000,
-                    'campaigns_per_month' => 100,
-                    'sms_per_month' => 50000,
-                    'emails_per_month' => 100000,
-                    'inbox_agents' => 30,
-                    'ai_tokens_per_month' => 10000000,
-                    'knowledge_bases' => 25,
-                    'chatbots' => 25,
-                    'pipelines' => null,
-                    'social_accounts' => 50,
-                    'social_posts_per_month' => 1000,
-                    'lead_credits_per_month' => 10000,
-                    'automations' => null,
-                ],
+                'limits' => $businessLimits,
                 'white_label_enabled' => true,
                 'feature_flags' => [
                     'multi_pipeline' => true,

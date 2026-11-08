@@ -2,6 +2,7 @@
 
 namespace App\Modules\Social\Models;
 
+use App\Support\Tenancy\WorkspacePivot;
 use Illuminate\Database\Eloquent\Model;
 
 class SocialAccount extends Model
@@ -26,7 +27,9 @@ class SocialAccount extends Model
 
     public function posts()
     {
-        return $this->belongsToMany(SocialPost::class, 'social_media_post_accounts', 'social_account_id', 'post_id');
+        return $this->belongsToMany(SocialPost::class, 'social_media_post_accounts', 'social_account_id', 'post_id')
+            ->using(WorkspacePivot::class)
+            ->withPivot('workspace_id');
     }
 
     public function isTokenExpired(): bool

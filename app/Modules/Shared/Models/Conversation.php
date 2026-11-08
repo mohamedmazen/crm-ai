@@ -6,6 +6,7 @@ use App\Models\InternalNote;
 use App\Models\User;
 use App\Modules\Inbox\Models\ConversationActivity;
 use App\Modules\Inbox\Models\InboxLabel;
+use App\Support\Tenancy\WorkspacePivot;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -136,7 +137,9 @@ class Conversation extends Model
             'inbox_label_conversation',
             'conversation_id',
             'label_id'
-        );
+        )
+            ->using(WorkspacePivot::class)
+            ->withPivot('workspace_id');
     }
 
     public function assignedUser(): BelongsTo

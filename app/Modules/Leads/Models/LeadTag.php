@@ -3,6 +3,7 @@
 namespace App\Modules\Leads\Models;
 
 use App\Models\Workspace;
+use App\Support\Tenancy\WorkspacePivot;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -27,6 +28,8 @@ class LeadTag extends Model
 
     public function leads(): BelongsToMany
     {
-        return $this->belongsToMany(Lead::class, 'lead_tag_pivot', 'tag_id', 'lead_id');
+        return $this->belongsToMany(Lead::class, 'lead_tag_pivot', 'tag_id', 'lead_id')
+            ->using(WorkspacePivot::class)
+            ->withPivot('workspace_id');
     }
 }

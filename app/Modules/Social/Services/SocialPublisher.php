@@ -61,12 +61,13 @@ class SocialPublisher
         foreach ($accounts as $account) {
             $link = SocialPostAccount::firstOrCreate(
                 ['post_id' => $post->id, 'social_account_id' => $account->id],
-                ['status' => 'pending']
+                ['status' => 'pending', 'workspace_id' => $post->workspace_id]
             );
 
             // On job retry, skip accounts already successfully published.
             if ($link->status === 'published') {
                 $results[$account->id] = ['status' => 'published', 'post_id' => $link->platform_post_id];
+
                 continue;
             }
 

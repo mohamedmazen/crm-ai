@@ -22,22 +22,38 @@ function UsageBanner({ usage }) {
     const { t } = useTranslation();
     const [dismissed, setDismissed] = useState(false);
 
-    const overThreshold = Object.entries(usage ?? {}).filter(([, v]) => v.percent >= 80);
+    const entries = Object.entries(usage ?? {});
+    const overLimit = entries.filter(([, v]) => v.is_over);
+    const nearLimit = entries.filter(([, v]) => ! v.is_over && v.percent >= 80);
 
-    if (dismissed || overThreshold.length === 0) return null;
+    if (dismissed || (overLimit.length === 0 && nearLimit.length === 0)) return null;
 
-    const worst = overThreshold.sort((a, b) => b[1].percent - a[1].percent)[0];
-    const [key, data] = worst;
+    // An over-limit resource is more urgent than one merely near its cap, and
+    // the worse overage matters most. Fall back to the highest percentage.
+    const isOver = overLimit.length > 0;
+    const [key, data] = (isOver ? overLimit : nearLimit).sort(
+        (a, b) => (b[1].over_by ?? 0) - (a[1].over_by ?? 0) || b[1].percent - a[1].percent,
+    )[0];
     const label = key.replace(/_per_month$/, '').replace(/_/g, ' ');
 
     return (
-        <div className="flex items-center justify-between gap-4 bg-amber-50 dark:bg-amber-900/20 border-b border-amber-200 dark:border-amber-800 px-4 py-2 text-sm">
-            <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300">
+        <div className={[
+            'flex items-center justify-between gap-4 border-b px-4 py-2 text-sm',
+            isOver
+                ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
+                : 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800',
+        ].join(' ')}>
+            <div className={[
+                'flex items-center gap-2',
+                isOver ? 'text-red-800 dark:text-red-300' : 'text-amber-800 dark:text-amber-300',
+            ].join(' ')}>
                 <svg className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                 </svg>
                 <span>
-                    {t('ui.usage_banner', { percent: data.percent, label, current: data.current, limit: data.limit })}{' '}
+                    {isOver
+                        ? t('ui.over_limit_banner', { label, current: data.current, limit: data.limit, over: data.over_by })
+                        : t('ui.usage_banner', { percent: data.percent, label, current: data.current, limit: data.limit })}{' '}
                     <Link href={safeRoute('client.pricing')} className="font-semibold underline hover:no-underline">
                         {t('ui.usage_banner_upgrade')}
                     </Link>{' '}
@@ -46,7 +62,12 @@ function UsageBanner({ usage }) {
             </div>
             <button
                 onClick={() => setDismissed(true)}
-                className="flex-shrink-0 text-amber-700 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-200"
+                className={[
+                    'flex-shrink-0',
+                    isOver
+                        ? 'text-red-700 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200'
+                        : 'text-amber-700 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-200',
+                ].join(' ')}
                 aria-label={t('common.dismiss')}
             >
                 <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">

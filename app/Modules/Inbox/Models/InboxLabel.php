@@ -4,6 +4,7 @@ namespace App\Modules\Inbox\Models;
 
 use App\Models\Workspace;
 use App\Modules\Shared\Models\Conversation;
+use App\Support\Tenancy\WorkspacePivot;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -21,6 +22,8 @@ class InboxLabel extends Model
 
     public function conversations(): BelongsToMany
     {
-        return $this->belongsToMany(Conversation::class, 'inbox_label_conversation', 'label_id', 'conversation_id');
+        return $this->belongsToMany(Conversation::class, 'inbox_label_conversation', 'label_id', 'conversation_id')
+            ->using(WorkspacePivot::class)
+            ->withPivot('workspace_id');
     }
 }

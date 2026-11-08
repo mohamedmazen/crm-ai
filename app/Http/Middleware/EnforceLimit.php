@@ -2,11 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use App\Modules\AI\Models\AiChatbot;
-use App\Modules\AI\Models\AiKnowledgeBase;
-use App\Modules\Automation\Models\Automation;
 use App\Modules\Broadcasting\Models\UsageMeter;
-use App\Modules\Leads\Models\LeadPipeline;
+use App\Services\PlanUsage;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -66,7 +63,16 @@ class EnforceLimit
 
         if ($usage >= $limit) {
             $limitLabel = $limitKey === 'users' ? 'team seats' : str_replace('_', ' ', $limitKey);
-            $message = "You've reached your {$limitLabel} limit ({$usage}/{$limit}).";
+            $isOver = $usage > $limit;
+            $overBy = max(0, $usage - $limit);
+
+            // A workspace can be over the cap after moving to a smaller plan.
+            // Nothing is deleted: existing data stays fully usable, only new
+            // creations are refused. Say so explicitly instead of reporting a
+            // nonsensical 120000/50000 "reached" state.
+            $message = $isOver
+                ? "Your workspace is over its {$limitLabel} limit ({$usage}/{$limit}, {$overBy} over). Existing data stays usable, but you cannot add more until you are under the limit or upgrade."
+                : "You've reached your {$limitLabel} limit ({$usage}/{$limit}).";
 
             if ($request->expectsJson()) {
                 return response()->json([
@@ -74,6 +80,8 @@ class EnforceLimit
                     'upgrade_required' => true,
                     'limit' => $limit,
                     'current' => $usage,
+                    'over_by' => $overBy,
+                    'is_over' => $isOver,
                     'key' => $limitKey,
                 ], 402);
             }
@@ -92,12 +100,7 @@ class EnforceLimit
      */
     private function countCurrent(int $workspaceId, string $meterKey): int
     {
-        return match ($meterKey) {
-            'knowledge_bases' => AiKnowledgeBase::where('workspace_id', $workspaceId)->count(),
-            'chatbots' => AiChatbot::where('workspace_id', $workspaceId)->count(),
-            'pipelines' => LeadPipeline::where('workspace_id', $workspaceId)->count(),
-            'automations' => Automation::where('workspace_id', $workspaceId)->count(),
-            default => UsageMeter::current($workspaceId, $meterKey),
-        };
+        return PlanUsage::countedRows($workspaceId, $meterKey)
+            ?? UsageMeter::current($workspaceId, $meterKey);
     }
 }

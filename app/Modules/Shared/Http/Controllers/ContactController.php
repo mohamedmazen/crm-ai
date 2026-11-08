@@ -376,7 +376,7 @@ class ContactController extends Controller
             foreach ($contactIds as $contactId) {
                 foreach ($tagIds as $tagId) {
                     if (! isset($existing[$contactId.':'.$tagId])) {
-                        $inserts[] = ['contact_id' => $contactId, 'tag_id' => $tagId];
+                        $inserts[] = ['contact_id' => $contactId, 'tag_id' => $tagId, 'workspace_id' => $workspaceId];
                     }
                 }
             }
@@ -427,7 +427,7 @@ class ContactController extends Controller
             foreach ($contactIds as $contactId) {
                 foreach ($segmentIds as $segmentId) {
                     if (! isset($existing[$contactId.':'.$segmentId])) {
-                        $inserts[] = ['contact_id' => $contactId, 'segment_id' => $segmentId];
+                        $inserts[] = ['contact_id' => $contactId, 'segment_id' => $segmentId, 'workspace_id' => $workspaceId];
                     }
                 }
             }

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Social\Models;
 
+use App\Support\Tenancy\WorkspacePivot;
 use Illuminate\Database\Eloquent\Model;
 
 class SocialPost extends Model
@@ -29,6 +30,8 @@ class SocialPost extends Model
 
     public function accounts()
     {
-        return $this->belongsToMany(SocialAccount::class, 'social_media_post_accounts', 'post_id', 'social_account_id');
+        return $this->belongsToMany(SocialAccount::class, 'social_media_post_accounts', 'post_id', 'social_account_id')
+            ->using(WorkspacePivot::class)
+            ->withPivot('workspace_id');
     }
 }

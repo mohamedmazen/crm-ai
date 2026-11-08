@@ -22,24 +22,26 @@ class PlanSeederTest extends TestCase
     {
         $starter = Plan::where('slug', 'starter')->firstOrFail();
 
-        $this->assertFalse($starter->hasFeature('multi_pipeline'));
-        $this->assertFalse($starter->hasFeature('tasks'));
-        $this->assertFalse($starter->hasFeature('companies'));
-        $this->assertFalse($starter->hasFeature('lead_import'));
-        $this->assertFalse($starter->hasFeature('duplicates'));
+        // Starter v2: a single pipeline cap, but the small-team modules are in.
+        $this->assertTrue($starter->hasFeature('multi_pipeline'));
+        $this->assertSame(2, $starter->featureLimit('multi_pipeline'));
+        $this->assertTrue($starter->hasFeature('tasks'));
+        $this->assertTrue($starter->hasFeature('companies'));
+        $this->assertTrue($starter->hasFeature('lead_import'));
+        $this->assertTrue($starter->hasFeature('duplicates'));
         $this->assertFalse($starter->hasFeature('booking'));
-        $this->assertFalse($starter->hasFeature('sales_reports'));
-        $this->assertFalse($starter->hasFeature('quotes'));
+        $this->assertTrue($starter->hasFeature('sales_reports'));
+        $this->assertTrue($starter->hasFeature('quotes'));
         $this->assertFalse($starter->hasFeature('api_access'));
         $this->assertFalse($starter->hasFeature('white_label'));
 
         $this->assertTrue($starter->hasFeature('custom_fields'));
-        $this->assertSame(5, $starter->featureLimit('custom_fields'));
+        $this->assertSame(10, $starter->featureLimit('custom_fields'));
 
         $this->assertTrue($starter->hasFeature('forms'));
-        $this->assertSame(1, $starter->featureLimit('forms'));
+        $this->assertSame(3, $starter->featureLimit('forms'));
 
-        $this->assertSame(100, $starter->featureLimit('form_submissions'));
+        $this->assertSame(300, $starter->featureLimit('form_submissions'));
         $this->assertSame(0, $starter->featureLimit('sequences'));
     }
 

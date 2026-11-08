@@ -2,6 +2,7 @@
 
 namespace App\Modules\Shared\Models;
 
+use App\Support\Tenancy\WorkspacePivot;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -19,6 +20,8 @@ class Segment extends Model
 
     public function contacts(): BelongsToMany
     {
-        return $this->belongsToMany(Contact::class, 'segment_contact');
+        return $this->belongsToMany(Contact::class, 'segment_contact')
+            ->using(WorkspacePivot::class)
+            ->withPivot('workspace_id');
     }
 }

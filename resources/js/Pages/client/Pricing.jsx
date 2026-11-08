@@ -175,6 +175,26 @@ export default function Pricing({
                                             </li>
                                         )}
                                     </ul>
+
+                                    {! plan.data_fits && plan.blocking_limits?.length > 0 && (
+                                        <div className="mt-4 rounded-soft border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-300">
+                                            <p className="font-semibold">
+                                                {t('pricing.data_over_limit_title', { plan: plan.name })}
+                                            </p>
+                                            <ul className="mt-1 space-y-0.5">
+                                                {plan.blocking_limits.map((limit) => (
+                                                    <li key={limit.key}>
+                                                        {t('pricing.data_over_limit_item', {
+                                                            label: limit.label,
+                                                            current: limit.current,
+                                                            limit: limit.limit,
+                                                        })}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                            <p className="mt-1">{t('pricing.data_over_limit_hint')}</p>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* CTA */}

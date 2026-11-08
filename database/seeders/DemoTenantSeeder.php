@@ -607,6 +607,7 @@ abstract class DemoTenantSeeder extends Seeder
                 DB::table('inbox_label_conversation')->insertOrIgnore([
                     'label_id' => $label->id,
                     'conversation_id' => $conversation->id,
+                    'workspace_id' => $this->workspaceId,
                 ]);
             }
         }

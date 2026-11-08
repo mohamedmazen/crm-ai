@@ -3,6 +3,7 @@
 namespace App\Modules\Leads\Models;
 
 use App\Models\Workspace;
+use App\Support\Tenancy\WorkspacePivot;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -33,7 +34,9 @@ class LeadDuplicateGroup extends Model
 
     public function leads(): BelongsToMany
     {
-        return $this->belongsToMany(Lead::class, 'lead_duplicate_group_members', 'group_id', 'lead_id');
+        return $this->belongsToMany(Lead::class, 'lead_duplicate_group_members', 'group_id', 'lead_id')
+            ->using(WorkspacePivot::class)
+            ->withPivot('workspace_id');
     }
 
     public function scopeForWorkspace(Builder $query, int $workspaceId): Builder

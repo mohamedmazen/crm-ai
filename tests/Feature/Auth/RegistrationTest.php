@@ -58,12 +58,19 @@ class RegistrationTest extends TestCase
 
         $this->assertNotNull($plan);
         $this->assertSame('trial', $plan->slug);
-        // 100% of features are unlocked, with no numeric ceilings.
+        // 100% of features are unlocked, with no numeric feature ceilings.
         $this->assertTrue($plan->hasFeature('ai_sdr'));
         $this->assertTrue($plan->hasFeature('white_label'));
         $this->assertTrue($plan->hasFeature('sales_reports'));
-        $this->assertNull($plan->limitValue('users'));
-        $this->assertNull($plan->limitValue('ai_tokens_per_month'));
+        $this->assertNull($plan->limitValue('pipelines'));
+        $this->assertNull($plan->limitValue('automations'));
+
+        // Data is bounded by Business limits so a trial signup cannot grow the
+        // platform's storage or row counts without limit.
+        $this->assertSame(30, $plan->limitValue('users'));
+        $this->assertSame(250000, $plan->limitValue('max_contacts'));
+        $this->assertSame(256000, $plan->limitValue('storage'));
+        $this->assertSame(10000000, $plan->limitValue('ai_tokens_per_month'));
     }
 
     public function test_registration_succeeds_when_no_trial_plan_is_seeded(): void

@@ -7,6 +7,7 @@ use App\Modules\Leads\Services\CompanyMatcher;
 use App\Modules\Sales\Models\LeadSource;
 use App\Modules\Shared\Models\Contact;
 use App\Support\Concerns\MasksDemoData;
+use App\Support\Tenancy\WorkspacePivot;
 use Database\Factories\LeadFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -129,7 +130,9 @@ class Lead extends Model
 
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(LeadTag::class, 'lead_tag_pivot', 'lead_id', 'tag_id');
+        return $this->belongsToMany(LeadTag::class, 'lead_tag_pivot', 'lead_id', 'tag_id')
+            ->using(WorkspacePivot::class)
+            ->withPivot('workspace_id');
     }
 
     /** Follow-up history, newest first. */

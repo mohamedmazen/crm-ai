@@ -4,6 +4,7 @@ namespace App\Modules\Shared\Models;
 
 use App\Services\StorageManager;
 use App\Support\Concerns\MasksDemoData;
+use App\Support\Tenancy\WorkspacePivot;
 use Database\Factories\ContactFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -100,12 +101,16 @@ class Contact extends Model
 
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(ContactTag::class, 'contact_tag_pivot', 'contact_id', 'tag_id');
+        return $this->belongsToMany(ContactTag::class, 'contact_tag_pivot', 'contact_id', 'tag_id')
+            ->using(WorkspacePivot::class)
+            ->withPivot('workspace_id');
     }
 
     public function segments(): BelongsToMany
     {
-        return $this->belongsToMany(Segment::class, 'segment_contact');
+        return $this->belongsToMany(Segment::class, 'segment_contact')
+            ->using(WorkspacePivot::class)
+            ->withPivot('workspace_id');
     }
 
     public function conversations(): HasMany

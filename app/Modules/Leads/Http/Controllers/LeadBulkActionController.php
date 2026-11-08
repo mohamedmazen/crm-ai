@@ -119,7 +119,7 @@ class LeadBulkActionController extends Controller
             foreach ($leadIds as $leadId) {
                 foreach ($tagIds as $tagId) {
                     if (! isset($existing[$leadId.':'.$tagId])) {
-                        $inserts[] = ['lead_id' => $leadId, 'tag_id' => $tagId];
+                        $inserts[] = ['lead_id' => $leadId, 'tag_id' => $tagId, 'workspace_id' => $wid];
                     }
                 }
             }
