@@ -2,7 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Modules\AI\Models\AiChatbot;
+use App\Modules\AI\Models\AiKnowledgeBase;
+use App\Modules\Automation\Models\Automation;
 use App\Modules\Broadcasting\Models\UsageMeter;
+use App\Modules\Leads\Models\LeadPipeline;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -50,14 +54,14 @@ class EnforceLimit
 
             $usage = $user->client->seatUsage();
         } else {
-            $workspaceId = $request->session()->get('current_workspace_id') ?? $user->workspace_id;
+            $workspaceId = (int) ($user->current_workspace_id ?? $user->workspace_id);
 
             if (! $workspaceId) {
                 return $next($request);
             }
 
             $meterKey = $countKey ?: $limitKey;
-            $usage = UsageMeter::current((int) $workspaceId, $meterKey);
+            $usage = $this->countCurrent($workspaceId, $meterKey);
         }
 
         if ($usage >= $limit) {
@@ -79,5 +83,21 @@ class EnforceLimit
         }
 
         return $next($request);
+    }
+
+    /**
+     * Count-based limits (rows that exist right now) versus monthly meters
+     * (events that accumulate per period). Keys not listed here fall back to
+     * UsageMeter, which is what WhatsApp messages, campaigns and AI tokens use.
+     */
+    private function countCurrent(int $workspaceId, string $meterKey): int
+    {
+        return match ($meterKey) {
+            'knowledge_bases' => AiKnowledgeBase::where('workspace_id', $workspaceId)->count(),
+            'chatbots' => AiChatbot::where('workspace_id', $workspaceId)->count(),
+            'pipelines' => LeadPipeline::where('workspace_id', $workspaceId)->count(),
+            'automations' => Automation::where('workspace_id', $workspaceId)->count(),
+            default => UsageMeter::current($workspaceId, $meterKey),
+        };
     }
 }

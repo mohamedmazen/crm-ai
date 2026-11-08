@@ -22,7 +22,7 @@ Route::middleware(['web', 'client-app'])->prefix('app/ai')->name('client.ai.')->
 
     // Chatbots
     Route::get('/chatbots', [AiChatbotController::class, 'index'])->name('chatbots.index');
-    Route::post('/chatbots', [AiChatbotController::class, 'store'])->name('chatbots.store');
+    Route::post('/chatbots', [AiChatbotController::class, 'store'])->name('chatbots.store')->middleware('limit:chatbots');
     Route::put('/chatbots/{chatbot}', [AiChatbotController::class, 'update'])->name('chatbots.update');
     Route::delete('/chatbots/{chatbot}', [AiChatbotController::class, 'destroy'])->name('chatbots.destroy');
     Route::post('/chatbots/{chatbot}/playground', [AiChatbotController::class, 'playground'])->name('chatbots.playground')->middleware('limit:ai_tokens_per_month,ai_tokens');

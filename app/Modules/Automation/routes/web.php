@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'client-app'])->prefix('app/automations')->name('client.automations.')->group(function () {
     Route::get('/', [AutomationController::class, 'index'])->name('index');
-    Route::post('/', [AutomationController::class, 'store'])->name('store');
+    Route::post('/', [AutomationController::class, 'store'])->name('store')->middleware('limit:automations');
     Route::post('/generate', [AutomationController::class, 'generate'])->name('generate');
     // Must stay above /{automation}: a PUT to /business-hours would otherwise
     // bind "business-hours" to the automation update route.

@@ -40,6 +40,7 @@ class PlanController extends Controller
             'social_posts_per_month',
             'lead_credits_per_month',
             'automations',
+            'max_contacts',
         ];
     }
 

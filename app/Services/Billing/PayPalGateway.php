@@ -59,16 +59,19 @@ class PayPalGateway implements BillingGatewayInterface
         return $res->json('access_token');
     }
 
-    public function createCheckout(User $user, Plan $plan, string $billingCycle): array
+    public function createCheckout(User $user, Plan $plan, string $billingCycle, ?string $currency = null): array
     {
         if (! $this->isConfigured()) {
             return ['error' => 'PayPal is not configured.'];
         }
 
-        $priceCents = $plan->priceCentsForCycle($billingCycle);
-        if ($priceCents === null || $priceCents <= 0) {
+        $quote = $plan->priceQuote($billingCycle, $currency);
+        if ($quote === null || $quote['cents'] <= 0) {
             return ['error' => 'Plan has no price for this billing cycle.'];
         }
+
+        $priceCents = $quote['cents'];
+        $billingCurrency = $quote['currency'];
 
         $token = $this->getAccessToken();
         if (! $token) {
@@ -77,7 +80,6 @@ class PayPalGateway implements BillingGatewayInterface
 
         $amount = number_format($priceCents / 100, 2, '.', '');
         $interval = $billingCycle === 'year' ? 'YEAR' : 'MONTH';
-        $currency = $plan->currency_code ?? 'USD';
 
         // 1) Create product
         $productRes = Http::withToken($token)
@@ -112,7 +114,7 @@ class PayPalGateway implements BillingGatewayInterface
                         'sequence' => 1,
                         'total_cycles' => 0,
                         'pricing_scheme' => [
-                            'fixed_price' => ['value' => $amount, 'currency_code' => $currency],
+                            'fixed_price' => ['value' => $amount, 'currency_code' => $billingCurrency],
                         ],
                     ],
                 ],

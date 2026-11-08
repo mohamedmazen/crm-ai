@@ -1,6 +1,23 @@
 <?php
 
 return [
+    /*
+    |--------------------------------------------------------------------------
+    | Regional price currencies
+    |--------------------------------------------------------------------------
+    |
+    | Plans carry explicit prices in these currencies (plan_prices). Visitors
+    | can switch between them on the pricing page; other display currencies
+    | are converted for display only and cannot be billed.
+    |
+    */
+    'regions' => [
+        'EGP' => ['ar' => 'مصر', 'en' => 'Egypt'],
+        'SAR' => ['ar' => 'السعودية', 'en' => 'Saudi Arabia'],
+        'AED' => ['ar' => 'الإمارات', 'en' => 'United Arab Emirates'],
+        'USD' => ['ar' => 'دولي', 'en' => 'International'],
+    ],
+
     'gateways' => [
         'stripe' => [
             'enabled' => env('BILLING_STRIPE_ENABLED', false),

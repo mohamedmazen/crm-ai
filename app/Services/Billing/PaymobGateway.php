@@ -93,18 +93,19 @@ class PaymobGateway implements BillingGatewayInterface
         return $res->json('token');
     }
 
-    public function createCheckout(User $user, Plan $plan, string $billingCycle): array
+    public function createCheckout(User $user, Plan $plan, string $billingCycle, ?string $currency = null): array
     {
         if (! $this->isConfigured()) {
             return ['error' => 'Paymob is not configured.'];
         }
 
-        $priceCents = $plan->priceCentsForCycle($billingCycle);
-        if ($priceCents === null || $priceCents <= 0) {
+        $quote = $plan->priceQuote($billingCycle, $currency);
+        if ($quote === null || $quote['cents'] <= 0) {
             return ['error' => 'Plan has no price for this billing cycle.'];
         }
 
-        $currency = strtoupper($plan->currency_code ?? 'EGP');
+        $priceCents = $quote['cents'];
+        $chargeCurrency = $quote['currency'];
 
         // 1) Auth token.
         $authToken = $this->authToken();
@@ -117,7 +118,7 @@ class PaymobGateway implements BillingGatewayInterface
             'auth_token' => $authToken,
             'delivery_needed' => false,
             'amount_cents' => (string) $priceCents,
-            'currency' => $currency,
+            'currency' => $chargeCurrency,
             'merchant_order_id' => 'sub_'.$user->id.'_'.time(),
             'items' => [
                 [
@@ -149,7 +150,7 @@ class PaymobGateway implements BillingGatewayInterface
             'amount_cents' => (string) $priceCents,
             'expiration' => 3600,
             'order_id' => $orderId,
-            'currency' => $currency,
+            'currency' => $chargeCurrency,
             'integration_id' => $this->integrationId,
             'billing_data' => [
                 'first_name' => $nameParts[0],
@@ -372,10 +373,13 @@ class PaymobGateway implements BillingGatewayInterface
             return ['ok' => false, 'error' => 'Plan not found.'];
         }
 
-        $priceCents = $plan->priceCentsForCycle($subscription->billing_cycle ?? 'month');
-        if ($priceCents === null || $priceCents <= 0) {
+        $priceQuote = $plan->priceQuote($subscription->billing_cycle ?? 'month', $currency);
+        if ($priceQuote === null || $priceQuote['cents'] <= 0) {
             return ['ok' => false, 'error' => 'Plan has no price for this billing cycle.'];
         }
+
+        $priceCents = $priceQuote['cents'];
+        $currency = $priceQuote['currency'];
 
         // Auth.
         $authToken = $this->authToken();

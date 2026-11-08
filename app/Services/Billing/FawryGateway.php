@@ -74,18 +74,22 @@ class FawryGateway implements BillingGatewayInterface
         return Http::acceptJson()->asJson();
     }
 
-    public function createCheckout(User $user, Plan $plan, string $billingCycle): array
+    public function createCheckout(User $user, Plan $plan, string $billingCycle, ?string $currency = null): array
     {
         if (! $this->isConfigured()) {
             return ['error' => 'Fawry is not configured.'];
         }
 
-        $priceCents = $plan->priceCentsForCycle($billingCycle);
-        if ($priceCents === null || $priceCents <= 0) {
+        $quote = $plan->priceQuote($billingCycle, $currency);
+        if ($quote === null || $quote['cents'] <= 0) {
             return ['error' => 'Plan has no price for this billing cycle.'];
         }
 
-        $amount = number_format($priceCents / 100, 2, '.', '');
+        if ($quote['currency'] !== 'EGP') {
+            return ['error' => 'Fawry only supports EGP payments.'];
+        }
+
+        $amount = number_format($quote['cents'] / 100, 2, '.', '');
 
         // Encode user/plan/cycle in the merchant reference so the webhook can recover them.
         $merchantRefNum = $this->buildMerchantRefNum($user, $plan, $billingCycle);
@@ -326,7 +330,7 @@ class FawryGateway implements BillingGatewayInterface
         $paid = (float) ($data['paymentAmount'] ?? $data['orderAmount'] ?? 0);
         $amountCents = $paid > 0
             ? $this->minorAmount($paid)
-            : ($plan->priceCentsForCycle($meta['billing_cycle']) ?? 0);
+            : ($plan->priceQuote($meta['billing_cycle'], $currency)['cents'] ?? 0);
 
         $renewal = $this->nextRenewal($meta['billing_cycle']);
         $fawryRef = (string) ($data['fawryRefNumber'] ?? $data['referenceNumber'] ?? '');

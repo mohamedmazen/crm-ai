@@ -82,19 +82,19 @@ class MyFatoorahGateway implements BillingGatewayInterface
         return round($cents / 100, $decimals);
     }
 
-    public function createCheckout(User $user, Plan $plan, string $billingCycle): array
+    public function createCheckout(User $user, Plan $plan, string $billingCycle, ?string $currency = null): array
     {
         if (! $this->isConfigured()) {
             return ['error' => 'MyFatoorah is not configured.'];
         }
 
-        $priceCents = $plan->priceCentsForCycle($billingCycle);
-        if ($priceCents === null || $priceCents <= 0) {
+        $quote = $plan->priceQuote($billingCycle, $currency);
+        if ($quote === null || $quote['cents'] <= 0) {
             return ['error' => 'Plan has no price for this billing cycle.'];
         }
 
-        $currency = strtoupper($plan->currency_code ?? 'KWD');
-        $amount = $this->majorAmount($priceCents, $currency);
+        $chargeCurrency = $quote['currency'];
+        $amount = $this->majorAmount($quote['cents'], $chargeCurrency);
         $name = $user->name ?? 'Customer';
 
         // Encode metadata in UserDefinedField (256 char limit).
@@ -107,14 +107,14 @@ class MyFatoorahGateway implements BillingGatewayInterface
         $body = [
             'NotificationOption' => 'LNK',
             'InvoiceValue' => $amount,
-            'CurrencyIso' => $currency,
+            'CurrencyIso' => $chargeCurrency,
             'CustomerName' => $name,
             'CustomerEmail' => $user->email ?? '',
             'CallBackUrl' => $this->successUrl,
             'ErrorUrl' => $this->cancelUrl,
             'Language' => 'en',
             'UserDefinedField' => $userField,
-            'DisplayCurrencyIso' => $currency,
+            'DisplayCurrencyIso' => $chargeCurrency,
         ];
 
         $res = $this->http()->post($this->baseUrl.'/v2/SendPayment', $body);
@@ -322,10 +322,13 @@ class MyFatoorahGateway implements BillingGatewayInterface
             return ['ok' => false, 'error' => 'Plan not found.'];
         }
 
-        $priceCents = $plan->priceCentsForCycle($subscription->billing_cycle ?? 'month');
-        if ($priceCents === null || $priceCents <= 0) {
+        $priceQuote = $plan->priceQuote($subscription->billing_cycle ?? 'month', $currency);
+        if ($priceQuote === null || $priceQuote['cents'] <= 0) {
             return ['ok' => false, 'error' => 'Plan has no price for this billing cycle.'];
         }
+
+        $priceCents = $priceQuote['cents'];
+        $currency = $priceQuote['currency'];
 
         $user = $subscription->user ?? User::find($subscription->user_id);
         $amount = $this->majorAmount($priceCents, $currency);

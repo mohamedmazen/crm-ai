@@ -17,6 +17,8 @@ export default function Pricing({
     is_authenticated = false,
     register_url = '/register',
     checkout_url = null,
+    currency = 'USD',
+    currency_options = [],
 }) {
     const { t } = useTranslation();
     const [billingCycle, setBillingCycle]     = useState('month');
@@ -38,6 +40,7 @@ export default function Pricing({
             plan_id:       planId,
             billing_cycle: billingCycle,
             gateway:       gatewayKey,
+            currency:      currency,
         }, {
             preserveScroll: true,
             onFinish: () => setLoadingGateway(null),
@@ -49,6 +52,15 @@ export default function Pricing({
             return is_authenticated ? route('client.dashboard') : register_url;
         }
         return `${register_url}?plan_id=${plan.id}&cycle=${billingCycle}`;
+    };
+
+    const switchCurrency = (code) => {
+        if (code === currency) return;
+        router.get(route('pricing'), { currency: code }, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        });
     };
 
     return (
@@ -83,6 +95,24 @@ export default function Pricing({
                         </button>
                     </div>
                 </div>
+
+                {currency_options.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+                            {t('pricing.currency')}
+                        </span>
+                        {currency_options.map((option) => (
+                            <button
+                                key={option.code}
+                                type="button"
+                                onClick={() => switchCurrency(option.code)}
+                                className={`rounded-full border px-3 py-1 text-xs font-medium transition ${currency === option.code ? 'border-brand-500 bg-brand-50 text-brand-700 dark:border-brand-400 dark:bg-brand-900/30 dark:text-brand-300' : 'border-neutral-200 text-neutral-600 hover:border-neutral-300 dark:border-neutral-700 dark:text-neutral-300'}`}
+                            >
+                                {option.label} · {option.code}
+                            </button>
+                        ))}
+                    </div>
+                )}
 
                 {(flashError || hasCanceled) && (
                     <div className="rounded-soft-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">

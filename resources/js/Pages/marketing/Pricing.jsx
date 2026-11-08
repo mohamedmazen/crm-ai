@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import LandingLayout from '@/Layouts/LandingLayout';
 import { useTranslation } from 'react-i18next';
 
@@ -25,10 +25,19 @@ function StarRating() {
     );
 }
 
-export default function Pricing({ landing = {}, plans = [], canRegister }) {
+export default function Pricing({ landing = {}, plans = [], canRegister, currency = 'USD', currency_options = [] }) {
     const { t } = useTranslation();
     const [yearly, setYearly] = useState(false);
     const s = (key, def = '') => landing[`landing.${key}`] ?? def;
+
+    const switchCurrency = (code) => {
+        if (code === currency) return;
+        router.get(route('pricing'), { currency: code }, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        });
+    };
 
     const faqs = [1, 2, 3, 4, 5].map((i) => ({
         q: s(`faq_${i}_q`),
@@ -88,9 +97,23 @@ export default function Pricing({ landing = {}, plans = [], canRegister }) {
                             className={`rounded-lg px-5 py-2 text-sm font-semibold transition-all flex items-center gap-2 ${yearly ? 'bg-white text-neutral-900 shadow' : 'text-white/70 hover:text-white'}`}
                         >
                             {t('welcome.yearly')}
-                            <span className="rounded-full text-xs px-1.5 py-0.5 font-bold" style={{ background: 'rgb(var(--brand-600))', color: '#ffffff' }}>-20%</span>
+                            <span className="rounded-full text-xs px-1.5 py-0.5 font-bold" style={{ background: 'rgb(var(--brand-600))', color: '#ffffff' }}>{t('pricing.save_15')}</span>
                         </button>
                     </div>
+
+                    {currency_options.length > 0 && (
+                        <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+                            {currency_options.map((option) => (
+                                <button
+                                    key={option.code}
+                                    onClick={() => switchCurrency(option.code)}
+                                    className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${currency === option.code ? 'border-white/40 bg-white text-neutral-900' : 'border-white/20 text-white/70 hover:text-white'}`}
+                                >
+                                    {option.label} · {option.code}
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </section>
 
@@ -100,9 +123,11 @@ export default function Pricing({ landing = {}, plans = [], canRegister }) {
                     {plans.length === 0 ? (
                         <p className="text-center text-neutral-500 dark:text-neutral-400 py-16">{t('pricing.no_plans_yet')}</p>
                     ) : (
-                        <div className={`grid gap-6 ${plans.length <= 2 ? 'sm:grid-cols-2 max-w-2xl mx-auto' : 'sm:grid-cols-2 lg:grid-cols-3'}`}>
+                        <div className={`grid gap-6 ${plans.length <= 2 ? 'sm:grid-cols-2 max-w-2xl mx-auto' : plans.length === 4 ? 'sm:grid-cols-2 lg:grid-cols-4' : 'sm:grid-cols-2 lg:grid-cols-3'}`}>
                             {plans.map((plan) => {
                                 const price = yearly ? plan.price_yearly : plan.price_monthly;
+                                const priceDisplay = yearly ? plan.price_yearly_display : plan.price_monthly_display;
+                                const isFree = !price || parseFloat(price) <= 0;
                                 return (
                                     <div
                                         key={plan.id}
@@ -126,9 +151,9 @@ export default function Pricing({ landing = {}, plans = [], canRegister }) {
                                         </div>
                                         <div className="mt-5 mb-6">
                                             <span className={`text-4xl font-bold ${plan.is_featured ? 'text-white' : 'text-neutral-900 dark:text-white'}`}>
-                                                {price === 0 ? t('welcome.free') : `$${parseFloat(price).toFixed(0)}`}
+                                                {isFree ? t('welcome.free') : (priceDisplay ?? `$${parseFloat(price).toFixed(0)}`)}
                                             </span>
-                                            {price > 0 && (
+                                            {! isFree && (
                                                 <span className={`text-sm ml-1 ${plan.is_featured ? 'text-neutral-400' : 'text-neutral-500 dark:text-neutral-400'}`}>{yearly ? t('welcome.per_year') : t('welcome.per_month')}</span>
                                             )}
                                             {plan.trial_days > 0 && (
@@ -157,7 +182,7 @@ export default function Pricing({ landing = {}, plans = [], canRegister }) {
                                                 }`}
                                                 style={plan.is_featured ? { background: 'rgb(var(--brand-600))' } : {}}
                                             >
-                                                {price === 0 ? t('welcome.get_started_free') : t('welcome.upgrade')}
+                                                {isFree ? t('welcome.get_started_free') : t('welcome.upgrade')}
                                             </Link>
                                         )}
                                     </div>

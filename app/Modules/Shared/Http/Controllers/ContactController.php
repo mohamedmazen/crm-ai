@@ -3,6 +3,7 @@
 namespace App\Modules\Shared\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Ecommerce\Services\ContactCapacity;
 use App\Modules\Shared\Models\Contact;
 use App\Modules\Shared\Models\ContactTag;
 use App\Modules\Shared\Models\Segment;
@@ -110,6 +111,17 @@ class ContactController extends Controller
 
         $segmentIds = $validated['segment_ids'] ?? [];
         unset($validated['segment_ids']);
+
+        $hasIdentifier = ! empty($validated['phone_e164']) || ! empty($validated['email']);
+        $alreadyExists = $hasIdentifier && Contact::where('workspace_id', $workspaceId)
+            ->when($validated['phone_e164'] ?? null, fn ($q, $phone) => $q->orWhere('phone_e164', $phone))
+            ->when($validated['email'] ?? null, fn ($q, $email) => $q->orWhere('email', $email))
+            ->exists();
+
+        $remaining = app(ContactCapacity::class)->remaining($workspaceId);
+        if (! $alreadyExists && $remaining !== null && $remaining <= 0) {
+            return back()->with('error', __('You have reached your contacts limit. Upgrade your plan to add more.'));
+        }
 
         $contact = $this->contactService->upsert($workspaceId, array_merge($validated, ['source' => 'manual']));
 
@@ -230,6 +242,16 @@ class ContactController extends Controller
             return back()->withErrors(['file' => 'The CSV file appears to be empty or has no valid rows.']);
         }
 
+        $remaining = app(ContactCapacity::class)->remaining($workspaceId);
+
+        if ($remaining !== null && $remaining <= 0) {
+            return back()->withErrors(['file' => __('You have reached your contacts limit. Upgrade your plan to import more.')]);
+        }
+
+        if ($remaining !== null && count($data) > $remaining) {
+            $data = array_slice($data, 0, $remaining);
+        }
+
         $stats = $this->contactService->bulkImport($workspaceId, $data);
 
         return back()->with('success', "Imported: {$stats['created']} created, {$stats['updated']} updated, {$stats['skipped']} skipped.");
@@ -256,9 +278,12 @@ class ContactController extends Controller
             ],
         ]);
 
+        $remaining = app(ContactCapacity::class)->remaining($workspaceId);
+        $rows = $remaining === null ? $validated['rows'] : array_slice($validated['rows'], 0, $remaining);
+
         return response()->json($this->contactService->bulkImport(
             $workspaceId,
-            $validated['rows'],
+            $rows,
             tagNames: $validated['tag_names'] ?? [],
             segmentIds: $validated['segment_ids'] ?? [],
         ));

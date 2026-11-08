@@ -36,7 +36,7 @@ Route::middleware(['web', 'client-app'])->prefix('app/leads')->name('client.lead
     // Pipeline settings and multiple pipelines management
     Route::prefix('pipelines')->name('pipelines.')->group(function () {
         Route::get('/', [PipelineSettingsController::class, 'index'])->name('index')->middleware('feature:multi_pipeline');
-        Route::post('/', [PipelineSettingsController::class, 'store'])->name('store')->middleware('feature:multi_pipeline');
+        Route::post('/', [PipelineSettingsController::class, 'store'])->name('store')->middleware(['feature:multi_pipeline', 'limit:pipelines']);
         Route::put('/{pipeline}', [PipelineSettingsController::class, 'update'])->name('update');
         Route::delete('/{pipeline}', [PipelineSettingsController::class, 'destroy'])->name('destroy')->middleware('feature:multi_pipeline');
         Route::post('/reasons', [PipelineSettingsController::class, 'storeReason'])->name('reasons.store');

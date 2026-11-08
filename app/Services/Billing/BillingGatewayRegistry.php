@@ -23,6 +23,22 @@ class BillingGatewayRegistry
     /** @var array<string, BillingGatewayInterface> */
     private array $gateways = [];
 
+    /**
+     * Currencies each gateway can actually settle. Fawry is EGP-only, Paymob is
+     * our Egypt gateway, MyFatoorah covers the Gulf, and Stripe/PayPal bill USD.
+     * The pricing page only shows a gateway when it supports the selected price
+     * currency so a customer is never sent to a checkout that would charge the
+     * wrong currency.
+     */
+    private const GATEWAY_CURRENCIES = [
+        'stripe' => ['USD'],
+        'paypal' => ['USD'],
+        'paymob' => ['EGP'],
+        'myfatoorah' => ['SAR', 'AED', 'USD'],
+        'fawry' => ['EGP'],
+        'tap' => ['EGP', 'SAR', 'AED', 'USD'],
+    ];
+
     private bool $loaded = false;
 
     /**
@@ -224,12 +240,18 @@ class BillingGatewayRegistry
     /**
      * @return array<array{key: string, name: string, configured: bool}>
      */
-    public function listForFrontend(): array
+    public function listForFrontend(?string $currencyCode = null): array
     {
         $this->load();
 
+        $currencyCode = $currencyCode ? strtoupper($currencyCode) : null;
+
         $out = [];
         foreach (self::FRONTEND_GATEWAYS as $key => $fallbackLabel) {
+            if ($currencyCode !== null && ! self::supportsCurrency($key, $currencyCode)) {
+                continue;
+            }
+
             $gateway = $this->gateways[$key] ?? null;
             $out[] = [
                 'key' => $key,
@@ -239,5 +261,12 @@ class BillingGatewayRegistry
         }
 
         return $out;
+    }
+
+    public static function supportsCurrency(string $gateway, string $currencyCode): bool
+    {
+        $supported = self::GATEWAY_CURRENCIES[$gateway] ?? [];
+
+        return in_array(strtoupper($currencyCode), $supported, true);
     }
 }

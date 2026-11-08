@@ -64,6 +64,68 @@ class Plan extends Model
     }
 
     /**
+     * Regional prices for this plan, one row per currency.
+     */
+    public function prices(): HasMany
+    {
+        return $this->hasMany(PlanPrice::class);
+    }
+
+    /**
+     * Resolve the price for a billing cycle in a specific currency.
+     *
+     * Regional rows win; the plan's own currency falls back to the base
+     * `monthly_price_cents` / `yearly_price_cents` columns. A currency that has
+     * no regional row (and is not the base currency) returns null so checkout
+     * can reject it instead of silently charging the wrong amount.
+     *
+     * @return array{cents: int, currency: string}|null
+     */
+    public function priceQuote(string $cycle, ?string $currencyCode = null): ?array
+    {
+        $baseCurrency = strtoupper((string) $this->currency_code);
+        $currencyCode = strtoupper((string) ($currencyCode ?: $baseCurrency));
+
+        $regional = $this->prices->firstWhere('currency_code', $currencyCode);
+
+        if ($regional) {
+            $cents = $cycle === 'year' ? $regional->yearly_price_cents : $regional->monthly_price_cents;
+
+            if ($cents !== null) {
+                return ['cents' => (int) $cents, 'currency' => $currencyCode];
+            }
+        }
+
+        if ($currencyCode !== $baseCurrency) {
+            return null;
+        }
+
+        $cents = $this->priceCentsForCycle($cycle);
+
+        return $cents === null
+            ? null
+            : ['cents' => (int) $cents, 'currency' => $baseCurrency];
+    }
+
+    /**
+     * Currency codes this plan can be billed in, base currency included.
+     *
+     * @return list<string>
+     */
+    public function priceCurrencies(): array
+    {
+        $codes = $this->prices->pluck('currency_code')
+            ->push($this->currency_code)
+            ->filter()
+            ->map(fn (string $code) => strtoupper($code))
+            ->unique()
+            ->values()
+            ->all();
+
+        return $codes;
+    }
+
+    /**
      * Whether the plan is free — both billing cycles cost nothing.
      *
      * Mirrors the price shown on the pricing page, so registration, pricing and

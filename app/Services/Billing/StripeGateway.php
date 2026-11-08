@@ -56,28 +56,35 @@ class StripeGateway implements BillingGatewayInterface
         return $this->client;
     }
 
-    public function createCheckout(User $user, Plan $plan, string $billingCycle): array
+    public function createCheckout(User $user, Plan $plan, string $billingCycle, ?string $currency = null): array
     {
         if (! $this->isConfigured()) {
             return ['error' => 'Stripe is not configured.'];
         }
 
-        $priceCents = $plan->priceCentsForCycle($billingCycle);
-        if ($priceCents === null || $priceCents <= 0) {
+        $quote = $plan->priceQuote($billingCycle, $currency);
+        if ($quote === null || $quote['cents'] <= 0) {
             return ['error' => 'Plan has no price for this billing cycle.'];
         }
+
+        $priceCents = $quote['cents'];
+        $billingCurrency = $quote['currency'];
 
         try {
             $stripe = $this->client();
             $interval = $billingCycle === 'year' ? 'year' : 'month';
 
-            // Use pre-configured catalog price ID when available, otherwise create ad-hoc
-            $catalogPriceId = $billingCycle === 'year' ? $plan->stripe_yearly_id : $plan->stripe_monthly_id;
+            // Use pre-configured catalog price ID when available, otherwise create ad-hoc.
+            // Catalog IDs belong to the plan's base currency, so a regional checkout
+            // always creates an ad-hoc price in the customer's currency.
+            $catalogPriceId = $currency === null || strcasecmp($currency, $plan->currency_code) === 0
+                ? ($billingCycle === 'year' ? $plan->stripe_yearly_id : $plan->stripe_monthly_id)
+                : null;
             if ($catalogPriceId) {
                 $priceId = $catalogPriceId;
             } else {
                 $price = $stripe->prices->create([
-                    'currency' => strtolower($plan->currency_code ?? 'usd'),
+                    'currency' => strtolower($billingCurrency),
                     'unit_amount' => $priceCents,
                     'recurring' => ['interval' => $interval],
                     'product_data' => ['name' => $plan->name.' ('.$interval.'ly)'],

@@ -2,11 +2,12 @@
 
 namespace App\Contracts;
 
-use App\Models\Plan;
 use App\Models\PaymentTransaction;
+use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 interface BillingGatewayInterface
 {
@@ -19,15 +20,16 @@ interface BillingGatewayInterface
     /**
      * Create checkout and return redirect URL or session URL.
      * billingCycle: 'month' | 'year'
+     * currency: optional ISO code; regional plans bill in the customer's currency.
      * Returns ['url' => string] or ['error' => string].
      */
-    public function createCheckout(User $user, Plan $plan, string $billingCycle): array;
+    public function createCheckout(User $user, Plan $plan, string $billingCycle, ?string $currency = null): array;
 
     /**
      * Handle gateway webhook (verify signature, update subscription/transactions).
      * Returns Symfony Response.
      */
-    public function handleWebhook(Request $request): \Symfony\Component\HttpFoundation\Response;
+    public function handleWebhook(Request $request): Response;
 
     /** Cancel the subscription at the gateway. */
     public function cancel(Subscription $subscription): bool;

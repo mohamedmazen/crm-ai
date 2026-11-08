@@ -43,7 +43,7 @@ class PlanLimitsRegressionTest extends TestCase
         ksort($stored);
         ksort($limits);
 
-        $this->assertCount(16, $limits);
+        $this->assertCount(count(PlanController::limitKeys()), $limits);
         $this->assertSame($limits, $stored);
     }
 

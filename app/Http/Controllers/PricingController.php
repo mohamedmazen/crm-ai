@@ -20,31 +20,48 @@ class PricingController extends Controller
     public function index(Request $request): Response
     {
         $user = $request->user();
-        $displayCurrency = $user?->display_currency
+        $fallbackCurrency = $user?->display_currency
             ?? $user?->workspace?->currency_code
             ?? $request->session()->get('display_currency')
             ?? Currency::defaultCode();
 
-        $plans = Plan::where('enabled', true)
+        $regions = config('billing.regions', []);
+
+        $requestedCurrency = strtoupper((string) $request->query('currency', ''));
+        $displayCurrency = array_key_exists($requestedCurrency, $regions)
+            ? $requestedCurrency
+            : strtoupper((string) $fallbackCurrency);
+
+        $locale = app()->getLocale();
+
+        $plans = Plan::with('prices')
+            ->where('enabled', true)
             ->orderBy('sort_order')
             ->get()
             ->map(function (Plan $plan) use ($displayCurrency) {
-                $monthlyCents = $plan->priceCentsForCycle('month');
-                $yearlyCents = $plan->priceCentsForCycle('year');
+                $monthlyQuote = $plan->priceQuote('month', $displayCurrency);
+                $yearlyQuote = $plan->priceQuote('year', $displayCurrency);
+
+                $baseMonthly = $plan->priceCentsForCycle('month');
+                $baseYearly = $plan->priceCentsForCycle('year');
 
                 return [
                     'id' => $plan->id,
                     'name' => $plan->name,
                     'slug' => $plan->slug,
                     'description' => $plan->description,
-                    'monthly_price_display' => $monthlyCents !== null
-                        ? $this->currency->formatConverted($monthlyCents, $plan->currency_code, $displayCurrency)
-                        : null,
-                    'yearly_price_display' => $yearlyCents !== null
-                        ? $this->currency->formatConverted($yearlyCents, $plan->currency_code, $displayCurrency)
-                        : null,
-                    'monthly_price_cents' => $monthlyCents,
-                    'yearly_price_cents' => $yearlyCents,
+                    'monthly_price_display' => $monthlyQuote !== null
+                        ? $this->currency->format($monthlyQuote['cents'], $monthlyQuote['currency'])
+                        : ($baseMonthly !== null
+                            ? $this->currency->formatConverted($baseMonthly, $plan->currency_code, $displayCurrency)
+                            : null),
+                    'yearly_price_display' => $yearlyQuote !== null
+                        ? $this->currency->format($yearlyQuote['cents'], $yearlyQuote['currency'])
+                        : ($baseYearly !== null
+                            ? $this->currency->formatConverted($baseYearly, $plan->currency_code, $displayCurrency)
+                            : null),
+                    'monthly_price_cents' => $baseMonthly,
+                    'yearly_price_cents' => $baseYearly,
                     'features' => is_array($plan->features) ? $plan->features : [],
                     'limits' => is_array($plan->limits) ? $plan->limits : [],
                     'white_label_enabled' => (bool) $plan->white_label_enabled,
@@ -55,12 +72,22 @@ class PricingController extends Controller
                 ];
             });
 
+        $currencyOptions = collect($regions)
+            ->map(fn (array $labels, string $code) => [
+                'code' => $code,
+                'label' => $labels[$locale] ?? $labels['en'],
+            ])
+            ->values()
+            ->all();
+
         return Inertia::render('client/Pricing', [
             'plans' => $plans,
-            'gateways' => $this->gateways->listForFrontend(),
+            'gateways' => $this->gateways->listForFrontend($displayCurrency),
             'is_authenticated' => (bool) $user,
             'register_url' => route('register'),
             'checkout_url' => route('client.checkout.store'),
+            'currency' => $displayCurrency,
+            'currency_options' => $currencyOptions,
             'flash' => [
                 'error' => $request->session()->get('error'),
                 'success' => $request->session()->get('success'),

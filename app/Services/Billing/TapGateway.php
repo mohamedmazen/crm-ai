@@ -69,22 +69,23 @@ class TapGateway implements BillingGatewayInterface
         return Http::withToken($this->secretKey)->acceptJson()->asJson();
     }
 
-    public function createCheckout(User $user, Plan $plan, string $billingCycle): array
+    public function createCheckout(User $user, Plan $plan, string $billingCycle, ?string $currency = null): array
     {
         if (! $this->isConfigured()) {
             return ['error' => 'Tap is not configured.'];
         }
 
-        $priceCents = $plan->priceCentsForCycle($billingCycle);
-        if ($priceCents === null || $priceCents <= 0) {
+        $quote = $plan->priceQuote($billingCycle, $currency);
+        if ($quote === null || $quote['cents'] <= 0) {
             return ['error' => 'Plan has no price for this billing cycle.'];
         }
 
-        $currency = strtoupper($plan->currency_code ?? 'KWD');
+        $priceCents = $quote['cents'];
+        $chargeCurrency = $quote['currency'];
 
         $res = $this->http()->post(self::BASE_URL.'/charges', [
-            'amount' => $this->majorAmount($priceCents, $currency),
-            'currency' => $currency,
+            'amount' => $this->majorAmount($priceCents, $chargeCurrency),
+            'currency' => $chargeCurrency,
             'threeDSecure' => true,
             'save_card' => true,
             'description' => $plan->name.' subscription ('.$billingCycle.')',
@@ -343,12 +344,15 @@ class TapGateway implements BillingGatewayInterface
             return ['ok' => false, 'error' => 'Plan not found for subscription.'];
         }
 
-        $priceCents = $plan->priceCentsForCycle($subscription->billing_cycle ?? 'month');
-        if ($priceCents === null || $priceCents <= 0) {
+        $currency = strtoupper($meta['currency'] ?? ($plan->currency_code ?? 'KWD'));
+
+        $priceQuote = $plan->priceQuote($subscription->billing_cycle ?? 'month', $currency);
+        if ($priceQuote === null || $priceQuote['cents'] <= 0) {
             return ['ok' => false, 'error' => 'Plan has no price for this billing cycle.'];
         }
 
-        $currency = strtoupper($meta['currency'] ?? ($plan->currency_code ?? 'KWD'));
+        $priceCents = $priceQuote['cents'];
+        $currency = $priceQuote['currency'];
 
         // 1) Mint a single-use token from the saved card (tokens expire in ~5 minutes).
         $tokenRes = $this->http()->post(self::BASE_URL.'/tokens', [
