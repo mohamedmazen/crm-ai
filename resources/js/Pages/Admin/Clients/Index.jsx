@@ -295,7 +295,25 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {}, t
             header: t('admin.col_name'),
             sortable: true,
             cardTitle: true,
-            render: (c) => <span className="font-medium text-neutral-900 dark:text-neutral-100">{c.name}</span>,
+            render: (c) => {
+                // Custom domain wins (it is what the tenant is reached on), and the
+                // platform subdomain is the fallback when no custom domain is set.
+                const domain = c.custom_domain || (c.subdomain
+                    ? (tenantBaseDomain ? `${c.subdomain}.${tenantBaseDomain}` : c.subdomain)
+                    : null);
+
+                return (
+                    <div className="min-w-0">
+                        <div className="font-medium text-neutral-900 dark:text-neutral-100">{c.name}</div>
+                        {domain && (
+                            <div className="mt-0.5 flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-400" title={domain}>
+                                <Globe className="h-3 w-3 shrink-0" />
+                                <span className="truncate font-mono">{domain}</span>
+                            </div>
+                        )}
+                    </div>
+                );
+            },
         },
         {
             key: 'email',

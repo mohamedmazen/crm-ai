@@ -64,3 +64,4 @@ class R2StorageTest extends TestCase
         $this->assertSame('Cloudflare R2', IntegrationConfig::LABELS['storage_r2']);
     }
 }
+
