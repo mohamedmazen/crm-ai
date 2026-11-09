@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Whatsapp\Http\Controllers\WhatsappAutoReplyController;
+use App\Modules\Whatsapp\Http\Controllers\WhatsappCoexistenceController;
 use App\Modules\Whatsapp\Http\Controllers\WhatsappEmbeddedSignupController;
 use App\Modules\Whatsapp\Http\Controllers\WhatsappSetupController;
 use App\Modules\Whatsapp\Http\Controllers\WhatsappTemplateController;
@@ -25,6 +26,10 @@ Route::middleware(['web', 'client-app'])->prefix('app/whatsapp')->name('client.w
     Route::post('/setup/embedded-signup', [WhatsappEmbeddedSignupController::class, 'store'])->name('setup.embedded-signup');
     Route::post('/setup/manual', [WhatsappEmbeddedSignupController::class, 'manual'])->name('setup.manual');
     Route::post('/setup/{waba}/reregister-webhook', [WhatsappEmbeddedSignupController::class, 'reregisterWebhook'])->name('setup.reregister-webhook');
+    Route::post('/setup/{waba}/coexistence/consent', [WhatsappCoexistenceController::class, 'consent'])->name('setup.coexistence.consent');
+    Route::post('/setup/{waba}/coexistence/decline', [WhatsappCoexistenceController::class, 'decline'])->name('setup.coexistence.decline');
+    Route::post('/setup/{waba}/coexistence/retry-contacts', [WhatsappCoexistenceController::class, 'retryPending'])->name('setup.coexistence.retry-contacts');
+    Route::post('/setup/{waba}/coexistence/disconnect', [WhatsappCoexistenceController::class, 'disconnect'])->name('setup.coexistence.disconnect');
     Route::delete('/setup/{waba}', [WhatsappSetupController::class, 'destroy'])->name('setup.destroy');
     Route::post('/setup/{waba}/sync-phone-numbers', [WhatsappSetupController::class, 'syncPhoneNumbers'])->name('setup.sync-phone-numbers');
     Route::post('/setup/{waba}/phone/{phoneNumberId}/refresh-status', [WhatsappSetupController::class, 'refreshPhoneStatus'])->name('setup.refresh-phone-status');

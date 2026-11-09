@@ -443,6 +443,7 @@ class HandleInertiaRequests extends Middleware
             'firebase' => $this->firebasePublicConfig(),
             'metaAppId' => $this->metaAppId(),
             'metaGraphVersion' => MetaGraph::version(),
+            'whatsappCoexistenceEnabled' => (bool) config('whatsapp.coexistence.enabled', false),
         ];
     }
 

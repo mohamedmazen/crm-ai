@@ -43,6 +43,8 @@ class PlanSeederTest extends TestCase
 
         $this->assertSame(300, $starter->featureLimit('form_submissions'));
         $this->assertSame(0, $starter->featureLimit('sequences'));
+
+        $this->assertFalse($starter->hasFeature('whatsapp_coexistence'));
     }
 
     public function test_pro_unlocks_the_core_crm_and_sales_modules(): void
@@ -59,6 +61,7 @@ class PlanSeederTest extends TestCase
         $this->assertSame(10, $pro->featureLimit('forms'));
         $this->assertSame(5000, $pro->featureLimit('form_submissions'));
         $this->assertSame(5, $pro->featureLimit('sequences'));
+        $this->assertTrue($pro->hasFeature('whatsapp_coexistence'));
     }
 
     public function test_business_unlocks_everything_without_caps_where_advertised(): void

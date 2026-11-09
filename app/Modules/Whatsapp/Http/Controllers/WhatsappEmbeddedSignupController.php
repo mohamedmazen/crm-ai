@@ -12,6 +12,7 @@ use App\Modules\Whatsapp\Models\WhatsappPhoneNumber;
 use App\Modules\Whatsapp\Services\CloudApiClient;
 use App\Modules\Whatsapp\Services\WhatsappTokenInspector;
 use App\Services\AuditLogService;
+use App\Services\FeatureGate;
 use App\Support\MetaGraph;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -32,9 +33,19 @@ class WhatsappEmbeddedSignupController extends Controller
             'code' => ['required', 'string', 'max:2048'],
             'waba_id' => ['required', 'string', 'max:64'],
             'phone_number_id' => ['nullable', 'string', 'max:64'],
+            'coexistence' => ['nullable', 'boolean'],
+            'session_event' => ['nullable', 'string', 'max:64'],
         ]);
 
         $workspaceId = $request->user()->current_workspace_id ?? $request->user()->workspace_id;
+        $isCoexistence = $request->boolean('coexistence');
+
+        if ($isCoexistence && (! config('whatsapp.coexistence.enabled', false)
+            || ! FeatureGate::forUser($request->user())->enabled('whatsapp_coexistence'))) {
+            return response()->json([
+                'message' => 'WhatsApp Coexistence is not available on this plan. Upgrade to Pro or Business to connect an existing WhatsApp Business app number.',
+            ], 403);
+        }
 
         $meta = CredentialResolver::system()->meta();
         if (! $meta || ! $meta->appId() || ! $meta->appSecret()) {
@@ -114,11 +125,61 @@ class WhatsappEmbeddedSignupController extends Controller
             ->where('workspace_id', $workspaceId)
             ->first();
 
+        // Coexistence is only valid for a number that Meta reports as linked to
+        // both the WhatsApp Business app and Cloud API. Never trust the JS
+        // session alone: verify on the server before accepting the connection.
+        $coexistencePhoneId = null;
+        if ($isCoexistence) {
+            $verification = $this->verifyCoexistenceNumber(
+                $validated['waba_id'],
+                $validated['phone_number_id'] ?? null,
+                $accessToken,
+            );
+
+            if (! $verification['ok']) {
+                Log::warning('WhatsApp embedded signup: coexistence verification failed', [
+                    'workspace_id' => $workspaceId,
+                    'waba_id' => $validated['waba_id'],
+                    'phone_number_id' => $validated['phone_number_id'] ?? null,
+                    'error' => $verification['error'],
+                ]);
+
+                return response()->json(['message' => $verification['error']], 422);
+            }
+
+            $coexistencePhoneId = $verification['phone_number_id'];
+        }
+
         $verifyToken = $existing?->webhook_verify_token ?? Str::random(48);
+
+        // Coexistence needs the extra webhook fields, so a failed subscription
+        // is a hard failure here instead of a warning on a half-working number.
+        if ($isCoexistence) {
+            $webhookError = $this->subscribeWabaWebhooks($validated['waba_id'], $accessToken, $verifyToken, $meta);
+
+            if ($webhookError !== null) {
+                return response()->json([
+                    'message' => 'Could not subscribe this account to WhatsApp webhooks: '.$webhookError,
+                ], 422);
+            }
+        }
+
+        $coexistenceAttributes = [
+            'is_coexistence' => true,
+            'coexistence_status' => WhatsappBusinessAccount::COEXISTENCE_ACTIVE,
+            'coexistence_linked_at' => $existing?->coexistence_linked_at ?? now(),
+            'coexistence_disconnected_at' => null,
+            'coexistence_disconnect_reason' => null,
+            // The history request can only be sent once per business. Keep a
+            // terminal Meta outcome instead of resetting it on reconnect.
+            'history_sync_status' => in_array($existing?->history_sync_status, ['requested', 'completed', 'declined'], true)
+                ? $existing->history_sync_status
+                : 'pending_consent',
+        ];
 
         $waba = WhatsappBusinessAccount::updateOrCreate(
             ['waba_id' => $validated['waba_id'], 'workspace_id' => $workspaceId],
-            [
+            array_merge([
                 'credentials' => [
                     'system_user_token' => $accessToken,
                     'access_token' => $accessToken,
@@ -134,8 +195,10 @@ class WhatsappEmbeddedSignupController extends Controller
                     'currency' => $wabaData['currency'] ?? null,
                     'timezone_id' => $wabaData['timezone_id'] ?? null,
                     'connected_via' => 'embedded_signup',
+                    'coexistence_session_event' => $isCoexistence ? $validated['session_event'] ?? null : null,
+                    'coexistence_phone_number_id' => $isCoexistence ? $coexistencePhoneId : null,
                 ]),
-            ]
+            ], $isCoexistence ? $coexistenceAttributes : [])
         );
 
         $tokenExpiresAt = $this->tokenInspector->expiresAt($accessToken, $meta);
@@ -145,14 +208,18 @@ class WhatsappEmbeddedSignupController extends Controller
             'token_checked_at' => now(),
         ])->save();
 
-        // Subscribe the app to this WABA for webhooks and register callback URL
-        $webhookError = $this->subscribeWabaWebhooks($validated['waba_id'], $accessToken, $waba->webhook_verify_token, $meta);
+        // Subscribe the app to this WABA for webhooks and register callback URL.
+        // Coexistence already subscribed before the account was saved.
+        $webhookError = null;
+        if (! $isCoexistence) {
+            $webhookError = $this->subscribeWabaWebhooks($validated['waba_id'], $accessToken, $waba->webhook_verify_token, $meta);
+        }
 
         // Sync phone numbers (try user token, then app token, then admin system user)
         $phoneCount = 0;
         $syncError = null;
         try {
-            $phoneCount = $this->syncPhoneNumbers($waba->fresh(), $accessToken, $meta);
+            $phoneCount = $this->syncPhoneNumbers($waba->fresh(), $accessToken, $meta, register: ! $isCoexistence);
         } catch (\Throwable $e) {
             $syncError = $e->getMessage();
             Log::warning('WhatsApp embedded signup: phone sync failed', [
@@ -162,15 +229,19 @@ class WhatsappEmbeddedSignupController extends Controller
             ]);
         }
 
-        if (! empty($validated['phone_number_id'])) {
+        $sessionPhoneNumberId = $validated['phone_number_id'] ?? $coexistencePhoneId;
+
+        if (! empty($sessionPhoneNumberId)) {
             try {
-                $details = CloudApiClient::fetchPhoneNumberDetails($validated['phone_number_id'], $accessToken);
-                $this->attachPhoneNumber($waba->fresh(), $validated['phone_number_id'], $details ?? ['id' => $validated['phone_number_id']]);
-                $this->registerNumber($validated['phone_number_id'], $accessToken, $validated['waba_id']);
+                $details = CloudApiClient::fetchPhoneNumberDetails($sessionPhoneNumberId, $accessToken);
+                $this->attachPhoneNumber($waba->fresh(), $sessionPhoneNumberId, $details ?? ['id' => $sessionPhoneNumberId]);
+                if (! $isCoexistence) {
+                    $this->registerNumber($sessionPhoneNumberId, $accessToken, $validated['waba_id']);
+                }
                 $phoneCount = max($phoneCount, 1);
             } catch (\Throwable $e) {
                 Log::warning('WhatsApp embedded signup: session phone attach failed', [
-                    'phone_number_id' => $validated['phone_number_id'],
+                    'phone_number_id' => $sessionPhoneNumberId,
                     'error' => $e->getMessage(),
                 ]);
             }
@@ -186,6 +257,8 @@ class WhatsappEmbeddedSignupController extends Controller
             'waba_id' => $validated['waba_id'],
             'workspace_id' => $workspaceId,
             'via' => 'embedded_signup',
+            'coexistence' => $isCoexistence,
+            'coexistence_phone_number_id' => $coexistencePhoneId,
             'phone_count' => $phoneCount,
             'token_expires_at' => $tokenExpiresAt?->toIso8601String(),
         ]);
@@ -195,6 +268,8 @@ class WhatsappEmbeddedSignupController extends Controller
             'waba_id' => $validated['waba_id'],
             'name' => $wabaData['name'] ?? $validated['waba_id'],
             'phone_count' => $phoneCount,
+            'coexistence' => $isCoexistence,
+            'history_sync_status' => $waba->fresh()->history_sync_status,
             'sync_error' => $syncError,
             'webhook_warning' => $warnings !== [] ? implode(' ', $warnings) : null,
         ]);
@@ -661,7 +736,7 @@ class WhatsappEmbeddedSignupController extends Controller
                 'object' => 'whatsapp_business_account',
                 'callback_url' => $callbackUrl,
                 'verify_token' => $globalVerify,
-                'fields' => 'messages,message_template_status_update,phone_number_name_update,phone_number_quality_update,account_update',
+                'fields' => 'messages,message_template_status_update,phone_number_name_update,phone_number_quality_update,account_update,history,smb_app_state_sync,smb_message_echoes',
             ]);
 
             if (! $res->successful()) {
@@ -702,10 +777,83 @@ class WhatsappEmbeddedSignupController extends Controller
         return null;
     }
 
+    /**
+     * Confirm that a phone number is really linked to both the WhatsApp Business
+     * app and Cloud API. Meta documents that coexistence numbers answer
+     * `is_on_biz_app=true` and `platform_type=CLOUD_API`; anything else must be
+     * rejected instead of creating a half-connected account.
+     *
+     * @return array{ok: bool, phone_number_id: string|null, error: string|null}
+     */
+    private function verifyCoexistenceNumber(
+        string $wabaId,
+        ?string $sessionPhoneNumberId,
+        string $accessToken,
+    ): array {
+        $candidates = [];
+
+        if ($sessionPhoneNumberId !== null && $sessionPhoneNumberId !== '') {
+            $candidates[] = $sessionPhoneNumberId;
+        } else {
+            try {
+                foreach (CloudApiClient::fetchWabaPhoneNumbers($wabaId, $accessToken) as $row) {
+                    if (! empty($row['id'])) {
+                        $candidates[] = (string) $row['id'];
+                    }
+                }
+            } catch (\Throwable $e) {
+                Log::info('WhatsApp coexistence: phone number list unavailable', [
+                    'waba_id' => $wabaId,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        $candidates = array_values(array_unique($candidates));
+
+        if ($candidates === []) {
+            return [
+                'ok' => false,
+                'phone_number_id' => null,
+                'error' => 'Meta did not return a phone number for this account. Finish the WhatsApp Business app connection in Meta, then try again.',
+            ];
+        }
+
+        $lastError = null;
+
+        foreach ($candidates as $phoneNumberId) {
+            $response = Http::withToken($accessToken)
+                ->timeout(20)
+                ->get(MetaGraph::url($phoneNumberId), ['fields' => 'is_on_biz_app,platform_type']);
+
+            if (! $response->successful()) {
+                $lastError = (string) ($response->json('error.message') ?? 'HTTP '.$response->status());
+
+                continue;
+            }
+
+            $onBusinessApp = filter_var($response->json('is_on_biz_app'), FILTER_VALIDATE_BOOLEAN);
+            $platform = strtoupper((string) $response->json('platform_type'));
+
+            if ($onBusinessApp && $platform === 'CLOUD_API') {
+                return ['ok' => true, 'phone_number_id' => $phoneNumberId, 'error' => null];
+            }
+        }
+
+        return [
+            'ok' => false,
+            'phone_number_id' => null,
+            'error' => $lastError !== null
+                ? 'Meta could not verify this number as a WhatsApp Business app coexistence number: '.$lastError
+                : 'This number is not linked to WhatsApp Business app and Cloud API together yet. Open the WhatsApp Business app → Settings → Account → Business Platform, finish the connection, then try again.',
+        ];
+    }
+
     private function syncPhoneNumbers(
         WhatsappBusinessAccount $waba,
         string $userToken,
         ?MetaCredentials $meta,
+        bool $register = true,
     ): int {
         $tokens = array_values(array_unique(array_filter([
             $userToken,
@@ -745,7 +893,9 @@ class WhatsappEmbeddedSignupController extends Controller
             }
 
             $this->attachPhoneNumber($waba, (string) $row['id'], $row);
-            $this->registerNumber((string) $row['id'], $syncToken, $waba->waba_id);
+            if ($register) {
+                $this->registerNumber((string) $row['id'], $syncToken, $waba->waba_id);
+            }
             $count++;
         }
 

@@ -13,7 +13,7 @@ class Message extends Model
     protected $fillable = [
         'conversation_id', 'direction', 'channel', 'type', 'payload', 'body',
         'media_id', 'status', 'provider_message_id', 'error_json',
-        'sent_by', 'user_id', 'sent_at',
+        'sent_by', 'source', 'is_history_import', 'user_id', 'sent_at',
     ];
 
     /**
@@ -32,6 +32,7 @@ class Message extends Model
         return [
             'payload' => 'array',
             'error_json' => 'array',
+            'is_history_import' => 'boolean',
             'sent_at' => 'datetime',
         ];
     }

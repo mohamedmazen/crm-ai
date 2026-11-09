@@ -46,7 +46,7 @@ return [
     | with META_GRAPH_VERSION in .env.
     */
     'meta' => [
-        'graph_version' => env('META_GRAPH_VERSION', 'v25.0'),
+        'graph_version' => env('META_GRAPH_VERSION', 'v27.0'),
     ],
 
     /*

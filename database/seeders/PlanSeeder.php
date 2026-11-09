@@ -14,10 +14,9 @@ class PlanSeeder extends Seeder
         // the product without having to keep a second feature list in sync.
         $trialFeatureFlags = array_fill_keys(array_keys(config('features.labels', [])), null);
 
-        // Data limits shared by Business and the free trial. The trial is
-        // feature-complete, but its storage/row caps match the largest paid
-        // plan so a 60-day signup cannot grow the platform's bill without
-        // bound. Keeping one array means the two can never drift apart.
+        // Data limits for the Business plan. The free trial is feature-complete
+        // (all gates below) but deliberately capped with smaller data limits so a
+        // 60-day signup cannot grow the platform's bill without bound.
         $businessLimits = [
             'users' => 30,
             'storage' => 256000,
@@ -173,6 +172,7 @@ class PlanSeeder extends Seeder
                     'white_label' => false,
                     'ai_sales' => false,
                     'ai_sdr' => false,
+                    'whatsapp_coexistence' => false,
                 ],
                 'sort_order' => 1,
                 'enabled' => true,
@@ -245,6 +245,7 @@ class PlanSeeder extends Seeder
                     'white_label' => false,
                     'ai_sales' => false,
                     'ai_sdr' => false,
+                    'whatsapp_coexistence' => false,
                 ],
                 'sort_order' => 2,
                 'enabled' => true,
@@ -309,6 +310,7 @@ class PlanSeeder extends Seeder
                     'white_label' => false,
                     'ai_sales' => true,
                     'ai_sdr' => false,
+                    'whatsapp_coexistence' => true,
                 ],
                 'sort_order' => 3,
                 'enabled' => true,
@@ -353,6 +355,7 @@ class PlanSeeder extends Seeder
                     'white_label' => true,
                     'ai_sales' => true,
                     'ai_sdr' => true,
+                    'whatsapp_coexistence' => true,
                 ],
                 'sort_order' => 4,
                 'enabled' => true,

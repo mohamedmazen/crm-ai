@@ -14,6 +14,21 @@ class WhatsappBusinessAccount extends Model
 {
     use HasFactory;
 
+    /** Standard Cloud API account, unrelated to the WhatsApp Business app. */
+    public const COEXISTENCE_NONE = 'none';
+
+    /** Embedded Signup started for a Business-app number but not confirmed yet. */
+    public const COEXISTENCE_PENDING = 'pending';
+
+    /** Number is linked to both the Business app and Cloud API. */
+    public const COEXISTENCE_ACTIVE = 'active';
+
+    /** Meta reported the link is gone or unreachable; data is kept for reconnect. */
+    public const COEXISTENCE_SUSPENDED = 'suspended';
+
+    /** Customer explicitly disconnected the number; data is archived, not deleted. */
+    public const COEXISTENCE_DISCONNECTED = 'disconnected';
+
     protected static function newFactory()
     {
         return WhatsappBusinessAccountFactory::new();
@@ -24,6 +39,8 @@ class WhatsappBusinessAccount extends Model
     protected $fillable = [
         'workspace_id', 'waba_id', 'credentials', 'webhook_verify_token', 'webhook_verify_token_hash', 'status', 'meta_json',
         'token_expires_at', 'token_checked_at', 'last_error_at', 'last_error_code', 'last_error_message',
+        'is_coexistence', 'coexistence_status', 'coexistence_linked_at', 'coexistence_disconnected_at',
+        'coexistence_disconnect_reason', 'history_sync_status', 'history_sync_consented_at', 'coexistence_last_sync_at',
     ];
 
     protected $hidden = ['credentials', 'webhook_verify_token'];
@@ -37,6 +54,11 @@ class WhatsappBusinessAccount extends Model
             'token_expires_at' => 'datetime',
             'token_checked_at' => 'datetime',
             'last_error_at' => 'datetime',
+            'is_coexistence' => 'boolean',
+            'coexistence_linked_at' => 'datetime',
+            'coexistence_disconnected_at' => 'datetime',
+            'history_sync_consented_at' => 'datetime',
+            'coexistence_last_sync_at' => 'datetime',
         ];
     }
 

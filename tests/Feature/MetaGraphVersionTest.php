@@ -22,6 +22,7 @@ class MetaGraphVersionTest extends TestCase
     {
         config(['services.meta.graph_version' => '']);
 
+        $this->assertSame('v27.0', MetaGraph::DEFAULT_VERSION);
         $this->assertSame(MetaGraph::DEFAULT_VERSION, MetaGraph::version());
         $this->assertSame('https://graph.facebook.com/'.MetaGraph::DEFAULT_VERSION, MetaGraph::base());
     }

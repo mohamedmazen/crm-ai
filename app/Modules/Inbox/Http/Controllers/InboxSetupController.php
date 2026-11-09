@@ -8,7 +8,10 @@ use App\Modules\Inbox\Services\MetaWebhookSubscriptionService;
 use App\Modules\Integrations\Services\CredentialResolver;
 use App\Modules\Shared\Models\ChannelAccount;
 use App\Modules\Whatsapp\Models\WhatsappBusinessAccount;
+use App\Modules\Whatsapp\Models\WhatsappCoexistencePendingContact;
+use App\Modules\Whatsapp\Services\WhatsappCoexistenceSyncService;
 use App\Modules\Whatsapp\Services\WhatsappConnectionHealth;
+use App\Services\FeatureGate;
 use App\Support\MetaGraph;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -75,6 +78,8 @@ class InboxSetupController extends Controller
         $meta = CredentialResolver::system()->meta();
         $metaWebhookUrl = $meta ? url('/webhooks/meta/'.$meta->verifyToken()) : null;
 
+        $wabaCoexistence = $this->coexistenceProps($request, $wabas, $workspaceId);
+
         $metaCreds = CredentialResolver::system()->meta();
 
         return Inertia::render('Inbox/Setup', [
@@ -83,6 +88,7 @@ class InboxSetupController extends Controller
             'whatsappWebhookGlobalUrl' => route('webhooks.whatsapp.global.receive'),
             'webhookTokensByWaba' => $webhookTokensByWaba,
             'wabaHealth' => $wabaHealth,
+            'wabaCoexistence' => $wabaCoexistence,
             'channelAccountPhoneIdsByWaba' => $channelAccountPhoneIdsByWaba,
             'channelAccountsByWaba' => $channelAccountsByWaba,
             'instagramAccounts' => $instagramAccounts,
@@ -93,6 +99,48 @@ class InboxSetupController extends Controller
             'metaConfigIdWhatsapp' => $metaCreds?->configIdWhatsapp() ?: null,
             'metaConfigIdSocial' => $metaCreds?->configIdSocial() ?: null,
         ]);
+    }
+
+    /**
+     * Per-WABA coexistence state for the Setup page: plan gate, consent
+     * window, staged-contact count and the contact cap.
+     *
+     * @param  iterable<int, WhatsappBusinessAccount>  $wabas
+     * @return array<int, array<string, mixed>>
+     */
+    private function coexistenceProps(Request $request, iterable $wabas, int $workspaceId): array
+    {
+        $sync = app(WhatsappCoexistenceSyncService::class);
+        $enabled = (bool) config('whatsapp.coexistence.enabled', false)
+            && FeatureGate::forUser($request->user())->enabled('whatsapp_coexistence');
+
+        $limit = $request->user()->effectivePlan()?->limitValue('max_contacts');
+
+        $pending = WhatsappCoexistencePendingContact::where('workspace_id', $workspaceId)
+            ->where('status', WhatsappCoexistencePendingContact::STATUS_PENDING)
+            ->selectRaw('waba_id, COUNT(*) as total')
+            ->groupBy('waba_id')
+            ->pluck('total', 'waba_id');
+
+        $props = [];
+
+        foreach ($wabas as $waba) {
+            if (! $waba->is_coexistence) {
+                continue;
+            }
+
+            $props[$waba->id] = [
+                'enabled' => $enabled,
+                'window_open' => $enabled && $sync->windowIsOpen($waba),
+                'window_ends_at' => $sync->windowEndsAt($waba)?->toIso8601String(),
+                'pending_contacts' => (int) ($pending[$waba->waba_id] ?? 0),
+                'contact_limit' => $limit === null ? null : (int) $limit,
+                'status' => $waba->coexistence_status,
+                'history_status' => $waba->history_sync_status,
+            ];
+        }
+
+        return $props;
     }
 
     public function embeddedSignupInstagram(Request $request): JsonResponse

@@ -418,7 +418,161 @@ function WabaHealthBanner({ health, onReconnect }) {
     );
 }
 
-function WabaCard({ waba, webhookGlobalUrl, webhookBaseUrl, webhookToken, channelAccounts, chatbots, health = null, onReconnect }) {
+function CoexistencePanel({ waba, info }) {
+    const { t } = useTranslation();
+    const [busy, setBusy] = useState(null);
+    const [confirmDisconnect, setConfirmDisconnect] = useState(false);
+
+    if (!info) return null;
+
+    const status = info.status ?? waba.coexistence_status;
+    const history = info.history_status ?? waba.history_sync_status;
+    const needsConsent = ['pending_consent', 'failed'].includes(history);
+
+    const post = (name) => {
+        setBusy(name);
+        router.post(route(`client.whatsapp.setup.coexistence.${name}`, { waba: waba.id }), {}, {
+            preserveScroll: true,
+            onFinish: () => setBusy(null),
+        });
+    };
+
+    return (
+        <div className="border-t border-neutral-100 dark:border-neutral-800 px-4 py-3 space-y-2 bg-green-50/50 dark:bg-green-950/10">
+            <div className="flex items-center gap-2 flex-wrap">
+                <span className="inline-flex items-center gap-1 rounded-full bg-green-100 dark:bg-green-900/40 px-2 py-0.5 text-xs font-semibold text-green-700 dark:text-green-300">
+                    <Phone className="h-3 w-3" /> {t('inbox.coexistence_badge')}
+                </span>
+                {status === 'suspended' && (
+                    <span className="rounded-full bg-amber-100 dark:bg-amber-900/40 px-2 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-300">
+                        {t('inbox.coexistence_suspended')}
+                    </span>
+                )}
+                {status === 'disconnected' && (
+                    <span className="rounded-full bg-neutral-200 dark:bg-neutral-700 px-2 py-0.5 text-xs font-semibold text-neutral-600 dark:text-neutral-300">
+                        {t('inbox.coexistence_disconnected')}
+                    </span>
+                )}
+            </div>
+
+            {status === 'suspended' && (
+                <p className="text-xs leading-relaxed text-amber-700 dark:text-amber-300">
+                    {t('inbox.coexistence_suspended_help')}
+                </p>
+            )}
+
+            {status === 'disconnected' && (
+                <p className="text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
+                    {t('inbox.coexistence_disconnected_help')}
+                </p>
+            )}
+
+            {status !== 'disconnected' && !info.enabled && (
+                <p className="text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
+                    {t('inbox.coexistence_plan_required')}
+                </p>
+            )}
+
+            {status !== 'disconnected' && info.enabled && (
+                <>
+                    {needsConsent && info.window_open && (
+                        <div className="rounded-lg border border-green-200 dark:border-green-800 bg-white dark:bg-neutral-800/70 p-2.5 space-y-2">
+                            <p className="text-xs font-semibold text-neutral-800 dark:text-neutral-100">
+                                {t('inbox.coexistence_import_title')}
+                            </p>
+                            <p className="text-xs leading-relaxed text-neutral-600 dark:text-neutral-400">
+                                {t('inbox.coexistence_import_help')}
+                            </p>
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <button type="button" onClick={() => post('consent')} disabled={busy !== null}
+                                    className="rounded-lg bg-green-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-green-700 disabled:opacity-60 transition">
+                                    {busy === 'consent' ? t('inbox.syncing') : t('inbox.coexistence_import_start')}
+                                </button>
+                                <button type="button" onClick={() => post('decline')} disabled={busy !== null}
+                                    className="rounded-lg border border-neutral-200 dark:border-neutral-600 px-2.5 py-1.5 text-xs font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 disabled:opacity-60 transition">
+                                    {t('inbox.coexistence_import_skip')}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {needsConsent && !info.window_open && (
+                        <p className="text-xs leading-relaxed text-amber-700 dark:text-amber-300">
+                            {t('inbox.coexistence_window_closed')}
+                        </p>
+                    )}
+
+                    {['consented', 'requested'].includes(history) && (
+                        <p className="text-xs leading-relaxed text-neutral-600 dark:text-neutral-400">
+                            {t('inbox.coexistence_import_running')}
+                        </p>
+                    )}
+
+                    {history === 'completed' && (
+                        <p className="text-xs leading-relaxed text-emerald-700 dark:text-emerald-300">
+                            {t('inbox.coexistence_import_done')}
+                        </p>
+                    )}
+
+                    {history === 'declined' && (
+                        <p className="text-xs leading-relaxed text-neutral-600 dark:text-neutral-400">
+                            {t('inbox.coexistence_import_declined')}
+                        </p>
+                    )}
+
+                    {history === 'expired' && (
+                        <p className="text-xs leading-relaxed text-amber-700 dark:text-amber-300">
+                            {t('inbox.coexistence_window_closed')}
+                        </p>
+                    )}
+
+                    {info.pending_contacts > 0 && (
+                        <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20 p-2.5 space-y-2">
+                            <p className="text-xs leading-relaxed text-amber-700 dark:text-amber-300">
+                                {t('inbox.coexistence_pending_contacts', {
+                                    count: info.pending_contacts,
+                                    limit: info.contact_limit ?? '—',
+                                })}
+                            </p>
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <Link href={route('client.pricing')}
+                                    className="rounded-lg bg-brand-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-brand-700 transition">
+                                    {t('inbox.coexistence_upgrade')}
+                                </Link>
+                                <button type="button" onClick={() => post('retry-contacts')} disabled={busy !== null}
+                                    className="rounded-lg border border-amber-300 dark:border-amber-700 px-2.5 py-1.5 text-xs font-medium text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/40 disabled:opacity-60 transition">
+                                    <RefreshCw className={`inline h-3 w-3 mr-1 ${busy === 'retry-contacts' ? 'animate-spin' : ''}`} />
+                                    {t('inbox.coexistence_retry_contacts')}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {confirmDisconnect ? (
+                        <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-xs text-neutral-600 dark:text-neutral-400">{t('inbox.coexistence_disconnect_confirm')}</span>
+                            <button type="button" onClick={() => post('disconnect')} disabled={busy !== null}
+                                className="rounded-lg bg-red-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-60 transition">
+                                {busy === 'disconnect' ? t('inbox.removing') : t('inbox.confirm')}
+                            </button>
+                            <button type="button" onClick={() => setConfirmDisconnect(false)}
+                                className="rounded-lg border border-neutral-200 dark:border-neutral-600 px-2.5 py-1.5 text-xs text-neutral-600 dark:text-neutral-400 transition">
+                                {t('common.cancel')}
+                            </button>
+                        </div>
+                    ) : (
+                        <button type="button" onClick={() => setConfirmDisconnect(true)}
+                            className="text-xs font-medium text-red-600 dark:text-red-400 hover:underline">
+                            {t('inbox.coexistence_disconnect')}
+                        </button>
+                    )}
+                </>
+            )}
+        </div>
+    );
+}
+
+function WabaCard({ waba, webhookGlobalUrl, webhookBaseUrl, webhookToken, channelAccounts, chatbots, health = null, onReconnect, coexistence = null }) {
     const { t } = useTranslation();
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [deleting, setDeleting]           = useState(false);
@@ -524,6 +678,8 @@ function WabaCard({ waba, webhookGlobalUrl, webhookBaseUrl, webhookToken, channe
 
             <WabaHealthBanner health={health} onReconnect={onReconnect} />
 
+            <CoexistencePanel waba={waba} info={coexistence} />
+
             <div className="p-4 space-y-4">
                 {/* Webhook — global for embedded signup, per-WABA for manual connections */}
                 <div className="space-y-2">
@@ -594,13 +750,15 @@ function WabaCard({ waba, webhookGlobalUrl, webhookBaseUrl, webhookToken, channe
     );
 }
 
-function WhatsAppSection({ wabas, webhookGlobalUrl, webhookBaseUrl, webhookTokensByWaba, channelAccountsByWaba, chatbots, showForm, setShowForm, metaConfigIdWhatsapp, metaAppId, wabaHealth = {} }) {
+function WhatsAppSection({ wabas, webhookGlobalUrl, webhookBaseUrl, webhookTokensByWaba, channelAccountsByWaba, chatbots, showForm, setShowForm, metaConfigIdWhatsapp, metaAppId, wabaHealth = {}, wabaCoexistence = {} }) {
     const { t } = useTranslation();
+    const { props } = usePage();
     const [waApiError, setWaApiError] = useState(null);
     const [waSubmitting, setWaSubmitting] = useState(false);
     const [waMethod, setWaMethod] = useState(metaConfigIdWhatsapp ? 'meta' : 'manual');
+    const canUseCoexistence = Boolean(props.plan_features?.whatsapp_coexistence && props.whatsappCoexistenceEnabled);
 
-    const handleWaEmbeddedCode = useCallback(async (code, wabaId, phoneNumberId = null) => {
+    const handleWaEmbeddedCode = useCallback(async (code, wabaId, phoneNumberId = null, sessionInfo = null) => {
         setWaApiError(null);
         if (!wabaId) {
             setWaApiError(t('inbox.could_not_detect_waba'));
@@ -615,7 +773,13 @@ function WhatsAppSection({ wabas, webhookGlobalUrl, webhookBaseUrl, webhookToken
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'Accept': 'application/json',
                 },
-                body: JSON.stringify({ code, waba_id: wabaId, phone_number_id: phoneNumberId }),
+                body: JSON.stringify({
+                    code,
+                    waba_id: wabaId,
+                    phone_number_id: phoneNumberId,
+                    coexistence: Boolean(sessionInfo?.isCoexistence),
+                    session_event: sessionInfo?.event ?? null,
+                }),
             });
             const json = await res.json();
             if (!res.ok) {
@@ -651,6 +815,7 @@ function WhatsAppSection({ wabas, webhookGlobalUrl, webhookBaseUrl, webhookToken
                             channelAccounts={channelAccountsByWaba?.[waba.id] ?? []}
                             chatbots={chatbots}
                             health={wabaHealth?.[waba.id] ?? null}
+                            coexistence={wabaCoexistence?.[waba.id] ?? null}
                             onReconnect={() => setShowForm(true)}
                         />
                     ))}
@@ -683,6 +848,39 @@ function WhatsAppSection({ wabas, webhookGlobalUrl, webhookBaseUrl, webhookToken
                                     color="green"
                                     onCode={handleWaEmbeddedCode}
                                 />
+
+                                <div className="flex items-center gap-3 pt-1">
+                                    <span className="h-px flex-1 bg-neutral-200 dark:bg-neutral-700" />
+                                    <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+                                        {t('inbox.coexistence_or')}
+                                    </span>
+                                    <span className="h-px flex-1 bg-neutral-200 dark:bg-neutral-700" />
+                                </div>
+
+                                {canUseCoexistence ? (
+                                    <div className="rounded-xl border border-green-200 dark:border-green-800 bg-green-50/60 dark:bg-green-900/10 p-3 space-y-2">
+                                        <p className="text-xs font-semibold text-neutral-800 dark:text-neutral-100">
+                                            {t('inbox.coexistence_title')}
+                                        </p>
+                                        <p className="text-xs leading-relaxed text-neutral-600 dark:text-neutral-400">
+                                            {t('inbox.coexistence_help')}
+                                        </p>
+                                        <EmbeddedSignupButton
+                                            configId={metaConfigIdWhatsapp}
+                                            appId={metaAppId}
+                                            channel="whatsapp"
+                                            coexistence
+                                            label={t('inbox.continue_meta_coexistence')}
+                                            color="green"
+                                            onCode={handleWaEmbeddedCode}
+                                        />
+                                    </div>
+                                ) : (
+                                    <p className="text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
+                                        {t('inbox.coexistence_plan_required')}
+                                    </p>
+                                )}
+
                                 {waSubmitting && <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('inbox.connecting_whatsapp')}</p>}
                                 {waApiError && (
                                     <p className="text-xs text-red-500 flex items-start gap-1.5">
@@ -855,9 +1053,9 @@ function AccountRow({ account, channel, chatbots }) {
 /* ─────────────────── Meta Embedded Signup helpers ─────────────────── */
 
 /**
- * Listens for the WA_EMBEDDED_SIGNUP postMessage Meta sends when
- * sessionInfoVersion:'4' is set. Resolves with { waba_id, phone_number_id }
- * once the FINISH event (or a payload carrying a waba_id) arrives.
+ * Listens for the WA_EMBEDDED_SIGNUP postMessage Meta sends for Embedded
+ * Signup v4. Resolves with { waba_id, phone_number_id, event, isCoexistence }
+ * once the flow reports FINISH (or a payload carrying a waba_id).
  */
 function waitForWabaSessionInfo(timeout = 120000) {
     return new Promise((resolve, reject) => {
@@ -874,7 +1072,8 @@ function waitForWabaSessionInfo(timeout = 120000) {
                 const parsed = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
                 if (parsed?.type === 'WA_EMBEDDED_SIGNUP') {
                     const data = parsed.data ?? {};
-                    if (data.event === 'CANCEL' || data.event === 'ERROR') {
+                    const eventType = parsed.event ?? data.event ?? null;
+                    if (eventType === 'CANCEL' || eventType === 'ERROR') {
                         clearTimeout(timer);
                         window.removeEventListener('message', handler);
                         reject(Object.assign(new Error(data.error_message || 'Embedded signup was not completed'), {
@@ -883,12 +1082,13 @@ function waitForWabaSessionInfo(timeout = 120000) {
                         }));
                         return;
                     }
+                    const coexistenceEvent = eventType === 'FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING';
                     // v4 ends with a FINISH event; some intermediates already carry
                     // the ids. Wait for either rather than resolving too early.
-                    if (data.event === 'FINISH' || data.waba_id) {
+                    if (eventType === 'FINISH' || coexistenceEvent || data.waba_id) {
                         clearTimeout(timer);
                         window.removeEventListener('message', handler);
-                        resolve(data);
+                        resolve({ ...data, event: eventType, isCoexistence: coexistenceEvent });
                     }
                 }
             } catch (_) {}
@@ -901,7 +1101,7 @@ function waitForWabaSessionInfo(timeout = 120000) {
 function initFbSdk(appId, version) {
     if (typeof window.FB === 'undefined' || !appId) return false;
     try {
-        FB.init({ appId, autoLogAppEvents: true, xfbml: false, version: version || 'v25.0' });
+        FB.init({ appId, autoLogAppEvents: true, xfbml: false, version: version || 'v27.0' });
         window.__fbSdkReady = true;
         return true;
     } catch (_) {
@@ -997,11 +1197,11 @@ function loadFbSdk(appId, version) {
     return window.__fbSdkPromise;
 }
 
-function EmbeddedSignupButton({ configId, appId, channel, label, color, onCode, children }) {
+function EmbeddedSignupButton({ configId, appId, channel, label, color, onCode, coexistence = false, children }) {
     const { t } = useTranslation();
     const { props } = usePage();
     const resolvedAppId = appId || props.metaAppId;
-    const graphVersion = props.metaGraphVersion || 'v25.0';
+    const graphVersion = props.metaGraphVersion || 'v27.0';
     const [loading, setLoading] = useState(false);
     const [error, setError]     = useState(null);
 
@@ -1027,7 +1227,11 @@ function EmbeddedSignupButton({ configId, appId, channel, label, color, onCode, 
         const sessionInfoPromise = isWhatsapp ? waitForWabaSessionInfo() : Promise.resolve(null);
 
         const extrasMap = {
-            whatsapp:  { setup: {}, featureType: '', sessionInfoVersion: '4' },
+            // v4 no longer accepts sessionInfoVersion: session logging is sent
+            // for every flow. Coexistence is opted into with featureType.
+            whatsapp: coexistence
+                ? { setup: {}, featureType: 'whatsapp_business_app_onboarding' }
+                : { setup: {} },
             instagram: { feature_type: 'instagram_management' },
             messenger: { feature_type: 'messenger_chat' },
         };
@@ -1040,7 +1244,7 @@ function EmbeddedSignupButton({ configId, appId, channel, label, color, onCode, 
                         sessionInfoPromise
                             .then((info) => {
                                 setLoading(false);
-                                onCode(code, info?.waba_id ?? null, info?.phone_number_id ?? null);
+                                onCode(code, info?.waba_id ?? null, info?.phone_number_id ?? null, info);
                             })
                             .catch((e) => {
                                 setLoading(false);
@@ -1070,7 +1274,7 @@ function EmbeddedSignupButton({ configId, appId, channel, label, color, onCode, 
                 extras: extrasMap[channel] ?? {},
             },
         );
-    }, [configId, resolvedAppId, channel, onCode, t]);
+    }, [configId, resolvedAppId, graphVersion, channel, coexistence, onCode, t]);
 
     const colors = {
         green:  'bg-[#25D366] hover:bg-[#1ebe5d] text-white',
@@ -1501,7 +1705,7 @@ export default function ChannelSetup({
     wabas, whatsappWebhookGlobalUrl, whatsappWebhookUrl, webhookTokensByWaba,
     channelAccountsByWaba, instagramAccounts, messengerAccounts, metaWebhookUrl,
     metaAppId = null, metaConfigIdWhatsapp = null, metaConfigIdSocial = null,
-    chatbots = [], wabaHealth = {},
+    chatbots = [], wabaHealth = {}, wabaCoexistence = {},
 }) {
     const { t } = useTranslation();
     const { props } = usePage();
@@ -1577,6 +1781,7 @@ export default function ChannelSetup({
                     channelAccountsByWaba={channelAccountsByWaba ?? {}}
                     chatbots={chatbots}
                     wabaHealth={wabaHealth}
+                    wabaCoexistence={wabaCoexistence}
                     showForm={false}
                     setShowForm={() => {}}
                     metaConfigIdWhatsapp={metaConfigIdWhatsapp}

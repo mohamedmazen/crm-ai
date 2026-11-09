@@ -20,7 +20,7 @@ class OverLimitSoftLandingTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_the_trial_is_feature_complete_but_capped_at_business_data_limits(): void
+    public function test_the_trial_is_feature_complete_but_capped_below_business_data_limits(): void
     {
         $this->seed(PlanSeeder::class);
 
@@ -32,11 +32,22 @@ class OverLimitSoftLandingTest extends TestCase
             $this->assertNull($trial->featureLimit($feature), "Trial should leave {$feature} uncapped.");
         }
 
-        foreach (['users', 'storage', 'max_contacts', 'knowledge_bases', 'chatbots'] as $key) {
-            $this->assertSame(
+        // The trial is feature-complete but intentionally smaller than Business
+        // on the data it costs the platform money to store or serve.
+        $expectedTrialCaps = [
+            'users' => 5,
+            'storage' => 5000,
+            'max_contacts' => 2500,
+            'knowledge_bases' => 5,
+            'chatbots' => 2,
+        ];
+
+        foreach ($expectedTrialCaps as $key => $cap) {
+            $this->assertSame($cap, $trial->limitValue($key), "Trial {$key} cap drifted.");
+            $this->assertLessThan(
                 $business->limitValue($key),
                 $trial->limitValue($key),
-                "Trial {$key} must match Business.",
+                "Trial {$key} must stay below Business.",
             );
         }
     }

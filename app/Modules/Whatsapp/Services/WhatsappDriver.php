@@ -12,16 +12,19 @@ use App\Modules\Shared\Models\Contact;
 use App\Modules\Shared\Models\Conversation;
 use App\Modules\Shared\Models\Message;
 use App\Modules\Shared\Services\ContactService;
+use App\Modules\Whatsapp\Models\WhatsappBusinessAccount;
 use App\Modules\Whatsapp\Models\WhatsappPhoneNumber;
 use App\Modules\Whatsapp\Models\WhatsappTemplate;
 use App\Services\WebhookIdempotencyService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 
 class WhatsappDriver implements ChannelDriverInterface
 {
     public function __construct(
         private readonly ContactService $contactService,
+        private readonly WhatsappCoexistenceContactImporter $coexistenceContacts,
     ) {}
 
     public function send(Message $message): string
@@ -97,7 +100,31 @@ class WhatsappDriver implements ChannelDriverInterface
                     continue;
                 }
 
-                if (in_array($field, ['phone_number_quality_update', 'phone_number_name_update', 'account_update'], true)) {
+                if ($field === 'account_update') {
+                    $this->processAccountUpdate($wabaId, $value);
+
+                    continue;
+                }
+
+                if ($field === 'history') {
+                    $this->processHistorySync($wabaId, $value);
+
+                    continue;
+                }
+
+                if ($field === 'smb_app_state_sync') {
+                    $this->processStateSync($wabaId, $value);
+
+                    continue;
+                }
+
+                if ($field === 'smb_message_echoes') {
+                    $this->processMessageEchoes($wabaId, $value);
+
+                    continue;
+                }
+
+                if (in_array($field, ['phone_number_quality_update', 'phone_number_name_update'], true)) {
                     $this->processPhoneNumberUpdate($value);
 
                     continue;
@@ -200,6 +227,607 @@ class WhatsappDriver implements ChannelDriverInterface
             'phone_number_id' => $phoneNumberId,
             'patch' => $patch,
         ]);
+    }
+
+    /**
+     * Coexistence account lifecycle events. Meta reports a revoked link through
+     * `PARTNER_REMOVED` / `ACCOUNT_OFFBOARDED`, and a re-onboard through
+     * `ACCOUNT_RECONNECTED`. We suspend local routing but never delete data.
+     */
+    private function processAccountUpdate(string $entryWabaId, array $value): void
+    {
+        $event = strtoupper((string) ($value['event'] ?? ''));
+        $wabaId = (string) ($value['waba_info']['waba_id'] ?? $entryWabaId);
+
+        $waba = $wabaId !== ''
+            ? WhatsappBusinessAccount::where('waba_id', $wabaId)->first()
+            : null;
+
+        if ($waba && $waba->is_coexistence
+            && in_array($event, ['PARTNER_REMOVED', 'ACCOUNT_OFFBOARDED'], true)) {
+            $reason = (string) ($value['disconnection_info']['reason'] ?? strtolower($event));
+
+            $waba->update([
+                'coexistence_status' => WhatsappBusinessAccount::COEXISTENCE_SUSPENDED,
+                'coexistence_disconnected_at' => now(),
+                'coexistence_disconnect_reason' => mb_substr($reason, 0, 64),
+            ]);
+
+            ChannelAccount::where('workspace_id', $waba->workspace_id)
+                ->where('channel', 'whatsapp')
+                ->where('business_account_id', $waba->waba_id)
+                ->update(['status' => 'inactive']);
+
+            Log::warning('whatsapp.coexistence.suspended', [
+                'workspace_id' => $waba->workspace_id,
+                'waba_id' => $waba->waba_id,
+                'event' => $event,
+                'reason' => $reason,
+                'initiated_by' => $value['disconnection_info']['initiated_by'] ?? null,
+            ]);
+
+            return;
+        }
+
+        if ($waba && $waba->is_coexistence && $event === 'ACCOUNT_RECONNECTED') {
+            $waba->update([
+                'coexistence_status' => WhatsappBusinessAccount::COEXISTENCE_ACTIVE,
+                'coexistence_disconnected_at' => null,
+                'coexistence_disconnect_reason' => null,
+                'status' => 'active',
+            ]);
+
+            ChannelAccount::where('workspace_id', $waba->workspace_id)
+                ->where('channel', 'whatsapp')
+                ->where('business_account_id', $waba->waba_id)
+                ->update(['status' => 'active']);
+
+            Log::info('whatsapp.coexistence.reconnected', [
+                'workspace_id' => $waba->workspace_id,
+                'waba_id' => $waba->waba_id,
+            ]);
+
+            return;
+        }
+
+        // Other account_update payloads still describe phone-number changes.
+        $this->processPhoneNumberUpdate($value);
+    }
+
+    /**
+     * Resolve the coexistence WABA and channel account for a webhook value, or
+     * null when this is not a coexistence account (or it is disconnected).
+     *
+     * @return array{0: WhatsappBusinessAccount, 1: ChannelAccount}|null
+     */
+    private function resolveCoexistenceContext(string $wabaId, array $value): ?array
+    {
+        $waba = WhatsappBusinessAccount::where('waba_id', $wabaId)->first();
+
+        if (! $waba || ! $waba->is_coexistence) {
+            return null;
+        }
+
+        if ($waba->coexistence_status === WhatsappBusinessAccount::COEXISTENCE_DISCONNECTED) {
+            return null;
+        }
+
+        $phoneNumberId = (string) ($value['metadata']['phone_number_id'] ?? '');
+
+        $channelAccount = $phoneNumberId !== ''
+            ? ChannelAccount::where('phone_number_id', $phoneNumberId)
+                ->where('channel', 'whatsapp')
+                ->first()
+            : null;
+
+        if (! $channelAccount) {
+            $channelAccount = ChannelAccount::where('workspace_id', $waba->workspace_id)
+                ->where('channel', 'whatsapp')
+                ->where('business_account_id', $waba->waba_id)
+                ->orderBy('id')
+                ->first();
+        }
+
+        if (! $channelAccount) {
+            Log::warning('whatsapp.coexistence.no_channel_account', [
+                'waba_id' => $wabaId,
+                'phone_number_id' => $phoneNumberId,
+            ]);
+
+            return null;
+        }
+
+        return [$waba, $channelAccount];
+    }
+
+    /**
+     * Import the WhatsApp Business app address book (initial sync and later
+     * add/edit events). `remove` is ignored on purpose: removing a number from
+     * the phone's address book must never delete a CRM contact.
+     */
+    private function processStateSync(string $wabaId, array $value): void
+    {
+        $context = $this->resolveCoexistenceContext($wabaId, $value);
+
+        if (! $context) {
+            return;
+        }
+
+        [$waba] = $context;
+        $imported = 0;
+        $skipped = 0;
+
+        foreach ((array) ($value['state_sync'] ?? []) as $row) {
+            if (! is_array($row) || ($row['type'] ?? 'contact') !== 'contact') {
+                continue;
+            }
+
+            if (strtolower((string) ($row['action'] ?? 'add')) === 'remove') {
+                $skipped++;
+
+                continue;
+            }
+
+            $contact = is_array($row['contact'] ?? null) ? $row['contact'] : [];
+
+            if ($this->coexistenceContacts->import($waba, $contact, 'state_sync') !== null) {
+                $imported++;
+            }
+        }
+
+        $waba->update(['coexistence_last_sync_at' => now()]);
+
+        Log::info('whatsapp.coexistence.state_sync', [
+            'workspace_id' => $waba->workspace_id,
+            'waba_id' => $waba->waba_id,
+            'imported' => $imported,
+            'removed_ignored' => $skipped,
+        ]);
+    }
+
+    /**
+     * Mirror messages the business sends from the WhatsApp Business app into the
+     * inbox as outbound messages, badged with their source.
+     */
+    private function processMessageEchoes(string $wabaId, array $value): void
+    {
+        $context = $this->resolveCoexistenceContext($wabaId, $value);
+
+        if (! $context) {
+            return;
+        }
+
+        [$waba, $channelAccount] = $context;
+        $workspaceId = (int) $channelAccount->workspace_id;
+
+        $contactEntry = is_array($value['contacts'][0] ?? null) ? $value['contacts'][0] : [];
+        $fallbackPhone = $this->normalizePhone($contactEntry['wa_id'] ?? null);
+        $fallbackUserId = $contactEntry['user_id'] ?? null;
+        $username = $contactEntry['profile']['username'] ?? null;
+
+        $imported = 0;
+
+        foreach ((array) ($value['message_echoes'] ?? []) as $echo) {
+            if (! is_array($echo)) {
+                continue;
+            }
+
+            $messageId = $echo['id'] ?? null;
+
+            if (! is_string($messageId) || $messageId === '') {
+                continue;
+            }
+
+            if (Message::where('provider_message_id', $messageId)->exists()) {
+                continue;
+            }
+
+            $phone = $this->normalizePhone($echo['to'] ?? null) ?? $fallbackPhone;
+            $userId = $echo['to_user_id'] ?? $fallbackUserId;
+
+            $contact = $this->coexistenceContacts->import($waba, [
+                'phone_number' => $phone,
+                'user_id' => $userId,
+                'username' => $username,
+            ], 'whatsapp_business_app');
+
+            if (! $contact) {
+                continue;
+            }
+
+            $conversation = Conversation::firstOrCreate(
+                [
+                    'workspace_id' => $workspaceId,
+                    'contact_id' => $contact->id,
+                    'channel_account_id' => $channelAccount->id,
+                ],
+                ['status' => 'open', 'external_thread_id' => $phone ?? $userId],
+            );
+
+            $type = (string) ($echo['type'] ?? 'text');
+            $body = $this->extractMessageBody($echo, $type);
+            $sentAt = $this->webhookTimestamp($echo['timestamp'] ?? null);
+
+            // Meta can replay an echo under a new id when the app retries, so
+            // also drop an identical outbound body sent within five minutes.
+            if ($body !== null && $body !== '' && Message::where('conversation_id', $conversation->id)
+                ->where('direction', 'out')
+                ->where('body', $body)
+                ->whereBetween('sent_at', [$sentAt->copy()->subMinutes(5), $sentAt->copy()->addMinutes(5)])
+                ->exists()) {
+                continue;
+            }
+
+            Message::create([
+                'conversation_id' => $conversation->id,
+                'direction' => 'out',
+                'channel' => 'whatsapp',
+                'type' => $this->normaliseMessageType($type),
+                'payload' => $echo,
+                'body' => $body,
+                'status' => 'sent',
+                'provider_message_id' => $messageId,
+                'sent_by' => 'human',
+                'source' => 'whatsapp_business_app',
+                'is_history_import' => false,
+                'sent_at' => $sentAt,
+            ]);
+
+            if (! $conversation->last_message_at || $sentAt->greaterThan($conversation->last_message_at)) {
+                $conversation->update(['last_message_at' => $sentAt]);
+            }
+
+            $imported++;
+        }
+
+        Log::info('whatsapp.coexistence.message_echoes', [
+            'workspace_id' => $workspaceId,
+            'waba_id' => $waba->waba_id,
+            'imported' => $imported,
+        ]);
+    }
+
+    /**
+     * Import a chunk of WhatsApp Business app chat history. History is silent:
+     * no unread counters, notifications, automations or lead capture.
+     */
+    private function processHistorySync(string $wabaId, array $value): void
+    {
+        $context = $this->resolveCoexistenceContext($wabaId, $value);
+
+        if (! $context) {
+            return;
+        }
+
+        [$waba, $channelAccount] = $context;
+        $workspaceId = (int) $channelAccount->workspace_id;
+        $businessPhone = $this->normalizePhone($value['metadata']['display_phone_number'] ?? null);
+
+        // Media assets in old messages arrive in a follow-up webhook under the
+        // same `history` field but with `messages` instead of `history` chunks.
+        foreach ((array) ($value['messages'] ?? []) as $message) {
+            if (is_array($message)) {
+                $this->upgradeHistoryMediaMessage($message);
+            }
+        }
+
+        $maxProgress = null;
+        $imported = 0;
+
+        foreach ((array) ($value['history'] ?? []) as $chunk) {
+            if (! is_array($chunk)) {
+                continue;
+            }
+
+            if (! empty($chunk['errors'])) {
+                $code = (int) ($chunk['errors'][0]['code'] ?? 0);
+
+                if ($code === 2593109) {
+                    $waba->update([
+                        'history_sync_status' => WhatsappCoexistenceSyncService::STATUS_DECLINED,
+                        'coexistence_last_sync_at' => now(),
+                    ]);
+                }
+
+                Log::info('whatsapp.coexistence.history_chunk_error', [
+                    'workspace_id' => $workspaceId,
+                    'waba_id' => $waba->waba_id,
+                    'code' => $code,
+                    'title' => $chunk['errors'][0]['title'] ?? null,
+                ]);
+
+                continue;
+            }
+
+            $progress = isset($chunk['metadata']['progress']) ? (int) $chunk['metadata']['progress'] : null;
+            $maxProgress = $progress === null ? $maxProgress : max($maxProgress ?? 0, $progress);
+
+            foreach ((array) ($chunk['threads'] ?? []) as $thread) {
+                if (is_array($thread)) {
+                    $imported += $this->importHistoryThread($waba, $channelAccount, $thread, $businessPhone);
+                }
+            }
+        }
+
+        if ($maxProgress !== null && $maxProgress >= 100) {
+            $waba->update([
+                'history_sync_status' => WhatsappCoexistenceSyncService::STATUS_COMPLETED,
+                'coexistence_last_sync_at' => now(),
+            ]);
+        }
+
+        Log::info('whatsapp.coexistence.history_chunk', [
+            'workspace_id' => $workspaceId,
+            'waba_id' => $waba->waba_id,
+            'imported' => $imported,
+            'progress' => $maxProgress,
+        ]);
+    }
+
+    /**
+     * Import every message in one history thread.
+     *
+     * @param  array<string, mixed>  $thread
+     */
+    private function importHistoryThread(
+        WhatsappBusinessAccount $waba,
+        ChannelAccount $channelAccount,
+        array $thread,
+        ?string $businessPhone,
+    ): int {
+        $context = is_array($thread['context'] ?? null) ? $thread['context'] : [];
+        $phone = $this->normalizePhone($context['wa_id'] ?? $thread['id'] ?? null);
+        $userId = $context['user_id'] ?? null;
+
+        if ($phone === null && $userId === null) {
+            return 0;
+        }
+
+        $contact = $this->coexistenceContacts->import($waba, [
+            'phone_number' => $phone,
+            'user_id' => $userId,
+            'username' => $context['username'] ?? null,
+        ], 'history_sync');
+
+        if (! $contact) {
+            return 0;
+        }
+
+        $conversation = Conversation::firstOrCreate(
+            [
+                'workspace_id' => $channelAccount->workspace_id,
+                'contact_id' => $contact->id,
+                'channel_account_id' => $channelAccount->id,
+            ],
+            ['status' => 'open', 'external_thread_id' => $phone ?? $userId],
+        );
+
+        $imported = 0;
+        $latestSentAt = null;
+        $latestInboundAt = null;
+
+        foreach ((array) ($thread['messages'] ?? []) as $message) {
+            if (! is_array($message)) {
+                continue;
+            }
+
+            $created = $this->importHistoryMessage($conversation->id, $message, $businessPhone);
+
+            if (! $created) {
+                continue;
+            }
+
+            $imported++;
+            $sentAt = $created->sent_at;
+
+            if ($sentAt !== null && ($latestSentAt === null || $sentAt->greaterThan($latestSentAt))) {
+                $latestSentAt = $sentAt;
+            }
+
+            if ($created->direction === 'in' && $sentAt !== null
+                && ($latestInboundAt === null || $sentAt->greaterThan($latestInboundAt))) {
+                $latestInboundAt = $sentAt;
+            }
+        }
+
+        if ($latestSentAt !== null && (! $conversation->last_message_at || $latestSentAt->greaterThan($conversation->last_message_at))) {
+            $conversation->update(['last_message_at' => $latestSentAt]);
+        }
+
+        if ($latestInboundAt !== null && (! $conversation->last_inbound_at || $latestInboundAt->greaterThan($conversation->last_inbound_at))) {
+            $conversation->update(['last_inbound_at' => $latestInboundAt]);
+        }
+
+        return $imported;
+    }
+
+    /**
+     * Persist one history message. Returns the new message, or null when it was
+     * already imported or carries no usable id.
+     *
+     * @param  array<string, mixed>  $message
+     */
+    private function importHistoryMessage(int $conversationId, array $message, ?string $businessPhone): ?Message
+    {
+        $messageId = $message['id'] ?? null;
+
+        if (! is_string($messageId) || $messageId === '') {
+            return null;
+        }
+
+        $type = (string) ($message['type'] ?? 'text');
+        $body = $this->extractMessageBody($message, $type);
+        $existing = Message::where('provider_message_id', $messageId)->first();
+
+        if ($existing) {
+            // A media placeholder can be completed by a later detail webhook.
+            if (in_array($existing->type, ['unsupported', 'media_placeholder'], true) && $type !== 'media_placeholder') {
+                $existing->update([
+                    'type' => $this->normaliseMessageType($type),
+                    'payload' => $message,
+                    'body' => $body,
+                ]);
+            }
+
+            return null;
+        }
+
+        $direction = $this->historyDirection($message, $businessPhone);
+        $status = $this->historyStatus($message['history_context']['status'] ?? null);
+
+        return Message::create([
+            'conversation_id' => $conversationId,
+            'direction' => $direction,
+            'channel' => 'whatsapp',
+            'type' => $this->normaliseMessageType($type),
+            'payload' => $message,
+            'body' => $body,
+            'status' => $status,
+            'provider_message_id' => $messageId,
+            'sent_by' => 'human',
+            'source' => 'coexistence_history',
+            'is_history_import' => true,
+            'sent_at' => $this->webhookTimestamp($message['timestamp'] ?? null),
+        ]);
+    }
+
+    /**
+     * A follow-up webhook that adds the media asset to an already imported
+     * history message.
+     *
+     * @param  array<string, mixed>  $message
+     */
+    private function upgradeHistoryMediaMessage(array $message): void
+    {
+        $messageId = $message['id'] ?? null;
+
+        if (! is_string($messageId) || $messageId === '') {
+            return;
+        }
+
+        $existing = Message::where('provider_message_id', $messageId)->first();
+
+        if (! $existing || ! in_array($existing->type, ['unsupported', 'media_placeholder'], true)) {
+            return;
+        }
+
+        $type = (string) ($message['type'] ?? 'text');
+
+        $existing->update([
+            'type' => $this->normaliseMessageType($type),
+            'payload' => $message,
+            'body' => $this->extractMessageBody($message, $type),
+        ]);
+    }
+
+    /**
+     * Outbound history messages either carry a `to` (SMB echo) or are sent by
+     * the business display number; everything else came from the contact.
+     *
+     * @param  array<string, mixed>  $message
+     */
+    private function historyDirection(array $message, ?string $businessPhone): string
+    {
+        if (! empty($message['to'])) {
+            return 'out';
+        }
+
+        $from = $this->normalizePhone($message['from'] ?? null);
+
+        if ($from !== null && $businessPhone !== null && $from === $businessPhone) {
+            return 'out';
+        }
+
+        return 'in';
+    }
+
+    private function historyStatus(mixed $status): string
+    {
+        return match (strtolower((string) $status)) {
+            'pending' => 'queued',
+            'sent' => 'sent',
+            'delivered' => 'delivered',
+            'read', 'played' => 'read',
+            'error', 'failed' => 'failed',
+            default => 'delivered',
+        };
+    }
+
+    /**
+     * @param  array<string, mixed>  $message
+     */
+    private function extractMessageBody(array $message, string $type): ?string
+    {
+        $text = is_array($message['text'] ?? null) ? ($message['text']['body'] ?? null) : null;
+
+        if (is_string($text) && $text !== '') {
+            return $text;
+        }
+
+        $interactive = is_array($message['interactive'] ?? null) ? $message['interactive'] : [];
+
+        $body = ($message['button']['text'] ?? null)
+            ?? ($interactive['button_reply']['title'] ?? null)
+            ?? ($interactive['list_reply']['title'] ?? null)
+            ?? ($message['caption'] ?? null)
+            ?? (is_array($message[$type] ?? null) && ! isset($message[$type][0])
+                ? ($message[$type]['caption'] ?? null)
+                : null)
+            ?? ($message['errors'][0]['title'] ?? null);
+
+        if (is_string($body) && $body !== '') {
+            return $body;
+        }
+
+        return match ($type) {
+            'location' => implode(', ', array_filter([
+                $message['location']['name'] ?? null,
+                $message['location']['address'] ?? null,
+                isset($message['location']['latitude'], $message['location']['longitude'])
+                    ? ($message['location']['latitude'].','.$message['location']['longitude'])
+                    : null,
+            ])) ?: '📍 Location',
+            'contacts' => isset($message['contacts'][0]['name']['formatted_name'])
+                ? ('👤 '.$message['contacts'][0]['name']['formatted_name'])
+                : '👤 Contact',
+            'poll' => '📊 '.($message['poll']['question'] ?? 'Poll'),
+            'event' => '📅 '.($message['event']['title'] ?? $message['event']['name'] ?? 'Event'),
+            'image' => '🖼 Image',
+            'video' => '🎬 Video',
+            'audio' => '🎤 Audio',
+            'document' => '📄 '.($message['document']['filename'] ?? 'Document'),
+            'sticker' => '😊 Sticker',
+            'reaction' => $message['reaction']['emoji'] ?? '👍',
+            'media_placeholder' => '📎 Attachment',
+            default => null,
+        };
+    }
+
+    private function normaliseMessageType(string $type): string
+    {
+        $allowed = [
+            'text', 'template', 'media', 'interactive', 'reaction',
+            'image', 'video', 'document', 'audio', 'location', 'contacts',
+            'sticker', 'order', 'poll', 'event', 'unsupported',
+        ];
+
+        return in_array($type, $allowed, true) ? $type : 'unsupported';
+    }
+
+    private function normalizePhone(mixed $phone): ?string
+    {
+        if (! is_string($phone) || trim($phone) === '') {
+            return null;
+        }
+
+        return '+'.ltrim(trim($phone), '+');
+    }
+
+    private function webhookTimestamp(mixed $timestamp): Carbon
+    {
+        $seconds = is_numeric($timestamp) ? (int) $timestamp : time();
+
+        return now()->createFromTimestamp($seconds);
     }
 
     public function verifyCreds(): bool

@@ -32,6 +32,7 @@ return [
         'white_label' => 'White-label branding',
         'ai_sales' => 'AI sales assistant',
         'ai_sdr' => 'AI sales development rep',
+        'whatsapp_coexistence' => 'WhatsApp Coexistence (Business app + Cloud API)',
     ],
 
 ];

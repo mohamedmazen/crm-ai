@@ -711,6 +711,7 @@ function SoundPrefsMenu() {
 }
 
 function MessageBubble({ msg, conversationId }) {
+    const { t } = useTranslation();
     const { props: pageProps } = usePage();
     const bubbleTz = pageProps.timezone || 'Africa/Cairo';
     const isOut = msg.direction === 'out';
@@ -782,6 +783,12 @@ function MessageBubble({ msg, conversationId }) {
                 )}
 
                 <div className="px-3 py-2.5">
+                    {msg.source === 'whatsapp_business_app' && (
+                        <div className={`mb-1 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-3xs font-semibold ${isOut ? 'bg-white/20 text-white' : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300'}`}>
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#25D366]" />
+                            {t('inbox.from_whatsapp_business_app')}
+                        </div>
+                    )}
                     {/* IMAGE */}
                     {mediaType === 'image' && (
                         <MediaImage src={mediaSrc} alt={caption} conversationId={conversationId} messageId={msg.id} isOut={isOut} />

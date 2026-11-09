@@ -12,7 +12,8 @@
         { file: '07-marketing-social.html', title: 'التسويق والحملات والسوشيال' },
         { file: '08-automation-ai.html', title: 'الأتمتة والذكاء الاصطناعي' },
         { file: '09-reports.html', title: 'التقارير والتحليلات' },
-        { file: '10-admin-troubleshooting.html', title: 'إدارة الحساب واستكشاف الأخطاء' }
+        { file: '10-admin-troubleshooting.html', title: 'إدارة الحساب واستكشاف الأخطاء' },
+        { file: '11-whatsapp-coexistence.html', title: 'تشغيل تطبيق واتساب للأعمال' }
     ];
 
     var current = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
