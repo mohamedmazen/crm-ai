@@ -94,7 +94,7 @@ export default function ClientLayout({ header, children, title }) {
     const { auth, impersonation, current_workspace_usage, unreadNotificationsCount, branding, onesignal } = usePage().props;
     const logoUrl = branding?.logo_url;
     const [unreadCount, setUnreadCount] = useState(unreadNotificationsCount ?? 0);
-    const { home: navHome, areas: navAreas } = useClientNav();
+    const { home: navHome, areas: navAreas, help: navHelp } = useClientNav();
     const { collapsed, toggleCollapsed } = useNavPrefs();
 
     const mobileTabs = [
@@ -181,6 +181,7 @@ export default function ClientLayout({ header, children, title }) {
                 showCreateButton={false}
                 home={navHome}
                 areas={navAreas}
+                help={navHelp}
                 collapsed={collapsed}
                 onToggleCollapsed={toggleCollapsed}
                 enableCollapse

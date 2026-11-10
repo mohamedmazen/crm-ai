@@ -1,7 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, Lock, Plus, X, Search, PanelLeftClose, PanelLeftOpen, Star, Clock } from 'lucide-react';
+import { ChevronDown, Lock, Plus, X, Search, PanelLeftClose, PanelLeftOpen, Star, Clock, ExternalLink } from 'lucide-react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import { useBranding } from '@/hooks/useBranding';
 import useNavPrefs, { navItemKey } from '@/hooks/useNavPrefs';
@@ -316,7 +316,7 @@ function MenuSearch({ areas, home, onClose, onVisit, isPinned, togglePin }) {
     );
 }
 
-function ClientNav({ home, areas, onClose, onVisit, collapsed, search }) {
+function ClientNav({ home, areas, help, onClose, onVisit, collapsed, search }) {
     const { t } = useTranslation();
     const { pinned, recent, isPinned, togglePin } = useNavPrefs();
     const activeAreaKey = useMemo(
@@ -364,6 +364,18 @@ function ClientNav({ home, areas, onClose, onVisit, collapsed, search }) {
                             {area.icon}
                         </button>
                     ))}
+                    {help && (
+                        <a
+                            href={help.href}
+                            title={help.label}
+                            aria-label={`${help.label} (${t('nav.opens_new_tab', { defaultValue: 'opens in a new tab' })})`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mx-auto flex h-9 w-9 items-center justify-center rounded-lg text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                        >
+                            {help.icon}
+                        </a>
+                    )}
                 </div>
                 {openArea && (
                     <div className="mt-2 space-y-0.5 border-t border-white/10 pt-2">
@@ -402,6 +414,21 @@ function ClientNav({ home, areas, onClose, onVisit, collapsed, search }) {
                 {areas.map((area) => (
                     <AreaSection key={area.key} area={area} onClose={onClose} onVisit={onVisit} isPinned={isPinned} togglePin={togglePin} />
                 ))}
+
+                {help && (
+                    <a
+                        href={help.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => onClose?.()}
+                        className="mt-2 flex items-center gap-2.5 rounded-lg border-t border-white/10 px-3 pt-3 pb-2 text-sm font-semibold text-white/80 transition-colors hover:text-white"
+                    >
+                        <span className="text-white/70" aria-hidden>{help.icon}</span>
+                        <span className="truncate">{help.label}</span>
+                        <ExternalLink className="ms-auto h-3.5 w-3.5 shrink-0 text-white/40" aria-hidden />
+                        <span className="sr-only">({t('nav.opens_new_tab', { defaultValue: 'opens in a new tab' })})</span>
+                    </a>
+                )}
             </div>
         </nav>
     );
@@ -415,6 +442,7 @@ export default function Sidebar({
     // new (client)
     home,
     areas,
+    help,
     // legacy
     navItems = [],
     navGroups = [],
@@ -483,7 +511,7 @@ export default function Sidebar({
             )}
 
             {isAreas ? (
-                <ClientNav home={home} areas={areas} onClose={onClose} onVisit={recordVisit} collapsed={collapsed && enableCollapse} search={enableSearch} />
+                <ClientNav home={home} areas={areas} help={help} onClose={onClose} onVisit={recordVisit} collapsed={collapsed && enableCollapse} search={enableSearch} />
             ) : (
                 <nav className="flex-1 overflow-y-auto px-2 py-2 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10">
                     {navGroups.length > 0 &&

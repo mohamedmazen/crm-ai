@@ -5,7 +5,7 @@ import { ChannelBrandIcon } from '@/Components/BrandIcons';
 import {
     LayoutDashboard, CreditCard, Package, FileText, Users, Settings,
     Layers, Webhook, Key, BookOpen, Image, Radio, Inbox, Bot, Database,
-    Zap, Share2, MapPin, Tag, LifeBuoy, ExternalLink, Mail, MessageSquare,
+    Zap, Share2, MapPin, Tag, LifeBuoy, HelpCircle, Mail, MessageSquare,
     ShoppingBag, KanbanSquare, SlidersHorizontal, CheckSquare, Building2, Copy, Calendar, BarChart3, Phone, Receipt,
     ShieldCheck, Sparkles, Bell,
 } from 'lucide-react';
@@ -140,15 +140,6 @@ export default function useClientNav() {
             );
         }
 
-        if (docsUrl) {
-            settingsItems.push({
-                label: t('nav.help_docs'),
-                href: docsUrl,
-                icon: <ExternalLink className={iconClass} />,
-                external: true,
-            });
-        }
-
         const areas = [
             { key: 'inbox', label: t('nav.group_inbox'), icon: <Inbox className="h-5 w-5" />, items: inboxItems },
             { key: 'contacts', label: t('nav.group_contacts'), icon: <Users className="h-5 w-5" />, items: contactsItems },
@@ -181,6 +172,14 @@ export default function useClientNav() {
                 });
                 return { ...area, items: available, lockedItems: locked };
             }),
+            help: docsUrl
+                ? {
+                    label: t('nav.help_center'),
+                    href: docsUrl,
+                    icon: <HelpCircle className="h-5 w-5" />,
+                    external: true,
+                }
+                : null,
         };
     }, [t, planFeatures, isClientAdmin, docsUrl]);
 }
