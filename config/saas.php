@@ -16,8 +16,10 @@ return [
     'tagline' => env('SAAS_TAGLINE', 'Your Business. Smarter.'),
     'tagline_ar' => env('SAAS_TAGLINE_AR', 'أعمالك، بذكاء أكبر.'),
     'support_email' => env('SAAS_SUPPORT_EMAIL', env('MAIL_FROM_ADDRESS', 'support@example.com')),
-    // External help/documentation URL shown in the client "Help & Docs" nav
-    // item. Leave blank to hide the link. Configure in the admin panel or .env.
+    // Help/documentation URL used by the client panel's "Help Center" entry.
+    // When this and the admin-panel value are both blank, the bilingual guides
+    // bundled in public/docs are used instead; set an absolute URL to point at
+    // an external help site.
     'docs_url' => env('SAAS_DOCS_URL', ''),
 
     /*

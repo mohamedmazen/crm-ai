@@ -25,6 +25,12 @@ use Inertia\Middleware;
 class HandleInertiaRequests extends Middleware
 {
     /**
+     * The bilingual user guides checked into `public/docs`, served by the app
+     * itself. Used when no help URL is configured (admin panel or .env).
+     */
+    private const BUNDLED_DOCS_PATH = '/docs/index.html';
+
+    /**
      * The root template that is loaded on the first page visit.
      *
      * @var string
@@ -202,7 +208,7 @@ class HandleInertiaRequests extends Middleware
                 'app_name' => Brand::name(),
                 'app_tagline' => Brand::tagline(),
                 'support_email' => SystemSetting::get('support_email') ?: config('saas.support_email'),
-                'docs_url' => SystemSetting::get('docs_url') ?: config('saas.docs_url'),
+                'docs_url' => $this->docsUrl(),
                 'primary_color' => SystemSetting::get('primary_color') ?: config('saas.branding.primary_color', '#F9A61A'),
                 'secondary_color' => SystemSetting::get('secondary_color') ?: config('saas.branding.secondary_color', '#B07436'),
                 'font_family' => SystemSetting::get('font_family') ?: config('saas.branding.font_family', 'bdo-grotesk'),
@@ -218,7 +224,7 @@ class HandleInertiaRequests extends Middleware
                 'app_name' => Brand::name(),
                 'app_tagline' => Brand::tagline(),
                 'support_email' => config('saas.support_email'),
-                'docs_url' => config('saas.docs_url'),
+                'docs_url' => $this->resolveDocsUrl(config('saas.docs_url')),
                 'primary_color' => config('saas.branding.primary_color', '#F9A61A'),
                 'secondary_color' => config('saas.branding.secondary_color', '#B07436'),
                 'font_family' => config('saas.branding.font_family', 'bdo-grotesk'),
@@ -226,6 +232,32 @@ class HandleInertiaRequests extends Middleware
                 'favicon_url' => null,
             ];
         }
+    }
+
+    /**
+     * Where the client "Help Center" entry points.
+     *
+     * Precedence: the value saved in the admin panel, then `SAAS_DOCS_URL`, then
+     * the user guides that ship inside `public/docs`. The guides are part of the
+     * application, so a stock install gets a working Help Center without anyone
+     * remembering to set an env var — production previously showed no entry at
+     * all because both sources were empty.
+     */
+    private function docsUrl(): ?string
+    {
+        return $this->resolveDocsUrl(
+            SystemSetting::get('docs_url') ?: config('saas.docs_url'),
+        );
+    }
+
+    private function resolveDocsUrl(?string $configured): ?string
+    {
+        if (filled($configured)) {
+            return $configured;
+        }
+
+        // Hidden rather than broken when an installation strips the guides.
+        return is_file(public_path('docs/index.html')) ? self::BUNDLED_DOCS_PATH : null;
     }
 
     /**

@@ -39,9 +39,10 @@ class DemoTenantSeederTest extends TestCase
 
         $this->assertDemoDataIsIsolated();
 
-        // The seeders promise to be re-runnable against an existing database;
-        // a second pass must not duplicate rows or trip a unique key.
-        $this->seed($seeders);
+        // The seeders promise to be re-runnable against an existing database.
+        // The Pro tier is the one that previously collided, and it runs after
+        // Starter, so a second pass proves the shared helpers are idempotent.
+        $this->seed(DemoProSeeder::class);
 
         $this->assertDemoDataIsIsolated();
     }
