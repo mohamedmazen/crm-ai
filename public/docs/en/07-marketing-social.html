@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>07 · Marketing, Campaigns &amp; Social · AYDRA</title>
+<meta name="description" content="WhatsApp, SMS and email campaigns, templates, auto-replies, the chat widget, social posting, forms and booking.">
+<link rel="stylesheet" href="../assets/docs.css?v=2">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" href="index.html"><span class="dot"></span> AYDRA <small>User Guides</small></a>
+    <div class="topbar-actions">
+        <a class="btn" href="index.html">All guides</a>
+        <button id="theme-toggle" class="btn" type="button" aria-label="Toggle theme">🌙</button>
+        <button class="btn" type="button" onclick="window.print()">🖨️ Print</button>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <h3>Guides</h3>
+        <nav class="doc-nav" id="doc-nav"></nav>
+        <div class="toc">
+            <h3>On this page</h3>
+            <ul id="page-toc"></ul>
+        </div>
+    </aside>
+
+    <main class="content">
+        <article>
+            <span class="eyebrow">Guide 07 · Marketing team</span>
+            <h1>Marketing, Campaigns &amp; Social</h1>
+            <p class="lead">Every tool for reaching your customer in one place: WhatsApp, SMS and email campaigns, templates, auto-replies, the chat widget, social posting, forms, and booking pages.</p>
+
+            <h2>1. Campaigns</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/campaigns.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/campaigns.png" alt="Campaigns: launch a WhatsApp, SMS, or email broadcast to a segment and watch it progress." decoding="async">
+                </a>
+                <figcaption>Campaigns: launch a WhatsApp, SMS, or email broadcast to a segment and watch it progress.</figcaption>
+            </figure>
+
+            <p>From <strong>Marketing → Campaigns</strong>. A campaign sends one message to a defined list over a single channel.</p>
+            <h3>Creating a campaign</h3>
+            <ol class="steps">
+                <li>Click <strong>New Campaign</strong> and choose the channel: <strong>WhatsApp</strong>, <strong>SMS</strong>, or <strong>Email</strong>.</li>
+                <li>Choose the <strong>audience</strong>: all contacts, a segment, a tag, or a custom list.</li>
+                <li>Design the content per channel:
+                    <ul>
+                        <li><strong>WhatsApp:</strong> choose an approved template and the sending number.</li>
+                        <li><strong>SMS:</strong> write the text (and check the character count and balance).</li>
+                        <li><strong>Email:</strong> subject, body, From, and Reply-To.</li>
+                    </ul>
+                </li>
+                <li>Review the preview and the expected audience.</li>
+                <li>Send now, or schedule the campaign for a later time.</li>
+            </ol>
+            <div class="callout warn">
+                <span class="ico">⚠️</span>
+                <p>On WhatsApp you cannot start a conversation with free text. You need an <strong>approved template</strong>, otherwise Meta will reject the campaign. Prepare the template a day before the campaign.</p>
+            </div>
+            <h3>Tracking a campaign</h3>
+            <p>On the campaign page you see: the number targeted, sent, failed, and read (per channel), with a detailed report and an export of the recipients.</p>
+
+            <h2>2. WhatsApp Templates</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/wa-templates.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/wa-templates.png" alt="WhatsApp templates: create and track Meta approval for the message templates your campaigns use." decoding="async">
+                </a>
+                <figcaption>WhatsApp templates: create and track Meta approval for the message templates your campaigns use.</figcaption>
+            </figure>
+
+            <p>From <strong>Marketing → WhatsApp Templates</strong>.</p>
+            <ol class="steps">
+                <li>Click <strong>New Template</strong> and choose the category (Marketing / Utility / Authentication).</li>
+                <li>Write the header, body, footer, and buttons.</li>
+                <li>Add variables such as <code>{{1}}</code> for the name.</li>
+                <li>Submit it to Meta for approval.</li>
+                <li>Check the status: approved / pending review / rejected.</li>
+            </ol>
+            <p>After linking, you can <strong>sync the templates</strong> from the channel setup page to pull all your WABA templates.</p>
+
+            <h2>3. Auto Replies</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/auto-replies.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/auto-replies.png" alt="Auto replies: keyword rules that answer customers instantly, 24/7." decoding="async">
+                </a>
+                <figcaption>Auto replies: keyword rules that answer customers instantly, 24/7.</figcaption>
+            </figure>
+
+            <p>From <strong>Marketing → Auto Replies</strong>. An instant reply to keywords with no human intervention.</p>
+            <ol class="steps">
+                <li>Create a new reply.</li>
+                <li>Define the trigger words or phrases.</li>
+                <li>Write the reply (text or template).</li>
+                <li>Enable it. You can disable it at any time without deleting it.</li>
+            </ol>
+            <div class="callout tip">
+                <span class="ico">💡</span>
+                <p>Use auto-replies for frequently asked questions (prices, opening hours, address). For complex automation, use <a href="08-automation-ai.html">Automation</a>.</p>
+            </div>
+
+            <h2>4. Chat Widget</h2>
+            <p>A chat button embedded on your website that opens WhatsApp or a form. From <strong>Marketing → Chat Widget</strong>.</p>
+            <ol class="steps">
+                <li>Create a widget and choose the channel and number.</li>
+                <li>Customize the text, color, and position.</li>
+                <li>Copy the embed code and place it on your site before <code>&lt;/body&gt;</code>.</li>
+                <li>Use the preview button to confirm it looks right.</li>
+            </ol>
+
+            <h2>5. SMS &amp; Email</h2>
+            <p>Configuration is done from:</p>
+            <ul>
+                <li><strong>Marketing → SMS Gateways</strong> — choose the provider and enter the keys and the Sender ID.</li>
+                <li><strong>Marketing → Mail Server</strong> — SMTP and From.</li>
+            </ul>
+            <p>Step-by-step details are in the <a href="02-setup-integrations.html">Integrations guide</a>.</p>
+
+            <h2>6. Social Media</h2>
+            <h3>Connecting accounts</h3>
+            <p>From <strong>Marketing → Social Accounts</strong>. Supported networks:</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Network</th><th>Note</th></tr></thead>
+                    <tbody>
+                        <tr><td>Facebook</td><td>A page managed by your account</td></tr>
+                        <tr><td>Instagram</td><td>A business account linked to a Facebook page</td></tr>
+                        <tr><td>LinkedIn</td><td>A personal account or a company page, depending on permissions</td></tr>
+                        <tr><td>X (Twitter)</td><td>OAuth sign-in</td></tr>
+                        <tr><td>YouTube</td><td>Upload/post a video</td></tr>
+                        <tr><td>TikTok</td><td>Post a video</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <ol class="steps">
+                <li>Click <strong>Connect Account</strong> and choose the network.</li>
+                <li>Sign in and approve the permissions.</li>
+                <li>Choose the page/account.</li>
+                <li>Make sure the status shows “Connected”.</li>
+            </ol>
+
+            <h3>Post Composer</h3>
+            <figure class="shot">
+                <a href="../assets/img/en/social-composer.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/social-composer.png" alt="Post composer: write once and schedule the post to several connected social accounts." decoding="async">
+                </a>
+                <figcaption>Post composer: write once and schedule the post to several connected social accounts.</figcaption>
+            </figure>
+
+            <ol class="steps">
+                <li>Write the text.</li>
+                <li>Add an image or a video.</li>
+                <li>Choose the networks (you can post to more than one network).</li>
+                <li>Preview the content for each network — the limits differ (for example, X is shorter).</li>
+                <li>Publish now or schedule.</li>
+            </ol>
+            <h3>Posts &amp; Calendar</h3>
+            <figure class="shot">
+                <a href="../assets/img/en/social-calendar.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/social-calendar.png" alt="Social calendar: a month view of everything scheduled and published." decoding="async">
+                </a>
+                <figcaption>Social calendar: a month view of everything scheduled and published.</figcaption>
+            </figure>
+
+            <ul>
+                <li><strong>Posts:</strong> drafts, scheduled, published, and failed.</li>
+                <li><strong>Calendar:</strong> a monthly view of everything to be published.</li>
+                <li><strong>AI Planner:</strong> suggests ideas and posting times (consumes tokens).</li>
+                <li>A failed post shows the reason — often an expired network token; reconnect the account.</li>
+            </ul>
+
+            <h2>7. Forms</h2>
+            <p>From <strong>Marketing → Forms</strong> (the Forms feature).</p>
+            <ol class="steps">
+                <li>Create a form and open the <strong>builder</strong>.</li>
+                <li>Add fields (text, choice, email, phone...).</li>
+                <li>Link the form to a Lead Source to track the campaign.</li>
+                <li>Save and publish — it becomes available at <code>/f/{slug}</code>.</li>
+                <li>Embed it on your site with the Embed code if you want.</li>
+            </ol>
+            <p>Every submission creates a lead and appears in <strong>form analytics</strong>. The number of forms and submissions is limited by your plan.</p>
+
+            <h2>8. Booking Pages</h2>
+            <p>From <strong>Marketing → Booking</strong> (the Booking feature).</p>
+            <ol class="steps">
+                <li>Create a meeting type: duration, description, price if needed.</li>
+                <li>Set the <strong>availability times</strong> and the time zone.</li>
+                <li>Share the booking link <code>/b/{slug}</code>.</li>
+                <li>The customer picks a slot and confirms.</li>
+                <li>They can reschedule or cancel from the confirmation link.</li>
+            </ol>
+            <p>Bookings appear on the same screen, and a booking can be linked to an automation trigger or send a reminder.</p>
+
+            <h2>9. Lead Sources</h2>
+            <p>From <strong>Marketing → Lead Sources</strong>. Create a source (such as “Facebook campaign”) and get a UTM link/token to mark the leads coming from it. The <strong>Attribution</strong> report uses these to identify the best channel.</p>
+
+            <h2>Limits to know</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Resource</th><th>Free</th><th>Starter</th><th>Pro</th><th>Business</th></tr></thead>
+                    <tbody>
+                        <tr><td>WhatsApp messages/month</td><td>100</td><td>2,000</td><td>20,000</td><td>100,000</td></tr>
+                        <tr><td>SMS/month</td><td>0</td><td>500</td><td>10,000</td><td>50,000</td></tr>
+                        <tr><td>Email/month</td><td>100</td><td>2,000</td><td>25,000</td><td>100,000</td></tr>
+                        <tr><td>Campaigns/month</td><td>1</td><td>10</td><td>30</td><td>100</td></tr>
+                        <tr><td>Social posts/month</td><td>10</td><td>30</td><td>200</td><td>1,000</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Common mistakes</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Problem</th><th>Cause</th><th>Fix</th></tr></thead>
+                    <tbody>
+                        <tr><td>The campaign does not send</td><td>Template not approved or channel not connected</td><td>Check the template and the channel status</td></tr>
+                        <tr><td>Recipient count is zero</td><td>The segment/tag contains no one</td><td>Review the segment or choose another audience</td></tr>
+                        <tr><td>Social post failed</td><td>Expired token or missing permission</td><td>Reconnect the account and grant the permissions</td></tr>
+                        <tr><td>The widget does not appear</td><td>The code is in the wrong place or CSP</td><td>Place it before <code>&lt;/body&gt;</code> and check the site policy</td></tr>
+                        <tr><td>A form does not create leads</td><td>The lead source or the required fields</td><td>Check the form settings and the Lead Source</td></tr>
+                        <tr><td>“Reached the message limit”</td><td>The monthly limit was exceeded</td><td>Previous messages keep working, but new sends stop — upgrade your plan</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout ok">
+                <span class="ico">✅</span>
+                <p><strong>Next step:</strong> automate your follow-up from the <a href="08-automation-ai.html">Automation &amp; AI guide</a>.</p>
+            </div>
+        </article>
+
+        <footer class="doc-footer">
+            <span>AYDRA · Version 1.0</span>
+            <span class="pager"><a class="btn" href="06-sales.html">← Previous</a><a class="btn btn-primary" href="08-automation-ai.html">Next: Automation &amp; AI →</a></span>
+        </footer>
+    </main>
+</div>
+
+<script src="../assets/docs.js?v=2"></script>
+</body>
+</html>

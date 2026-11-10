@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>11 · Running the WhatsApp Business app with AYDRA · AYDRA</title>
+<meta name="description" content="Connect your existing WhatsApp Business app number to AYDRA without losing the app on your phone: consent, importing contacts and chat history, and keeping your data.">
+<link rel="stylesheet" href="../assets/docs.css?v=2">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" href="index.html"><span class="dot"></span> AYDRA <small>User Guides</small></a>
+    <div class="topbar-actions">
+        <a class="btn" href="index.html">All guides</a>
+        <button id="theme-toggle" class="btn" type="button" aria-label="Toggle theme">🌙</button>
+        <button class="btn" type="button" onclick="window.print()">🖨️ Print</button>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <h3>Guides</h3>
+        <nav class="doc-nav" id="doc-nav"></nav>
+        <div class="toc">
+            <h3>On this page</h3>
+            <ul id="page-toc"></ul>
+        </div>
+    </aside>
+
+    <main class="content">
+        <article>
+            <span class="eyebrow">Guide 11 · Account admin</span>
+            <h1>Running the WhatsApp Business app with AYDRA</h1>
+            <p class="lead">You have a number on the WhatsApp Business app and want to use it from AYDRA with your team, without losing the app on your phone? The "Run with the WhatsApp Business app" feature (Coexistence) connects the same number to the Cloud API and keeps the app working normally. Messages arrive in AYDRA, and you can still reply from your phone.</p>
+
+            <div class="callout warn">
+                <span class="ico">⚠️</span>
+                <p><strong>Before you start:</strong> this feature is available only on the <strong>Pro</strong> and <strong>Business</strong> plans. If you are on a lower plan, you can upgrade from <strong>Settings → Subscription</strong> and then come back to complete the connection.</p>
+            </div>
+
+            <h2>How is it different from a regular connection?</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Item</th><th>Regular connection (Cloud API)</th><th>Running with the WhatsApp Business app</th></tr></thead>
+                    <tbody>
+                        <tr><td>The number on the WhatsApp Business app</td><td>Must be deleted from the app</td><td>✅ Keeps working as is</td></tr>
+                        <tr><td>Replying from the phone</td><td>Not possible</td><td>✅ Possible</td></tr>
+                        <tr><td>Messages sent from the phone</td><td>—</td><td>✅ Appear in the inbox with a "From the WhatsApp Business app" badge</td></tr>
+                        <tr><td>Importing contacts and chat history</td><td>—</td><td>✅ Once, within 24 hours (with your consent)</td></tr>
+                        <tr><td>Required plan</td><td>All plans</td><td>Pro and Business</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Connecting in steps</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/whatsapp-setup.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/whatsapp-setup.png" alt="Channel Setup: the WhatsApp Business App number appears here as a coexistence connection once the consent step is complete." decoding="async">
+                </a>
+                <figcaption>Channel Setup: the WhatsApp Business App number appears here as a coexistence connection once the consent step is complete.</figcaption>
+            </figure>
+
+            <ol class="steps">
+                <li>Open <strong>Inbox → Channel setup</strong>.</li>
+                <li>Under the WhatsApp section, click <strong>Connect an existing WhatsApp Business number</strong>.</li>
+                <li>Sign in with the Meta account that owns the number, then choose the number on the WhatsApp Business app.</li>
+                <li>Complete the steps until the success message. <strong>Do not delete the app.</strong></li>
+                <li>A dedicated panel appears below the number card, showing a "WhatsApp Business app" badge and the sync status.</li>
+            </ol>
+            <div class="callout tip">
+                <span class="ico">💡</span>
+                <p>If the button does not appear at all, the feature is disabled for your current plan. If the button appears but then returns you to the setup page, make sure your number is actually activated on the WhatsApp Business app and not a regular app.</p>
+            </div>
+
+            <h2>Importing contacts and chat history</h2>
+            <p>Right after connecting, a consent panel appears inside the number card. The import is <strong>optional</strong> and requires your explicit consent. If you agree, the app's contacts and chat history up to <strong>180 days</strong> back are moved into AYDRA.</p>
+            <ol class="steps">
+                <li>Read the consent text, then click <strong>Import my data</strong>. (Or <strong>Skip for now</strong> if you prefer not to.)</li>
+                <li>The import starts automatically in the background — it may take a while depending on the size of the history.</li>
+                <li>You can follow the status from the same panel: "Import in progress", then "Import complete".</li>
+            </ol>
+            <div class="callout warn">
+                <span class="ico">⚠️</span>
+                <p><strong>The import window is only 24 hours.</strong> If you added the feature but did not consent within 24 hours, the window closes and you must disconnect the number from the app and reconnect it to restart the window.</p>
+            </div>
+            <div class="callout ok">
+                <span class="ico">✅</span>
+                <p><strong>The import is silent by design.</strong> Imported conversations do not create notifications, do not increase the unread message counter, and do not trigger automation or auto-replies — because they are old history, not new messages.</p>
+            </div>
+
+            <h2>When the contact limit is full</h2>
+            <p>Your app's contacts are imported directly, respecting the <strong>contact limit on your plan</strong>. If the account has already reached the limit, no contact is ignored: they are placed in a safe queue until space becomes available.</p>
+            <ul>
+                <li>A message showing the number of waiting contacts appears in the panel.</li>
+                <li>Click <strong>Upgrade plan</strong> to raise the cap, or free up space by deleting unwanted contacts.</li>
+                <li>Then click <strong>Retry import</strong> to take in the waiting contacts.</li>
+            </ul>
+
+            <h2>Replying from the phone inside AYDRA</h2>
+            <p>When your team replies to a customer from the WhatsApp Business app on the phone, the message is recorded in the inbox as an <strong>outgoing</strong> message and appears with a small green badge: <strong>"From the WhatsApp Business app"</strong>. This prevents confusion with agent replies inside AYDRA. Duplicate messages from the app are merged automatically, so they do not appear twice.</p>
+
+            <h2>Statuses that may appear on the number</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Status</th><th>Meaning</th><th>What to do</th></tr></thead>
+                    <tbody>
+                        <tr><td>Active</td><td>The number is connected and working on both the app and AYDRA</td><td>Nothing</td></tr>
+                        <tr><td>Temporarily paused</td><td>Meta has been notified that the link no longer exists; receiving new messages is temporarily stopped</td><td>Open the WhatsApp Business app → Settings → Account → Business platform and reconnect the number. Your data is preserved</td></tr>
+                        <tr><td>Offline</td><td>You disconnected the number from AYDRA yourself</td><td>Reconnect from the same page. Conversations are preserved</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Disconnecting the number</h2>
+            <p>Disconnecting from AYDRA <strong>does not delete any data</strong>: conversations and messages remain readable, but new messages stop arriving in AYDRA.</p>
+            <ol class="steps">
+                <li>From the number panel, click <strong>Disconnect this number</strong>, then confirm.</li>
+                <li>If you want to stop using the Cloud API entirely, complete it from the app: <strong>Settings → Account → Business platform → Disconnect account</strong>.</li>
+            </ol>
+            <div class="callout danger">
+                <span class="ico">🚫</span>
+                <p>Do not destroy anything in order to preserve your data. If you want to come back later, reconnect and you will find your old conversations just as they were.</p>
+            </div>
+
+            <h2>Common questions</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Question</th><th>Answer</th></tr></thead>
+                    <tbody>
+                        <tr><td>Does the phone lose any messages?</td><td>No. The number works on both at once, and messages arrive in AYDRA and in the app.</td></tr>
+                        <tr><td>Are messages older than 180 days imported?</td><td>No. The chat history available for import goes back up to 180 days.</td></tr>
+                        <tr><td>Why do I not see the consent button?</td><td>Either your plan does not include the feature, the 24-hour window has closed, or the import has already started.</td></tr>
+                        <tr><td>Does the import wake up customers?</td><td>No. Nothing is sent, and no automation runs on the imported data.</td></tr>
+                        <tr><td>Can the import be postponed?</td><td>Yes, via "Skip for now". But it cannot be requested later, after the 24-hour window closes, without reconnecting.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout ok">
+                <span class="ico">✅</span>
+                <p><strong>After finishing this guide</strong>, your number will be working on both the WhatsApp Business app and AYDRA. See the <a href="03-inbox.html">inbox</a> to manage conversations, and <a href="02-setup-integrations.html">setup &amp; integrations</a> for the other channels.</p>
+            </div>
+        </article>
+
+        <footer class="doc-footer">
+            <span>AYDRA · Version 1.0</span>
+            <span class="pager"><a class="btn" href="10-admin-troubleshooting.html">← Previous</a><a class="btn btn-primary" href="index.html">Index</a></span>
+        </footer>
+    </main>
+</div>
+
+<script src="../assets/docs.js?v=2"></script>
+</body>
+</html>

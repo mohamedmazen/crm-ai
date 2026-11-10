@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>02 · Setup &amp; Integrations (BYOK) · AYDRA</title>
+<meta name="description" content="Connecting WhatsApp, Instagram, SMS, email, AI keys, stores and your domain in AYDRA.">
+<link rel="stylesheet" href="../assets/docs.css?v=2">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" href="index.html"><span class="dot"></span> AYDRA <small>User Guides</small></a>
+    <div class="topbar-actions">
+        <a class="btn" href="index.html">All guides</a>
+        <button id="theme-toggle" class="btn" type="button" aria-label="Toggle theme">🌙</button>
+        <button class="btn" type="button" onclick="window.print()">🖨️ Print</button>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <h3>Guides</h3>
+        <nav class="doc-nav" id="doc-nav"></nav>
+        <div class="toc">
+            <h3>On this page</h3>
+            <ul id="page-toc"></ul>
+        </div>
+    </aside>
+
+    <main class="content">
+        <article>
+            <span class="eyebrow">Guide 02 · Account admin</span>
+            <h1>Setup &amp; Integrations (BYOK)</h1>
+            <p class="lead">This is the most important guide on the platform. AYDRA provides the storage and the running of the system, but every channel needs your own keys: WhatsApp, Instagram, SMS, email, AI and the store. If you do not enter the keys, the channel will not work — and that is intentional behavior, not a malfunction.</p>
+
+            <div class="callout warn">
+                <span class="ico">⚠️</span>
+                <p><strong>Before you start:</strong> gather the details for every integration in one place. Most support tickets are caused by a missing or expired key, or a test key instead of a production one.</p>
+            </div>
+
+            <h2>What does the platform provide and what do you provide?</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/settings.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/settings.png" alt="Settings is the home of every integration: channels, AI, stores, domain, and webhooks." decoding="async">
+                </a>
+                <figcaption>Settings is the home of every integration: channels, AI, stores, domain, and webhooks.</figcaption>
+            </figure>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Item</th><th>Platform</th><th>You (the customer)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Storage, database and hosting</td><td>✅</td><td>—</td></tr>
+                        <tr><td>Meta app identity (App ID / App Secret)</td><td>✅</td><td>—</td></tr>
+                        <tr><td>Payment and subscription gateways</td><td>✅</td><td>—</td></tr>
+                        <tr><td>WhatsApp Business Account + number + token</td><td>—</td><td>✅</td></tr>
+                        <tr><td>Social accounts (Facebook/Instagram/LinkedIn/X/YouTube/TikTok)</td><td>—</td><td>✅</td></tr>
+                        <tr><td>SMS provider + sender ID + keys</td><td>—</td><td>✅</td></tr>
+                        <tr><td>Mail server / SMTP</td><td>—</td><td>✅</td></tr>
+                        <tr><td>AI keys (OpenAI/Anthropic/Gemini/OpenRouter)</td><td>—</td><td>✅</td></tr>
+                        <tr><td>Shopify / WooCommerce store details</td><td>—</td><td>✅</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Checklist of required keys</h2>
+            <p>Print this list and gather everything before you start:</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Integration</th><th>What you need</th><th>Where to get it</th></tr></thead>
+                    <tbody>
+                        <tr><td>WhatsApp</td><td>WABA ID · Phone Number ID · Permanent Access Token</td><td>Meta Business Suite / WhatsApp Manager</td></tr>
+                        <tr><td>Instagram / Messenger</td><td>A Facebook account + page + publishing permissions</td><td>Meta for Developers (page permissions)</td></tr>
+                        <tr><td>SMS</td><td>Provider · API Key/SID · Sender ID</td><td>Your SMS provider’s dashboard</td></tr>
+                        <tr><td>Email / SMTP</td><td>Host · Port · Username · Password · From</td><td>Your email provider or your own server</td></tr>
+                        <tr><td>AI</td><td>API Key + a chat model (+ an Embeddings model)</td><td>OpenAI / Anthropic / Google / OpenRouter</td></tr>
+                        <tr><td>Shopify</td><td>A <code>*.myshopify.com</code> domain + Admin API Token + Webhook Secret</td><td>Shopify Admin ← Apps</td></tr>
+                        <tr><td>WooCommerce</td><td>Store URL + Consumer Key + Consumer Secret</td><td>WooCommerce ← REST API</td></tr>
+                        <tr><td>Domain</td><td>Subdomain or Custom Domain + DNS</td><td>Your domain / hosting dashboard</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>1. WhatsApp (WhatsApp Cloud API)</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/whatsapp-setup.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/whatsapp-setup.png" alt="WhatsApp setup: connect the Cloud API number automatically (Embedded Signup) or with manual credentials." decoding="async">
+                </a>
+                <figcaption>WhatsApp setup: connect the Cloud API number automatically (Embedded Signup) or with manual credentials.</figcaption>
+            </figure>
+
+            <p>Connecting is done from <strong>Inbox ← Channel setup</strong>. The preferred method is <strong>Embedded Signup</strong>: you click the connect button, sign in with your Meta account, and choose your number — and it is linked automatically.</p>
+            <h3>Automatic connection (Embedded Signup)</h3>
+            <ol class="steps">
+                <li>Click <strong>Connect WhatsApp</strong> and choose “Continue with Meta”.</li>
+                <li>Sign in with the Facebook account that owns the Business Account.</li>
+                <li>Choose or create a WhatsApp Business Account.</li>
+                <li>Choose the phone number. <strong>The number must not be registered on the regular WhatsApp app</strong> — if it is, delete it from the app first.</li>
+                <li>Complete the permissions, then wait for the success message.</li>
+            </ol>
+            <h3>Manual connection (Manual)</h3>
+            <ol class="steps">
+                <li>From Meta Business Suite, create an app and get: <strong>WABA ID</strong>, <strong>Phone Number ID</strong>, and a <strong>Permanent Token</strong> (from a System User).</li>
+                <li>On the setup page, click “Manual connect” and enter the three values.</li>
+                <li>Add the webhook URL shown on the page to the app settings in Meta, then verify it.</li>
+                <li>After connecting, click <strong>Sync phone numbers</strong>, then <strong>Sync templates</strong>.</li>
+            </ol>
+            <div class="callout danger">
+                <span class="ico">🚫</span>
+                <p><strong>A temporary token expires after 24 hours.</strong> Use a <em>Permanent Token</em> from a System User. Watch the “Connection health” on the setup page: if the token shows as expired, the channel will stop sending.</p>
+            </div>
+            <h3>Templates</h3>
+            <p>Any message that starts a conversation on WhatsApp must be an <strong>approved Template</strong>. Create it from <strong>Marketing ← WhatsApp templates</strong>, and wait for Meta’s approval (it can take from a few minutes up to 24 hours). Rejected templates show the reason for rejection — edit it and resubmit.</p>
+            <h3>Is your number running on the WhatsApp Business app?</h3>
+            <p>If you use the number on the WhatsApp Business app and want to keep it on your phone as well, do not delete it from the app the usual way. Use the <strong>WhatsApp Business app coexistence</strong> feature instead — see <a href="11-whatsapp-coexistence.html">Guide 11</a>.</p>
+
+            <h2>2. Instagram and Messenger</h2>
+            <ol class="steps">
+                <li>From the channel setup page, choose <strong>Instagram</strong> or <strong>Messenger</strong>.</li>
+                <li>Sign in with the Facebook account that manages the page.</li>
+                <li>Choose the page (Messenger) or the business account (Instagram).</li>
+                <li>Approve the message management and publishing permissions.</li>
+            </ol>
+            <div class="callout warn">
+                <span class="ico">⚠️</span>
+                <p>If a message appears about <strong>Content-Security-Policy</strong> or the Facebook SDK failing to load, the problem is in the server/proxy configuration and not in your account. Contact the platform administrator.</p>
+            </div>
+
+            <h2>3. SMS</h2>
+            <p>From <strong>Marketing ← SMS gateways</strong>. The supported providers:</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Region</th><th>Providers</th></tr></thead>
+                    <tbody>
+                        <tr><td>Global</td><td>Twilio · Vonage (Nexmo) · Telnyx · ClickSend · Amazon SNS</td></tr>
+                        <tr><td>Egypt</td><td>SMS Misr · Cequens</td></tr>
+                        <tr><td>Gulf</td><td>Unifonic · Taqnyat · Msegat · Infobip</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <ol class="steps">
+                <li>Choose the provider.</li>
+                <li>Enter the required keys (API Key / SID / Token depending on the provider).</li>
+                <li>Enter the <strong>Sender ID</strong> approved by the provider.</li>
+                <li>Save, then click <strong>Test connection</strong> if it is available.</li>
+                <li>Send a test message to your number before any campaign.</li>
+            </ol>
+            <div class="callout tip">
+                <span class="ico">💡</span>
+                <p>If sending fails even though the keys are correct, check: the account balance, the Sender ID approval, and the international number format (example: <code>2010...</code> without a + or leading zeros).</p>
+            </div>
+
+            <h2>4. Email (SMTP)</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/email-server.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/email-server.png" alt="Email server (SMTP): your own sending details, so campaigns leave from your domain." decoding="async">
+                </a>
+                <figcaption>Email server (SMTP): your own sending details, so campaigns leave from your domain.</figcaption>
+            </figure>
+
+            <p>From <strong>Marketing ← Mail server</strong>. This server is used for email campaigns, email sequences, and system notifications if you connect it.</p>
+            <ol class="steps">
+                <li>Enter the <strong>Host</strong> and the <strong>Port</strong> (usually 587 with TLS or 465 with SSL).</li>
+                <li>Enter the username and password.</li>
+                <li>Set the <strong>From Email</strong> and the <strong>From Name</strong>.</li>
+                <li>Save, then send a test message.</li>
+            </ol>
+            <div class="callout warn">
+                <span class="ico">⚠️</span>
+                <p>Use an email address on your own domain, and set up <strong>SPF and DKIM</strong> at your domain provider. Without that, your messages will go to Spam even if the SMTP is working.</p>
+            </div>
+
+            <h2>5. AI (BYOK)</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/ai-providers.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/ai-providers.png" alt="AI providers (BYOK): add your own key from OpenAI, Anthropic, Google, or a compatible endpoint." decoding="async">
+                </a>
+                <figcaption>AI providers (BYOK): add your own key from OpenAI, Anthropic, Google, or a compatible endpoint.</figcaption>
+            </figure>
+
+            <p>Connecting is done from <strong>Settings ← AI providers</strong>. The supported providers: <strong>OpenRouter · OpenAI · Anthropic · Gemini</strong>.</p>
+            <ol class="steps">
+                <li>Open the provider and click “Add key”.</li>
+                <li>Paste the API Key (it is stored encrypted and is not shown again after saving).</li>
+                <li>Choose the default <strong>chat model</strong>.</li>
+                <li>Enable the provider.</li>
+                <li>If you are going to use knowledge bases, enable a provider that supports <strong>Embeddings</strong> (OpenAI or Gemini).</li>
+            </ol>
+            <div class="callout danger">
+                <span class="ico">🚫</span>
+                <p>Knowledge bases do not work without an enabled Embeddings provider. If a warning appears at the top of the page, that is what it means.</p>
+            </div>
+
+            <h2>6. Online stores</h2>
+            <h3>Shopify</h3>
+            <ol class="steps">
+                <li>From <strong>Sales ← Stores ← Add store</strong>, choose Shopify.</li>
+                <li>Enter the store domain in the format <code>your-store.myshopify.com</code> (not the custom domain).</li>
+                <li>Create an Admin API Access Token with read permissions for orders and products, and enter it.</li>
+                <li>Copy the <strong>Webhook Secret</strong> and add it in Shopify when you set up the webhooks.</li>
+            </ol>
+            <h3>WooCommerce</h3>
+            <ol class="steps">
+                <li>Enter the full store URL (<code>https://shop.example.com</code>).</li>
+                <li>From WooCommerce ← Settings ← Advanced ← REST API, create a key with Read/Write permissions.</li>
+                <li>Enter the Consumer Key and the Consumer Secret.</li>
+                <li>Save, then click “Sync” to confirm the connection.</li>
+            </ol>
+
+            <h2>7. Domain and subdomain</h2>
+            <ul>
+                <li><strong>Subdomain:</strong> for example <code>acme</code> becomes <code>acme.&lt;base-domain&gt;</code>. The platform administrator sets it from the customers screen.</li>
+                <li><strong>Custom Domain:</strong> for example <code>crm.company.com</code>. It requires configuring DNS (CNAME or A) to the platform server, and then an SSL certificate.</li>
+                <li>After changing the domain, wait for DNS propagation (it can take up to 24 hours).</li>
+            </ul>
+
+            <h2>8. Outgoing webhooks</h2>
+            <p>From <strong>Settings ← Webhooks</strong>. They are used to notify your external systems of events (such as a lead being created or a message being received).</p>
+            <ol class="steps">
+                <li>Add an Endpoint (an HTTPS URL that receives POST).</li>
+                <li>Choose the events you need.</li>
+                <li>Keep the Secret to verify the request signature.</li>
+                <li>Use “Send test”, then check the “Delivery log” whenever something fails.</li>
+            </ol>
+
+            <h2>Common connection errors</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Message / symptom</th><th>Cause</th><th>Solution</th></tr></thead>
+                    <tbody>
+                        <tr><td>WhatsApp token expired</td><td>A 24-hour temporary token was used</td><td>Create a Permanent Token from a System User and reconnect</td></tr>
+                        <tr><td>Number already registered</td><td>The number is on the regular WhatsApp app</td><td>Delete the account from the app and try again</td></tr>
+                        <tr><td>Template rejected</td><td>Non-compliant content or missing variables</td><td>Edit the text and resubmit after reading the rejection reason</td></tr>
+                        <tr><td>SMS sending failed</td><td>Sender ID not approved or zero balance</td><td>Check the provider’s dashboard</td></tr>
+                        <tr><td>Email going to Spam</td><td>SPF/DKIM are not configured</td><td>Configure the DNS records at your domain provider</td></tr>
+                        <tr><td>Invalid AI key</td><td>A test, expired or zero-balance key</td><td>Create a production key and make sure there is a balance</td></tr>
+                        <tr><td>No Embeddings</td><td>No provider supporting them is enabled</td><td>Enable OpenAI or Gemini</td></tr>
+                        <tr><td>Webhook not arriving</td><td>The URL is unreachable or the signature is wrong</td><td>Check the delivery log and retest the endpoint</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout ok">
+                <span class="ico">✅</span>
+                <p><strong>After finishing this guide</strong> all your channels will be ready. Move on to the <a href="03-inbox.html">Inbox</a> to start receiving conversations.</p>
+            </div>
+        </article>
+
+        <footer class="doc-footer">
+            <span>AYDRA · Version 1.0</span>
+            <span class="pager"><a class="btn" href="01-getting-started.html">← Previous</a><a class="btn btn-primary" href="03-inbox.html">Next: Inbox →</a></span>
+        </footer>
+    </main>
+</div>
+
+<script src="../assets/docs.js?v=2"></script>
+</body>
+</html>

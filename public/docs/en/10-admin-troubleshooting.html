@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10 · Account Admin &amp; Troubleshooting · AYDRA</title>
+<meta name="description" content="Team and permissions, subscription and billing, API keys and Webhooks, security, privacy, support, and solving common problems.">
+<link rel="stylesheet" href="../assets/docs.css?v=2">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" href="index.html"><span class="dot"></span> AYDRA <small>User Guides</small></a>
+    <div class="topbar-actions">
+        <a class="btn" href="index.html">All guides</a>
+        <button id="theme-toggle" class="btn" type="button" aria-label="Toggle theme">🌙</button>
+        <button class="btn" type="button" onclick="window.print()">🖨️ Print</button>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <h3>Guides</h3>
+        <nav class="doc-nav" id="doc-nav"></nav>
+        <div class="toc">
+            <h3>On this page</h3>
+            <ul id="page-toc"></ul>
+        </div>
+    </aside>
+
+    <main class="content">
+        <article>
+            <span class="eyebrow">Guide 10 · Account admin</span>
+            <h1>Account Admin &amp; Troubleshooting</h1>
+            <p class="lead">This guide is for the administrator: who can access the system and what they see, how billing is managed, how to secure the account, and where to find a fix when something stops working.</p>
+
+            <div class="callout warn">
+                <span class="ico">⚠️</span>
+                <p>Most of the settings in this guide only appear for the <strong>Administrator</strong> role. If you are a Staff or Viewer and cannot find a screen, this is the reason — ask your account administrator.</p>
+            </div>
+
+            <h2>1. Team and invitations</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/team.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/team.png" alt="Team: invite members, assign roles, and control what each person can access." decoding="async">
+                </a>
+                <figcaption>Team: invite members, assign roles, and control what each person can access.</figcaption>
+            </figure>
+
+            <p>From <strong>Settings → Team</strong>.</p>
+            <h3>Invite a new member</h3>
+            <ol class="steps">
+                <li>Click <strong>Invite by email</strong>.</li>
+                <li>Enter the member's email and choose a role (Staff by default).</li>
+                <li>Send the invitation. It appears under <strong>Pending invitations</strong> until the member accepts it.</li>
+                <li>You can cancel the invitation before it is accepted.</li>
+            </ol>
+            <h3>The three roles</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Role</th><th>Permissions</th><th>Best for</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Administrator</strong></td><td>Everything: team, billing, integrations, settings, logs, deletion</td><td>Account owner or operations manager</td></tr>
+                        <tr><td><strong>Staff</strong></td><td>Day-to-day work: conversations, contacts, leads, campaigns</td><td>Sales and support team</td></tr>
+                        <tr><td><strong>Viewer</strong></td><td>Read and reports only</td><td>Management or oversight without editing</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>The number of users is limited by your plan. When you reach the limit, the invite button is disabled and an upgrade suggestion appears — existing members keep working unaffected.</p>
+            <div class="callout tip">
+                <span class="ico">💡</span>
+                <p>Before deleting a member, reassign their tasks and unresolved conversations to a colleague. Deleting the member does not delete their historical data, but it cuts off their access immediately.</p>
+            </div>
+
+            <h2>2. Subscription and billing</h2>
+            <h3>Subscription page</h3>
+            <figure class="shot">
+                <a href="../assets/img/en/billing.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/billing.png" alt="Subscription: your current plan, usage, renewal date, and upgrade options." decoding="async">
+                </a>
+                <figcaption>Subscription: your current plan, usage, renewal date, and upgrade options.</figcaption>
+            </figure>
+
+            <p>From <strong>Settings → Subscription</strong> you can see: the current plan, renewal date, subscription status, and limits. From the same page:</p>
+            <ul>
+                <li><strong>Change plan:</strong> an upgrade is immediate, while a downgrade usually starts from the next cycle.</li>
+                <li><strong>Cancel subscription:</strong> the account keeps working until the end of the paid period, then switches to limited mode.</li>
+                <li><strong>Discount coupon:</strong> enter the code before paying, then click verify — the discount appears before you confirm.</li>
+            </ul>
+
+            <h3>Payments and invoices log</h3>
+            <p>From <strong>Settings → Billing</strong>. A table of all transactions: date, amount, currency, gateway, and status.</p>
+            <ul>
+                <li>Click <strong>Invoice</strong> next to any successful transaction to download it.</li>
+                <li>Transactions with a Pending status may complete after a few minutes, depending on the payment gateway.</li>
+                <li>If the payment fails, try another gateway or check with your bank — do not retry more than twice in a row.</li>
+            </ul>
+
+            <h3>Prices and currencies</h3>
+            <p>Prices are shown according to the account/region currency. Displayed amounts do not include tax (VAT), which is added at checkout based on your country. An annual subscription = 10 months' cost (two months free).</p>
+
+            <h2>3. Profile and security</h2>
+            <h3>Profile</h3>
+            <p>From <strong>Profile</strong>: name, email, photo, language, and time zone. Changing the email requires confirmation.</p>
+            <h3>Two-factor authentication (2FA)</h3>
+            <ol class="steps">
+                <li>Open <strong>Profile → Two-Factor</strong>.</li>
+                <li>Scan the QR code with an authenticator app (Google Authenticator / Authy / 1Password).</li>
+                <li>Enter the code to confirm activation.</li>
+                <li>Save the <strong>recovery codes</strong> in a safe place — without them, signing in is difficult if you lose your phone.</li>
+            </ol>
+            <h3>Active sessions</h3>
+            <p>From <strong>Profile → Sessions</strong> you can see all signed-in devices. Use <strong>Sign out of all sessions</strong> if you suspect unauthorized access.</p>
+            <h3>Password</h3>
+            <p>Change it from your profile. Use a long, unique password, and enable 2FA — these are the two most important steps to protect the account.</p>
+
+            <h2>4. API and Webhooks</h2>
+            <h3>API keys (API Tokens)</h3>
+            <figure class="shot">
+                <a href="../assets/img/en/api-tokens.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/api-tokens.png" alt="API tokens: create scoped keys for external integrations and revoke them at any time." decoding="async">
+                </a>
+                <figcaption>API tokens: create scoped keys for external integrations and revoke them at any time.</figcaption>
+            </figure>
+
+            <p>From <strong>Settings → API keys</strong> (requires the API feature in your plan).</p>
+            <ol class="steps">
+                <li>Click <strong>Create key</strong> and enter a name that reflects its use (for example, "Website integration").</li>
+                <li>Choose the permissions (Scopes): read/write contacts, campaigns, messages, conversations, Webhooks, AI, automation, social.</li>
+                <li>Optionally set an expiry date.</li>
+                <li>Copy the key immediately — <strong>it will not be shown again</strong>.</li>
+            </ol>
+            <p>Use it in requests as <code>Authorization: Bearer &lt;token&gt;</code>. See <strong>Settings → API documentation</strong> for examples and routes.</p>
+            <div class="callout danger">
+                <span class="ico">🚫</span>
+                <p>Do not put the key in frontend code or a Git repository. Create a separate key for each integration, and revoke it immediately if it leaks or is no longer used.</p>
+            </div>
+
+            <h3>Outgoing Webhooks</h3>
+            <figure class="shot">
+                <a href="../assets/img/en/webhooks.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/webhooks.png" alt="Outgoing webhooks: endpoints AYDRA calls when events happen, with delivery history." decoding="async">
+                </a>
+                <figcaption>Outgoing webhooks: endpoints AYDRA calls when events happen, with delivery history.</figcaption>
+            </figure>
+
+            <p>From <strong>Settings → Webhooks</strong>. They notify your systems about platform events.</p>
+            <ol class="steps">
+                <li>Add an Endpoint (HTTPS) and choose the events.</li>
+                <li>Save the Secret to verify the signature.</li>
+                <li>Send a test and make sure you receive <code>200</code>.</li>
+                <li>Check the <strong>delivery log</strong> on any failure, and retry.</li>
+            </ol>
+            <p>You can <strong>rotate the Secret</strong> from the same page if you suspect it has leaked.</p>
+
+            <h2>5. Media and storage</h2>
+            <p>From <strong>Settings → Media library</strong>. Upload the images and files used in campaigns, templates, and posts.</p>
+            <ul>
+                <li>The maximum file size depends on your plan and storage capacity.</li>
+                <li>Large images are compressed automatically in some flows — check the preview after uploading.</li>
+                <li>Deleting a file that is used in a campaign may break the campaign — verify before deleting.</li>
+            </ul>
+            <p>When storage is full, only new uploads stop; existing files keep working. Clean up unused files or upgrade your plan.</p>
+
+            <h2>6. Notifications</h2>
+            <p>From <strong>Settings → Notifications</strong>:</p>
+            <ul>
+                <li>Choose what reaches you: new conversation, assignment, due task, campaign failure, automation failure, invoice...</li>
+                <li>Choose the channel: in-app, email, or Web Push.</li>
+                <li>Web Push requires permission from the browser — if you declined it, re-enable it from the site settings in your browser.</li>
+                <li>Alert sounds are configured from the inbox.</li>
+            </ul>
+
+            <h2>7. Audit Log</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/audit-log.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/audit-log.png" alt="Audit log: a record of who did what and when inside the workspace." decoding="async">
+                </a>
+                <figcaption>Audit log: a record of who did what and when inside the workspace.</figcaption>
+            </figure>
+
+            <p>From <strong>Settings → Audit log</strong> (administrators only). It shows who did what and when: sign-in, settings change, deletion, invitation, plan change... etc.</p>
+            <ul>
+                <li>Filter by action or user.</li>
+                <li>Export the log as CSV from the export button.</li>
+                <li>Use it when investigating an unexpected change or a security incident.</li>
+            </ul>
+
+            <h2>8. Privacy and GDPR</h2>
+            <p>From <strong>Settings → Privacy &amp; GDPR</strong> (administrators only):</p>
+            <h3>Data Processing Agreement (DPA)</h3>
+            <p>Download a DPA copy pre-filled with your organization's details — for the vendor and the customer.</p>
+            <h3>Right to erasure (Erasure)</h3>
+            <ol class="steps">
+                <li>Create an erasure request for a specific person's email.</li>
+                <li>The request goes through a grace period (30 days by default) before execution.</li>
+                <li>The request can be cancelled during that period.</li>
+                <li>On execution: conversations and contacts are deleted, and leads are anonymised (Anonymise) to preserve financial records.</li>
+            </ol>
+            <h3>Retention period</h3>
+            <p>Set the number of days to keep generated export archives. A value of 0 = unlimited retention. Delete old archives automatically to save space.</p>
+
+            <h2>9. Export workspace data</h2>
+            <p>From <strong>Settings → Data export</strong>: request a complete copy of your workspace data. The file is generated in the background and you receive a download link by email when it finishes. The duration depends on the size of the data.</p>
+
+            <h2>10. Support</h2>
+            <p>From <strong>Support</strong> in the sidebar:</p>
+            <ol class="steps">
+                <li>Click <strong>New ticket</strong>.</li>
+                <li>Choose the topic (billing, integration, technical error, other).</li>
+                <li>Write a clear description and attach screenshots if possible.</li>
+                <li>Follow the replies from the same screen.</li>
+            </ol>
+            <div class="callout tip">
+                <span class="ico">💡</span>
+                <p>For the fastest resolution, include: the screen name, the time of the problem, the email/phone used, and the error message text. Do not send API keys or passwords.</p>
+            </div>
+
+            <h2>11. Troubleshooting — quick guide</h2>
+
+            <h3>I cannot sign in</h3>
+            <ul>
+                <li>Make sure the email and password are correct (try forgot password).</li>
+                <li>If you enabled 2FA and lost your phone, use a recovery code.</li>
+                <li>If the account is suspended or the trial has ended, check with the administrator.</li>
+            </ul>
+
+            <h3>I cannot see a screen in the menu</h3>
+            <ul>
+                <li>Role: Viewer/Staff see less than an Administrator.</li>
+                <li>Plan: some features are not included.</li>
+                <li>Workspace: you are in a different workspace — switch using the workspace switcher.</li>
+            </ul>
+
+            <h3>The "limit reached" message</h3>
+            <p>The limit blocks <strong>new creation only</strong>. Existing data keeps working and is not deleted. Upgrade your plan, wait for the month to renew, or delete unused items.</p>
+
+            <h3>Channels are not sending</h3>
+            <ul>
+                <li>WhatsApp: expired token, unapproved template, or outside the 24-hour window.</li>
+                <li>SMS: zero balance, unapproved Sender ID, or wrong number format.</li>
+                <li>Email: wrong SMTP or SPF/DKIM not configured.</li>
+                <li>See the <a href="02-setup-integrations.html">integrations guide</a>.</li>
+            </ul>
+
+            <h3>AI is not working</h3>
+            <ul>
+                <li>No key is enabled, or the key has expired / has zero balance.</li>
+                <li>You have exceeded the monthly token limit.</li>
+                <li>Knowledge bases need an Embeddings provider (OpenAI/Gemini).</li>
+            </ul>
+
+            <h3>The website or domain does not open</h3>
+            <ul>
+                <li>Check the DNS settings (CNAME/A) and wait up to 24 hours for propagation.</li>
+                <li>Verify the SSL certificate.</li>
+                <li>Check with the platform administrator — domain setup is done from the admin panel.</li>
+            </ul>
+
+            <h3>The campaign reached fewer recipients than expected</h3>
+            <ul>
+                <li>Invalid or blocked numbers on WhatsApp.</li>
+                <li>Recipients who are on the "unsubscribed" list.</li>
+                <li>The monthly channel limit was exceeded during sending.</li>
+                <li>See the campaign report for a breakdown of the failure reasons.</li>
+            </ul>
+
+            <h3>Automation is not working</h3>
+            <ul>
+                <li>It is not enabled, or the trigger is not connected to the first step.</li>
+                <li>A step is failing because of a disconnected channel or an unapproved template.</li>
+                <li>Check the "run log" to find the step and the reason.</li>
+            </ul>
+
+            <h2>12. Frequently asked questions</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Question</th><th>Answer</th></tr></thead>
+                    <tbody>
+                        <tr><td>Is my data shared with other customers?</td><td>No. Every workspace is fully isolated at the database level.</td></tr>
+                        <tr><td>What happens if I downgrade my plan and exceed the limits?</td><td>Nothing is deleted. New additions are blocked and an upgrade prompt appears.</td></tr>
+                        <tr><td>Can a deleted item be recovered?</td><td>Deletion is usually permanent. Export a copy periodically, or use the data export.</td></tr>
+                        <tr><td>Can ownership be transferred to someone else?</td><td>Yes, from team management — appoint another Administrator and then change your own roles.</td></tr>
+                        <tr><td>Does the platform work without my keys?</td><td>No. Channels and AI need your keys (BYOK) — this is intentional, for the security of your data and your costs.</td></tr>
+                        <tr><td>How do I track my usage?</td><td>From the reports (AI, conversations, campaigns) and the dashboard.</td></tr>
+                        <tr><td>Can I export everything?</td><td>Yes — CSV from the reports, and a full copy from the data export.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>13. Monthly security checklist</h2>
+            <ul>
+                <li>Review the team list and remove anyone who no longer needs access.</li>
+                <li>Rotate/revoke unused API keys.</li>
+                <li>Review the active sessions.</li>
+                <li>Make sure 2FA is enabled for every Administrator.</li>
+                <li>Review the audit log for unexpected changes.</li>
+                <li>Make sure the channel keys (WhatsApp/SMS/SMTP/AI) are production keys and have not expired.</li>
+                <li>Review token and message usage against your plan limits.</li>
+            </ul>
+
+            <div class="callout ok">
+                <span class="ico">✅</span>
+                <p><strong>You have reached the end of the guides.</strong> If you missed a step, go back to the <a href="index.html">guides index</a> or use the search at the top.</p>
+            </div>
+        </article>
+
+        <footer class="doc-footer">
+            <span>AYDRA · Version 1.0</span>
+            <span class="pager"><a class="btn" href="09-reports.html">← Previous</a><a class="btn btn-primary" href="11-whatsapp-coexistence.html">Next: Running the WhatsApp Business app →</a></span>
+        </footer>
+    </main>
+</div>
+
+<script src="../assets/docs.js?v=2"></script>
+</body>
+</html>

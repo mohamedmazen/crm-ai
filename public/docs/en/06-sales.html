@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>06 · Sales, Quotes &amp; Invoices · AYDRA</title>
+<meta name="description" content="Quotes, invoices, products, email sequences, call log and AI SDR in AYDRA.">
+<link rel="stylesheet" href="../assets/docs.css?v=2">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" href="index.html"><span class="dot"></span> AYDRA <small>User Guides</small></a>
+    <div class="topbar-actions">
+        <a class="btn" href="index.html">All guides</a>
+        <button id="theme-toggle" class="btn" type="button" aria-label="Toggle theme">🌙</button>
+        <button class="btn" type="button" onclick="window.print()">🖨️ Print</button>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <h3>Guides</h3>
+        <nav class="doc-nav" id="doc-nav"></nav>
+        <div class="toc">
+            <h3>On this page</h3>
+            <ul id="page-toc"></ul>
+        </div>
+    </aside>
+
+    <main class="content">
+        <article>
+            <span class="eyebrow">Guide 06 · Sales team</span>
+            <h1>Sales, Quotes &amp; Invoices</h1>
+            <p class="lead">Once a lead is ready, this is where you close the deal: products, a quote, an invoice, automated follow-up, and recorded calls. Every section below stands on its own — start with products.</p>
+
+            <div class="callout warn">
+                <span class="ico">⚠️</span>
+                <p>These screens are included in plans that contain <strong>Quotes</strong>, <strong>Sequences</strong> and <strong>Call Logs</strong>. If you do not see them in the sidebar, check your plan.</p>
+            </div>
+
+            <h2>1. Products</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/products.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/products.png" alt="Products: your catalogue with price and currency, used when building quotes and invoices." decoding="async">
+                </a>
+                <figcaption>Products: your catalogue with price and currency, used when building quotes and invoices.</figcaption>
+            </figure>
+
+            <p>Go to <strong>Sales ← Products</strong>. Products are the foundation from which quote and invoice line items are built.</p>
+            <ol class="steps">
+                <li>Add the product: name, description, price, currency, and unit.</li>
+                <li>You can add images or links if included.</li>
+                <li>Products not linked to an online store are managed manually.</li>
+                <li>When building a quote, select the products and set the quantities.</li>
+            </ol>
+
+            <h2>2. Quotes</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/quotes.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/quotes.png" alt="Quotes: build an offer from products, send it as a link or PDF, and track when it is viewed." decoding="async">
+                </a>
+                <figcaption>Quotes: build an offer from products, send it as a link or PDF, and track when it is viewed.</figcaption>
+            </figure>
+
+            <p>Go to <strong>Sales ← Quotes</strong>.</p>
+            <ol class="steps">
+                <li>Click <strong>New quote</strong>.</li>
+                <li>Choose the customer (a contact or a lead).</li>
+                <li>Add the line items: product, quantity, price, discount, tax.</li>
+                <li>Set the validity period and the terms.</li>
+                <li>Save as a draft, then click <strong>Send</strong>.</li>
+            </ol>
+            <h3>What happens after sending</h3>
+            <ul>
+                <li>The customer receives a secure public link (no login required).</li>
+                <li>They can <strong>accept</strong> or <strong>reject</strong> the quote from the same link.</li>
+                <li>They can download a PDF copy.</li>
+                <li>The quote status updates automatically in the system.</li>
+            </ul>
+            <h3>Converting a quote to an invoice</h3>
+            <p>After acceptance, click <strong>Convert to invoice</strong> — the line items and customer are copied and it becomes a collectable invoice.</p>
+
+            <h2>3. Invoices</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/invoices.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/invoices.png" alt="Invoices: issue, track payment status, and download the PDF." decoding="async">
+                </a>
+                <figcaption>Invoices: issue, track payment status, and download the PDF.</figcaption>
+            </figure>
+
+            <p>Go to <strong>Sales ← Invoices</strong>.</p>
+            <ol class="steps">
+                <li>Create a new invoice (or convert an accepted quote).</li>
+                <li>Review the line items and the due date.</li>
+                <li>Send it to the customer — they receive a public link + PDF.</li>
+                <li>Record payments from the <strong>Add payment</strong> button (full or partial).</li>
+                <li>The invoice status appears: unpaid / partially paid / paid.</li>
+            </ol>
+            <div class="callout tip">
+                <span class="ico">💡</span>
+                <p>Tax is calculated according to the platform's tax settings. Make sure the tax rate is configured before issuing your first invoice.</p>
+            </div>
+
+            <h2>4. Email sequences (Sequences)</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/sequences.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/sequences.png" alt="Email sequences: automated multi-step follow-up cadences with conditions and stop rules." decoding="async">
+                </a>
+                <figcaption>Email sequences: automated multi-step follow-up cadences with conditions and stop rules.</figcaption>
+            </figure>
+
+            <p>Automated follow-up across several email steps. Go to <strong>Sales ← Sequences</strong>.</p>
+            <ol class="steps">
+                <li>Create a new sequence.</li>
+                <li>Open the <strong>Builder</strong> and add the steps: first email, wait, second email... and so on.</li>
+                <li>Write the subject and body of each step, and use the variables (customer name...).</li>
+                <li>Activate the sequence.</li>
+                <li>Add contacts/leads manually or via automation (the "enrol in a sequence" action).</li>
+            </ol>
+            <ul>
+                <li>There is an automatic <strong>unsubscribe</strong> link in every email (One-click Unsubscribe).</li>
+                <li>Anyone who unsubscribes appears under <strong>Unsubscribed</strong> and does not receive further steps.</li>
+                <li>The sequence can be paused without deleting it.</li>
+            </ul>
+
+            <h2>5. Call log (Call Log)</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/calls.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/calls.png" alt="Call log: record calls against a contact or lead, with outcome and notes." decoding="async">
+                </a>
+                <figcaption>Call log: record calls against a contact or lead, with outcome and notes.</figcaption>
+            </figure>
+
+            <p>Go to <strong>Sales ← Calls</strong> (includes Click-to-Call if a call provider is configured).</p>
+            <ol class="steps">
+                <li>Click the customer's number to start a call (Click-to-Call).</li>
+                <li>After the call ends, log the outcome: connected, no answer, busy, or add a call manually.</li>
+                <li>Add your call notes.</li>
+                <li>If the AI Sales feature is available, use <strong>Summarise call</strong> to turn the transcript into a summary and follow-up points (consumes tokens).</li>
+            </ol>
+
+            <h2>6. AI SDR</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/ai-sdr.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/ai-sdr.png" alt="AI SDR: let the assistant qualify and follow up with leads automatically within the limits you set." decoding="async">
+                </a>
+                <figcaption>AI SDR: let the assistant qualify and follow up with leads automatically within the limits you set.</figcaption>
+            </figure>
+
+            <p>An automated sales rep that follows up with leads automatically until a human replies. Go to <strong>Sales ← AI SDR</strong>.</p>
+            <ol class="steps">
+                <li>Enable the feature.</li>
+                <li>Set the tone, messages, working hours and number of follow-ups.</li>
+                <li>Click <strong>Start</strong> to begin the run.</li>
+                <li>The sequence stops automatically as soon as the customer replies, and hands over to you.</li>
+            </ol>
+            <div class="callout warn">
+                <span class="ico">⚠️</span>
+                <p>AI SDR consumes AI tokens. Monitor usage from the AI reports, and start with a small number of follow-ups.</p>
+            </div>
+
+            <h2>7. AI sales assistant</h2>
+            <p>Inside the lead profile (AI Sales feature) you will find:</p>
+            <ul>
+                <li><strong>Lead Coach:</strong> suggestions for the next step and a follow-up message.</li>
+                <li><strong>Smart tags:</strong> automatic classification of interest.</li>
+                <li><strong>Conversation summary:</strong> a quick summary of the latest interactions.</li>
+            </ul>
+            <p>All of these features consume from the monthly token limit.</p>
+
+            <h2>Common problems</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Problem</th><th>Cause</th><th>Fix</th></tr></thead>
+                    <tbody>
+                        <tr><td>The "Send quote" button does not work</td><td>The customer has no email or SMTP is not configured</td><td>Add an email and test the mail server</td></tr>
+                        <tr><td>The customer did not receive the quote</td><td>The email is in Spam or SMTP failed</td><td>Send the link manually and test SMTP</td></tr>
+                        <tr><td>Cannot convert to an invoice</td><td>The quote is not accepted yet</td><td>Accept it manually or wait for the customer</td></tr>
+                        <tr><td>The sequence does not send</td><td>It is not activated or the user is unsubscribed</td><td>Check the status and the unsubscribed list</td></tr>
+                        <tr><td>A call does not start</td><td>The call provider is not configured</td><td>Configure the call settings first</td></tr>
+                        <tr><td>"You have reached the token limit"</td><td>High AI usage</td><td>The data still works, but new requests stop — upgrade your plan</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout ok">
+                <span class="ico">✅</span>
+                <p><strong>Next step:</strong> connect sales to marketing with the <a href="07-marketing-social.html">Campaigns &amp; Social guide</a>.</p>
+            </div>
+        </article>
+
+        <footer class="doc-footer">
+            <span>AYDRA · v1.0</span>
+            <span class="pager"><a class="btn" href="05-leads-pipeline.html">← Previous</a><a class="btn btn-primary" href="07-marketing-social.html">Next: Marketing →</a></span>
+        </footer>
+    </main>
+</div>
+
+<script src="../assets/docs.js?v=2"></script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>04 · Contacts &amp; Segments · AYDRA</title>
+<meta name="description" content="Manage contacts, import them from CSV, build segments and custom fields in AYDRA.">
+<link rel="stylesheet" href="../assets/docs.css?v=2">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" href="index.html"><span class="dot"></span> AYDRA <small>User Guides</small></a>
+    <div class="topbar-actions">
+        <a class="btn" href="index.html">All guides</a>
+        <button id="theme-toggle" class="btn" type="button" aria-label="Toggle theme">🌙</button>
+        <button class="btn" type="button" onclick="window.print()">🖨️ Print</button>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <h3>Guides</h3>
+        <nav class="doc-nav" id="doc-nav"></nav>
+        <div class="toc">
+            <h3>On this page</h3>
+            <ul id="page-toc"></ul>
+        </div>
+    </aside>
+
+    <main class="content">
+        <article>
+            <span class="eyebrow">Guide 04 · Staff / agent</span>
+            <h1>Contacts &amp; Segments</h1>
+            <p class="lead">Contacts are the heart of the system: campaigns, segments and leads are all built from them. This guide explains manual entry, smart importing, and building segments without duplicate records.</p>
+
+            <h2>Contacts list</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/contacts.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/contacts.png" alt="Contacts list: search, filter, tag, and open any contact profile from here." decoding="async">
+                </a>
+                <figcaption>Contacts list: search, filter, tag, and open any contact profile from here.</figcaption>
+            </figure>
+
+            <p>Go to <strong>Contacts ← Contacts</strong>. The list shows name, phone, email, tags and segments, with instant search.</p>
+            <ul>
+                <li>Click any contact to open its full profile (messages, linked leads, activity).</li>
+                <li>Use search by name, phone or email.</li>
+                <li>You can export from the same screen or from Reports, depending on your permissions.</li>
+            </ul>
+
+            <h2>Adding a contact manually</h2>
+            <ol class="steps">
+                <li>Click <strong>Add contact</strong>.</li>
+                <li>Enter the name and phone number in international format (example: <code>201012345678</code>).</li>
+                <li>Add email, company and tags if you wish.</li>
+                <li>Save.</li>
+            </ol>
+            <div class="callout warn">
+                <span class="ico">⚠️</span>
+                <p>The phone number is the primary key for the channel. Always enter it in international format without the <code>+</code> or leading zeros, otherwise sending on WhatsApp and SMS will fail.</p>
+            </div>
+
+            <h2>Importing contacts</h2>
+            <p>There are two paths: quick import (CSV) and the table import (Bulk Import), which works like an Excel sheet inside the browser.</p>
+
+            <h3>Quick import (CSV)</h3>
+            <ol class="steps">
+                <li>From the contacts list, click <strong>Import</strong>.</li>
+                <li>Upload a CSV file encoded in UTF-8.</li>
+                <li>Match the columns: phone is required, the rest are optional.</li>
+                <li>Review the number of valid and rejected rows before confirming.</li>
+                <li>Click Import.</li>
+            </ol>
+
+            <h3>Table import (Bulk Import)</h3>
+            <figure class="shot">
+                <a href="../assets/img/en/contacts-import.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/contacts-import.png" alt="Bulk import: upload a CSV or Excel file, map its columns, and check for duplicates before importing." decoding="async">
+                </a>
+                <figcaption>Bulk import: upload a CSV or Excel file, map its columns, and check for duplicates before importing.</figcaption>
+            </figure>
+
+            <ol class="steps">
+                <li>Open <strong>Advanced import</strong>.</li>
+                <li>Paste the data or upload a CSV/XLSX file.</li>
+                <li>Map the columns: name, phone, email, company, tags, segment.</li>
+                <li>Rows missing a phone are flagged as errors and are not imported.</li>
+                <li>Review the summary, then confirm.</li>
+            </ol>
+
+            <div class="callout tip">
+                <span class="ico">💡</span>
+                <p><strong>Before any large import:</strong> try 10 rows first, and make sure the number format is correct. A bad import is harder to clean up than manual entry.</p>
+            </div>
+
+            <h3>Duplicates during import</h3>
+            <p>The system prevents creating a duplicate contact with the same phone number within the same workspace. When a match is found, the existing record is usually updated instead of creating a new copy — check the import summary to see the number of "updated" and "added" records.</p>
+
+            <h2>Segments</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/segments.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/segments.png" alt="Segments: saved smart groups built from conditions, used for campaigns and automations." decoding="async">
+                </a>
+                <figcaption>Segments: saved smart groups built from conditions, used for campaigns and automations.</figcaption>
+            </figure>
+
+            <p>A segment is a dynamic group of contacts that updates automatically according to rules. Go to <strong>Contacts ← Segments</strong>.</p>
+            <ol class="steps">
+                <li>Click <strong>New segment</strong>.</li>
+                <li>Choose the combiner: <strong>AND</strong> (all conditions) or <strong>OR</strong> (any condition).</li>
+                <li>Add the conditions: field + operator + value. Example: <code>phone_e164</code> "contains" <code>2010</code>.</li>
+                <li>You can use the "is empty" and "is not empty" operators without a value.</li>
+                <li>Save — the segment appears with the number of matching contacts.</li>
+            </ol>
+
+            <h3>Adding contacts to a segment manually</h3>
+            <p>Next to each segment there is an <strong>Add contacts</strong> button that opens a multi-select screen. Use it for static segments (such as "Showroom customers").</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Use case</th><th>Segment example</th></tr></thead>
+                    <tbody>
+                        <tr><td>Campaign for a city</td><td>City = Cairo</td></tr>
+                        <tr><td>VIP customers</td><td>Tag contains "VIP"</td></tr>
+                        <tr><td>Incomplete data</td><td>Email is empty</td></tr>
+                        <tr><td>Follow-up after purchase</td><td>Tag "Purchased" + last activity within 30 days</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Tags</h2>
+            <p>Tags are manual and quick, and differ from segments in that they do not update automatically:</p>
+            <ul>
+                <li>Add or remove a tag from the contact profile.</li>
+                <li>Add tags to several contacts at once from bulk actions.</li>
+                <li>Tags are used in campaign filters and automation triggers.</li>
+            </ul>
+
+            <h2>Custom fields</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/custom-fields.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/custom-fields.png" alt="Custom fields: extra fields you add to contacts and use in segments and messages." decoding="async">
+                </a>
+                <figcaption>Custom fields: extra fields you add to contacts and use in segments and messages.</figcaption>
+            </figure>
+
+            <p>Go to <strong>Settings ← Custom fields</strong> (if included in your plan). Add fields such as "City", "Favourite product", "Date of birth".</p>
+            <ul>
+                <li>Choose the type: text, number, date, select list...</li>
+                <li>The fields appear on the contact form and during import.</li>
+                <li>They can be used in segment conditions and automation.</li>
+            </ul>
+            <div class="callout tip">
+                <span class="ico">💡</span>
+                <p>The number of custom fields is limited by plan (Free = 3, Starter = 10, Pro = 20, Business = unlimited).</p>
+            </div>
+
+            <h2>Contact profile</h2>
+            <p>It opens everything related to the customer:</p>
+            <ul>
+                <li>Basic data, tags and segments.</li>
+                <li>Previous conversations across all channels.</li>
+                <li>Linked leads and deals.</li>
+                <li>Activity log (messages, changes, tasks).</li>
+            </ul>
+
+            <h2>Bulk actions</h2>
+            <p>Select several contacts from the list, then:</p>
+            <ul>
+                <li>Add/remove tags.</li>
+                <li>Add to a segment.</li>
+                <li>Export the selection.</li>
+                <li>Delete (with care — this may affect reports).</li>
+            </ul>
+
+            <h2>Common problems</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Problem</th><th>Cause</th><th>Fix</th></tr></thead>
+                    <tbody>
+                        <tr><td>Rejected rows during import</td><td>Missing phone or wrong format</td><td>Correct the numbers and import again</td></tr>
+                        <tr><td>Duplicate contacts</td><td>Numbers in different formats (010... and 2010...)</td><td>Standardise the international format before importing</td></tr>
+                        <tr><td>Empty segment</td><td>A condition that matches no record</td><td>Check the operator and value, and try OR instead of AND</td></tr>
+                        <tr><td>Custom field not showing</td><td>Not included in the plan or disabled</td><td>Check your plan and the field settings</td></tr>
+                        <tr><td>"You have reached the contacts limit"</td><td>Plan limit exceeded</td><td>Existing data still works, but new additions stop — upgrade your plan</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout ok">
+                <span class="ico">✅</span>
+                <p><strong>Next step:</strong> once your contacts are in order, start working on <a href="05-leads-pipeline.html">Leads &amp; Pipeline</a>.</p>
+            </div>
+        </article>
+
+        <footer class="doc-footer">
+            <span>AYDRA · v1.0</span>
+            <span class="pager"><a class="btn" href="03-inbox.html">← Previous</a><a class="btn btn-primary" href="05-leads-pipeline.html">Next: Leads →</a></span>
+        </footer>
+    </main>
+</div>
+
+<script src="../assets/docs.js?v=2"></script>
+</body>
+</html>

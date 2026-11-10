@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>09 · Reports &amp; Analytics · AYDRA</title>
+<meta name="description" content="Sales, conversations, campaigns, automation, AI and social reports, plus CSV export and scheduled reports in AYDRA.">
+<link rel="stylesheet" href="../assets/docs.css?v=2">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" href="index.html"><span class="dot"></span> AYDRA <small>User Guides</small></a>
+    <div class="topbar-actions">
+        <a class="btn" href="index.html">All guides</a>
+        <button id="theme-toggle" class="btn" type="button" aria-label="Toggle theme">🌙</button>
+        <button class="btn" type="button" onclick="window.print()">🖨️ Print</button>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <h3>Guides</h3>
+        <nav class="doc-nav" id="doc-nav"></nav>
+        <div class="toc">
+            <h3>On this page</h3>
+            <ul id="page-toc"></ul>
+        </div>
+    </aside>
+
+    <main class="content">
+        <article>
+            <span class="eyebrow">Guide 09 · Manager</span>
+            <h1>Reports &amp; Analytics</h1>
+            <p class="lead">Numbers don't lie — but they have to be read in context. This guide explains every report available, when to use it, and how to export or schedule it so it reaches your inbox automatically.</p>
+
+            <div class="callout tip">
+                <span class="ico">💡</span>
+                <p>The seven sales reports (Volume, Sources, Win/Loss, Agents, Response, Pipeline, Attribution) require the <strong>Sales Reports</strong> feature in your plan. The conversations, campaigns, automation, AI, and social reports are also available depending on your plan — if the screen does not appear, it isn't included.</p>
+            </div>
+
+            <h2>1. Where do you start?</h2>
+            <p>All reports are under the <strong>Reports</strong> section in the sidebar:</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Report</th><th>Answers the question</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Sales</strong></td><td>Are we selling more? Who is selling? And where do the deals come from?</td></tr>
+                        <tr><td><strong>Conversations (Inbox)</strong></td><td>Are we replying quickly? And what is the team's workload?</td></tr>
+                        <tr><td><strong>Campaigns</strong></td><td>Which campaign actually landed and which one failed?</td></tr>
+                        <tr><td><strong>Automation</strong></td><td>Are the scenarios working or failing?</td></tr>
+                        <tr><td><strong>AI</strong></td><td>How many tokens are we consuming and where do they go?</td></tr>
+                        <tr><td><strong>Social</strong></td><td>How are the posts and accounts performing?</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>Every report starts with a <strong>time period</strong> filter. Change the period first before reading any number — most confusion comes from comparing different periods.</p>
+
+            <h2>2. Sales reports</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/reports-sales.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/reports-sales.png" alt="Sales reports: volume, sources, win/loss, agents, response speed, pipeline, and attribution." decoding="async">
+                </a>
+                <figcaption>Sales reports: volume, sources, win/loss, agents, response speed, pipeline, and attribution.</figcaption>
+            </figure>
+
+            <h3>2.1 Sales Volume (Volume)</h3>
+            <p>The number and value of deals over time, broken down by stage and status.</p>
+            <ul>
+                <li><strong>Use it to:</strong> measure the monthly trend and see your best months.</li>
+                <li><strong>Watch for:</strong> is the value rising while the count stays flat? (That means the average deal is getting bigger.)</li>
+                <li>The results can be grouped by day/week/month.</li>
+            </ul>
+
+            <h3>2.2 Sources</h3>
+            <p>Where the leads and deals come from: Scraper, Form, Campaign, Manual, and others.</p>
+            <ul>
+                <li>It shows the number of leads per source and the conversion rate to a deal.</li>
+                <li>It helps you stop expensive sources and double down on the winning ones.</li>
+                <li>It relies on the source being recorded when the lead is created — make sure the forms and campaigns are linked to a source.</li>
+            </ul>
+
+            <h3>2.3 Win/Loss</h3>
+            <p>Winning deals versus losing deals, with the loss reasons if they were recorded.</p>
+            <ul>
+                <li>It guides you to the recurring loss reasons (price, timing, competitor).</li>
+                <li>Encourage the team to record the loss reason when closing a deal — without it, the report is only half useful.</li>
+            </ul>
+
+            <h3>2.4 Agent Performance (Agents)</h3>
+            <p>For each team member: the number of deals, the value, the win rate, and the average time to close.</p>
+            <ul>
+                <li>Use it in the monthly review and for fair lead distribution.</li>
+                <li>Be careful about reading the numbers in isolation from the type of leads assigned to each agent.</li>
+            </ul>
+
+            <h3>2.5 Response Speed (Response)</h3>
+            <p>The time between a lead/message arriving and the first human reply.</p>
+            <ul>
+                <li>Replying within the first 5 minutes clearly lifts conversion.</li>
+                <li>Watch the leads that were never answered at all.</li>
+            </ul>
+
+            <h3>2.6 Pipeline</h3>
+            <p>The distribution of deals across the stages and their weighted value.</p>
+            <ul>
+                <li>It reveals the bottlenecks: a stage where deals pile up without progressing.</li>
+                <li>Use it in the weekly sales meeting.</li>
+            </ul>
+
+            <h3>2.7 Attribution</h3>
+            <p>Linking the deal to the channel, campaign, or UTM the customer came from.</p>
+            <ul>
+                <li>It relies on UTM links and lead sources.</li>
+                <li>Without it, you will know that you have sales, but not where they came from.</li>
+            </ul>
+
+            <h2>3. Conversations Report (Inbox)</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/reports-inbox.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/reports-inbox.png" alt="Conversations report: volume and response times per channel and per agent." decoding="async">
+                </a>
+                <figcaption>Conversations report: volume and response times per channel and per agent.</figcaption>
+            </figure>
+
+            <p>From <strong>Reports → Conversations</strong>:</p>
+            <ul>
+                <li>The number of new, resolved, and snoozed conversations.</li>
+                <li>The average first response and the average resolution time.</li>
+                <li>The breakdown by channel (WhatsApp/Instagram/Messenger/SMS/Email).</li>
+                <li>The workload per agent.</li>
+            </ul>
+            <div class="callout tip">
+                <span class="ico">💡</span>
+                <p>If the average first response is high, try auto-assignment or an instant auto-reply that reassures the customer and then routes the conversation.</p>
+            </div>
+
+            <h2>4. Campaigns Report</h2>
+            <p>From <strong>Reports → Campaigns</strong> or from the campaign page itself:</p>
+            <ul>
+                <li>Targeted, sent, failed, and read (per channel).</li>
+                <li>A breakdown of failures by reason (invalid number, rejected template, channel limit...).</li>
+                <li>Export the recipient list (CSV) to analyze it externally.</li>
+                <li>Compare campaigns with one another to find the best copy/timing.</li>
+            </ul>
+
+            <h2>5. Automation Report</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/reports-automations.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/reports-automations.png" alt="Automation report: how often each scenario ran and how many completed successfully." decoding="async">
+                </a>
+                <figcaption>Automation report: how often each scenario ran and how many completed successfully.</figcaption>
+            </figure>
+
+            <p>From <strong>Reports → Automation</strong>:</p>
+            <ul>
+                <li>The number of runs per scenario.</li>
+                <li>The success and failure rate, and the step where it fails.</li>
+                <li>The average execution time.</li>
+                <li>The most frequent errors.</li>
+            </ul>
+            <p>Use the button that jumps to the <strong>runs log</strong> from the report to see the details of each failed run.</p>
+
+            <h2>6. AI Report</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/reports-ai.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/reports-ai.png" alt="AI report: token usage and cost per provider and per chatbot." decoding="async">
+                </a>
+                <figcaption>AI report: token usage and cost per provider and per chatbot.</figcaption>
+            </figure>
+
+            <p>From <strong>Reports → AI</strong>:</p>
+            <ul>
+                <li>The total tokens consumed and the remainder of the monthly limit.</li>
+                <li>The breakdown by feature: chatbot, AI reply in automation, AI SDR, lead advisor, call summaries, post generation.</li>
+                <li>The estimated cost if it is enabled.</li>
+                <li>The number of failed requests (invalid key, limit exceeded, provider error).</li>
+            </ul>
+            <div class="callout warn">
+                <span class="ico">⚠️</span>
+                <p>As you approach the token limit, new features stop working but the old data remains. Watch the report weekly if you use AI SDR or the chatbot heavily.</p>
+            </div>
+
+            <h2>7. Social Report</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/reports-social.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/reports-social.png" alt="Social report: reach and engagement for the accounts you post to." decoding="async">
+                </a>
+                <figcaption>Social report: reach and engagement for the accounts you post to.</figcaption>
+            </figure>
+
+            <p>From <strong>Reports → Social</strong>:</p>
+            <ul>
+                <li>The number of posts per network (published/scheduled/failed).</li>
+                <li>Post performance by network.</li>
+                <li>The reasons posting failed (expired token, missing permission, rejected content).</li>
+            </ul>
+
+            <h2>8. CSV Export</h2>
+            <p>Most screens have an <strong>Export</strong> button. The files available:</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>File</th><th>Contents</th></tr></thead>
+                    <tbody>
+                        <tr><td>Contacts</td><td>All contacts with their fields, tags, and segments</td></tr>
+                        <tr><td>Campaign recipients</td><td>The status of each recipient in a given campaign</td></tr>
+                        <tr><td>Conversations</td><td>Conversation data, its status, and its channel</td></tr>
+                        <tr><td>AI runs</td><td>The requests, the tokens, and the result</td></tr>
+                        <tr><td>Audit log</td><td>All administrative operations (for the manager)</td></tr>
+                        <tr><td>Sales reports</td><td>Each report has its own export button</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>The files are UTF-8 encoded. If the Arabic text appears garbled in Excel, open the file via <em>Data ← From Text/CSV</em> and choose UTF-8.</p>
+
+            <h2>9. Scheduled Email Reports</h2>
+            <p>From <strong>Reports → Sales → Scheduled Reports</strong>:</p>
+            <ol class="steps">
+                <li>Click <strong>New Schedule</strong>.</li>
+                <li>Choose the report type (Volume, Sources, Win/Loss, Agents, Response, Pipeline, Attribution).</li>
+                <li>Choose the frequency: <strong>daily / weekly / monthly</strong>.</li>
+                <li>Enter the recipients' emails (comma-separated).</li>
+                <li>Add optional filters: pipeline, agent, source.</li>
+                <li>Save — the report arrives automatically as an attachment at the scheduled time.</li>
+            </ol>
+            <p>You can edit or delete the schedule at any time from the same screen.</p>
+            <div class="callout warn">
+                <span class="ico">⚠️</span>
+                <p>Sending scheduled reports depends on your own <strong>mail server (SMTP)</strong> and on the scheduler running on the server. If the reports do not arrive, check SMTP first, then ask the platform admin about Cron.</p>
+            </div>
+
+            <h2>10. Tips for reading them correctly</h2>
+            <ul>
+                <li><strong>Fix the period:</strong> don't compare a full month with a week.</li>
+                <li><strong>Read the source with the result:</strong> a single winning deal can flatter an agent's report for a month.</li>
+                <li><strong>Watch the trend, not the number:</strong> three points in a row matter more than a single spike.</li>
+                <li><strong>Connect the reports:</strong> Response + Agents + Win/Loss together give a real picture.</li>
+                <li><strong>Record the loss reasons:</strong> without them, Win/Loss stays incomplete.</li>
+            </ul>
+
+            <h2>Common mistakes</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Problem</th><th>Cause</th><th>Fix</th></tr></thead>
+                    <tbody>
+                        <tr><td>The sales report does not appear</td><td>The Sales Reports feature isn't included</td><td>Check your plan and upgrade it if needed</td></tr>
+                        <tr><td>Numbers for a previous period changed</td><td>Old data was edited/deleted or recategorized</td><td>Reports are calculated live from the current data</td></tr>
+                        <tr><td>Attribution is empty</td><td>There are no UTMs or recorded sources</td><td>Add sources and UTM links to the campaigns</td></tr>
+                        <tr><td>The AI report shows zero</td><td>No provider is enabled or there is no usage</td><td>Check the AI providers and the settings</td></tr>
+                        <tr><td>The scheduled report does not arrive</td><td>SMTP is not configured or the scheduler is down</td><td>Test SMTP and ask for a Cron review</td></tr>
+                        <tr><td>CSV with garbled Arabic</td><td>Excel opened it with the wrong encoding</td><td>Open it as UTF-8 via Data ← From Text/CSV</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout ok">
+                <span class="ico">✅</span>
+                <p><strong>Next step:</strong> set up the team, billing, and security in the <a href="10-admin-troubleshooting.html">Account Admin &amp; Troubleshooting guide</a>.</p>
+            </div>
+        </article>
+
+        <footer class="doc-footer">
+            <span>AYDRA · Version 1.0</span>
+            <span class="pager"><a class="btn" href="08-automation-ai.html">← Previous</a><a class="btn btn-primary" href="10-admin-troubleshooting.html">Next: Account Admin →</a></span>
+        </footer>
+    </main>
+</div>
+
+<script src="../assets/docs.js?v=2"></script>
+</body>
+</html>

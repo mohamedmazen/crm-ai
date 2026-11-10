@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>02 · الإعداد والتكاملات (BYOK) · AYDRA</title>
+<meta name="description" content="ربط واتساب وإنستجرام والرسائل النصية والبريد ومفاتيح الذكاء الاصطناعي والمتاجر والدومين في AYDRA.">
+<link rel="stylesheet" href="../assets/docs.css?v=2">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" href="index.html"><span class="dot"></span> AYDRA <small>دليل المستخدم</small></a>
+    <div class="topbar-actions">
+        <a class="btn" href="index.html">كل الأدلة</a>
+        <button id="theme-toggle" class="btn" type="button" aria-label="تبديل الوضع">🌙</button>
+        <button class="btn" type="button" onclick="window.print()">🖨️ طباعة</button>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <h3>الأدلة</h3>
+        <nav class="doc-nav" id="doc-nav"></nav>
+        <div class="toc">
+            <h3>في هذه الصفحة</h3>
+            <ul id="page-toc"></ul>
+        </div>
+    </aside>
+
+    <main class="content">
+        <article>
+            <span class="eyebrow">الدليل 02 · مدير الحساب</span>
+            <h1>الإعداد والتكاملات (BYOK)</h1>
+            <p class="lead">هذا أهم دليل في المنصة. AYDRA توفّر التخزين والتشغيل، لكن كل قناة تحتاج مفاتيحك أنت: واتساب، إنستجرام، SMS، البريد، الذكاء الاصطناعي، والمتجر. إن لم تُدخل المفاتيح، لن تعمل القناة — وهذا سلوك مقصود وليس عطلًا.</p>
+
+            <div class="callout warn">
+                <span class="ico">⚠️</span>
+                <p><strong>قبل أن تبدأ:</strong> جهّز بيانات كل تكامل في مكان واحد. معظم تذاكر الدعم سببها مفتاح ناقص أو منتهي أو مفتاح تجريبي بدل الإنتاجي.</p>
+            </div>
+
+            <h2>ما الذي توفّره المنصة وما الذي توفّره أنت؟</h2>
+            <figure class="shot">
+                <a href="../assets/img/ar/settings.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/ar/settings.png" alt="صفحة الإعدادات هي مركز كل التكاملات: القنوات والذكاء الاصطناعي والمتاجر والدومين والـWebhooks." decoding="async">
+                </a>
+                <figcaption>صفحة الإعدادات هي مركز كل التكاملات: القنوات والذكاء الاصطناعي والمتاجر والدومين والـWebhooks.</figcaption>
+            </figure>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>العنصر</th><th>المنصة</th><th>أنت (العميل)</th></tr></thead>
+                    <tbody>
+                        <tr><td>التخزين وقاعدة البيانات والاستضافة</td><td>✅</td><td>—</td></tr>
+                        <tr><td>هوية تطبيق Meta (App ID / App Secret)</td><td>✅</td><td>—</td></tr>
+                        <tr><td>بوابات الدفع والاشتراكات</td><td>✅</td><td>—</td></tr>
+                        <tr><td>WhatsApp Business Account + رقم + توكن</td><td>—</td><td>✅</td></tr>
+                        <tr><td>حسابات السوشيال (فيسبوك/إنستجرام/لينكدإن/X/يوتيوب/تيك توك)</td><td>—</td><td>✅</td></tr>
+                        <tr><td>مزوّد SMS + معرّف المرسل + المفاتيح</td><td>—</td><td>✅</td></tr>
+                        <tr><td>سيرفر البريد / SMTP</td><td>—</td><td>✅</td></tr>
+                        <tr><td>مفاتيح الذكاء الاصطناعي (OpenAI/Anthropic/Gemini/OpenRouter)</td><td>—</td><td>✅</td></tr>
+                        <tr><td>بيانات متجر Shopify / WooCommerce</td><td>—</td><td>✅</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>قائمة المفاتيح المطلوبة (Checklist)</h2>
+            <p>اطبع هذه القائمة واجمعها قبل البدء:</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>التكامل</th><th>ما تحتاجه</th><th>من أين تحصل عليه</th></tr></thead>
+                    <tbody>
+                        <tr><td>WhatsApp</td><td>WABA ID · Phone Number ID · Permanent Access Token</td><td>Meta Business Suite / WhatsApp Manager</td></tr>
+                        <tr><td>Instagram / Messenger</td><td>حساب Facebook + صفحة + صلاحيات النشر</td><td>Meta for Developers (صلاحيات الصفحة)</td></tr>
+                        <tr><td>SMS</td><td>Provider · API Key/SID · Sender ID</td><td>لوحة مزوّد الـSMS</td></tr>
+                        <tr><td>Email / SMTP</td><td>Host · Port · Username · Password · From</td><td>مزوّد البريد أو سيرفرك</td></tr>
+                        <tr><td>AI</td><td>API Key + موديل الشات (+ موديل Embeddings)</td><td>OpenAI / Anthropic / Google / OpenRouter</td></tr>
+                        <tr><td>Shopify</td><td>دومين <code>*.myshopify.com</code> + Admin API Token + Webhook Secret</td><td>Shopify Admin ← Apps</td></tr>
+                        <tr><td>WooCommerce</td><td>رابط المتجر + Consumer Key + Consumer Secret</td><td>WooCommerce ← REST API</td></tr>
+                        <tr><td>الدومين</td><td>Subdomain أو Custom Domain + DNS</td><td>لوحة الدومين / الاستضافة</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>1. واتساب (WhatsApp Cloud API)</h2>
+            <figure class="shot">
+                <a href="../assets/img/ar/whatsapp-setup.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/ar/whatsapp-setup.png" alt="إعداد واتساب: اربط رقم Cloud API تلقائيًا (Embedded Signup) أو بمفاتيح يدوية." decoding="async">
+                </a>
+                <figcaption>إعداد واتساب: اربط رقم Cloud API تلقائيًا (Embedded Signup) أو بمفاتيح يدوية.</figcaption>
+            </figure>
+
+            <p>الربط من <strong>صندوق الوارد ← إعداد القنوات</strong>. الطريقة المفضّلة هي <strong>Embedded Signup</strong>: تضغط زر الربط، تسجّل الدخول بحساب Meta، وتختار رقمك — فيُربط تلقائيًا.</p>
+            <h3>الربط التلقائي (Embedded Signup)</h3>
+            <ol class="steps">
+                <li>اضغط <strong>ربط واتساب</strong> واختر «المتابعة عبر Meta».</li>
+                <li>سجّل الدخول بحساب Facebook الذي يملك Business Account.</li>
+                <li>اختر أو أنشئ WhatsApp Business Account.</li>
+                <li>اختر رقم الهاتف. <strong>الرقم لا يجب أن يكون مسجّلًا على تطبيق WhatsApp العادي</strong> — إن كان كذلك، احذفه من التطبيق أولًا.</li>
+                <li>أكمل الصلاحيات ثم انتظر رسالة النجاح.</li>
+            </ol>
+            <h3>الربط اليدوي (Manual)</h3>
+            <ol class="steps">
+                <li>من Meta Business Suite أنشئ تطبيقًا واحصل على: <strong>WABA ID</strong>، <strong>Phone Number ID</strong>، و<strong>Permanent Token</strong> (من System User).</li>
+                <li>من صفحة الإعداد اضغط «ربط يدوي» وأدخل القيم الثلاث.</li>
+                <li>أضف عنوان الـWebhook الظاهر في الصفحة إلى إعدادات التطبيق في Meta، ثم تحقّق منه.</li>
+                <li>بعد الربط اضغط <strong>مزامنة أرقام الهاتف</strong> ثم <strong>مزامنة القوالب</strong>.</li>
+            </ol>
+            <div class="callout danger">
+                <span class="ico">🚫</span>
+                <p><strong>التوكن المؤقت ينتهي بعد 24 ساعة.</strong> استخدم <em>Permanent Token</em> من System User. راقب «صحة الاتصال» في صفحة الإعداد: لو ظهر أن التوكن منتهٍ، القناة ستتوقف عن الإرسال.</p>
+            </div>
+            <h3>القوالب</h3>
+            <p>أي رسالة تبدأ بها محادثة على واتساب يجب أن تكون <strong>Template معتمد</strong>. أنشئها من <strong>التسويق ← قوالب واتساب</strong>، وانتظر موافقة Meta (قد تأخذ دقائق إلى 24 ساعة). القوالب المرفوضة تُظهر سبب الرفض — عدّلها وأعد الإرسال.</p>
+            <h3>هل رقمك يعمل على تطبيق WhatsApp Business؟</h3>
+            <p>إن كنت تستخدم الرقم على تطبيق WhatsApp Business وتريد إبقاءه على هاتفك أيضًا، فلا تحذفه من التطبيق بالطريقة العادية. استخدم ميزة <strong>تشغيل تطبيق واتساب للأعمال</strong> بدلًا من ذلك — راجع <a href="11-whatsapp-coexistence.html">الدليل 11</a>.</p>
+
+            <h2>2. إنستجرام وماسنجر</h2>
+            <ol class="steps">
+                <li>من صفحة إعداد القنوات اختر <strong>Instagram</strong> أو <strong>Messenger</strong>.</li>
+                <li>سجّل الدخول بحساب Facebook الذي يدير الصفحة.</li>
+                <li>اختر الصفحة (Messenger) أو الحساب التجاري (Instagram).</li>
+                <li>وافق على صلاحيات إدارة الرسائل والنشر.</li>
+            </ol>
+            <div class="callout warn">
+                <span class="ico">⚠️</span>
+                <p>إن ظهرت رسالة عن <strong>Content-Security-Policy</strong> أو عدم تحميل Facebook SDK، فالمشكلة في إعدادات السيرفر/البروكسي وليست في حسابك. راجع مسؤول المنصة.</p>
+            </div>
+
+            <h2>3. الرسائل النصية (SMS)</h2>
+            <p>من <strong>التسويق ← بوابات SMS</strong>. المزوّدون المدعومون:</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>المنطقة</th><th>المزوّدون</th></tr></thead>
+                    <tbody>
+                        <tr><td>عالمي</td><td>Twilio · Vonage (Nexmo) · Telnyx · ClickSend · Amazon SNS</td></tr>
+                        <tr><td>مصر</td><td>SMS Misr · Cequens</td></tr>
+                        <tr><td>الخليج</td><td>Unifonic · Taqnyat · Msegat · Infobip</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <ol class="steps">
+                <li>اختر المزوّد.</li>
+                <li>أدخل المفاتيح المطلوبة (API Key / SID / Token حسب المزوّد).</li>
+                <li>أدخل <strong>Sender ID</strong> المعتمد من المزوّد.</li>
+                <li>احفظ ثم اضغط <strong>اختبار الاتصال</strong> إن كان متاحًا.</li>
+                <li>أرسل رسالة تجريبية لرقمك قبل أي حملة.</li>
+            </ol>
+            <div class="callout tip">
+                <span class="ico">💡</span>
+                <p>لو فشل الإرسال رغم صحة المفاتيح، فراجع: رصيد الحساب، اعتماد الـSender ID، وصيغة الرقم الدولي (مثال: <code>2010…</code> بدون + أو أصفار بادئة).</p>
+            </div>
+
+            <h2>4. البريد الإلكتروني (SMTP)</h2>
+            <figure class="shot">
+                <a href="../assets/img/ar/email-server.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/ar/email-server.png" alt="خادم البريد (SMTP): بيانات الإرسال الخاصة بك، لتخرج الحملات من دومينك." decoding="async">
+                </a>
+                <figcaption>خادم البريد (SMTP): بيانات الإرسال الخاصة بك، لتخرج الحملات من دومينك.</figcaption>
+            </figure>
+
+            <p>من <strong>التسويق ← سيرفر البريد</strong>. هذا السيرفر يُستخدم في حملات البريد والتسلسلات البريدية وإشعارات النظام إن ربطته.</p>
+            <ol class="steps">
+                <li>أدخل <strong>Host</strong> و<strong>Port</strong> (587 مع TLS أو 465 مع SSL عادة).</li>
+                <li>أدخل اسم المستخدم وكلمة المرور.</li>
+                <li>حدّد <strong>From Email</strong> و<strong>From Name</strong>.</li>
+                <li>احفظ ثم أرسل رسالة تجريبية.</li>
+            </ol>
+            <div class="callout warn">
+                <span class="ico">⚠️</span>
+                <p>استخدم بريدًا على دومينك، واضبط <strong>SPF وDKIM</strong> عند مزوّد الدومين. بدون ذلك ستذهب رسائلك إلى Spam حتى لو كان الـSMTP سليمًا.</p>
+            </div>
+
+            <h2>5. الذكاء الاصطناعي (BYOK)</h2>
+            <figure class="shot">
+                <a href="../assets/img/ar/ai-providers.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/ar/ai-providers.png" alt="مزودو الذكاء الاصطناعي (BYOK): أضف مفتاحك الخاص من OpenAI أو Anthropic أو Google أو أي نقطة متوافقة." decoding="async">
+                </a>
+                <figcaption>مزودو الذكاء الاصطناعي (BYOK): أضف مفتاحك الخاص من OpenAI أو Anthropic أو Google أو أي نقطة متوافقة.</figcaption>
+            </figure>
+
+            <p>الربط من <strong>الإعدادات ← مزوّدو الذكاء الاصطناعي</strong>. المزوّدون المدعومون: <strong>OpenRouter · OpenAI · Anthropic · Gemini</strong>.</p>
+            <ol class="steps">
+                <li>افتح المزوّد واضغط «إضافة مفتاح».</li>
+                <li>الصق الـAPI Key (يُخزّن مشفّرًا ولا يُعرض بعد الحفظ).</li>
+                <li>اختر <strong>موديل الشات</strong> الافتراضي.</li>
+                <li>فعّل المزوّد.</li>
+                <li>إن كنت ستستخدم قواعد المعرفة، فعّل مزوّدًا يدعم <strong>Embeddings</strong> (OpenAI أو Gemini).</li>
+            </ol>
+            <div class="callout danger">
+                <span class="ico">🚫</span>
+                <p>قواعد المعرفة لا تعمل بدون مزوّد Embeddings مفعّل. لو ظهر تحذير أعلى الصفحة، فالمقصود ذلك.</p>
+            </div>
+
+            <h2>6. المتاجر الإلكترونية</h2>
+            <h3>Shopify</h3>
+            <ol class="steps">
+                <li>من <strong>المبيعات ← المتاجر ← إضافة متجر</strong> اختر Shopify.</li>
+                <li>أدخل دومين المتجر بصيغة <code>your-store.myshopify.com</code> (ليس الدومين المخصص).</li>
+                <li>أنشئ Admin API Access Token بصلاحيات قراءة الطلبات والمنتجات، وأدخله.</li>
+                <li>انسخ <strong>Webhook Secret</strong> وأضفه في Shopify عند إعداد الـWebhooks.</li>
+            </ol>
+            <h3>WooCommerce</h3>
+            <ol class="steps">
+                <li>أدخل رابط المتجر الكامل (<code>https://shop.example.com</code>).</li>
+                <li>من WooCommerce ← Settings ← Advanced ← REST API أنشئ مفتاحًا بصلاحيات Read/Write.</li>
+                <li>أدخل Consumer Key وConsumer Secret.</li>
+                <li>احفظ ثم اضغط «مزامنة» لتأكيد الاتصال.</li>
+            </ol>
+
+            <h2>7. الدومين والـSubdomain</h2>
+            <ul>
+                <li><strong>Subdomain:</strong> مثل <code>acme</code> يصبح <code>acme.&lt;base-domain&gt;</code>. يضبطه مدير المنصة من شاشة العملاء.</li>
+                <li><strong>Custom Domain:</strong> مثل <code>crm.company.com</code>. يحتاج ضبط DNS (CNAME أو A) إلى سيرفر المنصة، ثم شهادة SSL.</li>
+                <li>بعد تغيير الدومين، انتظر انتشار الـDNS (قد يصل إلى 24 ساعة).</li>
+            </ul>
+
+            <h2>8. الـWebhooks الصادرة</h2>
+            <p>من <strong>الإعدادات ← Webhooks</strong>. تُستخدم لإبلاغ أنظمتك الخارجية بالأحداث (مثل إنشاء ليد أو استلام رسالة).</p>
+            <ol class="steps">
+                <li>أضف Endpoint (رابط HTTPS يستقبل POST).</li>
+                <li>اختر الأحداث المطلوبة.</li>
+                <li>احتفظ بالـSecret للتحقق من توقيع الطلب.</li>
+                <li>استخدم «إرسال تجريبي» ثم راجع «سجل التسليمات» عند أي فشل.</li>
+            </ol>
+
+            <h2>أخطاء الربط الشائعة</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>الرسالة / العَرَض</th><th>السبب</th><th>الحل</th></tr></thead>
+                    <tbody>
+                        <tr><td>توكن واتساب منتهي</td><td>استُخدم توكن مؤقت 24 ساعة</td><td>أنشئ Permanent Token من System User وأعد الربط</td></tr>
+                        <tr><td>الرقم مسجّل بالفعل</td><td>الرقم على تطبيق WhatsApp العادي</td><td>احذف الحساب من التطبيق ثم أعد المحاولة</td></tr>
+                        <tr><td>قالب مرفوض</td><td>محتوى مخالف أو متغيّرات ناقصة</td><td>عدّل النص وأعد الإرسال بعد قراءة سبب الرفض</td></tr>
+                        <tr><td>فشل إرسال SMS</td><td>Sender ID غير معتمد أو رصيد صفر</td><td>راجع لوحة المزوّد</td></tr>
+                        <tr><td>البريد يذهب لـSpam</td><td>SPF/DKIM غير مضبوطين</td><td>اضبط سجلات DNS عند مزوّد الدومين</td></tr>
+                        <tr><td>مفتاح AI غير صالح</td><td>مفتاح تجريبي أو منتهي أو رصيد صفر</td><td>أنشئ مفتاحًا إنتاجيًا وتأكد من الرصيد</td></tr>
+                        <tr><td>لا توجد Embeddings</td><td>لا يوجد مزوّد يدعمها مفعّل</td><td>فعّل OpenAI أو Gemini</td></tr>
+                        <tr><td>Webhook لا يصل</td><td>الرابط غير متاح أو التوقيع خاطئ</td><td>راجع سجل التسليمات وأعد اختبار الـEndpoint</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout ok">
+                <span class="ico">✅</span>
+                <p><strong>بعد إنهاء هذا الدليل</strong> ستكون كل القنوات جاهزة. انتقل إلى <a href="03-inbox.html">صندوق الوارد</a> لبدء استقبال المحادثات.</p>
+            </div>
+        </article>
+
+        <footer class="doc-footer">
+            <span>AYDRA · الإصدار 1.0</span>
+            <span class="pager"><a class="btn" href="01-getting-started.html">← السابق</a><a class="btn btn-primary" href="03-inbox.html">التالي: صندوق الوارد →</a></span>
+        </footer>
+    </main>
+</div>
+
+<script src="../assets/docs.js?v=2"></script>
+</body>
+</html>

@@ -736,7 +736,7 @@ class WhatsappEmbeddedSignupController extends Controller
                 'object' => 'whatsapp_business_account',
                 'callback_url' => $callbackUrl,
                 'verify_token' => $globalVerify,
-                'fields' => 'messages,message_template_status_update,phone_number_name_update,phone_number_quality_update,account_update,history,smb_app_state_sync,smb_message_echoes',
+                'fields' => config('whatsapp.webhook_fields'),
             ]);
 
             if (! $res->successful()) {

@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05 · Leads &amp; Pipeline · AYDRA</title>
+<meta name="description" content="Manage leads, pipeline, scoring, tasks and companies in AYDRA.">
+<link rel="stylesheet" href="../assets/docs.css?v=2">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" href="index.html"><span class="dot"></span> AYDRA <small>User Guides</small></a>
+    <div class="topbar-actions">
+        <a class="btn" href="index.html">All guides</a>
+        <button id="theme-toggle" class="btn" type="button" aria-label="Toggle theme">🌙</button>
+        <button class="btn" type="button" onclick="window.print()">🖨️ Print</button>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <h3>Guides</h3>
+        <nav class="doc-nav" id="doc-nav"></nav>
+        <div class="toc">
+            <h3>On this page</h3>
+            <ul id="page-toc"></ul>
+        </div>
+    </aside>
+
+    <main class="content">
+        <article>
+            <span class="eyebrow">Guide 05 · Sales team</span>
+            <h1>Leads &amp; Pipeline</h1>
+            <p class="lead">From prospecting to closing the deal. Learn how to fetch leads from Google Places, manage them on the kanban, and use scoring and tasks to close faster.</p>
+
+            <h2>1. Fetching leads (Lead Scraper)</h2>
+            <p>The system uses <strong>Google Places</strong> to find businesses by type and location. Every new lead is deducted from your monthly <strong>Lead Credits</strong> balance.</p>
+            <ol class="steps">
+                <li>Open <strong>Sales ← Leads</strong> and click <strong>New search</strong>.</li>
+                <li><strong>Business type / keyword:</strong> for example "restaurants" or "dental clinics".</li>
+                <li><strong>City / location:</strong> for example "Cairo" or "Riyadh".</li>
+                <li><strong>Search radius (metres):</strong> between 100 and 50,000 metres.</li>
+                <li>Start the search. The request appears under "Recent searches" with a running status.</li>
+                <li>When it finishes, the results are added to the leads list automatically.</li>
+            </ol>
+            <div class="callout tip">
+                <span class="ico">💡</span>
+                <p>Start with a small radius (2–5 km) to assess result quality before spending credits on a large radius. Each created lead is counted once even if you run the search again.</p>
+            </div>
+
+            <h2>2. Leads list</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/leads.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/leads.png" alt="The leads list: every lead with its score, source, stage, and owner." decoding="async">
+                </a>
+                <figcaption>The leads list: every lead with its score, source, stage, and owner.</figcaption>
+            </figure>
+
+            <ul>
+                <li>Search by name, phone, email or category.</li>
+                <li>Filter by source, status, tag, owner or activity.</li>
+                <li>View as a table or open the lead profile.</li>
+                <li>Import/export leads from a file (if the feature is included in your plan).</li>
+            </ul>
+
+            <h2>3. Lead profile</h2>
+            <p>Each lead gathers everything in one place:</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Section</th><th>What you find in it</th></tr></thead>
+                    <tbody>
+                        <tr><td>Basic data</td><td>Name, phone, email, location, category, geo location</td></tr>
+                        <tr><td>Tags</td><td>Manual tags + smart tags from AI</td></tr>
+                        <tr><td>Score</td><td>A 0–100 score with the reason for the score</td></tr>
+                        <tr><td>Activity</td><td>Last message, call, stage change, note</td></tr>
+                        <tr><td>Conversation</td><td>The WhatsApp/email thread linked to the lead</td></tr>
+                        <tr><td>Tasks</td><td>Follow-up tasks and their dates</td></tr>
+                        <tr><td>AI advisor</td><td>Suggestions and follow-up messages (AI Sales feature)</td></tr>
+                        <tr><td>Custom fields</td><td>Any fields you have added for leads</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>4. Automatic scoring (Lead Scoring)</h2>
+            <p>The system calculates a score for each lead from fixed signals (such as category and location) and behavioural ones (reply, open, engagement).</p>
+            <ul>
+                <li><strong>A higher score means higher priority</strong> in the work list.</li>
+                <li>The score can be recalculated in bulk from the scoring settings.</li>
+                <li>The "threshold" can be used as an automation trigger: when it exceeds 80, send an offer.</li>
+                <li>There is a scheduled job that decreases the score of inactive leads (Decay) so it does not stay high without engagement.</li>
+            </ul>
+
+            <h2>5. Pipeline</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/pipeline.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/pipeline.png" alt="The pipeline (kanban): drag a deal between stages to update its status instantly." decoding="async">
+                </a>
+                <figcaption>The pipeline (kanban): drag a deal between stages to update its status instantly.</figcaption>
+            </figure>
+
+            <p>Go to <strong>Sales ← Pipeline</strong>. A kanban board whose columns are the sales stages.</p>
+            <ol class="steps">
+                <li>Drag the lead card between columns to change its stage.</li>
+                <li>Open the card to edit the deal value and details.</li>
+                <li>Add a note or a task from inside the card.</li>
+                <li>Use the filters to show a specific stage or owner.</li>
+            </ol>
+            <h3>Stage settings</h3>
+            <p>From <strong>Sales ← Pipeline settings</strong> you can add a stage, reorder it, change its colour, or delete it. Deleting a stage moves its deals to the default stage — check the count before deleting.</p>
+            <h3>More than one pipeline</h3>
+            <p>Plans that include <strong>Multi Pipeline</strong> let you create separate pipelines (such as: sales, partnerships, renewals). Each pipeline has its own stages.</p>
+
+            <h2>6. Tasks and reminders</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/tasks.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/tasks.png" alt="Tasks and reminders: follow-ups tied to a lead, with a due date and an owner." decoding="async">
+                </a>
+                <figcaption>Tasks and reminders: follow-ups tied to a lead, with a due date and an owner.</figcaption>
+            </figure>
+
+            <ul>
+                <li>Create a task linked to a lead or contact with a date and time.</li>
+                <li>It appears under <strong>Sales ← Tasks</strong> and on the dashboard.</li>
+                <li>Overdue tasks trigger a notification, and can be linked to the "task overdue" automation trigger.</li>
+                <li>Close the task when it is done, or reschedule it.</li>
+            </ul>
+
+            <h2>7. Companies</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/companies.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/companies.png" alt="Companies: group contacts and deals under one account record." decoding="async">
+                </a>
+                <figcaption>Companies: group contacts and deals under one account record.</figcaption>
+            </figure>
+
+            <p>A feature included in higher plans. It groups several leads under one company to track enterprise deals.</p>
+            <ul>
+                <li>Create a company and add leads to it.</li>
+                <li>Track the total deal value for each company.</li>
+                <li>View all the company's conversations from its page.</li>
+            </ul>
+
+            <h2>8. Lead duplicates</h2>
+            <p>Go to <strong>Sales ← Duplicates</strong> (if included). The system detects leads that are similar by name/phone/email.</p>
+            <ol class="steps">
+                <li>Review the list of duplicate groups.</li>
+                <li>Open the group and choose the "primary" record.</li>
+                <li>Click <strong>Merge</strong> — the data and activity are moved to the primary record and the rest are deleted.</li>
+            </ol>
+            <div class="callout warn">
+                <span class="ico">⚠️</span>
+                <p>Merging cannot be undone. Review the fields before confirming.</p>
+            </div>
+
+            <h2>9. Lead sources</h2>
+            <p>Go to <strong>Marketing ← Lead sources</strong>. Each lead records its source (Scraper, Form, Campaign, Manual...). Use UTM links to find out which channel brings the best leads in the sales reports.</p>
+
+            <h2>Common problems</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Problem</th><th>Cause</th><th>Fix</th></tr></thead>
+                    <tbody>
+                        <tr><td>The search returns zero results</td><td>Imprecise keyword/location</td><td>Try a broader keyword or a larger radius</td></tr>
+                        <tr><td>"You have reached the Lead Credits limit"</td><td>Monthly plan limit exceeded</td><td>Existing leads still work, but new searches stop until you upgrade or the month renews</td></tr>
+                        <tr><td>I cannot drag the card</td><td>Viewer permission or the stage is locked</td><td>Check the role or the stage settings</td></tr>
+                        <tr><td>The lead score does not change</td><td>Recalculation has not been run</td><td>Use "Recalculate score"</td></tr>
+                        <tr><td>I do not see Companies</td><td>Not included in the plan</td><td>Upgrade your plan</td></tr>
+                        <tr><td>Merge does not appear</td><td>The Duplicates feature is not enabled</td><td>Check your plan</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout ok">
+                <span class="ico">✅</span>
+                <p><strong>Next step:</strong> turn won deals into quotes and invoices from the <a href="06-sales.html">Sales guide</a>.</p>
+            </div>
+        </article>
+
+        <footer class="doc-footer">
+            <span>AYDRA · v1.0</span>
+            <span class="pager"><a class="btn" href="04-contacts.html">← Previous</a><a class="btn btn-primary" href="06-sales.html">Next: Sales →</a></span>
+        </footer>
+    </main>
+</div>
+
+<script src="../assets/docs.js?v=2"></script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>03 · Inbox &amp; Conversations · AYDRA</title>
+<meta name="description" content="Managing conversations on WhatsApp, Instagram, Messenger, SMS and email inside AYDRA.">
+<link rel="stylesheet" href="../assets/docs.css?v=2">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" href="index.html"><span class="dot"></span> AYDRA <small>User Guides</small></a>
+    <div class="topbar-actions">
+        <a class="btn" href="index.html">All guides</a>
+        <button id="theme-toggle" class="btn" type="button" aria-label="Toggle theme">🌙</button>
+        <button class="btn" type="button" onclick="window.print()">🖨️ Print</button>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <h3>Guides</h3>
+        <nav class="doc-nav" id="doc-nav"></nav>
+        <div class="toc">
+            <h3>On this page</h3>
+            <ul id="page-toc"></ul>
+        </div>
+    </aside>
+
+    <main class="content">
+        <article>
+            <span class="eyebrow">Guide 03 · Staff / agent</span>
+            <h1>Inbox &amp; Conversations</h1>
+            <p class="lead">The inbox is your daily workplace: every message from every channel arrives here in a single thread. Learn the folders, canned replies, labels and assignment, and the chaos will disappear.</p>
+
+            <div class="callout tip">
+                <span class="ico">💡</span>
+                <p>Before you start, make sure the channels are actually connected: <a href="02-setup-integrations.html">Setup &amp; Integrations guide</a>.</p>
+            </div>
+
+            <h2>Folders</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/inbox.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/inbox.png" alt="The inbox: conversations from every channel in one list, filtered into folders, with filters and assignment controls." decoding="async">
+                </a>
+                <figcaption>The inbox: conversations from every channel in one list, filtered into folders, with filters and assignment controls.</figcaption>
+            </figure>
+
+            <p>On the right of the screen (or at the top of the list on mobile) you will find the following folders:</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Folder</th><th>What it shows</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>All</strong></td><td>All active conversations</td></tr>
+                        <tr><td><strong>Mine</strong></td><td>Conversations assigned to you</td></tr>
+                        <tr><td><strong>Unassigned</strong></td><td>Conversations nobody has picked up — keep an eye on them constantly</td></tr>
+                        <tr><td><strong>Resolved</strong></td><td>Conversations closed after being resolved</td></tr>
+                        <tr><td><strong>Snoozed</strong></td><td>Conversations you postponed to a later time</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>You can also filter by <strong>channel</strong> (WhatsApp, Instagram, Messenger, SMS, email) or by <strong>account</strong> or by <strong>label</strong>.</p>
+
+            <h2>Reading a conversation and replying</h2>
+            <ol class="steps">
+                <li>Choose the conversation from the left-hand list.</li>
+                <li>Read the previous messages — all channels appear in the same thread per customer.</li>
+                <li>Write your reply in the box at the bottom of the screen. It supports text and media (image/file/voice) depending on the channel.</li>
+                <li>Click send. The delivery status (sent/delivered/read) appears on WhatsApp.</li>
+            </ol>
+
+            <h3>The 24-hour rule on WhatsApp</h3>
+            <p>WhatsApp allows a free-form reply within <strong>24 hours</strong> of the customer’s last message. After the window closes, you must send an <strong>approved template</strong>. If you try to reply with free text after the period ends, WhatsApp will reject the message — use the “Send template” button.</p>
+
+            <h2>Canned Replies</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/canned-replies.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/canned-replies.png" alt="Canned replies: pre-written answers your team can drop into any conversation in one click." decoding="async">
+                </a>
+                <figcaption>Canned replies: pre-written answers your team can drop into any conversation in one click.</figcaption>
+            </figure>
+
+            <p>Repeated replies inserted with a single click. Create them from <strong>Inbox ← Canned replies</strong>.</p>
+            <ol class="steps">
+                <li>Click “Add reply”.</li>
+                <li>Enter a short title (visible only to you) and the reply text.</li>
+                <li>Variables such as the customer’s name can be used if they are supported in the text editor.</li>
+                <li>Save. When writing in a conversation, type <code>/</code> or open the replies list to insert it.</li>
+            </ol>
+
+            <h2>Labels</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/inbox-labels.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/inbox-labels.png" alt="Labels: colour-coded tags used to organise and report on conversations." decoding="async">
+                </a>
+                <figcaption>Labels: colour-coded tags used to organise and report on conversations.</figcaption>
+            </figure>
+
+            <p>A powerful organization tool: “VIP customer”, “Awaiting payment”, “Shipping issue”... Create them from <strong>Inbox ← Labels</strong> with a distinctive color.</p>
+            <ul>
+                <li>Add more than one label to the same conversation.</li>
+                <li>Use the label as a filter to display all of its conversations.</li>
+                <li>A label can be linked to an automation trigger (for example: when the “Interested” label is added, send a follow-up message).</li>
+            </ul>
+
+            <h2>Assignment</h2>
+            <ul>
+                <li>Assign the conversation to yourself or to a colleague from the assignment list.</li>
+                <li>Unassigned conversations appear in the “Unassigned” folder — distribute them at the start of the day.</li>
+                <li>Every change in assignment or labels is recorded in the conversation activity log.</li>
+            </ul>
+
+            <h2>Converting a conversation to a Lead</h2>
+            <p>When the customer becomes a sales opportunity, convert them to a lead in one click:</p>
+            <ol class="steps">
+                <li>Open the conversation.</li>
+                <li>Click <strong>Convert to Lead</strong>.</li>
+                <li>Review the name, number and email, and add any missing details.</li>
+                <li>Save — the lead is created and appears in the <a href="05-leads-pipeline.html">pipeline</a>.</li>
+            </ol>
+
+            <h2>Sharing a product inside the conversation</h2>
+            <p>If you have connected your store (Shopify/WooCommerce), you can send a product card directly:</p>
+            <ol class="steps">
+                <li>From the conversation, click <strong>Share product</strong>.</li>
+                <li>Search for the product and select it.</li>
+                <li>The product link is sent with its image and price in a single message.</li>
+            </ol>
+
+            <h2>Ending a conversation</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Action</th><th>When to use it</th><th>Result</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Resolve</strong></td><td>The need is finished</td><td>It moves to the “Resolved” folder</td></tr>
+                        <tr><td><strong>Snooze</strong></td><td>Waiting for the customer’s reply or for information</td><td>It disappears temporarily and returns at the set time</td></tr>
+                        <tr><td><strong>Reopen</strong></td><td>The customer replies after resolution</td><td>It returns to the active folder automatically</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Notifications</h2>
+            <ul>
+                <li>In-app notifications (the bell at the top of the screen).</li>
+                <li>Browser notifications (Web Push) — enable them from Settings ← Notifications.</li>
+                <li>Alert sounds for a new conversation can be turned on/off from the inbox.</li>
+            </ul>
+
+            <h2>Common mistakes</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Problem</th><th>Cause</th><th>Solution</th></tr></thead>
+                    <tbody>
+                        <tr><td>The send button is disabled</td><td>The conversation is resolved or the channel is disconnected</td><td>Reopen the conversation and make sure the channel connection is healthy</td></tr>
+                        <tr><td>WhatsApp message rejected</td><td>The 24-hour window ended</td><td>Send an approved template instead of free text</td></tr>
+                        <tr><td>New conversations do not appear</td><td>A channel/label filter is active</td><td>Go back to the “All” folder and clear the filters</td></tr>
+                        <tr><td>A colleague cannot see the conversation</td><td>It is assigned to you or it is in another workspace</td><td>Reassign it or switch workspaces</td></tr>
+                        <tr><td>Media is not sent</td><td>The size/format is unsupported on the channel</td><td>Use a smaller format or an external link</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout ok">
+                <span class="ico">✅</span>
+                <p><strong>Operational tip:</strong> start your day with the “Unassigned” folder, then “Mine”, and close the resolved conversations. This prevents work from piling up.</p>
+            </div>
+        </article>
+
+        <footer class="doc-footer">
+            <span>AYDRA · Version 1.0</span>
+            <span class="pager"><a class="btn" href="02-setup-integrations.html">← Previous</a><a class="btn btn-primary" href="04-contacts.html">Next: Contacts →</a></span>
+        </footer>
+    </main>
+</div>
+
+<script src="../assets/docs.js?v=2"></script>
+</body>
+</html>

@@ -40,7 +40,7 @@ class WhatsappWebhookRegisterCommand extends Command
 
         if ($this->option('dry-run')) {
             $this->warn('[dry-run] Would POST to: '.MetaGraph::url($appId.'/subscriptions'));
-            $this->warn('[dry-run] With fields: messages, message_template_status_update, phone_number_name_update, phone_number_quality_update, account_update');
+            $this->warn('[dry-run] With fields: '.config('whatsapp.webhook_fields'));
 
             return self::SUCCESS;
         }
@@ -53,7 +53,7 @@ class WhatsappWebhookRegisterCommand extends Command
             'object' => 'whatsapp_business_account',
             'callback_url' => $callbackUrl,
             'verify_token' => $verifyToken,
-            'fields' => 'messages,message_template_status_update,phone_number_name_update,phone_number_quality_update,account_update',
+            'fields' => config('whatsapp.webhook_fields'),
         ]);
 
         if (! $res->successful()) {

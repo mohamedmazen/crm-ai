@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>08 · الأتمتة والذكاء الاصطناعي · AYDRA</title>
+<meta name="description" content="بناء سيناريوهات الأتمتة والمشغّلات والإجراءات، ومزوّدو الذكاء الاصطناعي وقواعد المعرفة والشات بوت.">
+<link rel="stylesheet" href="../assets/docs.css?v=2">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" href="index.html"><span class="dot"></span> AYDRA <small>دليل المستخدم</small></a>
+    <div class="topbar-actions">
+        <a class="btn" href="index.html">كل الأدلة</a>
+        <button id="theme-toggle" class="btn" type="button" aria-label="تبديل الوضع">🌙</button>
+        <button class="btn" type="button" onclick="window.print()">🖨️ طباعة</button>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <h3>الأدلة</h3>
+        <nav class="doc-nav" id="doc-nav"></nav>
+        <div class="toc">
+            <h3>في هذه الصفحة</h3>
+            <ul id="page-toc"></ul>
+        </div>
+    </aside>
+
+    <main class="content">
+        <article>
+            <span class="eyebrow">الدليل 08 · مدير / تسويق</span>
+            <h1>الأتمتة والذكاء الاصطناعي</h1>
+            <p class="lead">الأتمتة تُشغّل سلسلة إجراءات عند حدث معيّن. والذكاء الاصطناعي يضيف الردّ الذكي وقواعد المعرفة. الاثنان معًا يختصران ساعات عمل يوميًا — لكن ابدأ بسيطًا.</p>
+
+            <h2>الجزء الأول: الأتمتة</h2>
+            <h3>ما هي الأتمتة؟</h3>
+            <p>سيناريو بصري: <strong>مشغّل (Trigger)</strong> ← خطوات متسلسلة (Nodes). مثال: «عند إنشاء جهة اتصال ← انتظر ساعة ← أرسل رسالة واتساب ترحيبية».</p>
+
+            <h3>إنشاء أتمتة</h3>
+            <figure class="shot">
+                <a href="../assets/img/ar/automations.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/ar/automations.png" alt="الأتمتة: كل سيناريو يعرض مُشغّله وخطواته وما إذا كان مُفعّلًا." decoding="async">
+                </a>
+                <figcaption>الأتمتة: كل سيناريو يعرض مُشغّله وخطواته وما إذا كان مُفعّلًا.</figcaption>
+            </figure>
+
+            <ol class="steps">
+                <li>افتح <strong>الأتمتة ← الأتمتة</strong> واضغط <strong>أتمتة جديدة</strong>.</li>
+                <li>اختر <strong>المشغّل</strong> من القائمة.</li>
+                <li>افتح <strong>المنشئ (Builder)</strong>.</li>
+                <li>اسحب الخطوات من لوحة العُقد واربطها ببعضها.</li>
+                <li>اضبط كل خطوة (النص، القالب، التأخير، الشروط…).</li>
+                <li>استخدم <strong>الاختبار</strong> لمحاكاة التشغيل دون إرسال فعلي.</li>
+                <li>فعّل الأتمتة.</li>
+            </ol>
+
+            <h3>المشغّلات المتاحة</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>المجموعة</th><th>المشغّلات</th></tr></thead>
+                    <tbody>
+                        <tr><td>جهات الاتصال</td><td>تم إنشاء جهة اتصال · تمت إضافة وسم</td></tr>
+                        <tr><td>الرسائل</td><td>تم استلام رسالة · ردّ العميل على ليد</td></tr>
+                        <tr><td>الليدز</td><td>تم إسناد ليد · تجاوز حد التقييم · ليد خامل · تاريخ معيّن في الليد</td></tr>
+                        <tr><td>المهام</td><td>مهمة متأخرة</td></tr>
+                        <tr><td>الحملات والنماذج</td><td>تم إرسال حملة · تم إرسال نموذج</td></tr>
+                        <tr><td>المتجر</td><td>طلب جديد · طلب مكتمل · إلغاء طلب · سلة متروكة · عميل جديد</td></tr>
+                        <tr><td>خارجي</td><td>Webhook مستلم</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>أنواع الخطوات (Nodes)</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>الفئة</th><th>أمثلة</th></tr></thead>
+                    <tbody>
+                        <tr><td>إرسال</td><td>واتساب · قالب · وسائط · SMS · بريد · تسلسل · ردود سريعة · قائمة</td></tr>
+                        <tr><td>استماع</td><td>اسأل سؤالًا وانتظر الإجابة</td></tr>
+                        <tr><td>منطق</td><td>شرط · انتظار · Webhook · تشغيل سيناريو فرعي</td></tr>
+                        <tr><td>ذكاء اصطناعي</td><td>رد AI</td></tr>
+                        <tr><td>جهة الاتصال</td><td>إضافة/إزالة وسم · تحديث بيانات · إسناد وكيل · إضافة لحملة · تسجيل في تسلسل · إنشاء مهمة · نقل لمرحلة · تحديث قيمة الصفقة</td></tr>
+                        <tr><td>تفاعل</td><td>زر CTA · موقع · استطلاع · تشغيل شات بوت · حجز موعد · Google Meet · نموذج واتساب</td></tr>
+                        <tr><td>تجارة</td><td>كاتالوج واتساب · منتج WooCommerce · منتج Shopify</td></tr>
+                        <tr><td>تكاملات</td><td>Google Sheets · Google Docs · Google Forms</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>الشروط</h3>
+            <p>خطوة الشرط تتحقق من حقل مثل: اسم/بريد/هاتف/وسم جهة الاتصال، نص الرسالة، أو مفتاح في السياق. العوامل: يساوي، لا يساوي، يحتوي، لا يحتوي، موجود، غير موجود.</p>
+
+            <h3>الاختبار والتشغيل</h3>
+            <ul>
+                <li><strong>اختبار:</strong> يحاكي كل الخطوات ويعرض النتيجة دون إرسال أو كتابة بيانات.</li>
+                <li><strong>سجل التشغيل (Runs):</strong> يعرض كل تشغيل وحالته. التشغيل الفاشل يوضح الخطوة والسبب.</li>
+                <li><strong>مولّد AI:</strong> اكتب وصفًا بالعربي («رسالة ترحيب ثم انتظر يومًا ثم اسأل عن الخدمة») ليولّد السيناريو.</li>
+                <li><strong>Webhook Trigger Token:</strong> لكل أتمتة توكن يمكنك استدعاؤه من نظام خارجي لبدء التشغيل.</li>
+            </ul>
+
+            <h3>حدود الأتمتة</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>الباقة</th><th>عدد الأتمتات</th></tr></thead>
+                    <tbody>
+                        <tr><td>Free</td><td>1</td></tr>
+                        <tr><td>Starter</td><td>5</td></tr>
+                        <tr><td>Pro</td><td>20</td></tr>
+                        <tr><td>Business</td><td>غير محدود</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>الجزء الثاني: الذكاء الاصطناعي</h2>
+
+            <h3>1. مزوّدو الذكاء الاصطناعي</h3>
+            <figure class="shot">
+                <a href="../assets/img/ar/ai-providers.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/ar/ai-providers.png" alt="مزودو الذكاء الاصطناعي: اربط مفتاحك الخاص وحدّد النموذج الافتراضي والبديل." decoding="async">
+                </a>
+                <figcaption>مزودو الذكاء الاصطناعي: اربط مفتاحك الخاص وحدّد النموذج الافتراضي والبديل.</figcaption>
+            </figure>
+
+            <p>من <strong>الإعدادات ← مزوّدو الذكاء الاصطناعي</strong>. المدعومون: OpenRouter · OpenAI · Anthropic · Gemini.</p>
+            <ol class="steps">
+                <li>افتح المزوّد وأضف الـAPI Key (يُخزّن مشفّرًا).</li>
+                <li>اختر موديل الشات الافتراضي.</li>
+                <li>فعّل المزوّد.</li>
+                <li>إن كنت ستستخدم قواعد المعرفة، فعّل OpenAI أو Gemini (يدعمان Embeddings).</li>
+            </ol>
+            <div class="callout danger">
+                <span class="ico">🚫</span>
+                <p>بدون مفتاح صالح، كل ميزات AI تتوقف: الشات بوت، الرد AI، توليد السيناريو، تلخيص المكالمات، مستشار الليد، ومنشورات AI.</p>
+            </div>
+
+            <h3>2. قواعد المعرفة (Knowledge Bases)</h3>
+            <figure class="shot">
+                <a href="../assets/img/ar/knowledge-bases.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/ar/knowledge-bases.png" alt="قواعد المعرفة: ارفع المستندات التي يجيب منها الشات بوت وتابع تقدّم الفهرسة." decoding="async">
+                </a>
+                <figcaption>قواعد المعرفة: ارفع المستندات التي يجيب منها الشات بوت وتابع تقدّم الفهرسة.</figcaption>
+            </figure>
+
+            <p>من <strong>الإعدادات ← قواعد المعرفة</strong>. هي «الذاكرة» التي يعتمد عليها الشات بوت في الإجابة.</p>
+            <ol class="steps">
+                <li>أنشئ قاعدة معرفة.</li>
+                <li>ارفع المستندات (PDF، DOCX، TXT، أو نص مباشر).</li>
+                <li>انتظر المعالجة — يمر المستند بحالة: قيد المعالجة ثم جاهز.</li>
+                <li>راجع التحليلات لمعرفة الأسئلة التي لم تُجب.</li>
+                <li>أضف محتوى ناقصًا أو صحّح المستندات المرفوضة.</li>
+            </ol>
+            <div class="callout tip">
+                <span class="ico">💡</span>
+                <p>جودة الإجابات تعتمد على جودة المستندات. قسّم المحتوى لمواضيع واضحة، وتجنّب الصور الممسوحة بدون نص.</p>
+            </div>
+
+            <h3>3. الشات بوت</h3>
+            <figure class="shot">
+                <a href="../assets/img/ar/chatbots.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/ar/chatbots.png" alt="الشات بوت: اربط قاعدة معرفة ومزوّد ذكاء اصطناعي بقناة، مع أسلوب الرد وقواعد التصعيد." decoding="async">
+                </a>
+                <figcaption>الشات بوت: اربط قاعدة معرفة ومزوّد ذكاء اصطناعي بقناة، مع أسلوب الرد وقواعد التصعيد.</figcaption>
+            </figure>
+
+            <p>من <strong>الإعدادات ← الشات بوت</strong>.</p>
+            <ol class="steps">
+                <li>أنشئ بوتًا واختر قواعد المعرفة المرتبطة.</li>
+                <li>اضبط رسالة الترحيب والنبرة واللغة.</li>
+                <li>اربطه بالقناة (واتساب/ويدجت) حسب الإعدادات المتاحة.</li>
+                <li>اختبره في المعاينة قبل التفعيل.</li>
+                <li>فعّله. يمكن إيقافه مؤقتًا في أي وقت.</li>
+            </ol>
+            <p>الباقة Free لا تشمل Chatbots (0). Starter = 2، Pro = 5، Business = 25.</p>
+
+            <h3>4. حدود الاستهلاك</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>المورد</th><th>Free</th><th>Starter</th><th>Pro</th><th>Business</th></tr></thead>
+                    <tbody>
+                        <tr><td>توكنز AI/شهر</td><td>10,000</td><td>250,000</td><td>2,000,000</td><td>10,000,000</td></tr>
+                        <tr><td>قواعد معرفة</td><td>1</td><td>2</td><td>5</td><td>25</td></tr>
+                        <tr><td>Chatbots</td><td>0</td><td>2</td><td>5</td><td>25</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>عند نفاد التوكنز: الميزات الحالية تعمل، لكن أي طلب AI جديد يتوقف حتى تجديد الشهر أو الترقية. راقب الاستهلاك من <strong>التقارير ← AI</strong>.</p>
+
+            <h2>أخطاء شائعة</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>المشكلة</th><th>السبب</th><th>الحل</th></tr></thead>
+                    <tbody>
+                        <tr><td>الأتمتة لا تعمل</td><td>غير مفعّلة أو لا يوجد مشغّل متصل</td><td>راجع الحالة واربط المشغّل بأول خطوة</td></tr>
+                        <tr><td>خطوة تفشل دائمًا</td><td>قناة غير متصلة أو قالب غير معتمد</td><td>راجع سجل التشغيل وصحّح الخطوة</td></tr>
+                        <tr><td>البوت يرد «لا أعرف»</td><td>قاعدة المعرفة ناقصة أو بدون Embeddings</td><td>أضف المستندات وفعّل مزوّد Embeddings</td></tr>
+                        <tr><td>مفتاح AI غير صالح</td><td>مفتاح تجريبي/منتهي/رصيد صفر</td><td>أنشئ مفتاحًا إنتاجيًا</td></tr>
+                        <tr><td>مستند عالق «قيد المعالجة»</td><td>ملف كبير أو صيغة غير مدعومة</td><td>أعد الرفع بصيغة مدعومة وحجم أصغر</td></tr>
+                        <tr><td>«وصلت لحد التوكنز»</td><td>استهلاك مرتفع</td><td>البيانات تعمل، لكن طلبات AI الجديدة تتوقف — رقّي الباقة</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout ok">
+                <span class="ico">✅</span>
+                <p><strong>الخطوة التالية:</strong> قِس النتائج من <a href="09-reports.html">دليل التقارير</a>.</p>
+            </div>
+        </article>
+
+        <footer class="doc-footer">
+            <span>AYDRA · الإصدار 1.0</span>
+            <span class="pager"><a class="btn" href="07-marketing-social.html">← السابق</a><a class="btn btn-primary" href="09-reports.html">التالي: التقارير →</a></span>
+        </footer>
+    </main>
+</div>
+
+<script src="../assets/docs.js?v=2"></script>
+</body>
+</html>

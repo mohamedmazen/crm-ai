@@ -432,6 +432,46 @@ article td { color: var(--text-soft); }
 .doc-card.hidden { display: none; }
 .no-results { text-align: center; color: var(--text-muted); padding: 30px; display: none; }
 
+/* ---------- Screenshots ---------- */
+figure.shot { margin: 18px 0 24px; }
+figure.shot a { display: block; }
+figure.shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    background: var(--surface);
+}
+figure.shot figcaption {
+    margin-top: 9px;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.6;
+}
+figure.shot figcaption .step-n {
+    display: inline-block;
+    font-weight: 700;
+    color: var(--brand-dark);
+    background: var(--brand-soft);
+    border: 1px solid color-mix(in srgb, var(--brand) 30%, transparent);
+    border-radius: 999px;
+    padding: 0 8px;
+    margin-inline-end: 6px;
+    font-size: 11.5px;
+}
+[data-theme="dark"] figure.shot figcaption .step-n { color: var(--brand); }
+.shot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+.shot-grid figure.shot { margin-top: 0; }
+
+/* ---------- Language switch ---------- */
+.lang-switch { white-space: nowrap; font-weight: 700; }
+
+/* English pages use a neutral system stack; the Arabic stack is kept for RTL. */
+html[dir="ltr"] body { font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif; }
+
 /* Footer */
 .doc-footer {
     max-width: var(--maxw);
@@ -457,6 +497,7 @@ article td { color: var(--text-soft); }
     .doc-nav a .num { display: none; }
     .content > article { padding: 28px 22px 34px; }
     article h1 { font-size: 26px; }
+    .shot-grid { grid-template-columns: 1fr; }
 }
 
 /* Print */

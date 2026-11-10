@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>01 · Getting Started · AYDRA</title>
+<meta name="description" content="AYDRA getting started guide: creating the account, the plan, the workspace, roles, and the first steps.">
+<link rel="stylesheet" href="../assets/docs.css?v=2">
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" href="index.html"><span class="dot"></span> AYDRA <small>User Guides</small></a>
+    <div class="topbar-actions">
+        <a class="btn" href="index.html">All guides</a>
+        <button id="theme-toggle" class="btn" type="button" aria-label="Toggle theme">🌙</button>
+        <button class="btn" type="button" onclick="window.print()">🖨️ Print</button>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <h3>Guides</h3>
+        <nav class="doc-nav" id="doc-nav"></nav>
+        <div class="toc">
+            <h3>On this page</h3>
+            <ul id="page-toc"></ul>
+        </div>
+    </aside>
+
+    <main class="content">
+        <article>
+            <span class="eyebrow">Guide 01 · All users</span>
+            <h1>Getting Started</h1>
+            <p class="lead">From creating your account to the first message you send. Read this guide before any other: it explains plans, roles and how the interface is organized, and it is the foundation for understanding the rest of the guides.</p>
+
+            <div class="callout tip">
+                <span class="ico">💡</span>
+                <p><strong>Golden rule:</strong> AYDRA does not run the channels on your behalf. You (the customer) supply the WhatsApp, SMS, email, AI and store keys. That is why you should not start by inviting your team before you finish the <a href="02-setup-integrations.html">Setup &amp; Integrations guide</a>.</p>
+            </div>
+
+            <h2>1. Creating the account and verifying your email</h2>
+            <ol class="steps">
+                <li><strong>Open the platform link</strong> the administrator gave you, then click “Create account”.</li>
+                <li><strong>Enter your name, email and password.</strong> Use a real email — the verification message is sent to it.</li>
+                <li><strong>Open the verification message</strong> and click the link. If it does not arrive, request a resend from the verification page.</li>
+                <li><strong>Sign in.</strong> The system also supports signing in with a Magic Link if it is enabled on your platform.</li>
+            </ol>
+            <div class="callout warn">
+                <span class="ico">⚠️</span>
+                <p>You cannot use most screens before verifying your email. If the verification page keeps appearing, check your Spam folder first.</p>
+            </div>
+
+            <h2>2. Choosing a plan</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/pricing.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/pricing.png" alt="The Pricing page — pick the plan that matches your team size; you can change it later." decoding="async">
+                </a>
+                <figcaption>The Pricing page — pick the plan that matches your team size; you can change it later.</figcaption>
+            </figure>
+
+            <p>Every new account starts with a trial period. After that you choose a plan from the pricing page inside the customer dashboard. Features appear or are hidden depending on the plan, and the limits apply to creation only — your existing data is not deleted when you upgrade or downgrade.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>Plan</th><th>Best for</th><th>Users</th><th>Contacts</th><th>Storage</th><th>WhatsApp/month</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Free</strong></td><td>A single user getting started</td><td>1</td><td>1,000</td><td>1 GB</td><td>100</td></tr>
+                        <tr><td><strong>Starter</strong></td><td>An individual or a small team</td><td>3</td><td>5,000</td><td>5 GB</td><td>2,000</td></tr>
+                        <tr><td><strong>Pro</strong></td><td>A growth team</td><td>10</td><td>50,000</td><td>50 GB</td><td>20,000</td></tr>
+                        <tr><td><strong>Business</strong></td><td>Enterprises</td><td>30</td><td>250,000</td><td>250 GB</td><td>100,000</td></tr>
+                        <tr><td><strong>Free Trial</strong></td><td>A 60-day trial</td><td>30</td><td>250,000</td><td>250 GB</td><td>100,000</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>What changes between plans?</h3>
+            <ul>
+                <li><strong>Numeric limits:</strong> number of users, contacts, storage, messages, tokens, leads... etc.</li>
+                <li><strong>Features:</strong> some screens only appear on higher plans (such as API, email sequences, AI SDR, White-label).</li>
+                <li><strong>Free trial:</strong> all features are unlocked for 60 days with Business-level data limits.</li>
+            </ul>
+            <div class="callout tip">
+                <span class="ico">💡</span>
+                <p>If there is a feature you cannot see in the sidebar, it is most likely not included in your plan — it is not a bug. Check the <a href="10-admin-troubleshooting.html">Account Admin guide</a> or the “Plans” page.</p>
+            </div>
+
+            <h2>3. Workspace</h2>
+            <p>The workspace is the container your data lives inside: contacts, conversations, leads, campaigns, settings... everything. A single user can belong to more than one workspace and switch between them.</p>
+            <ul>
+                <li>Open <strong>Settings → Workspaces</strong> to create a new workspace or switch between them.</li>
+                <li>Each workspace has completely separate data — contacts from one workspace never mix with another.</li>
+                <li>The domain or subdomain is linked to the workspace (see the <a href="02-setup-integrations.html">Integrations guide</a>).</li>
+            </ul>
+
+            <h2>4. Roles and permissions</h2>
+            <p>The system recognizes three basic roles inside a workspace. Assigning the wrong role is the most common cause of “I can’t find the screen” complaints.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Role</th><th>What they can do</th><th>What they cannot do</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Administrator</strong></td><td>Everything: team, billing, integrations, settings, logs, deletion</td><td>—</td></tr>
+                        <tr><td><strong>Staff</strong></td><td>Daily work: conversations, contacts, leads, campaigns</td><td>Managing the team, billing and sensitive integrations</td></tr>
+                        <tr><td><strong>Viewer</strong></td><td>Viewing and reports only</td><td>Adding, editing or deleting</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>For invitations: <strong>Settings → Team → Invite member</strong>. The invitation arrives by email, and the member completes registration from the invitation link.</p>
+
+            <h2>5. A tour of the interface</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/dashboard.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/dashboard.png" alt="The dashboard: your daily overview of messages, conversations, contacts, the current plan, and the onboarding checklist." decoding="async">
+                </a>
+                <figcaption>The dashboard: your daily overview of messages, conversations, contacts, the current plan, and the onboarding checklist.</figcaption>
+            </figure>
+
+            <p>The sidebar is divided into fixed areas. Every screen in the system falls under one of them:</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Area</th><th>What you will find there</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Inbox</strong></td><td>Conversations, channel setup, canned replies, labels</td></tr>
+                        <tr><td><strong>Contacts</strong></td><td>Customers, segments, import, custom fields</td></tr>
+                        <tr><td><strong>Sales</strong></td><td>Leads, pipeline, companies, tasks, quotes, invoices, products, sequences, calls, AI SDR, store</td></tr>
+                        <tr><td><strong>Marketing</strong></td><td>Campaigns, WhatsApp templates, auto-replies, chat widget, SMS, social, forms, booking</td></tr>
+                        <tr><td><strong>Automation</strong></td><td>Automation scenarios and the run log</td></tr>
+                        <tr><td><strong>Reports</strong></td><td>Sales, conversations, campaigns, automation, AI, social</td></tr>
+                        <tr><td><strong>Settings</strong></td><td>Account, team, billing, integrations, security, support</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>At the top of the screen there is a <strong>global search</strong> (⌘K / Ctrl+K) for quick access to any customer, conversation or lead.</p>
+
+            <h2>6. The first seven steps</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/onboarding.png" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/onboarding.png" alt="The onboarding checklist walks you through the seven first steps required to go live." decoding="async">
+                </a>
+                <figcaption>The onboarding checklist walks you through the seven first steps required to go live.</figcaption>
+            </figure>
+
+            <p>The system shows you an onboarding checklist in the dashboard. Complete it in order:</p>
+            <ol class="steps">
+                <li><strong>Verify your email</strong> — a prerequisite.</li>
+                <li><strong>Choose a plan</strong> — or continue on the trial.</li>
+                <li><strong>Connect your first channel</strong> — WhatsApp, Instagram or Messenger.</li>
+                <li><strong>Add or import your first contacts.</strong></li>
+                <li><strong>Send your first message</strong> — from the inbox or a campaign.</li>
+                <li><strong>Train your first chatbot</strong> — requires a knowledge base and an AI provider.</li>
+                <li><strong>Connect your first social account.</strong></li>
+            </ol>
+
+            <h2>7. Initial settings we recommend</h2>
+            <ul>
+                <li><strong>Company logo and details</strong> from Settings — they appear on invoices and emails.</li>
+                <li><strong>Time zone and currency</strong> — they affect appointments and reports.</li>
+                <li><strong>Email and push notifications</strong> — from Settings → Notifications.</li>
+                <li><strong>Enabling two-factor authentication (2FA)</strong> for the admin account — from Profile → Two-Factor.</li>
+                <li><strong>Inviting the team</strong> with the correct roles from the start.</li>
+            </ul>
+
+            <h2>Common mistakes</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Problem</th><th>Likely cause</th><th>Solution</th></tr></thead>
+                    <tbody>
+                        <tr><td>The verification email does not arrive</td><td>Wrong email or Spam</td><td>Check your email and Spam, then resend</td></tr>
+                        <tr><td>A screen does not appear in the menu</td><td>Not included in the plan or role</td><td>Check the plan and role (Administrator/Staff/Viewer)</td></tr>
+                        <tr><td>I cannot see a previous team’s data</td><td>You are in a different workspace</td><td>Switch workspaces from Settings → Workspaces</td></tr>
+                        <tr><td>“You’ve reached the maximum”</td><td>The plan limit was exceeded</td><td>Old data still works, but new data stops — upgrade the plan</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout ok">
+                <span class="ico">✅</span>
+                <p><strong>You have finished the basics.</strong> The next step is mandatory: <a href="02-setup-integrations.html">Setup &amp; Integrations (BYOK)</a> — without it, WhatsApp, email and AI will not work.</p>
+            </div>
+        </article>
+
+        <footer class="doc-footer">
+            <span>AYDRA · Version 1.0</span>
+            <span class="pager"><a class="btn" href="index.html">Index</a><a class="btn btn-primary" href="02-setup-integrations.html">Next: Setup &amp; Integrations →</a></span>
+        </footer>
+    </main>
+</div>
+
+<script src="../assets/docs.js?v=2"></script>
+</body>
+</html>

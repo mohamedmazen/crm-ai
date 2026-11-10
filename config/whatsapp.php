@@ -4,6 +4,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Meta Webhook Fields
+    |--------------------------------------------------------------------------
+    |
+    | The subscription fields for the app-global WhatsApp callback URL. This is
+    | the union of the standard Cloud API fields and the coexistence-only fields
+    | (`history`, `smb_app_state_sync`, `smb_message_echoes`), so registering the
+    | callback never drops coexistence events for already-connected numbers.
+    |
+    */
+
+    'webhook_fields' => 'messages,message_template_status_update,phone_number_name_update,phone_number_quality_update,account_update,history,smb_app_state_sync,smb_message_echoes',
+
+    /*
+    |--------------------------------------------------------------------------
     | WhatsApp Coexistence
     |--------------------------------------------------------------------------
     |
