@@ -1,0 +1,33 @@
+name: Docs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'public/docs/**'
+      - 'doc/scripts/**'
+      - '.github/workflows/docs.yml'
+  pull_request:
+    paths:
+      - 'public/docs/**'
+      - 'doc/scripts/**'
+      - '.github/workflows/docs.yml'
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Static documentation check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Verify screenshots, links, ids, annotations and search index
+        run: node doc/scripts/docs-check.mjs

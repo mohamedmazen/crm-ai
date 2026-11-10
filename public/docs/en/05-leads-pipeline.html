@@ -5,7 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>05 · Leads &amp; Pipeline · AYDRA</title>
 <meta name="description" content="Manage leads, pipeline, scoring, tasks and companies in AYDRA.">
-<link rel="stylesheet" href="../assets/docs.css?v=2">
+<link rel="stylesheet" href="../assets/docs.css?v=4">
+<!-- docs:meta -->
+<link rel="canonical" href="https://crm.business-os.tech/docs/en/05-leads-pipeline.html">
+<link rel="alternate" hreflang="ar" href="https://crm.business-os.tech/docs/ar/05-leads-pipeline.html">
+<link rel="alternate" hreflang="en" href="https://crm.business-os.tech/docs/en/05-leads-pipeline.html">
+<link rel="alternate" hreflang="x-default" href="https://crm.business-os.tech/docs/en/05-leads-pipeline.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AYDRA">
+<meta property="og:title" content="Leads &amp; Pipeline · AYDRA">
+<meta property="og:description" content="Fetch leads, manage deals on the Kanban board, scoring, tasks and companies.">
+<meta property="og:url" content="https://crm.business-os.tech/docs/en/05-leads-pipeline.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="ar_AR">
+<meta property="og:image" content="https://crm.business-os.tech/docs/assets/img/en/leads.webp">
+<meta property="og:image:alt" content="Leads &amp; Pipeline · AYDRA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Leads &amp; Pipeline · AYDRA">
+<meta name="twitter:description" content="Fetch leads, manage deals on the Kanban board, scoring, tasks and companies.">
+<meta name="twitter:image" content="https://crm.business-os.tech/docs/assets/img/en/leads.webp">
+<meta name="docs:lang" content="en">
+<meta name="docs:updated" content="2026-11-10">
+<!-- /docs:meta -->
 </head>
 <body>
 
@@ -20,10 +41,10 @@
 
 <div class="layout">
     <aside class="sidebar">
-        <h3>Guides</h3>
+        <h3 id="guides">Guides</h3>
         <nav class="doc-nav" id="doc-nav"></nav>
         <div class="toc">
-            <h3>On this page</h3>
+            <h3 id="on-this-page">On this page</h3>
             <ul id="page-toc"></ul>
         </div>
     </aside>
@@ -34,7 +55,7 @@
             <h1>Leads &amp; Pipeline</h1>
             <p class="lead">From prospecting to closing the deal. Learn how to fetch leads from Google Places, manage them on the kanban, and use scoring and tasks to close faster.</p>
 
-            <h2>1. Fetching leads (Lead Scraper)</h2>
+            <h2 id="1-fetching-leads-lead-scraper">1. Fetching leads (Lead Scraper)</h2>
             <p>The system uses <strong>Google Places</strong> to find businesses by type and location. Every new lead is deducted from your monthly <strong>Lead Credits</strong> balance.</p>
             <ol class="steps">
                 <li>Open <strong>Sales ← Leads</strong> and click <strong>New search</strong>.</li>
@@ -49,10 +70,10 @@
                 <p>Start with a small radius (2–5 km) to assess result quality before spending credits on a large radius. Each created lead is counted once even if you run the search again.</p>
             </div>
 
-            <h2>2. Leads list</h2>
+            <h2 id="2-leads-list">2. Leads list</h2>
             <figure class="shot">
-                <a href="../assets/img/en/leads.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/en/leads.png" alt="The leads list: every lead with its score, source, stage, and owner." decoding="async">
+                <a href="../assets/img/en/leads.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/leads.webp?v=4" alt="The leads list: every lead with its score, source, stage, and owner." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>The leads list: every lead with its score, source, stage, and owner.</figcaption>
             </figure>
@@ -64,7 +85,7 @@
                 <li>Import/export leads from a file (if the feature is included in your plan).</li>
             </ul>
 
-            <h2>3. Lead profile</h2>
+            <h2 id="3-lead-profile">3. Lead profile</h2>
             <p>Each lead gathers everything in one place:</p>
             <div class="table-wrap">
                 <table>
@@ -82,7 +103,28 @@
                 </table>
             </div>
 
-            <h2>4. Automatic scoring (Lead Scoring)</h2>
+            <h2 id="lead-fields">Lead fields reference</h2>
+            <p>The lead record is what the pipeline, scoring and reports operate on. Most fields can be edited inline from the lead profile.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Field</th><th>What it means</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Title / Name</strong></td><td>The business or contact name shown on the Kanban card.</td></tr>
+                        <tr><td><strong>Contact</strong></td><td>The person linked to the opportunity, when you have one.</td></tr>
+                        <tr><td><strong>Company</strong></td><td>The organisation the deal belongs to.</td></tr>
+                        <tr><td><strong>Pipeline</strong></td><td>Which sales process this lead follows.</td></tr>
+                        <tr><td><strong>Stage</strong></td><td>Its current column: New, Contacted, Qualified, Won, Lost…</td></tr>
+                        <tr><td><strong>Value</strong></td><td>The expected deal amount used in forecasts.</td></tr>
+                        <tr><td><strong>Score</strong></td><td>Automatic quality number; higher means more likely to convert.</td></tr>
+                        <tr><td><strong>Owner</strong></td><td>The salesperson responsible for the deal.</td></tr>
+                        <tr><td><strong>Source</strong></td><td>Where the lead came from (scraper, form, import, WhatsApp…).</td></tr>
+                        <tr><td><strong>Tags</strong></td><td>Hot, Warm, Cold, Enterprise and any custom labels.</td></tr>
+                        <tr><td><strong>Next task</strong></td><td>The next follow-up with its due date and assignee.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 id="4-automatic-scoring-lead-scoring">4. Automatic scoring (Lead Scoring)</h2>
             <p>The system calculates a score for each lead from fixed signals (such as category and location) and behavioural ones (reply, open, engagement).</p>
             <ul>
                 <li><strong>A higher score means higher priority</strong> in the work list.</li>
@@ -91,10 +133,10 @@
                 <li>There is a scheduled job that decreases the score of inactive leads (Decay) so it does not stay high without engagement.</li>
             </ul>
 
-            <h2>5. Pipeline</h2>
+            <h2 id="5-pipeline">5. Pipeline</h2>
             <figure class="shot">
-                <a href="../assets/img/en/pipeline.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/en/pipeline.png" alt="The pipeline (kanban): drag a deal between stages to update its status instantly." decoding="async">
+                <a href="../assets/img/en/pipeline.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/pipeline.webp?v=4" alt="The pipeline (kanban): drag a deal between stages to update its status instantly." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>The pipeline (kanban): drag a deal between stages to update its status instantly.</figcaption>
             </figure>
@@ -106,15 +148,15 @@
                 <li>Add a note or a task from inside the card.</li>
                 <li>Use the filters to show a specific stage or owner.</li>
             </ol>
-            <h3>Stage settings</h3>
+            <h3 id="stage-settings">Stage settings</h3>
             <p>From <strong>Sales ← Pipeline settings</strong> you can add a stage, reorder it, change its colour, or delete it. Deleting a stage moves its deals to the default stage — check the count before deleting.</p>
-            <h3>More than one pipeline</h3>
+            <h3 id="more-than-one-pipeline">More than one pipeline</h3>
             <p>Plans that include <strong>Multi Pipeline</strong> let you create separate pipelines (such as: sales, partnerships, renewals). Each pipeline has its own stages.</p>
 
-            <h2>6. Tasks and reminders</h2>
+            <h2 id="6-tasks-and-reminders">6. Tasks and reminders</h2>
             <figure class="shot">
-                <a href="../assets/img/en/tasks.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/en/tasks.png" alt="Tasks and reminders: follow-ups tied to a lead, with a due date and an owner." decoding="async">
+                <a href="../assets/img/en/tasks.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/tasks.webp?v=4" alt="Tasks and reminders: follow-ups tied to a lead, with a due date and an owner." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>Tasks and reminders: follow-ups tied to a lead, with a due date and an owner.</figcaption>
             </figure>
@@ -126,10 +168,10 @@
                 <li>Close the task when it is done, or reschedule it.</li>
             </ul>
 
-            <h2>7. Companies</h2>
+            <h2 id="7-companies">7. Companies</h2>
             <figure class="shot">
-                <a href="../assets/img/en/companies.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/en/companies.png" alt="Companies: group contacts and deals under one account record." decoding="async">
+                <a href="../assets/img/en/companies.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/companies.webp?v=4" alt="Companies: group contacts and deals under one account record." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>Companies: group contacts and deals under one account record.</figcaption>
             </figure>
@@ -141,7 +183,7 @@
                 <li>View all the company's conversations from its page.</li>
             </ul>
 
-            <h2>8. Lead duplicates</h2>
+            <h2 id="8-lead-duplicates">8. Lead duplicates</h2>
             <p>Go to <strong>Sales ← Duplicates</strong> (if included). The system detects leads that are similar by name/phone/email.</p>
             <ol class="steps">
                 <li>Review the list of duplicate groups.</li>
@@ -153,10 +195,10 @@
                 <p>Merging cannot be undone. Review the fields before confirming.</p>
             </div>
 
-            <h2>9. Lead sources</h2>
+            <h2 id="9-lead-sources">9. Lead sources</h2>
             <p>Go to <strong>Marketing ← Lead sources</strong>. Each lead records its source (Scraper, Form, Campaign, Manual...). Use UTM links to find out which channel brings the best leads in the sales reports.</p>
 
-            <h2>Common problems</h2>
+            <h2 id="common-problems">Common problems</h2>
             <div class="table-wrap">
                 <table>
                     <thead><tr><th>Problem</th><th>Cause</th><th>Fix</th></tr></thead>
@@ -178,12 +220,13 @@
         </article>
 
         <footer class="doc-footer">
+            <span class="updated">Last updated 10 November 2026 · <a href="/app/support" target="_blank" rel="noopener">Report an issue</a></span>
             <span>AYDRA · v1.0</span>
             <span class="pager"><a class="btn" href="04-contacts.html">← Previous</a><a class="btn btn-primary" href="06-sales.html">Next: Sales →</a></span>
         </footer>
     </main>
 </div>
 
-<script src="../assets/docs.js?v=2"></script>
+<script src="../assets/docs.js?v=4"></script>
 </body>
 </html>

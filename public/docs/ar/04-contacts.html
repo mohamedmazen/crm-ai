@@ -5,7 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>04 · جهات الاتصال والشرائح · AYDRA</title>
 <meta name="description" content="إدارة جهات الاتصال واستيرادها من CSV وبناء الشرائح والحقول المخصصة في AYDRA.">
-<link rel="stylesheet" href="../assets/docs.css?v=2">
+<link rel="stylesheet" href="../assets/docs.css?v=4">
+<!-- docs:meta -->
+<link rel="canonical" href="https://crm.business-os.tech/docs/ar/04-contacts.html">
+<link rel="alternate" hreflang="ar" href="https://crm.business-os.tech/docs/ar/04-contacts.html">
+<link rel="alternate" hreflang="en" href="https://crm.business-os.tech/docs/en/04-contacts.html">
+<link rel="alternate" hreflang="x-default" href="https://crm.business-os.tech/docs/en/04-contacts.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AYDRA">
+<meta property="og:title" content="جهات الاتصال والشرائح · AYDRA">
+<meta property="og:description" content="أضف جهات الاتصال واستوردها وابنِ الشرائح والحقول المخصصة.">
+<meta property="og:url" content="https://crm.business-os.tech/docs/ar/04-contacts.html">
+<meta property="og:locale" content="ar_AR">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://crm.business-os.tech/docs/assets/img/ar/contacts.webp">
+<meta property="og:image:alt" content="جهات الاتصال والشرائح · AYDRA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="جهات الاتصال والشرائح · AYDRA">
+<meta name="twitter:description" content="أضف جهات الاتصال واستوردها وابنِ الشرائح والحقول المخصصة.">
+<meta name="twitter:image" content="https://crm.business-os.tech/docs/assets/img/ar/contacts.webp">
+<meta name="docs:lang" content="ar">
+<meta name="docs:updated" content="2026-11-10">
+<!-- /docs:meta -->
 </head>
 <body>
 
@@ -20,10 +41,10 @@
 
 <div class="layout">
     <aside class="sidebar">
-        <h3>الأدلة</h3>
+        <h3 id="الأدلة">الأدلة</h3>
         <nav class="doc-nav" id="doc-nav"></nav>
         <div class="toc">
-            <h3>في هذه الصفحة</h3>
+            <h3 id="في-هذه-الصفحة">في هذه الصفحة</h3>
             <ul id="page-toc"></ul>
         </div>
     </aside>
@@ -34,10 +55,10 @@
             <h1>جهات الاتصال والشرائح</h1>
             <p class="lead">جهات الاتصال هي قلب النظام: منها تُبنى الحملات والشرائح والليدز. هذا الدليل يشرح الإضافة اليدوية والاستيراد الذكي وبناء الشرائح من غير أخطاء تكرار.</p>
 
-            <h2>قائمة جهات الاتصال</h2>
+            <h2 id="قائمة-جهات-الاتصال">قائمة جهات الاتصال</h2>
             <figure class="shot">
-                <a href="../assets/img/ar/contacts.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/ar/contacts.png" alt="قائمة جهات الاتصال: ابحث وفلتر وأضف الوسوم وافتح أي ملف جهة من هنا." decoding="async">
+                <a href="../assets/img/ar/contacts.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/ar/contacts.webp?v=4" alt="قائمة جهات الاتصال: ابحث وفلتر وأضف الوسوم وافتح أي ملف جهة من هنا." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>قائمة جهات الاتصال: ابحث وفلتر وأضف الوسوم وافتح أي ملف جهة من هنا.</figcaption>
             </figure>
@@ -49,7 +70,7 @@
                 <li>يمكنك التصدير من نفس الشاشة أو من التقارير حسب صلاحيتك.</li>
             </ul>
 
-            <h2>إضافة جهة اتصال يدويًا</h2>
+            <h2 id="إضافة-جهة-اتصال-يدويا">إضافة جهة اتصال يدويًا</h2>
             <ol class="steps">
                 <li>اضغط <strong>إضافة جهة اتصال</strong>.</li>
                 <li>أدخل الاسم ورقم الهاتف بالصيغة الدولية (مثال: <code>201012345678</code>).</li>
@@ -61,10 +82,10 @@
                 <p>رقم الهاتف هو المفتاح الأساسي للقناة. أدخله دائمًا بالصيغة الدولية بدون <code>+</code> أو أصفار بادئة، وإلا فشل الإرسال على واتساب والـSMS.</p>
             </div>
 
-            <h2>استيراد جهات الاتصال</h2>
+            <h2 id="استيراد-جهات-الاتصال">استيراد جهات الاتصال</h2>
             <p>يوجد مسارَان: الاستيراد السريع (CSV) والاستيراد الجدولي (Bulk Import) الذي يعمل كشيت إكسل داخل المتصفح.</p>
 
-            <h3>الاستيراد السريع (CSV)</h3>
+            <h3 id="الاستيراد-السريع-csv">الاستيراد السريع (CSV)</h3>
             <ol class="steps">
                 <li>من قائمة جهات الاتصال اضغط <strong>استيراد</strong>.</li>
                 <li>ارفع ملف CSV بترميز UTF-8.</li>
@@ -73,10 +94,10 @@
                 <li>اضغط استيراد.</li>
             </ol>
 
-            <h3>الاستيراد الجدولي (Bulk Import)</h3>
+            <h3 id="الاستيراد-الجدولي-bulk-import">الاستيراد الجدولي (Bulk Import)</h3>
             <figure class="shot">
-                <a href="../assets/img/ar/contacts-import.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/ar/contacts-import.png" alt="الاستيراد الجماعي: ارفع ملف CSV أو Excel وطابق أعمدته وتحقّق من التكرارات قبل الاستيراد." decoding="async">
+                <a href="../assets/img/ar/contacts-import.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/ar/contacts-import.webp?v=4" alt="الاستيراد الجماعي: ارفع ملف CSV أو Excel وطابق أعمدته وتحقّق من التكرارات قبل الاستيراد." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>الاستيراد الجماعي: ارفع ملف CSV أو Excel وطابق أعمدته وتحقّق من التكرارات قبل الاستيراد.</figcaption>
             </figure>
@@ -94,13 +115,13 @@
                 <p><strong>قبل أي استيراد كبير:</strong> جرّب 10 صفوف أولًا، وتأكد من صيغة الأرقام. الاستيراد الخاطئ أصعب في التنظيف من الإضافة اليدوية.</p>
             </div>
 
-            <h3>التكرارات عند الاستيراد</h3>
+            <h3 id="التكرارات-عند-الاستيراد">التكرارات عند الاستيراد</h3>
             <p>النظام يمنع إنشاء جهة اتصال مكرّرة بنفس رقم الهاتف داخل نفس المساحة. عند وجود تطابق، عادةً يتم تحديث السجل الموجود بدل إنشاء نسخة جديدة — راجع ملخص الاستيراد لمعرفة عدد «المحدّث» و«المضاف».</p>
 
-            <h2>الشرائح (Segments)</h2>
+            <h2 id="الشرائح-segments">الشرائح (Segments)</h2>
             <figure class="shot">
-                <a href="../assets/img/ar/segments.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/ar/segments.png" alt="الشرائح: مجموعات ذكية محفوظة تُبنى بشروط، تُستخدم في الحملات والأتمتة." decoding="async">
+                <a href="../assets/img/ar/segments.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/ar/segments.webp?v=4" alt="الشرائح: مجموعات ذكية محفوظة تُبنى بشروط، تُستخدم في الحملات والأتمتة." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>الشرائح: مجموعات ذكية محفوظة تُبنى بشروط، تُستخدم في الحملات والأتمتة.</figcaption>
             </figure>
@@ -114,7 +135,7 @@
                 <li>احفظ — تظهر الشريحة مع عدد جهات الاتصال المطابقة.</li>
             </ol>
 
-            <h3>إضافة جهات اتصال يدويًا لشريحة</h3>
+            <h3 id="إضافة-جهات-اتصال-يدويا-لشريحة">إضافة جهات اتصال يدويًا لشريحة</h3>
             <p>بجانب كل شريحة يوجد زر <strong>إضافة جهات اتصال</strong> يفتح شاشة اختيار متعددة. استخدمها للشرائح الثابتة (مثل «عملاء المعرض»).</p>
 
             <div class="table-wrap">
@@ -129,7 +150,7 @@
                 </table>
             </div>
 
-            <h2>الوسوم (Tags)</h2>
+            <h2 id="الوسوم-tags">الوسوم (Tags)</h2>
             <p>الوسوم يدوية وسريعة، وتختلف عن الشرائح في أنها لا تُحدَّث تلقائيًا:</p>
             <ul>
                 <li>أضف/أزل وسمًا من ملف الجهة.</li>
@@ -137,10 +158,10 @@
                 <li>الوسوم تُستخدم في فلاتر الحملات ومشغّلات الأتمتة.</li>
             </ul>
 
-            <h2>الحقول المخصصة</h2>
+            <h2 id="الحقول-المخصصة">الحقول المخصصة</h2>
             <figure class="shot">
-                <a href="../assets/img/ar/custom-fields.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/ar/custom-fields.png" alt="الحقول المخصصة: حقول إضافية تضيفها لجهات الاتصال وتستخدمها في الشرائح والرسائل." decoding="async">
+                <a href="../assets/img/ar/custom-fields.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/ar/custom-fields.webp?v=4" alt="الحقول المخصصة: حقول إضافية تضيفها لجهات الاتصال وتستخدمها في الشرائح والرسائل." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>الحقول المخصصة: حقول إضافية تضيفها لجهات الاتصال وتستخدمها في الشرائح والرسائل.</figcaption>
             </figure>
@@ -156,7 +177,26 @@
                 <p>عدد الحقول المخصصة محدود حسب الباقة (Free = 3، Starter = 10، Pro = 20، Business = غير محدود).</p>
             </div>
 
-            <h2>ملف جهة الاتصال</h2>
+            <h2 id="حقول-جهة-الاتصال">مرجع حقول جهة الاتصال</h2>
+            <p>لكل جهة اتصال الحقول الأساسية نفسها. تُضاف الحقول المخصصة فوقها من <strong>جهات الاتصال ← الحقول المخصصة</strong>.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>الحقل</th><th>المعنى</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>الاسم</strong></td><td>الاسم الظاهر في صندوق الوارد والحملات. مطلوب.</td></tr>
+                        <tr><td><strong>الهاتف</strong></td><td>رقم واتساب/الرسائل النصية بالصيغة الدولية. عادةً المفتاح الفريد للمراسلة.</td></tr>
+                        <tr><td><strong>البريد الإلكتروني</strong></td><td>يُستخدم في حملات البريد والعروض والفواتير.</td></tr>
+                        <tr><td><strong>الشركة</strong></td><td>يربط جهة الاتصال بسجل شركة.</td></tr>
+                        <tr><td><strong>المسؤول</strong></td><td>عضو الفريق المسؤول عن جهة الاتصال.</td></tr>
+                        <tr><td><strong>المصدر</strong></td><td>من أين جاءت جهة الاتصال: يدوي أو استيراد أو واتساب أو نموذج أو متجر أو API.</td></tr>
+                        <tr><td><strong>الوسوم</strong></td><td>وسوم حرة للتصفية والشرائح.</td></tr>
+                        <tr><td><strong>الحقول المخصصة</strong></td><td>أي خاصية إضافية عرّفتها، تظهر في ملف جهة الاتصال.</td></tr>
+                        <tr><td><strong>تاريخ الإنشاء</strong></td><td>متى دخل السجل مساحة العمل. تستخدمه التقارير وقواعد الاحتفاظ.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 id="ملف-جهة-الاتصال">ملف جهة الاتصال</h2>
             <p>يفتح على كل شيء يخص العميل:</p>
             <ul>
                 <li>البيانات الأساسية والوسوم والشرائح.</li>
@@ -165,7 +205,7 @@
                 <li>سجل النشاط (رسائل، تغييرات، مهام).</li>
             </ul>
 
-            <h2>الإجراءات الجماعية</h2>
+            <h2 id="الإجراءات-الجماعية">الإجراءات الجماعية</h2>
             <p>حدّد عدة جهات من القائمة ثم:</p>
             <ul>
                 <li>إضافة/إزالة وسوم.</li>
@@ -174,7 +214,7 @@
                 <li>حذف (بحذر — قد يؤثر على التقارير).</li>
             </ul>
 
-            <h2>أخطاء شائعة</h2>
+            <h2 id="أخطاء-شائعة">أخطاء شائعة</h2>
             <div class="table-wrap">
                 <table>
                     <thead><tr><th>المشكلة</th><th>السبب</th><th>الحل</th></tr></thead>
@@ -195,12 +235,13 @@
         </article>
 
         <footer class="doc-footer">
+            <span class="updated">آخر تحديث: 10 نوفمبر 2026 · <a href="/app/support" target="_blank" rel="noopener">أبلغ عن مشكلة</a></span>
             <span>AYDRA · الإصدار 1.0</span>
             <span class="pager"><a class="btn" href="03-inbox.html">← السابق</a><a class="btn btn-primary" href="05-leads-pipeline.html">التالي: الليدز →</a></span>
         </footer>
     </main>
 </div>
 
-<script src="../assets/docs.js?v=2"></script>
+<script src="../assets/docs.js?v=4"></script>
 </body>
 </html>

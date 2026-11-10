@@ -5,7 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>10 · إدارة الحساب واستكشاف الأخطاء · AYDRA</title>
 <meta name="description" content="إدارة الفريق والصلاحيات، الاشتراك والفوترة، مفاتيح API والـWebhooks، الأمان، الخصوصية، والدعم وحل المشاكل الشائعة.">
-<link rel="stylesheet" href="../assets/docs.css?v=2">
+<link rel="stylesheet" href="../assets/docs.css?v=4">
+<!-- docs:meta -->
+<link rel="canonical" href="https://crm.business-os.tech/docs/ar/10-admin-troubleshooting.html">
+<link rel="alternate" hreflang="ar" href="https://crm.business-os.tech/docs/ar/10-admin-troubleshooting.html">
+<link rel="alternate" hreflang="en" href="https://crm.business-os.tech/docs/en/10-admin-troubleshooting.html">
+<link rel="alternate" hreflang="x-default" href="https://crm.business-os.tech/docs/en/10-admin-troubleshooting.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AYDRA">
+<meta property="og:title" content="إدارة الحساب واستكشاف الأخطاء · AYDRA">
+<meta property="og:description" content="الفريق والأدوار والاشتراك والفواتير وواجهة البرمجة والأمان والمشاكل الشائعة.">
+<meta property="og:url" content="https://crm.business-os.tech/docs/ar/10-admin-troubleshooting.html">
+<meta property="og:locale" content="ar_AR">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://crm.business-os.tech/docs/assets/img/ar/team.webp">
+<meta property="og:image:alt" content="إدارة الحساب واستكشاف الأخطاء · AYDRA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="إدارة الحساب واستكشاف الأخطاء · AYDRA">
+<meta name="twitter:description" content="الفريق والأدوار والاشتراك والفواتير وواجهة البرمجة والأمان والمشاكل الشائعة.">
+<meta name="twitter:image" content="https://crm.business-os.tech/docs/assets/img/ar/team.webp">
+<meta name="docs:lang" content="ar">
+<meta name="docs:updated" content="2026-11-10">
+<!-- /docs:meta -->
 </head>
 <body>
 
@@ -20,10 +41,10 @@
 
 <div class="layout">
     <aside class="sidebar">
-        <h3>الأدلة</h3>
+        <h3 id="الأدلة">الأدلة</h3>
         <nav class="doc-nav" id="doc-nav"></nav>
         <div class="toc">
-            <h3>في هذه الصفحة</h3>
+            <h3 id="في-هذه-الصفحة">في هذه الصفحة</h3>
             <ul id="page-toc"></ul>
         </div>
     </aside>
@@ -39,23 +60,23 @@
                 <p>معظم إعدادات هذا الدليل تظهر فقط لدور <strong>Administrator</strong>. لو كنت Staff أو Viewer ولم تجد الشاشة، فهذا هو السبب — اطلب من مدير الحساب.</p>
             </div>
 
-            <h2>1. الفريق والدعوات</h2>
+            <h2 id="1-الفريق-والدعوات">1. الفريق والدعوات</h2>
             <figure class="shot">
-                <a href="../assets/img/ar/team.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/ar/team.png" alt="الفريق: ادعُ الأعضاء وحدّد الأدوار وتحكّم في صلاحيات كل شخص." decoding="async">
+                <a href="../assets/img/ar/team.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/ar/team.webp?v=4" alt="الفريق: ادعُ الأعضاء وحدّد الأدوار وتحكّم في صلاحيات كل شخص." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>الفريق: ادعُ الأعضاء وحدّد الأدوار وتحكّم في صلاحيات كل شخص.</figcaption>
             </figure>
 
             <p>من <strong>الإعدادات ← الفريق</strong>.</p>
-            <h3>دعوة عضو جديد</h3>
+            <h3 id="دعوة-عضو-جديد">دعوة عضو جديد</h3>
             <ol class="steps">
                 <li>اضغط <strong>دعوة بالبريد</strong>.</li>
                 <li>أدخل بريد العضو واختر الدور (Staff افتراضيًا).</li>
                 <li>أرسل الدعوة. تظهر في قسم <strong>الدعوات المعلّقة</strong> حتى يقبلها العضو.</li>
                 <li>يمكنك إلغاء الدعوة قبل قبولها.</li>
             </ol>
-            <h3>الأدوار الثلاثة</h3>
+            <h3 id="الأدوار-الثلاثة">الأدوار الثلاثة</h3>
             <div class="table-wrap">
                 <table>
                     <thead><tr><th>الدور</th><th>الصلاحيات</th><th>مناسب لـ</th></tr></thead>
@@ -72,11 +93,11 @@
                 <p>قبل حذف عضو، انقل مهامه ومحادثاته غير المحلولة إلى زميل آخر. حذف العضو لا يحذف بياناته التاريخية لكنه يقطع وصوله فورًا.</p>
             </div>
 
-            <h2>2. الاشتراك والفوترة</h2>
-            <h3>صفحة الاشتراك</h3>
+            <h2 id="2-الاشتراك-والفوترة">2. الاشتراك والفوترة</h2>
+            <h3 id="صفحة-الاشتراك">صفحة الاشتراك</h3>
             <figure class="shot">
-                <a href="../assets/img/ar/billing.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/ar/billing.png" alt="الاشتراك: باقتك الحالية والاستهلاك وتاريخ التجديد وخيارات الترقية." decoding="async">
+                <a href="../assets/img/ar/billing.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/ar/billing.webp?v=4" alt="الاشتراك: باقتك الحالية والاستهلاك وتاريخ التجديد وخيارات الترقية." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>الاشتراك: باقتك الحالية والاستهلاك وتاريخ التجديد وخيارات الترقية.</figcaption>
             </figure>
@@ -88,7 +109,7 @@
                 <li><strong>كوبون خصم:</strong> أدخل الكود قبل الدفع ثم اضغط تحقّق — يظهر الخصم قبل التأكيد.</li>
             </ul>
 
-            <h3>سجل المدفوعات والفواتير</h3>
+            <h3 id="سجل-المدفوعات-والفواتير">سجل المدفوعات والفواتير</h3>
             <p>من <strong>الإعدادات ← الفوترة</strong>. جدول بكل العمليات: التاريخ، المبلغ، العملة، البوابة، والحالة.</p>
             <ul>
                 <li>اضغط <strong>الفاتورة</strong> بجانب أي عملية ناجحة لتحميلها.</li>
@@ -96,29 +117,29 @@
                 <li>لو فشل الدفع، جرّب بوابة أخرى أو راجع البنك — لا تُكرّر المحاولة أكثر من مرتين متتاليتين.</li>
             </ul>
 
-            <h3>الأسعار والعملات</h3>
+            <h3 id="الأسعار-والعملات">الأسعار والعملات</h3>
             <p>الأسعار تُعرض حسب عملة الحساب/المنطقة. القيم المعروضة لا تشمل الضريبة (VAT) وتُضاف عند الدفع حسب بلدك. الاشتراك السنوي = قيمة 10 أشهر (شهران مجانًا).</p>
 
-            <h2>3. الملف الشخصي والأمان</h2>
-            <h3>الملف الشخصي</h3>
+            <h2 id="3-الملف-الشخصي-والأمان">3. الملف الشخصي والأمان</h2>
+            <h3 id="الملف-الشخصي">الملف الشخصي</h3>
             <p>من <strong>الملف الشخصي</strong>: الاسم، البريد، الصورة، اللغة، والمنطقة الزمنية. تغيير البريد يحتاج تأكيدًا.</p>
-            <h3>المصادقة الثنائية (2FA)</h3>
+            <h3 id="المصادقة-الثنائية-2fa">المصادقة الثنائية (2FA)</h3>
             <ol class="steps">
                 <li>افتح <strong>الملف الشخصي ← Two-Factor</strong>.</li>
                 <li>امسح رمز QR بتطبيق مصادقة (Google Authenticator / Authy / 1Password).</li>
                 <li>أدخل الرمز لتأكيد التفعيل.</li>
                 <li>احفظ <strong>أكواد الاسترداد</strong> في مكان آمن — بدونها يصعب الدخول عند فقدان الهاتف.</li>
             </ol>
-            <h3>الجلسات النشطة</h3>
+            <h3 id="الجلسات-النشطة">الجلسات النشطة</h3>
             <p>من <strong>الملف الشخصي ← الجلسات</strong> ترى كل الأجهزة المسجّلة. استخدم <strong>تسجيل الخروج من كل الجلسات</strong> عند الاشتباه في وصول غير مصرّح به.</p>
-            <h3>كلمة المرور</h3>
+            <h3 id="كلمة-المرور">كلمة المرور</h3>
             <p>غيّرها من الملف الشخصي. استخدم كلمة طويلة وفريدة، وفعّل 2FA — هما أهم خطوتين لحماية الحساب.</p>
 
-            <h2>4. الـAPI والـWebhooks</h2>
-            <h3>مفاتيح API (API Tokens)</h3>
+            <h2 id="4-الـapi-والـwebhooks">4. الـAPI والـWebhooks</h2>
+            <h3 id="مفاتيح-api-api-tokens">مفاتيح API (API Tokens)</h3>
             <figure class="shot">
-                <a href="../assets/img/ar/api-tokens.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/ar/api-tokens.png" alt="مفاتيح الـAPI: أنشئ مفاتيح محدودة النطاق للتكاملات الخارجية وألغِها في أي وقت." decoding="async">
+                <a href="../assets/img/ar/api-tokens.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/ar/api-tokens.webp?v=4" alt="مفاتيح الـAPI: أنشئ مفاتيح محدودة النطاق للتكاملات الخارجية وألغِها في أي وقت." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>مفاتيح الـAPI: أنشئ مفاتيح محدودة النطاق للتكاملات الخارجية وألغِها في أي وقت.</figcaption>
             </figure>
@@ -136,10 +157,10 @@
                 <p>لا تضع المفتاح في كود الواجهة أو مستودع Git. أنشئ مفتاحًا منفصلًا لكل تكامل، وأبطله فورًا عند تسريبه أو انتهاء استخدامه.</p>
             </div>
 
-            <h3>Webhooks الصادرة</h3>
+            <h3 id="webhooks-الصادرة">Webhooks الصادرة</h3>
             <figure class="shot">
-                <a href="../assets/img/ar/webhooks.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/ar/webhooks.png" alt="الـWebhooks الصادرة: نقاط يستدعيها AYDRA عند وقوع الأحداث، مع سجل التسليم." decoding="async">
+                <a href="../assets/img/ar/webhooks.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/ar/webhooks.webp?v=4" alt="الـWebhooks الصادرة: نقاط يستدعيها AYDRA عند وقوع الأحداث، مع سجل التسليم." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>الـWebhooks الصادرة: نقاط يستدعيها AYDRA عند وقوع الأحداث، مع سجل التسليم.</figcaption>
             </figure>
@@ -153,7 +174,7 @@
             </ol>
             <p>يمكن <strong>تدوير الـSecret</strong> من نفس الصفحة إن شككت في تسريبه.</p>
 
-            <h2>5. الوسائط والتخزين</h2>
+            <h2 id="5-الوسائط-والتخزين">5. الوسائط والتخزين</h2>
             <p>من <strong>الإعدادات ← مكتبة الوسائط</strong>. ارفع الصور والملفات المستخدمة في الحملات والقوالب والمنشورات.</p>
             <ul>
                 <li>الحد الأقصى لحجم الملف يعتمد على الباقة وسعة التخزين.</li>
@@ -162,7 +183,7 @@
             </ul>
             <p>عند امتلاء التخزين، الرفع الجديد يتوقف فقط؛ الملفات الحالية تعمل. نظّف الملفات غير المستخدمة أو رقّي الباقة.</p>
 
-            <h2>6. الإشعارات</h2>
+            <h2 id="6-الإشعارات">6. الإشعارات</h2>
             <p>من <strong>الإعدادات ← الإشعارات</strong>:</p>
             <ul>
                 <li>اختر ما يصلك: محادثة جديدة، إسناد، مهمة مستحقة، فشل حملة، فشل أتمتة، فاتورة…</li>
@@ -171,10 +192,10 @@
                 <li>نغمات التنبيه تُضبط من صندوق الوارد.</li>
             </ul>
 
-            <h2>7. سجل التدقيق (Audit Log)</h2>
+            <h2 id="7-سجل-التدقيق-audit-log">7. سجل التدقيق (Audit Log)</h2>
             <figure class="shot">
-                <a href="../assets/img/ar/audit-log.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/ar/audit-log.png" alt="سجل التدقيق: سجل بمن فعل ماذا ومتى داخل المساحة." decoding="async">
+                <a href="../assets/img/ar/audit-log.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/ar/audit-log.webp?v=4" alt="سجل التدقيق: سجل بمن فعل ماذا ومتى داخل المساحة." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>سجل التدقيق: سجل بمن فعل ماذا ومتى داخل المساحة.</figcaption>
             </figure>
@@ -186,24 +207,24 @@
                 <li>استخدمه عند التحقيق في تغيير غير متوقع أو حادث أمني.</li>
             </ul>
 
-            <h2>8. الخصوصية وGDPR</h2>
+            <h2 id="8-الخصوصية-وgdpr">8. الخصوصية وGDPR</h2>
             <p>من <strong>الإعدادات ← الخصوصية وGDPR</strong> (للمدير فقط):</p>
-            <h3>اتفاقية معالجة البيانات (DPA)</h3>
+            <h3 id="اتفاقية-معالجة-البيانات-dpa">اتفاقية معالجة البيانات (DPA)</h3>
             <p>حمّل نسخة DPA مُعبّأة ببيانات مؤسستك — للنظام والعميل.</p>
-            <h3>حق المحو (Erasure)</h3>
+            <h3 id="حق-المحو-erasure">حق المحو (Erasure)</h3>
             <ol class="steps">
                 <li>أنشئ طلب محو لبريد شخص معيّن.</li>
                 <li>الطلب يمر بفترة سماح (30 يومًا افتراضيًا) قبل التنفيذ.</li>
                 <li>يمكن إلغاء الطلب خلال الفترة.</li>
                 <li>عند التنفيذ: تُحذف المحادثات وجهات الاتصال، وتُجهَّل (Anonymise) الليدز للحفاظ على السجلات المالية.</li>
             </ol>
-            <h3>مدة الاحتفاظ</h3>
+            <h3 id="مدة-الاحتفاظ">مدة الاحتفاظ</h3>
             <p>حدّد عدد الأيام لحفظ أرشيفات التصدير المُنشأة. القيمة 0 = الاحتفاظ بلا حد. احذف الأرشيفات القديمة تلقائيًا لتوفير المساحة.</p>
 
-            <h2>9. تصدير بيانات المساحة</h2>
+            <h2 id="9-تصدير-بيانات-المساحة">9. تصدير بيانات المساحة</h2>
             <p>من <strong>الإعدادات ← تصدير البيانات</strong>: اطلب نسخة كاملة من بيانات مساحة العمل. يُنشأ الملف في الخلفية ويصلك رابط التحميل بالبريد عند انتهائه. الفترة تعتمد على حجم البيانات.</p>
 
-            <h2>10. الدعم</h2>
+            <h2 id="10-الدعم">10. الدعم</h2>
             <p>من <strong>الدعم</strong> في القائمة الجانبية:</p>
             <ol class="steps">
                 <li>اضغط <strong>تذكرة جديدة</strong>.</li>
@@ -216,26 +237,83 @@
                 <p>لأسرع حل، أرفق: اسم الشاشة، وقت المشكلة، والبريد/الهاتف المستخدم، ونص رسالة الخطأ. لا ترسل مفاتيح API أو كلمات مرور.</p>
             </div>
 
-            <h2>11. استكشاف الأخطاء — دليل سريع</h2>
+            <h2 id="11-استكشاف-الأخطاء-دليل-سريع">11. استكشاف الأخطاء — دليل سريع</h2>
 
-            <h3>لا أستطيع تسجيل الدخول</h3>
+            <div class="decision-tree">
+                <p class="tree-root">ابدأ من هنا: ما العرض الأساسي؟</p>
+                <ul>
+                    <li><strong>لا أستطيع تسجيل الدخول</strong>
+                        <ul>
+                            <li>البريد غير مؤكد؟ ← افتح رسالة التحقق أو اطلب إعادة إرسالها.</li>
+                            <li>كلمة المرور خاطئة؟ ← استخدم «نسيت كلمة المرور».</li>
+                            <li>فقدت جهاز المصادقة الثنائية؟ ← استخدم رمز استرداد، ثم اطلب من المدير إعادة ضبط 2FA.</li>
+                            <li>ما زلت محظورًا؟ ← <a href="/app/support">افتح تذكرة دعم</a> مع البريد والوقت.</li>
+                        </ul>
+                    </li>
+                    <li><strong>شاشة مفقودة من القائمة</strong>
+                        <ul>
+                            <li>هل تشملها <strong>خطتك</strong>؟ ← راجع صفحة الخطط.</li>
+                            <li>هل يسمح بها <strong>دورك</strong>؟ ← مدير مقابل موظف مقابل مشاهد.</li>
+                            <li>هل أنت في <strong>مساحة العمل</strong> الصحيحة؟ ← بدّل مساحة العمل.</li>
+                        </ul>
+                    </li>
+                    <li><strong>الرسائل لا تُرسل</strong>
+                        <ul>
+                            <li>هل القناة موصولة والرمز صالح؟ ← حالة القنوات.</li>
+                            <li>هل قالب واتساب معتمد؟ ← قائمة القوالب.</li>
+                            <li>خارج نافذة الـ24 ساعة؟ ← استخدم قالبًا معتمدًا لا نصًا حرًا.</li>
+                            <li>البريد؟ ← تحقق من SMTP وSPF وDKIM في شاشة خادم البريد.</li>
+                        </ul>
+                    </li>
+                    <li><strong>الذكاء الاصطناعي لا يجيب</strong>
+                        <ul>
+                            <li>هل مفتاح المزوّد مفعّل وله رصيد؟ ← مزوّدو الذكاء الاصطناعي.</li>
+                            <li>هل قاعدة المعرفة مفهرسة؟ ← قواعد المعرفة.</li>
+                            <li>هل الروبوت مفعّل ومرتبط بالقناة؟ ← الروبوتات.</li>
+                        </ul>
+                    </li>
+                    <li><strong>حملة وصلت لأقل من المتوقع</strong>
+                        <ul>
+                            <li>أرقام غير صالحة أو محظورة، أو موافقة مفقودة؟</li>
+                            <li>هل بلغت حد القناة الشهري أثناء الإرسال؟</li>
+                            <li>افتح تقرير الحملة لمعرفة أسباب الفشل بدقة.</li>
+                        </ul>
+                    </li>
+                    <li><strong>أتمتة لا تعمل</strong>
+                        <ul>
+                            <li>هل الأتمتة مفعّلة والمشغل موصول بالخطوة الأولى؟</li>
+                            <li>هل يطابق الحدث المشغل فعلًا (مثل انتقال المرحلة إلى «رابح»)؟</li>
+                            <li>افتح سجل التشغيل لمعرفة الخطوة الفاشلة.</li>
+                        </ul>
+                    </li>
+                    <li><strong>لا شيء يُحمَّل إطلاقًا</strong>
+                        <ul>
+                            <li>تحقق من الاتصال وأخطاء وحدة تحكم المتصفح.</li>
+                            <li>جرّب نافذة خاصة لاستبعاد إحدى الإضافات.</li>
+                            <li>إذا كان التطبيق كله متوقفًا، <a href="/app/support">افتح تذكرة دعم</a>.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <h3 id="لا-أستطيع-تسجيل-الدخول">لا أستطيع تسجيل الدخول</h3>
             <ul>
                 <li>تأكد من البريد الصحيح وكلمة المرور (جرّب نسيت كلمة المرور).</li>
                 <li>لو فعّلت 2FA وفقدت الهاتف، استخدم كود استرداد.</li>
                 <li>لو الحساب موقوف أو التجربة منتهية، راجع المدير.</li>
             </ul>
 
-            <h3>لا أرى شاشة في القائمة</h3>
+            <h3 id="لا-أرى-شاشة-في-القائمة">لا أرى شاشة في القائمة</h3>
             <ul>
                 <li>الدور: Viewer/Staff يريان أقل من Administrator.</li>
                 <li>الباقة: بعض الميزات غير مشمولة.</li>
                 <li>مساحة العمل: أنت في مساحة أخرى — بدّل من مبدّل المساحات.</li>
             </ul>
 
-            <h3>رسالة «وصلت للحد الأقصى»</h3>
+            <h3 id="رسالة-وصلت-للحد-الأقصى">رسالة «وصلت للحد الأقصى»</h3>
             <p>الحد يمنع <strong>الإنشاء الجديد فقط</strong>. البيانات الحالية تعمل ولا تُحذف. رقّي الباقة أو انتظر تجديد الشهر أو احذف عناصر غير مستخدمة.</p>
 
-            <h3>القنوات لا ترسل</h3>
+            <h3 id="القنوات-لا-ترسل">القنوات لا ترسل</h3>
             <ul>
                 <li>واتساب: توكن منتهٍ، قالب غير معتمد، أو خارج نافذة 24 ساعة.</li>
                 <li>SMS: رصيد صفر، Sender ID غير معتمد، أو صيغة رقم خاطئة.</li>
@@ -243,21 +321,21 @@
                 <li>راجع <a href="02-setup-integrations.html">دليل التكاملات</a>.</li>
             </ul>
 
-            <h3>الذكاء الاصطناعي لا يعمل</h3>
+            <h3 id="الذكاء-الاصطناعي-لا-يعمل">الذكاء الاصطناعي لا يعمل</h3>
             <ul>
                 <li>لا يوجد مفتاح مفعّل أو المفتاح منتهٍ/رصيده صفر.</li>
                 <li>تجاوزت حد التوكنز الشهري.</li>
                 <li>قواعد المعرفة تحتاج مزوّد Embeddings (OpenAI/Gemini).</li>
             </ul>
 
-            <h3>الموقع أو الدومين لا يفتح</h3>
+            <h3 id="الموقع-أو-الدومين-لا-يفتح">الموقع أو الدومين لا يفتح</h3>
             <ul>
                 <li>راجع إعدادات DNS (CNAME/A) وانتظر الانتشار حتى 24 ساعة.</li>
                 <li>تحقق من شهادة SSL.</li>
                 <li>راجع مسؤول المنصة — إعداد الدومين يتم من لوحة الإدارة.</li>
             </ul>
 
-            <h3>الحملة وصلت لعدد أقل من المتوقع</h3>
+            <h3 id="الحملة-وصلت-لعدد-أقل-من-المتوقع">الحملة وصلت لعدد أقل من المتوقع</h3>
             <ul>
                 <li>أرقام غير صالحة أو محظورة على واتساب.</li>
                 <li>مستلمون في قائمة «غير المشتركين».</li>
@@ -265,14 +343,14 @@
                 <li>راجع تقرير الحملة لتفصيل أسباب الفشل.</li>
             </ul>
 
-            <h3>الأتمتة لا تعمل</h3>
+            <h3 id="الأتمتة-لا-تعمل">الأتمتة لا تعمل</h3>
             <ul>
                 <li>غير مفعّلة أو المشغّل غير مربوط بأول خطوة.</li>
                 <li>خطوة تفشل بسبب قناة غير متصلة أو قالب غير معتمد.</li>
                 <li>راجع «سجل التشغيل» لمعرفة الخطوة والسبب.</li>
             </ul>
 
-            <h2>12. أسئلة متكررة</h2>
+            <h2 id="12-أسئلة-متكررة">12. أسئلة متكررة</h2>
             <div class="table-wrap">
                 <table>
                     <thead><tr><th>السؤال</th><th>الإجابة</th></tr></thead>
@@ -288,7 +366,7 @@
                 </table>
             </div>
 
-            <h2>13. قائمة تحقق أمنية شهرية</h2>
+            <h2 id="13-قائمة-تحقق-أمنية-شهرية">13. قائمة تحقق أمنية شهرية</h2>
             <ul>
                 <li>راجع قائمة الفريق وأزل من لا يحتاج الوصول.</li>
                 <li>أدر/أبطل مفاتيح API غير المستخدمة.</li>
@@ -306,12 +384,13 @@
         </article>
 
         <footer class="doc-footer">
+            <span class="updated">آخر تحديث: 10 نوفمبر 2026 · <a href="/app/support" target="_blank" rel="noopener">أبلغ عن مشكلة</a></span>
             <span>AYDRA · الإصدار 1.0</span>
             <span class="pager"><a class="btn" href="09-reports.html">← السابق</a><a class="btn btn-primary" href="11-whatsapp-coexistence.html">التالي: تشغيل تطبيق واتساب للأعمال →</a></span>
         </footer>
     </main>
 </div>
 
-<script src="../assets/docs.js?v=2"></script>
+<script src="../assets/docs.js?v=4"></script>
 </body>
 </html>

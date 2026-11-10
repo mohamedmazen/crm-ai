@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>12 · Glossary · AYDRA</title>
+<meta name="description" content="Every AYDRA term in one place: workspace, channel, WABA, conversations, segments, leads, stages, quotes, campaigns, sequences, agents and plans.">
+<link rel="stylesheet" href="../assets/docs.css?v=4">
+<!-- docs:meta -->
+<link rel="canonical" href="https://crm.business-os.tech/docs/en/12-glossary.html">
+<link rel="alternate" hreflang="ar" href="https://crm.business-os.tech/docs/ar/12-glossary.html">
+<link rel="alternate" hreflang="en" href="https://crm.business-os.tech/docs/en/12-glossary.html">
+<link rel="alternate" hreflang="x-default" href="https://crm.business-os.tech/docs/en/12-glossary.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AYDRA">
+<meta property="og:title" content="Glossary · AYDRA">
+<meta property="og:description" content="Every AYDRA term in one place: contacts, leads, stages, campaigns, sequences, agents and plans.">
+<meta property="og:url" content="https://crm.business-os.tech/docs/en/12-glossary.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="ar_AR">
+<meta property="og:image" content="https://crm.business-os.tech/docs/assets/img/en/dashboard.webp">
+<meta property="og:image:alt" content="Glossary · AYDRA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Glossary · AYDRA">
+<meta name="twitter:description" content="Every AYDRA term in one place: contacts, leads, stages, campaigns, sequences, agents and plans.">
+<meta name="twitter:image" content="https://crm.business-os.tech/docs/assets/img/en/dashboard.webp">
+<meta name="docs:lang" content="en">
+<meta name="docs:updated" content="2026-11-10">
+<!-- /docs:meta -->
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" href="index.html"><span class="dot"></span> AYDRA <small>User Guides</small></a>
+    <div class="topbar-actions">
+        <a class="btn" href="index.html">All guides</a>
+        <button id="theme-toggle" class="btn" type="button" aria-label="Toggle theme">🌙</button>
+        <button class="btn" type="button" onclick="window.print()">🖨️ Print</button>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <h3 id="guides">Guides</h3>
+        <nav class="doc-nav" id="doc-nav"></nav>
+        <div class="toc">
+            <h3 id="on-this-page">On this page</h3>
+            <ul id="page-toc"></ul>
+        </div>
+    </aside>
+
+    <main class="content">
+        <article>
+            <span class="eyebrow">Guide 12 · All users</span>
+            <h1>Glossary</h1>
+            <p class="lead">The words AYDRA uses on screen, in this manual and in support conversations — defined once so the rest of the guides stay short. Use Ctrl+K to jump straight to a term.</p>
+
+            <div class="callout tip">
+                <span class="ico">💡</span>
+                <p><strong>Arabic readers:</strong> every term below has a matching entry with the Arabic label in the <a href="../ar/12-glossary.html">Arabic glossary</a>.</p>
+            </div>
+
+            <h2 id="account-and-workspace">Account and workspace</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Tenant</strong></td><td>The customer account that owns the data. One tenant can hold several workspaces, and tenants never see each other’s records.</td></tr>
+                        <tr><td><strong>Workspace</strong></td><td>The isolated container you work inside: contacts, conversations, leads, campaigns and settings. Switch between workspaces from Settings → Workspaces.</td></tr>
+                        <tr><td><strong>Role</strong></td><td>Administrator, Staff or Viewer. The role decides which screens and actions are available.</td></tr>
+                        <tr><td><strong>Plan</strong></td><td>The subscription tier: Free, Starter, Pro or Business. It sets numeric limits and unlocks features.</td></tr>
+                        <tr><td><strong>Trial</strong></td><td>A 60-day period with Business-level limits and every feature unlocked.</td></tr>
+                        <tr><td><strong>Soft limit</strong></td><td>Over-limit policy: existing data is never deleted — only the creation of new records is blocked until you upgrade.</td></tr>
+                        <tr><td><strong>White-label</strong></td><td>Replacing AYDRA branding with your own logo and colours. Available on higher plans.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 id="channels-and-whatsapp">Channels and WhatsApp</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Channel</strong></td><td>A connected messaging account: WhatsApp, Instagram, Messenger, SMS or email.</td></tr>
+                        <tr><td><strong>WABA</strong></td><td>WhatsApp Business Account — the Meta container that holds your WhatsApp number and templates.</td></tr>
+                        <tr><td><strong>Embedded Signup</strong></td><td>The Meta flow that connects a WhatsApp number to AYDRA without leaving the setup screen.</td></tr>
+                        <tr><td><strong>Coexistence</strong></td><td>Running your existing WhatsApp Business app and AYDRA on the same number at the same time. See <a href="11-whatsapp-coexistence.html">guide 11</a>.</td></tr>
+                        <tr><td><strong>Template</strong></td><td>A pre-approved WhatsApp message with placeholders. Marketing templates need opt-in.</td></tr>
+                        <tr><td><strong>Opt-in</strong></td><td>The customer’s explicit consent to receive messages from you. Required for marketing sends.</td></tr>
+                        <tr><td><strong>BYOK</strong></td><td>Bring Your Own Keys: you supply the WhatsApp, SMS, email and AI credentials. AYDRA never silently falls back to platform-owned credentials.</td></tr>
+                        <tr><td><strong>Webhook</strong></td><td>An outbound HTTP call AYDRA makes when an event happens, for example a new message or a won deal.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 id="inbox-and-contacts">Inbox and contacts</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Conversation</strong></td><td>A thread with one contact on one channel. It groups every inbound and outbound message.</td></tr>
+                        <tr><td><strong>Canned reply</strong></td><td>A reusable message snippet inserted with a shortcut.</td></tr>
+                        <tr><td><strong>Label</strong></td><td>A tag attached to a conversation for filtering and reporting.</td></tr>
+                        <tr><td><strong>Contact</strong></td><td>A person or customer record: name, phone, email, tags and custom fields.</td></tr>
+                        <tr><td><strong>Segment</strong></td><td>A saved group of contacts. Static segments are fixed lists; dynamic segments update from rules.</td></tr>
+                        <tr><td><strong>Custom field</strong></td><td>An extra contact attribute you define, such as “Favourite class” or “Contract renewal date”.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 id="leads-and-pipeline">Leads and pipeline</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Lead</strong></td><td>A sales opportunity — a person or company you are trying to win.</td></tr>
+                        <tr><td><strong>Pipeline</strong></td><td>An ordered set of stages that represents your sales process.</td></tr>
+                        <tr><td><strong>Stage</strong></td><td>One column of the pipeline, such as New, Contacted or Won.</td></tr>
+                        <tr><td><strong>Score</strong></td><td>An automatic quality number calculated from behaviour, source and engagement.</td></tr>
+                        <tr><td><strong>Company</strong></td><td>An organisation record linked to contacts and leads.</td></tr>
+                        <tr><td><strong>Task</strong></td><td>A follow-up to-do with an owner, priority and due date.</td></tr>
+                        <tr><td><strong>Call log</strong></td><td>The record of inbound and outbound calls, including duration and notes.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 id="sales-and-billing">Sales and billing</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Product</strong></td><td>A catalogue item with a price, SKU, tax rate and unit.</td></tr>
+                        <tr><td><strong>Quote</strong></td><td>A priced proposal sent to a lead, with a public link and a validity date.</td></tr>
+                        <tr><td><strong>Invoice</strong></td><td>A request for payment generated from a quote or manually.</td></tr>
+                        <tr><td><strong>Sequence</strong></td><td>An automated series of email or WhatsApp steps with delays and stop conditions.</td></tr>
+                        <tr><td><strong>Campaign</strong></td><td>A bulk send to an audience on WhatsApp, SMS or email, with delivery statistics.</td></tr>
+                        <tr><td><strong>Broadcast</strong></td><td>A one-off mass message; campaigns are the managed version of it.</td></tr>
+                        <tr><td><strong>Audience</strong></td><td>The contacts a campaign or sequence targets — usually a segment.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 id="marketing-automation-and-ai">Marketing, automation and AI</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Auto-reply</strong></td><td>A rule that answers automatically: keyword, welcome, away or out-of-hours.</td></tr>
+                        <tr><td><strong>Chat widget</strong></td><td>The chat bubble you embed on your website.</td></tr>
+                        <tr><td><strong>Social post</strong></td><td>Content scheduled or published to connected social accounts.</td></tr>
+                        <tr><td><strong>Form</strong></td><td>A public capture form that creates contacts or leads when submitted.</td></tr>
+                        <tr><td><strong>Meeting type</strong></td><td>A bookable appointment definition: duration, buffers, location and questions.</td></tr>
+                        <tr><td><strong>Automation</strong></td><td>A workflow made of one trigger and one or more actions.</td></tr>
+                        <tr><td><strong>Trigger</strong></td><td>The event that starts an automation, such as <code>contact.created</code> or <code>lead.won</code>.</td></tr>
+                        <tr><td><strong>Run</strong></td><td>One execution of an automation for one record.</td></tr>
+                        <tr><td><strong>Knowledge base</strong></td><td>Documents and answers the AI searches before replying.</td></tr>
+                        <tr><td><strong>Chatbot</strong></td><td>An AI agent configured with a prompt, a knowledge base and a fallback reply.</td></tr>
+                        <tr><td><strong>AI SDR</strong></td><td>An AI sales development rep that researches and qualifies leads.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 id="technical-and-security">Technical and security</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>API token</strong></td><td>A secret key that lets an external system call the AYDRA API on your behalf.</td></tr>
+                        <tr><td><strong>Audit log</strong></td><td>A record of sensitive actions: who did what, when, and from where.</td></tr>
+                        <tr><td><strong>2FA</strong></td><td>Two-factor authentication: a second code required at sign-in.</td></tr>
+                        <tr><td><strong>RTL</strong></td><td>Right-to-left layout, used for Arabic pages and messages.</td></tr>
+                        <tr><td><strong>Storage</strong></td><td>The file and media space counted against your plan.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout ok">
+                <span class="ico">✅</span>
+                <p><strong>Still stuck on a term?</strong> Open a support ticket from <a href="/app/support">Support</a> and quote the term — the answer will be added here.</p>
+            </div>
+        </article>
+
+        <footer class="doc-footer">
+            <span class="updated">Last updated 10 November 2026 · <a href="/app/support" target="_blank" rel="noopener">Report an issue</a></span>
+            <span>AYDRA · Version 1.0</span>
+            <span class="pager"><a class="btn" href="11-whatsapp-coexistence.html">← Previous: WhatsApp Coexistence</a><a class="btn btn-primary" href="index.html">All guides</a></span>
+        </footer>
+    </main>
+</div>
+
+<script src="../assets/docs.js?v=4"></script>
+</body>
+</html>

@@ -5,7 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>07 · Marketing, Campaigns &amp; Social · AYDRA</title>
 <meta name="description" content="WhatsApp, SMS and email campaigns, templates, auto-replies, the chat widget, social posting, forms and booking.">
-<link rel="stylesheet" href="../assets/docs.css?v=2">
+<link rel="stylesheet" href="../assets/docs.css?v=4">
+<!-- docs:meta -->
+<link rel="canonical" href="https://crm.business-os.tech/docs/en/07-marketing-social.html">
+<link rel="alternate" hreflang="ar" href="https://crm.business-os.tech/docs/ar/07-marketing-social.html">
+<link rel="alternate" hreflang="en" href="https://crm.business-os.tech/docs/en/07-marketing-social.html">
+<link rel="alternate" hreflang="x-default" href="https://crm.business-os.tech/docs/en/07-marketing-social.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AYDRA">
+<meta property="og:title" content="Marketing, Campaigns &amp; Social · AYDRA">
+<meta property="og:description" content="WhatsApp, SMS and email campaigns, templates, auto-replies and social posting.">
+<meta property="og:url" content="https://crm.business-os.tech/docs/en/07-marketing-social.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="ar_AR">
+<meta property="og:image" content="https://crm.business-os.tech/docs/assets/img/en/campaigns.webp">
+<meta property="og:image:alt" content="Marketing, Campaigns &amp; Social · AYDRA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Marketing, Campaigns &amp; Social · AYDRA">
+<meta name="twitter:description" content="WhatsApp, SMS and email campaigns, templates, auto-replies and social posting.">
+<meta name="twitter:image" content="https://crm.business-os.tech/docs/assets/img/en/campaigns.webp">
+<meta name="docs:lang" content="en">
+<meta name="docs:updated" content="2026-11-10">
+<!-- /docs:meta -->
 </head>
 <body>
 
@@ -20,10 +41,10 @@
 
 <div class="layout">
     <aside class="sidebar">
-        <h3>Guides</h3>
+        <h3 id="guides">Guides</h3>
         <nav class="doc-nav" id="doc-nav"></nav>
         <div class="toc">
-            <h3>On this page</h3>
+            <h3 id="on-this-page">On this page</h3>
             <ul id="page-toc"></ul>
         </div>
     </aside>
@@ -34,16 +55,16 @@
             <h1>Marketing, Campaigns &amp; Social</h1>
             <p class="lead">Every tool for reaching your customer in one place: WhatsApp, SMS and email campaigns, templates, auto-replies, the chat widget, social posting, forms, and booking pages.</p>
 
-            <h2>1. Campaigns</h2>
+            <h2 id="1-campaigns">1. Campaigns</h2>
             <figure class="shot">
-                <a href="../assets/img/en/campaigns.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/en/campaigns.png" alt="Campaigns: launch a WhatsApp, SMS, or email broadcast to a segment and watch it progress." decoding="async">
+                <a href="../assets/img/en/campaigns.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/campaigns.webp?v=4" alt="Campaigns: launch a WhatsApp, SMS, or email broadcast to a segment and watch it progress." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>Campaigns: launch a WhatsApp, SMS, or email broadcast to a segment and watch it progress.</figcaption>
             </figure>
 
             <p>From <strong>Marketing → Campaigns</strong>. A campaign sends one message to a defined list over a single channel.</p>
-            <h3>Creating a campaign</h3>
+            <h3 id="creating-a-campaign">Creating a campaign</h3>
             <ol class="steps">
                 <li>Click <strong>New Campaign</strong> and choose the channel: <strong>WhatsApp</strong>, <strong>SMS</strong>, or <strong>Email</strong>.</li>
                 <li>Choose the <strong>audience</strong>: all contacts, a segment, a tag, or a custom list.</li>
@@ -61,13 +82,32 @@
                 <span class="ico">⚠️</span>
                 <p>On WhatsApp you cannot start a conversation with free text. You need an <strong>approved template</strong>, otherwise Meta will reject the campaign. Prepare the template a day before the campaign.</p>
             </div>
-            <h3>Tracking a campaign</h3>
+            <h3 id="tracking-a-campaign">Tracking a campaign</h3>
             <p>On the campaign page you see: the number targeted, sent, failed, and read (per channel), with a detailed report and an export of the recipients.</p>
 
-            <h2>2. WhatsApp Templates</h2>
+            <h2 id="campaign-fields">Campaign fields reference</h2>
+            <p>A campaign is defined by who receives it, what they receive and when. The totals columns update as recipients are processed.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Field</th><th>What it means</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Name</strong></td><td>Internal label for the campaign.</td></tr>
+                        <tr><td><strong>Channel</strong></td><td>WhatsApp, SMS or email.</td></tr>
+                        <tr><td><strong>Audience</strong></td><td>A segment, a tag filter or a manually selected list.</td></tr>
+                        <tr><td><strong>Template / payload</strong></td><td>The approved WhatsApp template or the email/SMS body.</td></tr>
+                        <tr><td><strong>Schedule</strong></td><td>Send immediately or at a specific date and time.</td></tr>
+                        <tr><td><strong>Timezone</strong></td><td>The timezone the schedule is expressed in.</td></tr>
+                        <tr><td><strong>Status</strong></td><td>Draft, scheduled, sending, completed, paused or failed.</td></tr>
+                        <tr><td><strong>Recipients</strong></td><td>Total contacts targeted after duplicates and opt-outs are removed.</td></tr>
+                        <tr><td><strong>Delivered / read / replied</strong></td><td>Engagement counters shown in the campaign report.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 id="2-whatsapp-templates">2. WhatsApp Templates</h2>
             <figure class="shot">
-                <a href="../assets/img/en/wa-templates.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/en/wa-templates.png" alt="WhatsApp templates: create and track Meta approval for the message templates your campaigns use." decoding="async">
+                <a href="../assets/img/en/wa-templates.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/wa-templates.webp?v=4" alt="WhatsApp templates: create and track Meta approval for the message templates your campaigns use." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>WhatsApp templates: create and track Meta approval for the message templates your campaigns use.</figcaption>
             </figure>
@@ -82,10 +122,10 @@
             </ol>
             <p>After linking, you can <strong>sync the templates</strong> from the channel setup page to pull all your WABA templates.</p>
 
-            <h2>3. Auto Replies</h2>
+            <h2 id="3-auto-replies">3. Auto Replies</h2>
             <figure class="shot">
-                <a href="../assets/img/en/auto-replies.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/en/auto-replies.png" alt="Auto replies: keyword rules that answer customers instantly, 24/7." decoding="async">
+                <a href="../assets/img/en/auto-replies.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/auto-replies.webp?v=4" alt="Auto replies: keyword rules that answer customers instantly, 24/7." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>Auto replies: keyword rules that answer customers instantly, 24/7.</figcaption>
             </figure>
@@ -102,7 +142,7 @@
                 <p>Use auto-replies for frequently asked questions (prices, opening hours, address). For complex automation, use <a href="08-automation-ai.html">Automation</a>.</p>
             </div>
 
-            <h2>4. Chat Widget</h2>
+            <h2 id="4-chat-widget">4. Chat Widget</h2>
             <p>A chat button embedded on your website that opens WhatsApp or a form. From <strong>Marketing → Chat Widget</strong>.</p>
             <ol class="steps">
                 <li>Create a widget and choose the channel and number.</li>
@@ -111,7 +151,7 @@
                 <li>Use the preview button to confirm it looks right.</li>
             </ol>
 
-            <h2>5. SMS &amp; Email</h2>
+            <h2 id="5-sms-email">5. SMS &amp; Email</h2>
             <p>Configuration is done from:</p>
             <ul>
                 <li><strong>Marketing → SMS Gateways</strong> — choose the provider and enter the keys and the Sender ID.</li>
@@ -119,8 +159,8 @@
             </ul>
             <p>Step-by-step details are in the <a href="02-setup-integrations.html">Integrations guide</a>.</p>
 
-            <h2>6. Social Media</h2>
-            <h3>Connecting accounts</h3>
+            <h2 id="6-social-media">6. Social Media</h2>
+            <h3 id="connecting-accounts">Connecting accounts</h3>
             <p>From <strong>Marketing → Social Accounts</strong>. Supported networks:</p>
             <div class="table-wrap">
                 <table>
@@ -142,10 +182,10 @@
                 <li>Make sure the status shows “Connected”.</li>
             </ol>
 
-            <h3>Post Composer</h3>
+            <h3 id="post-composer">Post Composer</h3>
             <figure class="shot">
-                <a href="../assets/img/en/social-composer.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/en/social-composer.png" alt="Post composer: write once and schedule the post to several connected social accounts." decoding="async">
+                <a href="../assets/img/en/social-composer.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/social-composer.webp?v=4" alt="Post composer: write once and schedule the post to several connected social accounts." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>Post composer: write once and schedule the post to several connected social accounts.</figcaption>
             </figure>
@@ -157,10 +197,10 @@
                 <li>Preview the content for each network — the limits differ (for example, X is shorter).</li>
                 <li>Publish now or schedule.</li>
             </ol>
-            <h3>Posts &amp; Calendar</h3>
+            <h3 id="posts-calendar">Posts &amp; Calendar</h3>
             <figure class="shot">
-                <a href="../assets/img/en/social-calendar.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/en/social-calendar.png" alt="Social calendar: a month view of everything scheduled and published." decoding="async">
+                <a href="../assets/img/en/social-calendar.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/social-calendar.webp?v=4" alt="Social calendar: a month view of everything scheduled and published." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>Social calendar: a month view of everything scheduled and published.</figcaption>
             </figure>
@@ -172,7 +212,7 @@
                 <li>A failed post shows the reason — often an expired network token; reconnect the account.</li>
             </ul>
 
-            <h2>7. Forms</h2>
+            <h2 id="7-forms">7. Forms</h2>
             <p>From <strong>Marketing → Forms</strong> (the Forms feature).</p>
             <ol class="steps">
                 <li>Create a form and open the <strong>builder</strong>.</li>
@@ -183,7 +223,7 @@
             </ol>
             <p>Every submission creates a lead and appears in <strong>form analytics</strong>. The number of forms and submissions is limited by your plan.</p>
 
-            <h2>8. Booking Pages</h2>
+            <h2 id="8-booking-pages">8. Booking Pages</h2>
             <p>From <strong>Marketing → Booking</strong> (the Booking feature).</p>
             <ol class="steps">
                 <li>Create a meeting type: duration, description, price if needed.</li>
@@ -194,10 +234,10 @@
             </ol>
             <p>Bookings appear on the same screen, and a booking can be linked to an automation trigger or send a reminder.</p>
 
-            <h2>9. Lead Sources</h2>
+            <h2 id="9-lead-sources">9. Lead Sources</h2>
             <p>From <strong>Marketing → Lead Sources</strong>. Create a source (such as “Facebook campaign”) and get a UTM link/token to mark the leads coming from it. The <strong>Attribution</strong> report uses these to identify the best channel.</p>
 
-            <h2>Limits to know</h2>
+            <h2 id="limits-to-know">Limits to know</h2>
             <div class="table-wrap">
                 <table>
                     <thead><tr><th>Resource</th><th>Free</th><th>Starter</th><th>Pro</th><th>Business</th></tr></thead>
@@ -211,7 +251,7 @@
                 </table>
             </div>
 
-            <h2>Common mistakes</h2>
+            <h2 id="common-mistakes">Common mistakes</h2>
             <div class="table-wrap">
                 <table>
                     <thead><tr><th>Problem</th><th>Cause</th><th>Fix</th></tr></thead>
@@ -233,12 +273,13 @@
         </article>
 
         <footer class="doc-footer">
+            <span class="updated">Last updated 10 November 2026 · <a href="/app/support" target="_blank" rel="noopener">Report an issue</a></span>
             <span>AYDRA · Version 1.0</span>
             <span class="pager"><a class="btn" href="06-sales.html">← Previous</a><a class="btn btn-primary" href="08-automation-ai.html">Next: Automation &amp; AI →</a></span>
         </footer>
     </main>
 </div>
 
-<script src="../assets/docs.js?v=2"></script>
+<script src="../assets/docs.js?v=4"></script>
 </body>
 </html>

@@ -5,7 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>10 · Account Admin &amp; Troubleshooting · AYDRA</title>
 <meta name="description" content="Team and permissions, subscription and billing, API keys and Webhooks, security, privacy, support, and solving common problems.">
-<link rel="stylesheet" href="../assets/docs.css?v=2">
+<link rel="stylesheet" href="../assets/docs.css?v=4">
+<!-- docs:meta -->
+<link rel="canonical" href="https://crm.business-os.tech/docs/en/10-admin-troubleshooting.html">
+<link rel="alternate" hreflang="ar" href="https://crm.business-os.tech/docs/ar/10-admin-troubleshooting.html">
+<link rel="alternate" hreflang="en" href="https://crm.business-os.tech/docs/en/10-admin-troubleshooting.html">
+<link rel="alternate" hreflang="x-default" href="https://crm.business-os.tech/docs/en/10-admin-troubleshooting.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AYDRA">
+<meta property="og:title" content="Account Admin &amp; Troubleshooting · AYDRA">
+<meta property="og:description" content="Team and roles, subscription and billing, the API, security and common problems.">
+<meta property="og:url" content="https://crm.business-os.tech/docs/en/10-admin-troubleshooting.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="ar_AR">
+<meta property="og:image" content="https://crm.business-os.tech/docs/assets/img/en/team.webp">
+<meta property="og:image:alt" content="Account Admin &amp; Troubleshooting · AYDRA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Account Admin &amp; Troubleshooting · AYDRA">
+<meta name="twitter:description" content="Team and roles, subscription and billing, the API, security and common problems.">
+<meta name="twitter:image" content="https://crm.business-os.tech/docs/assets/img/en/team.webp">
+<meta name="docs:lang" content="en">
+<meta name="docs:updated" content="2026-11-10">
+<!-- /docs:meta -->
 </head>
 <body>
 
@@ -20,10 +41,10 @@
 
 <div class="layout">
     <aside class="sidebar">
-        <h3>Guides</h3>
+        <h3 id="guides">Guides</h3>
         <nav class="doc-nav" id="doc-nav"></nav>
         <div class="toc">
-            <h3>On this page</h3>
+            <h3 id="on-this-page">On this page</h3>
             <ul id="page-toc"></ul>
         </div>
     </aside>
@@ -39,23 +60,23 @@
                 <p>Most of the settings in this guide only appear for the <strong>Administrator</strong> role. If you are a Staff or Viewer and cannot find a screen, this is the reason — ask your account administrator.</p>
             </div>
 
-            <h2>1. Team and invitations</h2>
+            <h2 id="1-team-and-invitations">1. Team and invitations</h2>
             <figure class="shot">
-                <a href="../assets/img/en/team.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/en/team.png" alt="Team: invite members, assign roles, and control what each person can access." decoding="async">
+                <a href="../assets/img/en/team.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/team.webp?v=4" alt="Team: invite members, assign roles, and control what each person can access." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>Team: invite members, assign roles, and control what each person can access.</figcaption>
             </figure>
 
             <p>From <strong>Settings → Team</strong>.</p>
-            <h3>Invite a new member</h3>
+            <h3 id="invite-a-new-member">Invite a new member</h3>
             <ol class="steps">
                 <li>Click <strong>Invite by email</strong>.</li>
                 <li>Enter the member's email and choose a role (Staff by default).</li>
                 <li>Send the invitation. It appears under <strong>Pending invitations</strong> until the member accepts it.</li>
                 <li>You can cancel the invitation before it is accepted.</li>
             </ol>
-            <h3>The three roles</h3>
+            <h3 id="the-three-roles">The three roles</h3>
             <div class="table-wrap">
                 <table>
                     <thead><tr><th>Role</th><th>Permissions</th><th>Best for</th></tr></thead>
@@ -72,11 +93,11 @@
                 <p>Before deleting a member, reassign their tasks and unresolved conversations to a colleague. Deleting the member does not delete their historical data, but it cuts off their access immediately.</p>
             </div>
 
-            <h2>2. Subscription and billing</h2>
-            <h3>Subscription page</h3>
+            <h2 id="2-subscription-and-billing">2. Subscription and billing</h2>
+            <h3 id="subscription-page">Subscription page</h3>
             <figure class="shot">
-                <a href="../assets/img/en/billing.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/en/billing.png" alt="Subscription: your current plan, usage, renewal date, and upgrade options." decoding="async">
+                <a href="../assets/img/en/billing.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/billing.webp?v=4" alt="Subscription: your current plan, usage, renewal date, and upgrade options." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>Subscription: your current plan, usage, renewal date, and upgrade options.</figcaption>
             </figure>
@@ -88,7 +109,7 @@
                 <li><strong>Discount coupon:</strong> enter the code before paying, then click verify — the discount appears before you confirm.</li>
             </ul>
 
-            <h3>Payments and invoices log</h3>
+            <h3 id="payments-and-invoices-log">Payments and invoices log</h3>
             <p>From <strong>Settings → Billing</strong>. A table of all transactions: date, amount, currency, gateway, and status.</p>
             <ul>
                 <li>Click <strong>Invoice</strong> next to any successful transaction to download it.</li>
@@ -96,29 +117,29 @@
                 <li>If the payment fails, try another gateway or check with your bank — do not retry more than twice in a row.</li>
             </ul>
 
-            <h3>Prices and currencies</h3>
+            <h3 id="prices-and-currencies">Prices and currencies</h3>
             <p>Prices are shown according to the account/region currency. Displayed amounts do not include tax (VAT), which is added at checkout based on your country. An annual subscription = 10 months' cost (two months free).</p>
 
-            <h2>3. Profile and security</h2>
-            <h3>Profile</h3>
+            <h2 id="3-profile-and-security">3. Profile and security</h2>
+            <h3 id="profile">Profile</h3>
             <p>From <strong>Profile</strong>: name, email, photo, language, and time zone. Changing the email requires confirmation.</p>
-            <h3>Two-factor authentication (2FA)</h3>
+            <h3 id="two-factor-authentication-2fa">Two-factor authentication (2FA)</h3>
             <ol class="steps">
                 <li>Open <strong>Profile → Two-Factor</strong>.</li>
                 <li>Scan the QR code with an authenticator app (Google Authenticator / Authy / 1Password).</li>
                 <li>Enter the code to confirm activation.</li>
                 <li>Save the <strong>recovery codes</strong> in a safe place — without them, signing in is difficult if you lose your phone.</li>
             </ol>
-            <h3>Active sessions</h3>
+            <h3 id="active-sessions">Active sessions</h3>
             <p>From <strong>Profile → Sessions</strong> you can see all signed-in devices. Use <strong>Sign out of all sessions</strong> if you suspect unauthorized access.</p>
-            <h3>Password</h3>
+            <h3 id="password">Password</h3>
             <p>Change it from your profile. Use a long, unique password, and enable 2FA — these are the two most important steps to protect the account.</p>
 
-            <h2>4. API and Webhooks</h2>
-            <h3>API keys (API Tokens)</h3>
+            <h2 id="4-api-and-webhooks">4. API and Webhooks</h2>
+            <h3 id="api-keys-api-tokens">API keys (API Tokens)</h3>
             <figure class="shot">
-                <a href="../assets/img/en/api-tokens.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/en/api-tokens.png" alt="API tokens: create scoped keys for external integrations and revoke them at any time." decoding="async">
+                <a href="../assets/img/en/api-tokens.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/api-tokens.webp?v=4" alt="API tokens: create scoped keys for external integrations and revoke them at any time." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>API tokens: create scoped keys for external integrations and revoke them at any time.</figcaption>
             </figure>
@@ -136,10 +157,10 @@
                 <p>Do not put the key in frontend code or a Git repository. Create a separate key for each integration, and revoke it immediately if it leaks or is no longer used.</p>
             </div>
 
-            <h3>Outgoing Webhooks</h3>
+            <h3 id="outgoing-webhooks">Outgoing Webhooks</h3>
             <figure class="shot">
-                <a href="../assets/img/en/webhooks.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/en/webhooks.png" alt="Outgoing webhooks: endpoints AYDRA calls when events happen, with delivery history." decoding="async">
+                <a href="../assets/img/en/webhooks.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/webhooks.webp?v=4" alt="Outgoing webhooks: endpoints AYDRA calls when events happen, with delivery history." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>Outgoing webhooks: endpoints AYDRA calls when events happen, with delivery history.</figcaption>
             </figure>
@@ -153,7 +174,7 @@
             </ol>
             <p>You can <strong>rotate the Secret</strong> from the same page if you suspect it has leaked.</p>
 
-            <h2>5. Media and storage</h2>
+            <h2 id="5-media-and-storage">5. Media and storage</h2>
             <p>From <strong>Settings → Media library</strong>. Upload the images and files used in campaigns, templates, and posts.</p>
             <ul>
                 <li>The maximum file size depends on your plan and storage capacity.</li>
@@ -162,7 +183,7 @@
             </ul>
             <p>When storage is full, only new uploads stop; existing files keep working. Clean up unused files or upgrade your plan.</p>
 
-            <h2>6. Notifications</h2>
+            <h2 id="6-notifications">6. Notifications</h2>
             <p>From <strong>Settings → Notifications</strong>:</p>
             <ul>
                 <li>Choose what reaches you: new conversation, assignment, due task, campaign failure, automation failure, invoice...</li>
@@ -171,10 +192,10 @@
                 <li>Alert sounds are configured from the inbox.</li>
             </ul>
 
-            <h2>7. Audit Log</h2>
+            <h2 id="7-audit-log">7. Audit Log</h2>
             <figure class="shot">
-                <a href="../assets/img/en/audit-log.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/en/audit-log.png" alt="Audit log: a record of who did what and when inside the workspace." decoding="async">
+                <a href="../assets/img/en/audit-log.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/audit-log.webp?v=4" alt="Audit log: a record of who did what and when inside the workspace." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>Audit log: a record of who did what and when inside the workspace.</figcaption>
             </figure>
@@ -186,24 +207,24 @@
                 <li>Use it when investigating an unexpected change or a security incident.</li>
             </ul>
 
-            <h2>8. Privacy and GDPR</h2>
+            <h2 id="8-privacy-and-gdpr">8. Privacy and GDPR</h2>
             <p>From <strong>Settings → Privacy &amp; GDPR</strong> (administrators only):</p>
-            <h3>Data Processing Agreement (DPA)</h3>
+            <h3 id="data-processing-agreement-dpa">Data Processing Agreement (DPA)</h3>
             <p>Download a DPA copy pre-filled with your organization's details — for the vendor and the customer.</p>
-            <h3>Right to erasure (Erasure)</h3>
+            <h3 id="right-to-erasure-erasure">Right to erasure (Erasure)</h3>
             <ol class="steps">
                 <li>Create an erasure request for a specific person's email.</li>
                 <li>The request goes through a grace period (30 days by default) before execution.</li>
                 <li>The request can be cancelled during that period.</li>
                 <li>On execution: conversations and contacts are deleted, and leads are anonymised (Anonymise) to preserve financial records.</li>
             </ol>
-            <h3>Retention period</h3>
+            <h3 id="retention-period">Retention period</h3>
             <p>Set the number of days to keep generated export archives. A value of 0 = unlimited retention. Delete old archives automatically to save space.</p>
 
-            <h2>9. Export workspace data</h2>
+            <h2 id="9-export-workspace-data">9. Export workspace data</h2>
             <p>From <strong>Settings → Data export</strong>: request a complete copy of your workspace data. The file is generated in the background and you receive a download link by email when it finishes. The duration depends on the size of the data.</p>
 
-            <h2>10. Support</h2>
+            <h2 id="10-support">10. Support</h2>
             <p>From <strong>Support</strong> in the sidebar:</p>
             <ol class="steps">
                 <li>Click <strong>New ticket</strong>.</li>
@@ -216,26 +237,83 @@
                 <p>For the fastest resolution, include: the screen name, the time of the problem, the email/phone used, and the error message text. Do not send API keys or passwords.</p>
             </div>
 
-            <h2>11. Troubleshooting — quick guide</h2>
+            <h2 id="11-troubleshooting-quick-guide">11. Troubleshooting — quick guide</h2>
 
-            <h3>I cannot sign in</h3>
+            <div class="decision-tree">
+                <p class="tree-root">Start here: what is the main symptom?</p>
+                <ul>
+                    <li><strong>I cannot sign in</strong>
+                        <ul>
+                            <li>Email not verified? → open the verification message, or request a resend.</li>
+                            <li>Wrong password? → use “Forgot password”.</li>
+                            <li>Lost the 2FA device? → use a recovery code, then ask an administrator to reset 2FA.</li>
+                            <li>Still blocked? → <a href="/app/support">open a support ticket</a> with the email and time.</li>
+                        </ul>
+                    </li>
+                    <li><strong>A screen is missing from the menu</strong>
+                        <ul>
+                            <li>Is it included in your <strong>plan</strong>? → check the plans page.</li>
+                            <li>Does your <strong>role</strong> allow it? → Administrator vs Staff vs Viewer.</li>
+                            <li>Are you in the right <strong>workspace</strong>? → switch workspace.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Messages are not sending</strong>
+                        <ul>
+                            <li>Is the channel connected and the token valid? → Channels status.</li>
+                            <li>WhatsApp template approved? → Templates list.</li>
+                            <li>Outside the 24-hour window? → use an approved template, not free text.</li>
+                            <li>Email? → verify SMTP, SPF and DKIM in the email server screen.</li>
+                        </ul>
+                    </li>
+                    <li><strong>AI does not answer</strong>
+                        <ul>
+                            <li>Is a provider key enabled and funded? → AI providers.</li>
+                            <li>Is the knowledge base indexed? → Knowledge bases.</li>
+                            <li>Is the chatbot enabled and mapped to the channel? → Chatbots.</li>
+                        </ul>
+                    </li>
+                    <li><strong>A campaign under-delivered</strong>
+                        <ul>
+                            <li>Invalid or blocked numbers, or missing opt-in?</li>
+                            <li>Monthly channel limit reached mid-send?</li>
+                            <li>Open the campaign report for the exact failure reasons.</li>
+                        </ul>
+                    </li>
+                    <li><strong>An automation is not firing</strong>
+                        <ul>
+                            <li>Is the automation active and the trigger connected to the first step?</li>
+                            <li>Does the event actually match the trigger (for example stage changed to Won)?</li>
+                            <li>Open the run log to see the failing step.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Nothing loads at all</strong>
+                        <ul>
+                            <li>Check your connection and the browser console for errors.</li>
+                            <li>Try a private window to rule out an extension.</li>
+                            <li>If the whole app is down, <a href="/app/support">open a support ticket</a>.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <h3 id="i-cannot-sign-in">I cannot sign in</h3>
             <ul>
                 <li>Make sure the email and password are correct (try forgot password).</li>
                 <li>If you enabled 2FA and lost your phone, use a recovery code.</li>
                 <li>If the account is suspended or the trial has ended, check with the administrator.</li>
             </ul>
 
-            <h3>I cannot see a screen in the menu</h3>
+            <h3 id="i-cannot-see-a-screen-in-the-menu">I cannot see a screen in the menu</h3>
             <ul>
                 <li>Role: Viewer/Staff see less than an Administrator.</li>
                 <li>Plan: some features are not included.</li>
                 <li>Workspace: you are in a different workspace — switch using the workspace switcher.</li>
             </ul>
 
-            <h3>The "limit reached" message</h3>
+            <h3 id="the-limit-reached-message">The "limit reached" message</h3>
             <p>The limit blocks <strong>new creation only</strong>. Existing data keeps working and is not deleted. Upgrade your plan, wait for the month to renew, or delete unused items.</p>
 
-            <h3>Channels are not sending</h3>
+            <h3 id="channels-are-not-sending">Channels are not sending</h3>
             <ul>
                 <li>WhatsApp: expired token, unapproved template, or outside the 24-hour window.</li>
                 <li>SMS: zero balance, unapproved Sender ID, or wrong number format.</li>
@@ -243,21 +321,21 @@
                 <li>See the <a href="02-setup-integrations.html">integrations guide</a>.</li>
             </ul>
 
-            <h3>AI is not working</h3>
+            <h3 id="ai-is-not-working">AI is not working</h3>
             <ul>
                 <li>No key is enabled, or the key has expired / has zero balance.</li>
                 <li>You have exceeded the monthly token limit.</li>
                 <li>Knowledge bases need an Embeddings provider (OpenAI/Gemini).</li>
             </ul>
 
-            <h3>The website or domain does not open</h3>
+            <h3 id="the-website-or-domain-does-not-open">The website or domain does not open</h3>
             <ul>
                 <li>Check the DNS settings (CNAME/A) and wait up to 24 hours for propagation.</li>
                 <li>Verify the SSL certificate.</li>
                 <li>Check with the platform administrator — domain setup is done from the admin panel.</li>
             </ul>
 
-            <h3>The campaign reached fewer recipients than expected</h3>
+            <h3 id="the-campaign-reached-fewer-recipients-than-expected">The campaign reached fewer recipients than expected</h3>
             <ul>
                 <li>Invalid or blocked numbers on WhatsApp.</li>
                 <li>Recipients who are on the "unsubscribed" list.</li>
@@ -265,14 +343,14 @@
                 <li>See the campaign report for a breakdown of the failure reasons.</li>
             </ul>
 
-            <h3>Automation is not working</h3>
+            <h3 id="automation-is-not-working">Automation is not working</h3>
             <ul>
                 <li>It is not enabled, or the trigger is not connected to the first step.</li>
                 <li>A step is failing because of a disconnected channel or an unapproved template.</li>
                 <li>Check the "run log" to find the step and the reason.</li>
             </ul>
 
-            <h2>12. Frequently asked questions</h2>
+            <h2 id="12-frequently-asked-questions">12. Frequently asked questions</h2>
             <div class="table-wrap">
                 <table>
                     <thead><tr><th>Question</th><th>Answer</th></tr></thead>
@@ -288,7 +366,7 @@
                 </table>
             </div>
 
-            <h2>13. Monthly security checklist</h2>
+            <h2 id="13-monthly-security-checklist">13. Monthly security checklist</h2>
             <ul>
                 <li>Review the team list and remove anyone who no longer needs access.</li>
                 <li>Rotate/revoke unused API keys.</li>
@@ -306,12 +384,13 @@
         </article>
 
         <footer class="doc-footer">
+            <span class="updated">Last updated 10 November 2026 · <a href="/app/support" target="_blank" rel="noopener">Report an issue</a></span>
             <span>AYDRA · Version 1.0</span>
             <span class="pager"><a class="btn" href="09-reports.html">← Previous</a><a class="btn btn-primary" href="11-whatsapp-coexistence.html">Next: Running the WhatsApp Business app →</a></span>
         </footer>
     </main>
 </div>
 
-<script src="../assets/docs.js?v=2"></script>
+<script src="../assets/docs.js?v=4"></script>
 </body>
 </html>

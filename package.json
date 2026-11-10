@@ -9,7 +9,12 @@
         "format": "prettier --write resources/js",
         "test": "vitest run",
         "test:watch": "vitest",
-        "test:coverage": "vitest run --coverage"
+        "test:coverage": "vitest run --coverage",
+        "docs:build": "node doc/scripts/docs-build.mjs",
+        "docs:check": "node doc/scripts/docs-check.mjs",
+        "docs:shots": "node doc/scripts/docs-capture.mjs",
+        "docs:shots:en": "php doc/scripts/set-locale.php business@aydra.demo en && node doc/scripts/docs-capture.mjs --lang en --mode all && node doc/scripts/docs-capture.mjs --lang en --mode mobile",
+        "docs:shots:ar": "php doc/scripts/set-locale.php business@aydra.demo ar && node doc/scripts/docs-capture.mjs --lang ar --mode all && node doc/scripts/docs-capture.mjs --lang ar --mode mobile && php doc/scripts/set-locale.php business@aydra.demo en"
     },
     "devDependencies": {
         "@eslint/js": "^9.22.0",

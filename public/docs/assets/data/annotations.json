@@ -1,0 +1,220 @@
+{
+  "en": {
+    "campaigns": [
+      {
+        "x": 21.41,
+        "y": 14.7,
+        "label": "Campaign performance"
+      },
+      {
+        "x": 58,
+        "y": 33.45,
+        "label": "Delivery and reply rates"
+      }
+    ],
+    "dashboard": [
+      {
+        "x": 22.11,
+        "y": 10.2,
+        "label": "Your workspace at a glance"
+      },
+      {
+        "x": 27.63,
+        "y": 32.2,
+        "label": "Inbox: all conversations"
+      }
+    ],
+    "settings": [
+      {
+        "x": 58,
+        "y": 14.5,
+        "label": "Workspace settings"
+      }
+    ],
+    "whatsapp-setup": [
+      {
+        "x": 31.89,
+        "y": 14.3,
+        "label": "Channel connections at a glance"
+      },
+      {
+        "x": 71.78,
+        "y": 15.4,
+        "label": "Connect WhatsApp, Messenger or Instagram"
+      }
+    ],
+    "inbox": [
+      {
+        "x": 36.97,
+        "y": 5.4,
+        "label": "Filter the conversation list"
+      },
+      {
+        "x": 36.97,
+        "y": 12.35,
+        "label": "Open a conversation"
+      }
+    ],
+    "contacts": [
+      {
+        "x": 20.67,
+        "y": 14.8,
+        "label": "All contacts"
+      },
+      {
+        "x": 48.78,
+        "y": 21.7,
+        "label": "Search or filter"
+      }
+    ],
+    "leads": [
+      {
+        "x": 34.1,
+        "y": 14.3,
+        "label": "Lead scraper results"
+      },
+      {
+        "x": 37.74,
+        "y": 22.7,
+        "label": "Search and filter leads"
+      }
+    ],
+    "quotes": [
+      {
+        "x": 43.16,
+        "y": 16.7,
+        "label": "Quotes and their status"
+      }
+    ],
+    "automations": [
+      {
+        "x": 31.81,
+        "y": 10.2,
+        "label": "Your automation scenarios"
+      }
+    ],
+    "reports-sales": [
+      {
+        "x": 26.77,
+        "y": 14.3,
+        "label": "Sales KPIs and charts"
+      }
+    ],
+    "team": [
+      {
+        "x": 22.88,
+        "y": 14.5,
+        "label": "Team members and roles"
+      }
+    ]
+  },
+  "ar": {
+    "dashboard": [
+      {
+        "x": 77.8,
+        "y": 10.2,
+        "label": "نظرة سريعة على مساحة العمل"
+      },
+      {
+        "x": 72.38,
+        "y": 32.2,
+        "label": "صندوق الوارد: كل المحادثات"
+      }
+    ],
+    "settings": [
+      {
+        "x": 42,
+        "y": 14.5,
+        "label": "إعدادات مساحة العمل"
+      }
+    ],
+    "whatsapp-setup": [
+      {
+        "x": 70.75,
+        "y": 14.3,
+        "label": "حالة قنوات الاتصال"
+      },
+      {
+        "x": 22.59,
+        "y": 15.4,
+        "label": "اربط واتساب أو ماسنجر أو إنستجرام"
+      }
+    ],
+    "inbox": [
+      {
+        "x": 62.97,
+        "y": 5.4,
+        "label": "صفِّ قائمة المحادثات"
+      },
+      {
+        "x": 62.97,
+        "y": 12.35,
+        "label": "افتح محادثة من القائمة"
+      }
+    ],
+    "contacts": [
+      {
+        "x": 78.5,
+        "y": 14.8,
+        "label": "كل جهات الاتصال"
+      },
+      {
+        "x": 37.05,
+        "y": 14.8,
+        "label": "استيراد جهات الاتصال"
+      }
+    ],
+    "leads": [
+      {
+        "x": 68.28,
+        "y": 14.3,
+        "label": "نتائج جلب الليدز"
+      },
+      {
+        "x": 91.75,
+        "y": 31.8,
+        "label": "افتح خط الأنابيب"
+      }
+    ],
+    "quotes": [
+      {
+        "x": 63.5,
+        "y": 16.7,
+        "label": "العروض وحالتها"
+      }
+    ],
+    "campaigns": [
+      {
+        "x": 79.96,
+        "y": 14.7,
+        "label": "أداء الحملات"
+      },
+      {
+        "x": 42,
+        "y": 33.45,
+        "label": "معدلات التسليم والرد"
+      }
+    ],
+    "automations": [
+      {
+        "x": 67.47,
+        "y": 10.2,
+        "label": "سيناريوهات الأتمتة"
+      }
+    ],
+    "reports-sales": [
+      {
+        "x": 76.33,
+        "y": 14.3,
+        "label": "مؤشرات المبيعات والرسوم"
+      }
+    ],
+    "team": [
+      {
+        "x": 78.5,
+        "y": 14.5,
+        "label": "أعضاء الفريق والأدوار"
+      }
+    ]
+  }
+}

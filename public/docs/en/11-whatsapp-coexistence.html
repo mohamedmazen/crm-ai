@@ -5,7 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>11 · Running the WhatsApp Business app with AYDRA · AYDRA</title>
 <meta name="description" content="Connect your existing WhatsApp Business app number to AYDRA without losing the app on your phone: consent, importing contacts and chat history, and keeping your data.">
-<link rel="stylesheet" href="../assets/docs.css?v=2">
+<link rel="stylesheet" href="../assets/docs.css?v=4">
+<!-- docs:meta -->
+<link rel="canonical" href="https://crm.business-os.tech/docs/en/11-whatsapp-coexistence.html">
+<link rel="alternate" hreflang="ar" href="https://crm.business-os.tech/docs/ar/11-whatsapp-coexistence.html">
+<link rel="alternate" hreflang="en" href="https://crm.business-os.tech/docs/en/11-whatsapp-coexistence.html">
+<link rel="alternate" hreflang="x-default" href="https://crm.business-os.tech/docs/en/11-whatsapp-coexistence.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AYDRA">
+<meta property="og:title" content="WhatsApp Business App (Coexistence) · AYDRA">
+<meta property="og:description" content="Connect your existing WhatsApp Business app number while the app keeps working.">
+<meta property="og:url" content="https://crm.business-os.tech/docs/en/11-whatsapp-coexistence.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="ar_AR">
+<meta property="og:image" content="https://crm.business-os.tech/docs/assets/img/en/whatsapp-setup.webp">
+<meta property="og:image:alt" content="WhatsApp Business App (Coexistence) · AYDRA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="WhatsApp Business App (Coexistence) · AYDRA">
+<meta name="twitter:description" content="Connect your existing WhatsApp Business app number while the app keeps working.">
+<meta name="twitter:image" content="https://crm.business-os.tech/docs/assets/img/en/whatsapp-setup.webp">
+<meta name="docs:lang" content="en">
+<meta name="docs:updated" content="2026-11-10">
+<!-- /docs:meta -->
 </head>
 <body>
 
@@ -20,10 +41,10 @@
 
 <div class="layout">
     <aside class="sidebar">
-        <h3>Guides</h3>
+        <h3 id="guides">Guides</h3>
         <nav class="doc-nav" id="doc-nav"></nav>
         <div class="toc">
-            <h3>On this page</h3>
+            <h3 id="on-this-page">On this page</h3>
             <ul id="page-toc"></ul>
         </div>
     </aside>
@@ -39,7 +60,7 @@
                 <p><strong>Before you start:</strong> this feature is available only on the <strong>Pro</strong> and <strong>Business</strong> plans. If you are on a lower plan, you can upgrade from <strong>Settings → Subscription</strong> and then come back to complete the connection.</p>
             </div>
 
-            <h2>How is it different from a regular connection?</h2>
+            <h2 id="how-is-it-different-from-a-regular-connection">How is it different from a regular connection?</h2>
             <div class="table-wrap">
                 <table>
                     <thead><tr><th>Item</th><th>Regular connection (Cloud API)</th><th>Running with the WhatsApp Business app</th></tr></thead>
@@ -53,10 +74,10 @@
                 </table>
             </div>
 
-            <h2>Connecting in steps</h2>
+            <h2 id="connecting-in-steps">Connecting in steps</h2>
             <figure class="shot">
-                <a href="../assets/img/en/whatsapp-setup.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/en/whatsapp-setup.png" alt="Channel Setup: the WhatsApp Business App number appears here as a coexistence connection once the consent step is complete." decoding="async">
+                <a href="../assets/img/en/whatsapp-setup.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/whatsapp-setup.webp?v=4" alt="Channel Setup: the WhatsApp Business App number appears here as a coexistence connection once the consent step is complete." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>Channel Setup: the WhatsApp Business App number appears here as a coexistence connection once the consent step is complete.</figcaption>
             </figure>
@@ -73,7 +94,7 @@
                 <p>If the button does not appear at all, the feature is disabled for your current plan. If the button appears but then returns you to the setup page, make sure your number is actually activated on the WhatsApp Business app and not a regular app.</p>
             </div>
 
-            <h2>Importing contacts and chat history</h2>
+            <h2 id="importing-contacts-and-chat-history">Importing contacts and chat history</h2>
             <p>Right after connecting, a consent panel appears inside the number card. The import is <strong>optional</strong> and requires your explicit consent. If you agree, the app's contacts and chat history up to <strong>180 days</strong> back are moved into AYDRA.</p>
             <ol class="steps">
                 <li>Read the consent text, then click <strong>Import my data</strong>. (Or <strong>Skip for now</strong> if you prefer not to.)</li>
@@ -89,7 +110,7 @@
                 <p><strong>The import is silent by design.</strong> Imported conversations do not create notifications, do not increase the unread message counter, and do not trigger automation or auto-replies — because they are old history, not new messages.</p>
             </div>
 
-            <h2>When the contact limit is full</h2>
+            <h2 id="when-the-contact-limit-is-full">When the contact limit is full</h2>
             <p>Your app's contacts are imported directly, respecting the <strong>contact limit on your plan</strong>. If the account has already reached the limit, no contact is ignored: they are placed in a safe queue until space becomes available.</p>
             <ul>
                 <li>A message showing the number of waiting contacts appears in the panel.</li>
@@ -97,10 +118,10 @@
                 <li>Then click <strong>Retry import</strong> to take in the waiting contacts.</li>
             </ul>
 
-            <h2>Replying from the phone inside AYDRA</h2>
+            <h2 id="replying-from-the-phone-inside-aydra">Replying from the phone inside AYDRA</h2>
             <p>When your team replies to a customer from the WhatsApp Business app on the phone, the message is recorded in the inbox as an <strong>outgoing</strong> message and appears with a small green badge: <strong>"From the WhatsApp Business app"</strong>. This prevents confusion with agent replies inside AYDRA. Duplicate messages from the app are merged automatically, so they do not appear twice.</p>
 
-            <h2>Statuses that may appear on the number</h2>
+            <h2 id="statuses-that-may-appear-on-the-number">Statuses that may appear on the number</h2>
             <div class="table-wrap">
                 <table>
                     <thead><tr><th>Status</th><th>Meaning</th><th>What to do</th></tr></thead>
@@ -112,7 +133,7 @@
                 </table>
             </div>
 
-            <h2>Disconnecting the number</h2>
+            <h2 id="disconnecting-the-number">Disconnecting the number</h2>
             <p>Disconnecting from AYDRA <strong>does not delete any data</strong>: conversations and messages remain readable, but new messages stop arriving in AYDRA.</p>
             <ol class="steps">
                 <li>From the number panel, click <strong>Disconnect this number</strong>, then confirm.</li>
@@ -123,7 +144,7 @@
                 <p>Do not destroy anything in order to preserve your data. If you want to come back later, reconnect and you will find your old conversations just as they were.</p>
             </div>
 
-            <h2>Common questions</h2>
+            <h2 id="common-questions">Common questions</h2>
             <div class="table-wrap">
                 <table>
                     <thead><tr><th>Question</th><th>Answer</th></tr></thead>
@@ -144,12 +165,13 @@
         </article>
 
         <footer class="doc-footer">
+            <span class="updated">Last updated 10 November 2026 · <a href="/app/support" target="_blank" rel="noopener">Report an issue</a></span>
             <span>AYDRA · Version 1.0</span>
             <span class="pager"><a class="btn" href="10-admin-troubleshooting.html">← Previous</a><a class="btn btn-primary" href="index.html">Index</a></span>
         </footer>
     </main>
 </div>
 
-<script src="../assets/docs.js?v=2"></script>
+<script src="../assets/docs.js?v=4"></script>
 </body>
 </html>

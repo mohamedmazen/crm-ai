@@ -3,8 +3,8 @@
     'use strict';
 
     /* Bilingual model: Arabic lives in /docs/ar/ (RTL), English in /docs/en/ (LTR).
-       The language is derived from the current path; the sidebar titles and the
-       language switch are localised from here so the same script serves both. */
+       The language is derived from the current path; the sidebar titles, the
+       language switch and all runtime strings are localised from here. */
     var DOCS = [
         { file: '01-getting-started.html', ar: 'البدء السريع', en: 'Getting Started' },
         { file: '02-setup-integrations.html', ar: 'الإعداد والتكاملات (BYOK)', en: 'Setup & Integrations (BYOK)' },
@@ -16,12 +16,25 @@
         { file: '08-automation-ai.html', ar: 'الأتمتة والذكاء الاصطناعي', en: 'Automation & AI' },
         { file: '09-reports.html', ar: 'التقارير والتحليلات', en: 'Reports & Analytics' },
         { file: '10-admin-troubleshooting.html', ar: 'إدارة الحساب واستكشاف الأخطاء', en: 'Account Admin & Troubleshooting' },
-        { file: '11-whatsapp-coexistence.html', ar: 'تشغيل تطبيق واتساب للأعمال', en: 'WhatsApp Business App (Coexistence)' }
+        { file: '11-whatsapp-coexistence.html', ar: 'تشغيل تطبيق واتساب للأعمال', en: 'WhatsApp Business App (Coexistence)' },
+        { file: '12-glossary.html', ar: 'المصطلحات', en: 'Glossary' }
     ];
 
     var STRINGS = {
-        ar: { themeDark: 'الوضع الداكن', themeLight: 'الوضع الفاتح', toEn: 'English', toAr: 'العربية' },
-        en: { themeDark: 'Dark mode', themeLight: 'Light mode', toEn: 'English', toAr: 'العربية' }
+        ar: {
+            themeDark: 'الوضع الداكن', themeLight: 'الوضع الفاتح', toEn: 'English', toAr: 'العربية',
+            search: 'بحث', searchPlaceholder: 'ابحث في الأدلة…', searchHint: 'Enter لفتح أول نتيجة · Esc لإغلاق',
+            searchEmpty: 'لا توجد نتائج مطابقة. جرّب كلمة أخرى مثل «واتساب» أو «فاتورة».',
+            searchNoIndex: 'تعذّر تحميل فهرس البحث.',
+            guide: 'دليل'
+        },
+        en: {
+            themeDark: 'Dark mode', themeLight: 'Light mode', toEn: 'English', toAr: 'العربية',
+            search: 'Search', searchPlaceholder: 'Search the guides…', searchHint: 'Enter opens the first result · Esc closes',
+            searchEmpty: 'No matching results. Try another word such as “WhatsApp” or “invoice”.',
+            searchNoIndex: 'Could not load the search index.',
+            guide: 'Guide'
+        }
     };
 
     var path = location.pathname.toLowerCase();
@@ -54,7 +67,7 @@
     function otherLangHref() {
         /* AR guide -> ../en/<file>; EN guide -> ../ar/<file>; index pages stay on index. */
         var target = lang === 'ar' ? 'en' : 'ar';
-        return '../' + target + '/' + current;
+        return '../' + target + '/' + current + location.hash;
     }
 
     function buildLanguageSwitch() {
@@ -116,29 +129,40 @@
 
         list.innerHTML = html;
 
-        /* Highlight the section currently in view. */
+        /* Highlight the section currently in view. A scroll handler is used
+           instead of IntersectionObserver so the state is correct in every
+           browser, embed and background tab. */
         var links = Array.prototype.slice.call(list.querySelectorAll('a'));
-        if (!links.length || !('IntersectionObserver' in window)) { return; }
+        if (!links.length) { return; }
 
-        var byId = {};
-        links.forEach(function (a) { byId[a.getAttribute('href').slice(1)] = a; });
+        var headings = Array.prototype.slice.call(nodes).filter(function (node) { return !!node.id; });
+        if (!headings.length) { return; }
 
-        var observer = new IntersectionObserver(function (entries) {
-            entries.forEach(function (entry) {
-                if (!entry.isIntersecting) { return; }
-                links.forEach(function (a) { a.classList.remove('active'); });
-                var link = byId[entry.target.id];
-                if (link) { link.classList.add('active'); }
+        function highlight() {
+            var offset = 110;
+            var currentId = headings[0].id;
+            headings.forEach(function (node) {
+                if (node.getBoundingClientRect().top <= offset) { currentId = node.id; }
             });
-        }, { rootMargin: '-80px 0px -70% 0px', threshold: 0 });
+            links.forEach(function (a) {
+                a.classList.toggle('active', a.getAttribute('href') === '#' + currentId);
+            });
+        }
 
-        nodes.forEach(function (node) { if (node.id) { observer.observe(node); } });
+        var lastRun = 0;
+        window.addEventListener('scroll', function () {
+            var now = Date.now();
+            if (now - lastRun < 60) { return; }
+            lastRun = now;
+            highlight();
+        }, { passive: true });
+        highlight();
     }
 
-    /* ---------- Index search ---------- */
-    /* Arabic-aware matching: ignores diacritics and spelling variants, then
-       strips the article and common plural/possessive endings so that
-       "حملة" matches "حملات" and "فواتير" matches "فاتورة". */
+    /* ---------- Shared text matching (Arabic-aware) ---------- */
+    /* Ignores diacritics and spelling variants, then strips the article and
+       common plural/possessive endings so that "حملة" matches "حملات" and
+       "فواتير" matches "فاتورة". */
     function normalizeArabic(text) {
         return text
             .toLowerCase()
@@ -156,16 +180,226 @@
             .replace(/(ات|ون|ين|ان|ه)$/, '');
     }
 
-    function searchable(text) {
-        text = normalizeArabic(text);
-        return text
+    function tokenize(text) {
+        return normalizeArabic(text)
             .split(/[^\p{L}\p{N}]+/u)
             .filter(Boolean)
-            .map(stemArabicToken)
-            .join(' ');
+            .map(stemArabicToken);
     }
 
-    function wireSearch() {
+    function searchable(text) {
+        return tokenize(text).join(' ');
+    }
+
+    /* ---------- Annotation badges ---------- */
+    /* Coordinates come from doc/scripts/docs-capture.mjs, which probes the live
+       app and writes public/docs/assets/data/annotations.json. Each badge is a
+       percentage position over the screenshot so it scales with the page. */
+    function imageSlug(img) {
+        var src = img.getAttribute('src') || '';
+        var match = src.match(/img\/(?:ar|en)\/([a-z0-9-]+)\.(?:webp|png)/i);
+        return match ? match[1] : null;
+    }
+
+    function buildAnnotation(container, points) {
+        points.forEach(function (point, index) {
+            var badge = document.createElement('span');
+            badge.className = 'anno-badge';
+            badge.style.left = point.x + '%';
+            badge.style.top = point.y + '%';
+            badge.textContent = String(index + 1);
+            badge.tabIndex = 0;
+            var label = point.label || '';
+            badge.setAttribute('aria-label', label);
+            if (label) {
+                var tip = document.createElement('span');
+                tip.className = 'anno-tip';
+                tip.textContent = label;
+                badge.appendChild(tip);
+            }
+            container.appendChild(badge);
+        });
+    }
+
+    function applyAnnotations() {
+        var figures = document.querySelectorAll('figure.shot');
+        if (!figures.length) { return; }
+
+        fetch('../assets/data/annotations.json')
+            .then(function (response) { return response.ok ? response.json() : null; })
+            .catch(function () { return null; })
+            .then(function (data) {
+                if (!data) { return; }
+                var pointsFor = data[lang] || {};
+
+                Array.prototype.forEach.call(figures, function (figure) {
+                    var img = figure.querySelector('img');
+                    if (!img) { return; }
+
+                    var slug = figure.getAttribute('data-slug') || imageSlug(img);
+                    if (!slug) { return; }
+
+                    var points = null;
+                    if (figure.hasAttribute('data-points')) {
+                        try { points = JSON.parse(figure.getAttribute('data-points')); } catch (e) { points = null; }
+                    }
+                    points = points || pointsFor[slug];
+                    if (!points || !points.length) { return; }
+
+                    var anchor = img.parentNode; /* the <a> around the image */
+                    var canvas = document.createElement('div');
+                    canvas.className = 'shot-canvas';
+                    anchor.parentNode.insertBefore(canvas, anchor);
+                    canvas.appendChild(anchor);
+                    buildAnnotation(canvas, points);
+                });
+            });
+    }
+
+    /* ---------- Global search (Ctrl/Cmd+K) ---------- */
+    var searchIndex = null;
+    var searchIndexPromise = null;
+
+    function loadSearchIndex() {
+        if (searchIndexPromise) { return searchIndexPromise; }
+        searchIndexPromise = fetch('../assets/data/search-index.json')
+            .then(function (response) { return response.ok ? response.json() : []; })
+            .catch(function () { return []; })
+            .then(function (items) {
+                searchIndex = (items || []).filter(function (item) { return item.lang === lang; });
+                return searchIndex;
+            });
+        return searchIndexPromise;
+    }
+
+    function buildSearchModal() {
+        if (document.getElementById('search-modal')) { return; }
+
+        var modal = document.createElement('div');
+        modal.id = 'search-modal';
+        modal.className = 'search-modal';
+        modal.hidden = true;
+        modal.innerHTML =
+            '<div class="search-panel" role="dialog" aria-modal="true" aria-label="' + t.search + '">' +
+                '<input id="search-modal-input" type="search" autocomplete="off" placeholder="' + t.searchPlaceholder + '" aria-label="' + t.searchPlaceholder + '">' +
+                '<div id="search-modal-results" class="search-results"></div>' +
+                '<div class="search-hint">' + t.searchHint + '</div>' +
+            '</div>';
+        document.body.appendChild(modal);
+
+        var input = modal.querySelector('#search-modal-input');
+        var results = modal.querySelector('#search-modal-results');
+
+        function close() {
+            modal.hidden = true;
+            document.body.classList.remove('search-open');
+        }
+
+        function open() {
+            modal.hidden = false;
+            document.body.classList.add('search-open');
+            input.value = '';
+            results.innerHTML = '';
+            loadSearchIndex().then(function () { input.focus(); });
+        }
+
+        function render() {
+            var query = input.value.trim();
+            var tokens = tokenize(query);
+            if (!tokens.length) { results.innerHTML = ''; return; }
+
+            loadSearchIndex().then(function (items) {
+                if (!items.length) {
+                    results.innerHTML = '<p class="search-empty">' + t.searchNoIndex + '</p>';
+                    return;
+                }
+
+                var scored = [];
+                items.forEach(function (item) {
+                    var title = searchable(item.title || '');
+                    var body = searchable(item.text || '');
+                    var score = 0;
+                    var matched = true;
+                    tokens.forEach(function (token) {
+                        var inTitle = title.indexOf(token) !== -1;
+                        var inBody = body.indexOf(token) !== -1;
+                        if (!inTitle && !inBody) { matched = false; return; }
+                        score += inTitle ? 10 : 1;
+                    });
+                    if (!matched) { return; }
+                    if (query && (item.title || '').toLowerCase().indexOf(query.toLowerCase()) !== -1) { score += 20; }
+                    scored.push({ item: item, score: score });
+                });
+
+                scored.sort(function (a, b) { return b.score - a.score; });
+
+                if (!scored.length) {
+                    results.innerHTML = '<p class="search-empty">' + t.searchEmpty + '</p>';
+                    return;
+                }
+
+                results.innerHTML = scored.slice(0, 14).map(function (entry) {
+                    var item = entry.item;
+                    var href = item.page + (item.id ? '#' + item.id : '');
+                    var snippet = (item.text || '').slice(0, 150);
+                    if ((item.text || '').length > 150) { snippet += '…'; }
+                    return '<a class="search-result" href="' + href + '">' +
+                        '<span class="sr-guide">' + item.guide + '</span>' +
+                        '<span class="sr-title">' + item.title + '</span>' +
+                        '<span class="sr-snippet">' + snippet + '</span>' +
+                    '</a>';
+                }).join('');
+
+                var first = results.querySelector('a.search-result');
+                if (first) { first.classList.add('is-first'); }
+            });
+        }
+
+        input.addEventListener('input', render);
+        input.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                var first = results.querySelector('a.search-result');
+                if (first) { event.preventDefault(); location.href = first.getAttribute('href'); }
+            }
+        });
+
+        modal.addEventListener('mousedown', function (event) {
+            if (event.target === modal) { close(); }
+        });
+
+        document.addEventListener('keydown', function (event) {
+            if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+                event.preventDefault();
+                if (modal.hidden) { open(); } else { close(); }
+                return;
+            }
+            if (event.key === 'Escape' && !modal.hidden) { close(); }
+        });
+    }
+
+    function buildSearchButton() {
+        var actions = document.querySelector('.topbar-actions');
+        if (!actions || document.getElementById('search-open')) { return; }
+        var button = document.createElement('button');
+        button.id = 'search-open';
+        button.type = 'button';
+        button.className = 'btn search-open';
+        button.innerHTML = '<span aria-hidden="true">🔎</span><span class="search-label">' + t.search + '</span><kbd>Ctrl K</kbd>';
+        button.addEventListener('click', function () {
+            var modal = document.getElementById('search-modal');
+            if (!modal) { return; }
+            modal.hidden = false;
+            document.body.classList.add('search-open');
+            var input = modal.querySelector('#search-modal-input');
+            input.value = '';
+            modal.querySelector('#search-modal-results').innerHTML = '';
+            loadSearchIndex().then(function () { input.focus(); });
+        });
+        actions.insertBefore(button, actions.firstChild);
+    }
+
+    /* ---------- Index page card filter ---------- */
+    function wireIndexSearch() {
         var input = document.getElementById('doc-search');
         if (!input) { return; }
         var cards = Array.prototype.slice.call(document.querySelectorAll('[data-doc]'));
@@ -194,7 +428,10 @@
         buildLanguageSwitch();
         buildNav();
         buildToc();
-        wireSearch();
+        wireIndexSearch();
+        buildSearchButton();
+        buildSearchModal();
+        applyAnnotations();
         paintThemeButton();
 
         var btn = document.getElementById('theme-toggle');
@@ -205,6 +442,21 @@
                 try { localStorage.setItem('aydra-docs-theme', dark ? 'light' : 'dark'); } catch (e) {}
                 paintThemeButton();
             });
+        }
+
+        /* Deep links: if the page opens with #section but the heading was
+           rendered late, scroll to it once the TOC ids are in place. Use an
+           instant scroll so the position is final even in a background tab. */
+        if (location.hash) {
+            var id = decodeURIComponent(location.hash.slice(1));
+            var target = document.getElementById(id);
+            if (target) {
+                try { target.scrollIntoView({ behavior: 'instant', block: 'start' }); }
+                catch (e) { target.scrollIntoView(); }
+                /* Let the sidebar TOC recompute immediately; some embedded
+                   browsers deliver the scroll notification late. */
+                window.dispatchEvent(new Event('scroll'));
+            }
         }
     });
 })();

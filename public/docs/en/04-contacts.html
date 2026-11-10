@@ -5,7 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>04 · Contacts &amp; Segments · AYDRA</title>
 <meta name="description" content="Manage contacts, import them from CSV, build segments and custom fields in AYDRA.">
-<link rel="stylesheet" href="../assets/docs.css?v=2">
+<link rel="stylesheet" href="../assets/docs.css?v=4">
+<!-- docs:meta -->
+<link rel="canonical" href="https://crm.business-os.tech/docs/en/04-contacts.html">
+<link rel="alternate" hreflang="ar" href="https://crm.business-os.tech/docs/ar/04-contacts.html">
+<link rel="alternate" hreflang="en" href="https://crm.business-os.tech/docs/en/04-contacts.html">
+<link rel="alternate" hreflang="x-default" href="https://crm.business-os.tech/docs/en/04-contacts.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AYDRA">
+<meta property="og:title" content="Contacts &amp; Segments · AYDRA">
+<meta property="og:description" content="Add and import contacts, build segments and custom fields.">
+<meta property="og:url" content="https://crm.business-os.tech/docs/en/04-contacts.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="ar_AR">
+<meta property="og:image" content="https://crm.business-os.tech/docs/assets/img/en/contacts.webp">
+<meta property="og:image:alt" content="Contacts &amp; Segments · AYDRA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Contacts &amp; Segments · AYDRA">
+<meta name="twitter:description" content="Add and import contacts, build segments and custom fields.">
+<meta name="twitter:image" content="https://crm.business-os.tech/docs/assets/img/en/contacts.webp">
+<meta name="docs:lang" content="en">
+<meta name="docs:updated" content="2026-11-10">
+<!-- /docs:meta -->
 </head>
 <body>
 
@@ -20,10 +41,10 @@
 
 <div class="layout">
     <aside class="sidebar">
-        <h3>Guides</h3>
+        <h3 id="guides">Guides</h3>
         <nav class="doc-nav" id="doc-nav"></nav>
         <div class="toc">
-            <h3>On this page</h3>
+            <h3 id="on-this-page">On this page</h3>
             <ul id="page-toc"></ul>
         </div>
     </aside>
@@ -34,10 +55,10 @@
             <h1>Contacts &amp; Segments</h1>
             <p class="lead">Contacts are the heart of the system: campaigns, segments and leads are all built from them. This guide explains manual entry, smart importing, and building segments without duplicate records.</p>
 
-            <h2>Contacts list</h2>
+            <h2 id="contacts-list">Contacts list</h2>
             <figure class="shot">
-                <a href="../assets/img/en/contacts.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/en/contacts.png" alt="Contacts list: search, filter, tag, and open any contact profile from here." decoding="async">
+                <a href="../assets/img/en/contacts.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/contacts.webp?v=4" alt="Contacts list: search, filter, tag, and open any contact profile from here." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>Contacts list: search, filter, tag, and open any contact profile from here.</figcaption>
             </figure>
@@ -49,7 +70,7 @@
                 <li>You can export from the same screen or from Reports, depending on your permissions.</li>
             </ul>
 
-            <h2>Adding a contact manually</h2>
+            <h2 id="adding-a-contact-manually">Adding a contact manually</h2>
             <ol class="steps">
                 <li>Click <strong>Add contact</strong>.</li>
                 <li>Enter the name and phone number in international format (example: <code>201012345678</code>).</li>
@@ -61,10 +82,10 @@
                 <p>The phone number is the primary key for the channel. Always enter it in international format without the <code>+</code> or leading zeros, otherwise sending on WhatsApp and SMS will fail.</p>
             </div>
 
-            <h2>Importing contacts</h2>
+            <h2 id="importing-contacts">Importing contacts</h2>
             <p>There are two paths: quick import (CSV) and the table import (Bulk Import), which works like an Excel sheet inside the browser.</p>
 
-            <h3>Quick import (CSV)</h3>
+            <h3 id="quick-import-csv">Quick import (CSV)</h3>
             <ol class="steps">
                 <li>From the contacts list, click <strong>Import</strong>.</li>
                 <li>Upload a CSV file encoded in UTF-8.</li>
@@ -73,10 +94,10 @@
                 <li>Click Import.</li>
             </ol>
 
-            <h3>Table import (Bulk Import)</h3>
+            <h3 id="table-import-bulk-import">Table import (Bulk Import)</h3>
             <figure class="shot">
-                <a href="../assets/img/en/contacts-import.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/en/contacts-import.png" alt="Bulk import: upload a CSV or Excel file, map its columns, and check for duplicates before importing." decoding="async">
+                <a href="../assets/img/en/contacts-import.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/contacts-import.webp?v=4" alt="Bulk import: upload a CSV or Excel file, map its columns, and check for duplicates before importing." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>Bulk import: upload a CSV or Excel file, map its columns, and check for duplicates before importing.</figcaption>
             </figure>
@@ -94,13 +115,13 @@
                 <p><strong>Before any large import:</strong> try 10 rows first, and make sure the number format is correct. A bad import is harder to clean up than manual entry.</p>
             </div>
 
-            <h3>Duplicates during import</h3>
+            <h3 id="duplicates-during-import">Duplicates during import</h3>
             <p>The system prevents creating a duplicate contact with the same phone number within the same workspace. When a match is found, the existing record is usually updated instead of creating a new copy — check the import summary to see the number of "updated" and "added" records.</p>
 
-            <h2>Segments</h2>
+            <h2 id="segments">Segments</h2>
             <figure class="shot">
-                <a href="../assets/img/en/segments.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/en/segments.png" alt="Segments: saved smart groups built from conditions, used for campaigns and automations." decoding="async">
+                <a href="../assets/img/en/segments.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/segments.webp?v=4" alt="Segments: saved smart groups built from conditions, used for campaigns and automations." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>Segments: saved smart groups built from conditions, used for campaigns and automations.</figcaption>
             </figure>
@@ -114,7 +135,7 @@
                 <li>Save — the segment appears with the number of matching contacts.</li>
             </ol>
 
-            <h3>Adding contacts to a segment manually</h3>
+            <h3 id="adding-contacts-to-a-segment-manually">Adding contacts to a segment manually</h3>
             <p>Next to each segment there is an <strong>Add contacts</strong> button that opens a multi-select screen. Use it for static segments (such as "Showroom customers").</p>
 
             <div class="table-wrap">
@@ -129,7 +150,7 @@
                 </table>
             </div>
 
-            <h2>Tags</h2>
+            <h2 id="tags">Tags</h2>
             <p>Tags are manual and quick, and differ from segments in that they do not update automatically:</p>
             <ul>
                 <li>Add or remove a tag from the contact profile.</li>
@@ -137,10 +158,10 @@
                 <li>Tags are used in campaign filters and automation triggers.</li>
             </ul>
 
-            <h2>Custom fields</h2>
+            <h2 id="custom-fields">Custom fields</h2>
             <figure class="shot">
-                <a href="../assets/img/en/custom-fields.png" target="_blank" rel="noopener">
-                    <img src="../assets/img/en/custom-fields.png" alt="Custom fields: extra fields you add to contacts and use in segments and messages." decoding="async">
+                <a href="../assets/img/en/custom-fields.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/custom-fields.webp?v=4" alt="Custom fields: extra fields you add to contacts and use in segments and messages." decoding="async" loading="lazy" width="1600" height="1000">
                 </a>
                 <figcaption>Custom fields: extra fields you add to contacts and use in segments and messages.</figcaption>
             </figure>
@@ -156,7 +177,26 @@
                 <p>The number of custom fields is limited by plan (Free = 3, Starter = 10, Pro = 20, Business = unlimited).</p>
             </div>
 
-            <h2>Contact profile</h2>
+            <h2 id="contact-fields">Contact fields reference</h2>
+            <p>Every contact record carries the same core fields. Custom fields are added on top from <strong>Contacts → Custom fields</strong>.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Field</th><th>What it means</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Name</strong></td><td>Display name used in the inbox and campaigns. Required.</td></tr>
+                        <tr><td><strong>Phone</strong></td><td>The WhatsApp/SMS number in international format. Usually the unique key for messaging.</td></tr>
+                        <tr><td><strong>Email</strong></td><td>Used for email campaigns, quotes and invoices.</td></tr>
+                        <tr><td><strong>Company</strong></td><td>Links the contact to a company record.</td></tr>
+                        <tr><td><strong>Owner</strong></td><td>The team member responsible for this contact.</td></tr>
+                        <tr><td><strong>Source</strong></td><td>Where the contact came from: manual, import, WhatsApp, form, store or API.</td></tr>
+                        <tr><td><strong>Tags</strong></td><td>Free labels for filtering and segmentation.</td></tr>
+                        <tr><td><strong>Custom fields</strong></td><td>Any extra attribute you defined, shown on the contact profile.</td></tr>
+                        <tr><td><strong>Created at</strong></td><td>When the record first entered the workspace. Used by reports and retention rules.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 id="contact-profile">Contact profile</h2>
             <p>It opens everything related to the customer:</p>
             <ul>
                 <li>Basic data, tags and segments.</li>
@@ -165,7 +205,7 @@
                 <li>Activity log (messages, changes, tasks).</li>
             </ul>
 
-            <h2>Bulk actions</h2>
+            <h2 id="bulk-actions">Bulk actions</h2>
             <p>Select several contacts from the list, then:</p>
             <ul>
                 <li>Add/remove tags.</li>
@@ -174,7 +214,7 @@
                 <li>Delete (with care — this may affect reports).</li>
             </ul>
 
-            <h2>Common problems</h2>
+            <h2 id="common-problems">Common problems</h2>
             <div class="table-wrap">
                 <table>
                     <thead><tr><th>Problem</th><th>Cause</th><th>Fix</th></tr></thead>
@@ -195,12 +235,13 @@
         </article>
 
         <footer class="doc-footer">
+            <span class="updated">Last updated 10 November 2026 · <a href="/app/support" target="_blank" rel="noopener">Report an issue</a></span>
             <span>AYDRA · v1.0</span>
             <span class="pager"><a class="btn" href="03-inbox.html">← Previous</a><a class="btn btn-primary" href="05-leads-pipeline.html">Next: Leads →</a></span>
         </footer>
     </main>
 </div>
 
-<script src="../assets/docs.js?v=2"></script>
+<script src="../assets/docs.js?v=4"></script>
 </body>
 </html>
