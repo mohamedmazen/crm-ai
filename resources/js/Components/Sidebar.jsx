@@ -101,6 +101,12 @@ function AreaLink({ item, onClose, areaKey, onVisit, collapsedIconOnly = false, 
     const key = navItemKey(item);
     const pinned = isPinned?.(key) ?? false;
 
+    // External entries (user manual, help site, third-party tools) must leave
+    // the SPA: render a real anchor that opens in a new browser tab instead of
+    // an Inertia visit, which would expect an Inertia response and fail.
+    const NavLink = item.external ? 'a' : Link;
+    const externalProps = item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+
     const handleClick = () => {
         onVisit?.({ key, label: item.label, href: item.href });
         onClose?.();
@@ -108,7 +114,7 @@ function AreaLink({ item, onClose, areaKey, onVisit, collapsedIconOnly = false, 
 
     if (collapsedIconOnly) {
         return (
-            <Link
+            <NavLink
                 href={item.href}
                 onClick={handleClick}
                 title={item.label}
@@ -117,21 +123,23 @@ function AreaLink({ item, onClose, areaKey, onVisit, collapsedIconOnly = false, 
                     'mx-auto flex h-9 w-9 items-center justify-center rounded-lg transition-colors duration-150',
                     active ? 'bg-brand-600 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white',
                 ].join(' ')}
+                {...externalProps}
             >
                 {item.icon}
-            </Link>
+            </NavLink>
         );
     }
 
     return (
         <div className="group/item relative flex items-center">
-            <Link
+            <NavLink
                 href={item.href}
                 onClick={handleClick}
                 className={[
                     'flex flex-1 items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150',
                     active ? 'bg-brand-600 text-white shadow-sm' : 'text-white/80 hover:bg-white/10 hover:text-white',
                 ].join(' ')}
+                {...externalProps}
             >
                 {item.icon && (
                     <span className={['shrink-0', active ? 'text-white' : 'text-white/65 group-hover/item:text-white'].join(' ')}>
@@ -140,7 +148,7 @@ function AreaLink({ item, onClose, areaKey, onVisit, collapsedIconOnly = false, 
                 )}
                 <span className="truncate">{item.label}</span>
                 {item.external && <span className="sr-only">(opens in a new tab)</span>}
-            </Link>
+            </NavLink>
             <button
                 type="button"
                 onClick={() => togglePin?.({ key, label: item.label, href: item.href })}

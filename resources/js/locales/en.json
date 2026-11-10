@@ -616,13 +616,8 @@
     "client": {
         "profile": {
             "edit": "Edit",
-            "2fa": {
-                "enable": "Enable",
-                "disable": "Disable"
-            },
-            "sessions": {
-                "destroy": "Destroy"
-            },
+            "2fa": "2Fa",
+            "sessions": "Sessions",
             "update": "Update",
             "destroy": "Destroy"
         },
@@ -793,10 +788,7 @@
             "index": "Index",
             "store": "Store",
             "destroy": "Destroy",
-            "contacts": {
-                "attach": "Attach",
-                "detach": "Detach"
-            }
+            "contacts": "Contacts"
         },
         "whatsapp": {
             "templates": {
@@ -819,7 +811,7 @@
                 "edit": "Edit"
             },
             "setup": {
-                "manual": "Manual"
+                "destroy": "Destroy"
             }
         },
         "broadcasts": {
@@ -852,13 +844,7 @@
             "start": "Start",
             "templates": "Templates",
             "assign": "Assign",
-            "setup": {
-                "destroy": "Destroy",
-                "resubscribe": "Resubscribe",
-                "manual": {
-                    "instagram": "Instagram"
-                }
-            },
+            "setup": "Setup",
             "activities": {
                 "index": "Index"
             }
@@ -870,7 +856,9 @@
             },
             "chatbots": {
                 "index": "Index",
-                "playground": "Playground",
+                "playground": {
+                    "stream": "Stream"
+                },
                 "update": "Update",
                 "destroy": "Destroy",
                 "store": "Store"
@@ -1014,11 +1002,7 @@
                 "response": "Response",
                 "sources": "Sources",
                 "export": "Export",
-                "schedules": {
-                    "update": "Update",
-                    "store": "Store",
-                    "destroy": "Destroy"
-                }
+                "schedules": "Schedules"
             }
         },
         "push": {
@@ -1097,19 +1081,16 @@
                 "connect": "Connect"
             }
         },
-        "workspaces": "Workspaces",
+        "workspaces": {
+            "switch": "Switch",
+            "index": "Index",
+            "store": "Store"
+        },
         "settings": {
             "update": "Update",
             "notifications": "Notifications",
             "index": "Index",
-            "gdpr": {
-                "erasure": {
-                    "store": "Store",
-                    "cancel": "Cancel"
-                },
-                "retention": "Retention",
-                "dpa": "Dpa"
-            }
+            "gdpr": "Gdpr"
         },
         "team": {
             "store": "Store",
@@ -1125,7 +1106,9 @@
         "sales": {
             "forms": {
                 "index": "Index",
-                "builder": "Builder",
+                "builder": {
+                    "update": "Update"
+                },
                 "store": "Store",
                 "destroy": "Destroy",
                 "analytics": "Analytics"
@@ -1144,7 +1127,9 @@
             },
             "sequences": {
                 "index": "Index",
-                "builder": "Builder",
+                "builder": {
+                    "update": "Update"
+                },
                 "status": "Status",
                 "enroll": "Enroll",
                 "store": "Store",
@@ -1440,7 +1425,11 @@
         "tax_rates": "Tax Rates",
         "landing_page": "Site Content",
         "cms_pages": "CMS Pages",
-        "license": "License",
+        "license": {
+            "index": "Index",
+            "deactivate": "Deactivate",
+            "activate": "Activate"
+        },
         "cron_setup": "Cron Setup",
         "support": {
             "index": "Index",
@@ -1557,38 +1546,40 @@
         "secret_key_hint": "Server-side secret key — keep this private",
         "stripe_webhook_hint": "Webhook signing secret (whsec_…) from the Stripe dashboard",
         "webhook_hint": "Webhook secret used to verify incoming gateway events",
-        "clients": "Clients",
-        "subscriptions": {
+        "clients": {
             "index": "Index",
+            "users": {
+                "index": "Index",
+                "store": "Store",
+                "update": "Update",
+                "destroy": "Destroy"
+            },
+            "impersonate": "Impersonate",
+            "destroy": "Destroy",
+            "export": "Export",
             "store": "Store",
-            "export": "Export"
+            "update": "Update"
         },
-        "payments": "Payments",
-        "plans": "Plans",
-        "currencies": {
+        "subscriptions": "Subscriptions",
+        "payments": {
+            "index": "Index"
+        },
+        "plans": {
             "index": "Index",
             "update": "Update",
+            "duplicate": "Duplicate",
+            "destroy": "Destroy",
+            "reorder": "Reorder",
             "store": "Store"
         },
-        "admins": "Admins",
-        "settings": {
+        "currencies": "Currencies",
+        "admins": {
             "index": "Index",
-            "general": {
-                "update": "Update"
-            },
-            "logo": {
-                "upload": "Upload",
-                "delete": "Delete"
-            },
-            "favicon": {
-                "upload": "Upload",
-                "delete": "Delete"
-            },
-            "update": "Update",
-            "firebase": {
-                "update": "Update"
-            }
+            "destroy": "Destroy",
+            "store": "Store",
+            "update": "Update"
         },
+        "settings": "Settings",
         "ai": {
             "index": "Index"
         },
@@ -4342,7 +4333,13 @@
         "tone_${chatbot": {
             "tone}": "Tone}"
         },
-        "tone_${tone}": "Tone ${Tone}"
+        "tone_${tone}": "Tone ${Tone}",
+        "doc_status_${document": {
+            "status}": "Status}"
+        },
+        "source_${document": {
+            "source_type}": "Source Type}"
+        }
     },
     "whatsapp": {
         "setup_title": "WhatsApp Setup",
@@ -5827,7 +5824,7 @@
     "Prepared for": "Prepared For",
     "Discount": "Discount",
     "Terms": "Terms",
-    "v25": [
+    "v27": [
         "0"
     ]
 }

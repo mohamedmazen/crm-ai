@@ -21,8 +21,13 @@ export default function AreaNav({ areas = [] }) {
             >
                 {area.items.map((item, i) => {
                     const active = isNavItemActive(item);
+                    // External entries (user manual, help site) are plain anchors
+                    // that open in a new tab; an Inertia visit would fail because
+                    // static docs do not return an Inertia response.
+                    const NavLink = item.external ? 'a' : Link;
+                    const externalProps = item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
                     return (
-                        <Link
+                        <NavLink
                             key={item.activePattern ?? item.href ?? i}
                             href={item.href}
                             aria-current={active ? 'page' : undefined}
@@ -32,12 +37,14 @@ export default function AreaNav({ areas = [] }) {
                                     ? 'text-brand-700 dark:text-brand-300'
                                     : 'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100',
                             ].join(' ')}
+                            {...externalProps}
                         >
                             {item.label}
+                            {item.external && <span className="sr-only">(opens in a new tab)</span>}
                             {active && (
                                 <span className="absolute inset-x-2 -bottom-px h-0.5 rounded-full bg-brand-600 dark:bg-brand-400" aria-hidden />
                             )}
-                        </Link>
+                        </NavLink>
                     );
                 })}
             </nav>

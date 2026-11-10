@@ -2,7 +2,7 @@ import ClientLayout from '@/Layouts/ClientLayout';
 import { Button } from '@/Components/ui';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
-import { Settings as SettingsIcon, Bell, Download } from 'lucide-react';
+import { Settings as SettingsIcon, Bell, Download, BookOpen } from 'lucide-react';
 import { browserTz } from '@/Utils/datetime';
 import TimezonePicker from '@/Components/TimezonePicker';
 
@@ -14,7 +14,8 @@ export default function ClientSettingsIndex({
     digestEnabled = true,
 }) {
     const { t } = useTranslation();
-    const { flash = {} } = usePage().props;
+    const { flash = {}, branding = {} } = usePage().props;
+    const docsUrl = branding?.docs_url;
     const form = useForm({
         locale: preferences.locale ?? 'en',
         display_currency: preferences.display_currency ?? 'USD',
@@ -214,6 +215,17 @@ export default function ClientSettingsIndex({
                         <Download className="h-4 w-4" />
                         {t('settings.export_data_link')} →
                     </Link>
+                    {docsUrl && (
+                        <a
+                            href={docsUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-sm text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
+                        >
+                            <BookOpen className="h-4 w-4" />
+                            {t('nav.help_docs')} ↗
+                        </a>
+                    )}
                 </div>
             </div>
         </ClientLayout>
