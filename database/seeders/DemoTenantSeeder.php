@@ -644,9 +644,9 @@ abstract class DemoTenantSeeder extends Seeder
         $this->seedAutomations($ws, $now);
         $this->seedWhatsappShowcase($cfg, $ws, $now);
         $this->seedAiShowcase($ws, $now);
-        $this->seedSocialShowcase($ws, $agentIds, $now);
+        $this->seedSocialShowcase($cfg, $ws, $now);
         $this->seedTasksAndCalls($ws, $leadIds, $agentIds, $now);
-        $this->seedBookingAndForms($ws, $now);
+        $this->seedBookingAndForms($cfg, $ws, $now);
     }
 
     /** @param list<int> $contactIds */
@@ -1106,24 +1106,49 @@ abstract class DemoTenantSeeder extends Seeder
         );
     }
 
-    /** @param list<int> $agentIds */
-    protected function seedSocialShowcase(int $ws, array $agentIds, Carbon $now): void
+    /**
+     * Seed the Social module's connected accounts and their scheduled posts.
+     *
+     * Accounts belong in `social_media_accounts` (workspace-scoped, unique on
+     * workspace + network + account_id); posts point at the account ids through
+     * `target_accounts`, which is what the network and account filters query.
+     * The demo token is stored as ciphertext because the model casts the column
+     * as `encrypted`, so writing it through the query builder would otherwise
+     * break every read of the account.
+     */
+    protected function seedSocialShowcase(array $cfg, int $ws, Carbon $now): void
     {
-        $userId = $agentIds[0] ?? $this->admin->id;
+        $key = strtoupper($cfg['key']);
 
-        foreach ([['facebook', '360 Business'], ['instagram', '@360business']] as [$provider, $handle]) {
-            DB::table('social_accounts')->updateOrInsert(
-                ['user_id' => $userId, 'provider' => $provider],
+        $definitions = [
+            ['facebook', $cfg['company'], 'DEMO_'.$key.'_FACEBOOK'],
+            ['instagram', '@'.Str::slug($cfg['company'], ''), 'DEMO_'.$key.'_INSTAGRAM'],
+        ];
+
+        $accountIds = [];
+
+        foreach ($definitions as [$network, $name, $accountId]) {
+            DB::table('social_media_accounts')->updateOrInsert(
+                ['workspace_id' => $ws, 'network' => $network, 'account_id' => $accountId],
                 [
-                    'provider_id' => 'DEMO_'.strtoupper($provider).'_360',
-                    'email' => 'social@360business.test',
-                    'avatar_url' => null,
-                    'access_token' => null,
+                    'name' => $name,
+                    'picture_url' => null,
+                    'access_token' => encrypt('DEMO_TOKEN_'.$key.'_'.strtoupper($network)),
                     'refresh_token' => null,
+                    'token_expires_at' => null,
+                    'scopes' => json_encode(['pages_manage_posts', 'pages_read_engagement', 'instagram_content_publish']),
+                    'meta' => json_encode(['demo' => true]),
+                    'active' => 1,
                     'created_at' => $now,
                     'updated_at' => $now,
                 ]
             );
+
+            $accountIds[] = (int) DB::table('social_media_accounts')
+                ->where('workspace_id', $ws)
+                ->where('network', $network)
+                ->where('account_id', $accountId)
+                ->value('id');
         }
 
         $posts = [
@@ -1138,12 +1163,12 @@ abstract class DemoTenantSeeder extends Seeder
                 [
                     'body' => $body,
                     'media_urls' => json_encode([]),
-                    'target_accounts' => json_encode(['facebook', 'instagram']),
+                    'target_accounts' => json_encode($accountIds),
                     'status' => $status,
                     'scheduled_at' => $ageDays === null ? null : ($ageDays < 0 ? $now->copy()->addDays(abs($ageDays)) : $this->days($ageDays)),
                     'timezone' => 'UTC',
                     'published_at' => $status === 'published' ? $this->days($ageDays ?? 1) : null,
-                    'provider_post_id' => $status === 'published' ? 'DEMO_POST_'.Str::random(10) : null,
+                    'provider_post_id' => $status === 'published' ? 'DEMO_POST_'.$key.'_'.strtoupper(Str::slug($title, '')) : null,
                     'post_url' => null,
                     'publish_results' => null,
                     'ai_generated' => 0,
@@ -1219,11 +1244,18 @@ abstract class DemoTenantSeeder extends Seeder
         }
     }
 
-    protected function seedBookingAndForms(int $ws, Carbon $now): void
+    /**
+     * Seed the booking page and the public enquiry form.
+     *
+     * `meeting_types.slug` is globally unique because the public booking URL is
+     * `/b/{slug}` with no tenant in the path, so each demo tenant needs its own
+     * slug or the second tenant to seed would collide with the first.
+     */
+    protected function seedBookingAndForms(array $cfg, int $ws, Carbon $now): void
     {
         $meetings = [
-            ['Discovery call', 'discovery-call', 30, 'google_meet', 'A short call to understand your goals.'],
-            ['Studio tour', 'studio-tour', 45, 'in_person', 'Walk through the studio with a membership advisor.'],
+            ['Discovery call', 'discovery-call-'.$cfg['key'], 30, 'google_meet', 'A short call to understand your goals.'],
+            ['Studio tour', 'studio-tour-'.$cfg['key'], 45, 'in_person', 'Walk through the studio with a membership advisor.'],
         ];
 
         foreach ($meetings as [$name, $slug, $duration, $location, $description]) {
