@@ -90,6 +90,30 @@ const SHOTS = [
     { route: '/app/api-tokens', slug: 'api-tokens' },
     { route: '/app/webhooks', slug: 'webhooks' },
     { route: '/app/audit-log', slug: 'audit-log' },
+    // 11 Roles & permissions
+    { route: '/app/team/roles', slug: 'roles', hero: true },
+    {
+        route: '/app/team/roles',
+        slug: 'roles-matrix',
+        hero: true,
+        open: `(() => {
+            const button = Array.from(document.querySelectorAll('main button'))
+                .find((el) => /add role|إضافة دور/i.test(el.textContent || ''));
+            if (!button) { return false; }
+            button.click();
+            return true;
+        })()`,
+        /* The editor is taller than a 1600x1000 viewport, and the centred
+           dialog clips its own header. Anchor it to the top so the shot starts
+           at the role name and template instead of the middle of the matrix. */
+        after: `(() => {
+            const dialog = document.querySelector('[role="dialog"]');
+            if (!dialog) { return false; }
+            dialog.style.alignItems = 'flex-start';
+            dialog.scrollTop = 0;
+            return true;
+        })()`,
+    },
 ];
 
 /**
@@ -171,6 +195,28 @@ const ANNOTATION_SPECS = {
     team: {
         en: [{ selector: 'main h1', label: 'Team members and roles' }],
         ar: [{ selector: 'main h1', label: 'أعضاء الفريق والأدوار' }],
+    },
+    roles: {
+        en: [
+            { selector: 'main h1', label: 'Built-in and custom roles' },
+            { selector: 'main table', label: 'Permissions and members per role' },
+        ],
+        ar: [
+            { selector: 'main h1', label: 'الأدوار الأساسية والمخصصة' },
+            { selector: 'main table', label: 'عدد الصلاحيات والأعضاء لكل دور' },
+        ],
+    },
+    'roles-matrix': {
+        en: [
+            { selector: '[role="dialog"] h3', label: 'Name the role' },
+            { selector: '#roleForm select', label: 'Start from a template' },
+            { selector: '#roleForm input[type="text"]', label: 'Pick a clear role name' },
+        ],
+        ar: [
+            { selector: '[role="dialog"] h3', label: 'اسم الدور ووصفه' },
+            { selector: '#roleForm select', label: 'ابدأ من قالب جاهز' },
+            { selector: '#roleForm input[type="text"]', label: 'اسم واضح للدور' },
+        ],
     },
     settings: {
         en: [{ selector: 'main h1', label: 'Workspace settings' }],
@@ -466,6 +512,19 @@ async function main() {
                     results.push({ slug: shot.slug, kind: 'light', ok: false, error: 'page stayed blank' });
                     console.log(`  ✗ ${shot.slug}: page stayed blank`);
                     continue;
+                }
+
+                /* Some screens (a modal, a drawer) need one interaction before
+                   they show what the guide documents. */
+                if (shot.open) {
+                    const opened = await evalJs(shot.open);
+                    if (!opened) { console.log(`    ↳ ${shot.slug}: open step matched nothing`); }
+                    await sleep(900);
+                }
+
+                if (shot.after) {
+                    await evalJs(shot.after);
+                    await sleep(400);
                 }
 
                 if (mode !== 'dark') {

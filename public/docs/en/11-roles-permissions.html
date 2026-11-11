@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>11 · Roles &amp; Permissions · AYDRA</title>
+<meta name="description" content="Create custom roles inside your workspace, choose view and edit permissions per module, and assign them to your team safely.">
+<link rel="stylesheet" href="../assets/docs.css?v=4">
+<!-- docs:meta -->
+<link rel="canonical" href="https://crm.business-os.tech/docs/en/11-roles-permissions.html">
+<link rel="alternate" hreflang="ar" href="https://crm.business-os.tech/docs/ar/11-roles-permissions.html">
+<link rel="alternate" hreflang="en" href="https://crm.business-os.tech/docs/en/11-roles-permissions.html">
+<link rel="alternate" hreflang="x-default" href="https://crm.business-os.tech/docs/en/11-roles-permissions.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AYDRA">
+<meta property="og:title" content="Roles &amp; Permissions · AYDRA">
+<meta property="og:description" content="Create custom roles, choose view and edit permissions per module, and assign them to the team.">
+<meta property="og:url" content="https://crm.business-os.tech/docs/en/11-roles-permissions.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="ar_AR">
+<meta property="og:image" content="https://crm.business-os.tech/docs/assets/img/en/roles.webp">
+<meta property="og:image:alt" content="Roles &amp; Permissions · AYDRA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Roles &amp; Permissions · AYDRA">
+<meta name="twitter:description" content="Create custom roles, choose view and edit permissions per module, and assign them to the team.">
+<meta name="twitter:image" content="https://crm.business-os.tech/docs/assets/img/en/roles.webp">
+<meta name="docs:lang" content="en">
+<meta name="docs:updated" content="2026-11-11">
+<!-- /docs:meta -->
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" href="index.html"><span class="dot"></span> AYDRA <small>User Guides</small></a>
+    <div class="topbar-actions">
+        <a class="btn" href="index.html">All guides</a>
+        <button id="theme-toggle" class="btn" type="button" aria-label="Toggle theme">🌙</button>
+        <button class="btn" type="button" onclick="window.print()">🖨️ Print</button>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <h3 id="guides">Guides</h3>
+        <nav class="doc-nav" id="doc-nav"></nav>
+        <div class="toc">
+            <h3 id="on-this-page">On this page</h3>
+            <ul id="page-toc"></ul>
+        </div>
+    </aside>
+
+    <main class="content">
+        <article>
+            <span class="eyebrow">Guide 11 · Account admin</span>
+            <h1>Roles &amp; Permissions</h1>
+            <p class="lead">A role decides what each member can see and change inside the workspace. This guide covers how permissions work, the three built-in roles, custom roles built from the five templates, and how to assign them without opening doors you do not need.</p>
+
+            <div class="callout warn">
+                <span class="ico">⚠️</span>
+                <p>The <strong>Roles &amp; permissions</strong> and <strong>Team</strong> screens are available to account administrators only. A role never unlocks a feature your plan does not include; it decides what a member can do with the features you have.</p>
+            </div>
+
+            <h2 id="1-how-permissions-work">1. How permissions work</h2>
+            <p>Every role is built from permissions on a <strong>module</strong>, with exactly two actions:</p>
+            <ul>
+                <li><strong>View:</strong> open the screen, read its data and export what the screen allows.</li>
+                <li><strong>Create &amp; edit:</strong> add, edit and delete inside the module.</li>
+            </ul>
+            <p>The permission is checked on the server for every request, based on the route — hiding a button is only a convenience on top of that check. A route that belongs to no known module is denied automatically, and an unknown or deleted role grants nothing.</p>
+
+            <h3 id="plan-versus-role">Plan versus role</h3>
+            <p>The plan decides which features the workspace has at all (member count, channels, AI, the API…). The role decides what a member can do <em>within</em> what is available. For example: if the plan does not include the API, no role can open it. If it does, only a role with <strong>Workspace settings</strong> can open it.</p>
+
+            <h2 id="2-the-three-built-in-roles">2. The three built-in roles</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/roles.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/roles.webp?v=4" alt="Roles & permissions: the built-in roles and your custom roles with the number of permissions and members for each." decoding="async" loading="lazy" width="1600" height="1000">
+                </a>
+                <figcaption>Roles &amp; permissions: the built-in roles and your custom roles with the number of permissions and members for each.</figcaption>
+            </figure>
+
+            <p>Open <strong>Settings → Team → Roles &amp; permissions</strong> (or use the <strong>Roles &amp; permissions</strong> button at the top of the Team page). The built-in roles appear first with a <strong>Built-in</strong> badge, followed by the roles your workspace created.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Role</th><th>Permissions</th><th>Cannot</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Administrator</strong></td><td>Every module and action, including team, billing, the audit log and privacy</td><td>Nothing inside the workspace</td></tr>
+                        <tr><td><strong>Staff</strong></td><td>Daily work across all modules: conversations, contacts, leads, sales, marketing, automation, reports</td><td>Team and roles, audit log, privacy and GDPR</td></tr>
+                        <tr><td><strong>Viewer</strong></td><td>View and reports across all modules, with no editing</td><td>Creating, editing and deleting, plus team, audit log and privacy</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>Built-in roles cannot be edited or deleted: the system relies on them, especially for last-administrator protection. Need different behaviour? Create a custom role and move the members to it.</p>
+            <div class="callout tip">
+                <span class="ico">💡</span>
+                <p>Most teams can start with: <strong>Administrator</strong> for the owner or operations lead, <strong>Staff</strong> for sales and support, and <strong>Viewer</strong> for people who only follow along. Add a custom role when someone needs something different.</p>
+            </div>
+
+            <h2 id="3-create-a-custom-role">3. Create a custom role</h2>
+            <figure class="shot">
+                <a href="../assets/img/en/roles-matrix.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/en/roles-matrix.webp?v=4" alt="The role editor: start from a template, name the role, then choose View or Create & edit for each module." decoding="async" loading="lazy" width="1600" height="1000">
+                </a>
+                <figcaption>The role editor: start from a template, name the role, then choose View or Create &amp; edit for each module.</figcaption>
+            </figure>
+
+            <ol class="steps">
+                <li>On the <strong>Roles &amp; permissions</strong> page, click <strong>Add role</strong>.</li>
+                <li>Pick a <strong>template</strong> (see the next section) or <strong>start from scratch</strong>.</li>
+                <li>Give it a clear, role-based name such as “Sales supervisor” and a short description that helps the other administrators.</li>
+                <li>For each module, tick <strong>View</strong> and/or <strong>Create &amp; edit</strong>. Ticking “Create &amp; edit” also ticks “View”; unticking “View” also removes edit.</li>
+                <li><strong>Administrators only</strong> modules are shown disabled and cannot be granted to a custom role: team and roles, audit log, privacy and GDPR.</li>
+                <li>Save. The role appears in every role picker immediately, with no sign-out required.</li>
+            </ol>
+
+            <h3 id="modules-you-can-grant">Modules you can grant</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Area</th><th>Modules</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Inbox</strong></td><td>Inbox (conversations, replies and labels)</td></tr>
+                        <tr><td><strong>Contacts</strong></td><td>Contacts &amp; segments</td></tr>
+                        <tr><td><strong>Sales</strong></td><td>Leads &amp; tasks · Quotes &amp; products · Invoices · Bookings &amp; forms · Call log · Sequences · AI SDR · E-commerce</td></tr>
+                        <tr><td><strong>Marketing</strong></td><td>Campaigns · WhatsApp marketing · SMS gateways · Email server · Social media</td></tr>
+                        <tr><td><strong>Automation</strong></td><td>Automations</td></tr>
+                        <tr><td><strong>Reports</strong></td><td>Reports &amp; exports</td></tr>
+                        <tr><td><strong>Settings</strong></td><td>AI settings · Workspace settings (including the API, webhooks and support) · Billing &amp; subscription · Data export · Team &amp; roles <sup>*</sup> · Audit log <sup>*</sup> · Privacy &amp; GDPR <sup>*</sup></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><sup>*</sup> Administrators only. They stay in the matrix because the Administrator role owns them, but they are disabled for every custom role.</p>
+            <p>Custom roles are stored per workspace; another workspace cannot see your roles or assign them to its members.</p>
+
+            <h2 id="4-the-five-templates">4. The five templates</h2>
+            <p>Templates are a starting point, not roles you use as-is: choosing one copies its permissions into the new role, and you can adjust them freely. Editing the role later changes neither the template nor any other role.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Template</th><th>What it grants by default</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Supervisor</strong></td><td>Almost every module except billing, privacy and the audit log. Suited to a team lead who needs the daily work without the owner’s financial powers.</td></tr>
+                        <tr><td><strong>Sales agent</strong></td><td>Inbox, contacts, leads, quotes, bookings, calls and sequences (view and edit), plus view access to invoices and reports, and workspace settings.</td></tr>
+                        <tr><td><strong>Support agent</strong></td><td>Inbox and contacts (view and edit), view access to leads and bookings, and workspace settings. No campaigns or billing.</td></tr>
+                        <tr><td><strong>Marketer</strong></td><td>View contacts; edit campaigns, WhatsApp marketing, SMS, the email server, social media and automation; view reports and workspace settings.</td></tr>
+                        <tr><td><strong>Accountant</strong></td><td>Invoices (view and edit), view access to quotes, reports and billing, plus data export. No conversations, campaigns or team.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="callout warn">
+                <span class="ico">⚠️</span>
+                <p>The Accountant template only grants <strong>view</strong> access to billing. Upgrading or downgrading the plan, or cancelling the subscription, requires <strong>Create &amp; edit</strong> on billing — grant it only to whoever actually manages payment.</p>
+            </div>
+
+            <h2 id="5-assign-a-role-to-team-members">5. Assign a role to team members</h2>
+            <p>From <strong>Settings → Team</strong>:</p>
+            <ul>
+                <li>When using <strong>Invite by email</strong> or <strong>Add member</strong>, choose the role before sending or saving (Staff is the default).</li>
+                <li>To change an existing member, click the pencil icon next to them, pick the role and save.</li>
+                <li>The role appears as a badge next to every member in the team table, and the new permissions apply to their very next request.</li>
+                <li>Pending invitations keep the chosen role until the member accepts or the invitation is revoked.</li>
+            </ul>
+            <div class="callout tip">
+                <span class="ico">💡</span>
+                <p>Before changing a member’s role, reassign their open conversations, tasks and deals to a colleague. Changing the role keeps historical data, but it may lock that member out of it the next day.</p>
+            </div>
+
+            <h2 id="6-edit-or-delete-a-role">6. Edit or delete a role</h2>
+            <ul>
+                <li><strong>Edit:</strong> the pencil icon on a custom role. Change the name, description or permissions, and the change applies immediately to everyone holding the role.</li>
+                <li><strong>Delete:</strong> the trash icon. A role that is still in use cannot be deleted; reassign its members to another role first. The button is disabled and explains why on hover.</li>
+                <li>Built-in roles have no edit or delete buttons. When you need different behaviour, create a custom role and move the members to it.</li>
+            </ul>
+
+            <h2 id="7-keeping-the-account-safe">7. Keeping the account safe</h2>
+            <ul>
+                <li>There must always be <strong>at least one administrator</strong>: the last Administrator cannot be removed or demoted, so administration never locks everyone out.</li>
+                <li>Grant Administrator only to people who genuinely manage the team and billing.</li>
+                <li>Review roles regularly: someone who moved from sales to accounting should move to the matching role instead of keeping their old permissions.</li>
+                <li>The audit log and privacy stay with administrators, so a custom role cannot erase records or run erasure requests.</li>
+            </ul>
+
+            <h2 id="8-faq">8. FAQ</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Question</th><th>Answer</th></tr></thead>
+                    <tbody>
+                        <tr><td>Can a custom role manage the team or roles?</td><td>No. Team, audit log and privacy are “administrators only” modules and stay with the account administrator.</td></tr>
+                        <tr><td>Can I give the accountant billing access?</td><td>Yes: the Accountant template grants view access to billing. Changing or cancelling the subscription requires Create &amp; edit on billing.</td></tr>
+                        <tr><td>Why can I not see a screen my role allows?</td><td>Check the plan first (is the feature included?), then the current workspace. A permission never exceeds the plan.</td></tr>
+                        <tr><td>What if a role is deleted while still in use?</td><td>The UI prevents it. If it happens outside the UI, the member loses all permissions and is denied by default until a valid role is assigned.</td></tr>
+                        <tr><td>Are roles per workspace?</td><td>Yes. Every workspace owns its custom roles, and a role from another workspace can never be used.</td></tr>
+                        <tr><td>Do role permissions cover API keys?</td><td>No. API keys have their own scopes and are managed from workspace settings.</td></tr>
+                        <tr><td>Does hiding a screen protect the data?</td><td>The server checks the permission on every request, so hiding buttons and links is not the only protection — but still avoid sharing data a role does not need.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout ok">
+                <span class="ico">✅</span>
+                <p>That is it. To set up channels and the team from scratch, see the <a href="10-admin-troubleshooting.html">account admin guide</a>; for the meaning of each term, open the <a href="12-glossary.html">glossary</a>.</p>
+            </div>
+        </article>
+
+        <footer class="doc-footer">
+            <span class="updated">Last updated 11 November 2026 · <a href="/app/support" target="_blank" rel="noopener">Report an issue</a></span>
+            <span>AYDRA · Version 1.0</span>
+            <span class="pager"><a class="btn" href="10-admin-troubleshooting.html">← Previous</a><a class="btn btn-primary" href="11-whatsapp-coexistence.html">Next: WhatsApp Business app →</a></span>
+        </footer>
+    </main>
+</div>
+
+<script src="../assets/docs.js?v=4"></script>
+</body>
+</html>

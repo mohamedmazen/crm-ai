@@ -16,6 +16,7 @@
         { file: '08-automation-ai.html', ar: 'الأتمتة والذكاء الاصطناعي', en: 'Automation & AI' },
         { file: '09-reports.html', ar: 'التقارير والتحليلات', en: 'Reports & Analytics' },
         { file: '10-admin-troubleshooting.html', ar: 'إدارة الحساب واستكشاف الأخطاء', en: 'Account Admin & Troubleshooting' },
+        { file: '11-roles-permissions.html', ar: 'الأدوار والصلاحيات', en: 'Roles & Permissions' },
         { file: '11-whatsapp-coexistence.html', ar: 'تشغيل تطبيق واتساب للأعمال', en: 'WhatsApp Business App (Coexistence)' },
         { file: '12-glossary.html', ar: 'المصطلحات', en: 'Glossary' }
     ];

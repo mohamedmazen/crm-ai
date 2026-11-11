@@ -23,10 +23,10 @@ const DOCS = join(ROOT, 'public', 'docs');
 
 const SITE = 'https://crm.business-os.tech';
 const VERSION = '4';
-const LAST_UPDATED = '2026-11-10';
+const LAST_UPDATED = '2026-11-11';
 const UPDATED_LABEL = {
-    en: 'Last updated 10 November 2026',
-    ar: 'آخر تحديث: 10 نوفمبر 2026',
+    en: 'Last updated 11 November 2026',
+    ar: 'آخر تحديث: 11 نوفمبر 2026',
 };
 const REPORT_LABEL = {
     en: 'Report an issue',
@@ -47,6 +47,7 @@ const MANIFEST = [
     { file: '08-automation-ai.html', en: 'Automation & AI', ar: 'الأتمتة والذكاء الاصطناعي', descEn: 'Build automation scenarios, triggers and actions, and configure AI providers and chatbots.', descAr: 'ابنِ سيناريوهات الأتمتة والمشغلات والإجراءات وأعدّ مزوّدي الذكاء الاصطناعي والروبوتات.', audEn: 'Manager / marketing', audAr: 'مدير / تسويق' },
     { file: '09-reports.html', en: 'Reports & Analytics', ar: 'التقارير والتحليلات', descEn: 'Sales, conversations, campaigns, automation, AI and social reports, plus exports.', descAr: 'تقارير المبيعات والمحادثات والحملات والأتمتة والذكاء الاصطناعي والسوشيال والتصدير.', audEn: 'Manager', audAr: 'مدير' },
     { file: '10-admin-troubleshooting.html', en: 'Account Admin & Troubleshooting', ar: 'إدارة الحساب واستكشاف الأخطاء', descEn: 'Team and roles, subscription and billing, the API, security and common problems.', descAr: 'الفريق والأدوار والاشتراك والفواتير وواجهة البرمجة والأمان والمشاكل الشائعة.', audEn: 'Account admin', audAr: 'مدير الحساب' },
+    { file: '11-roles-permissions.html', en: 'Roles & Permissions', ar: 'الأدوار والصلاحيات', descEn: 'Create custom roles, choose view and edit permissions per module, and assign them to the team.', descAr: 'أنشئ أدوارًا مخصصة وحدّد صلاحيات العرض والإنشاء والتعديل لكل وحدة ثم عيّنها للفريق.', audEn: 'Account admin', audAr: 'مدير الحساب' },
     { file: '11-whatsapp-coexistence.html', en: 'WhatsApp Business App (Coexistence)', ar: 'تشغيل تطبيق واتساب للأعمال', descEn: 'Connect your existing WhatsApp Business app number while the app keeps working.', descAr: 'اربط رقم تطبيق واتساب للأعمال الحالي مع استمرار عمل التطبيق.', audEn: 'Account admin', audAr: 'مدير الحساب' },
     { file: '12-glossary.html', en: 'Glossary', ar: 'المصطلحات', descEn: 'Every AYDRA term in one place: contacts, leads, stages, campaigns, sequences, agents and plans.', descAr: 'كل مصطلحات AYDRA في مكان واحد: جهات الاتصال والليدز والمراحل والحملات والتسلسلات والوكلاء والخطط.', audEn: 'All users', audAr: 'كل المستخدمين' },
 ];
@@ -285,8 +286,8 @@ function buildIndexPages() {
             file: 'index.html',
             title: lang === 'ar' ? 'أدلة المستخدم · AYDRA' : 'User Guides · AYDRA',
             description: lang === 'ar'
-                ? 'أدلة مستخدم AYDRA: الإعداد وصندوق الوارد وجهات الاتصال والليدز والمبيعات والتسويق والأتمتة والتقارير والإدارة وتشغيل واتساب والمصطلحات.'
-                : 'AYDRA user manuals: setup, inbox, contacts, leads, sales, marketing, automation, reports, account admin, WhatsApp coexistence and a glossary.',
+                ? 'أدلة مستخدم AYDRA: الإعداد وصندوق الوارد وجهات الاتصال والليدز والمبيعات والتسويق والأتمتة والتقارير والإدارة والأدوار والصلاحيات وتشغيل واتساب والمصطلحات.'
+                : 'AYDRA user manuals: setup, inbox, contacts, leads, sales, marketing, automation, reports, account admin, roles and permissions, WhatsApp coexistence and a glossary.',
             hero: { lang, slug: 'dashboard' },
         });
         // Index pages should not advertise themselves as needing cache busting.

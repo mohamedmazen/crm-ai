@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>11 · الأدوار والصلاحيات · AYDRA</title>
+<meta name="description" content="أنشئ أدوارًا مخصصة داخل مساحة العمل، وحدّد صلاحيات العرض والإنشاء والتعديل لكل وحدة، ثم عيّنها لأعضاء الفريق.">
+<link rel="stylesheet" href="../assets/docs.css?v=4">
+<!-- docs:meta -->
+<link rel="canonical" href="https://crm.business-os.tech/docs/ar/11-roles-permissions.html">
+<link rel="alternate" hreflang="ar" href="https://crm.business-os.tech/docs/ar/11-roles-permissions.html">
+<link rel="alternate" hreflang="en" href="https://crm.business-os.tech/docs/en/11-roles-permissions.html">
+<link rel="alternate" hreflang="x-default" href="https://crm.business-os.tech/docs/en/11-roles-permissions.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AYDRA">
+<meta property="og:title" content="الأدوار والصلاحيات · AYDRA">
+<meta property="og:description" content="أنشئ أدوارًا مخصصة وحدّد صلاحيات العرض والإنشاء والتعديل لكل وحدة ثم عيّنها للفريق.">
+<meta property="og:url" content="https://crm.business-os.tech/docs/ar/11-roles-permissions.html">
+<meta property="og:locale" content="ar_AR">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://crm.business-os.tech/docs/assets/img/ar/roles.webp">
+<meta property="og:image:alt" content="الأدوار والصلاحيات · AYDRA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="الأدوار والصلاحيات · AYDRA">
+<meta name="twitter:description" content="أنشئ أدوارًا مخصصة وحدّد صلاحيات العرض والإنشاء والتعديل لكل وحدة ثم عيّنها للفريق.">
+<meta name="twitter:image" content="https://crm.business-os.tech/docs/assets/img/ar/roles.webp">
+<meta name="docs:lang" content="ar">
+<meta name="docs:updated" content="2026-11-11">
+<!-- /docs:meta -->
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand" href="index.html"><span class="dot"></span> AYDRA <small>دليل المستخدم</small></a>
+    <div class="topbar-actions">
+        <a class="btn" href="index.html">كل الأدلة</a>
+        <button id="theme-toggle" class="btn" type="button" aria-label="تبديل الوضع">🌙</button>
+        <button class="btn" type="button" onclick="window.print()">🖨️ طباعة</button>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <h3 id="الأدلة">الأدلة</h3>
+        <nav class="doc-nav" id="doc-nav"></nav>
+        <div class="toc">
+            <h3 id="في-هذه-الصفحة">في هذه الصفحة</h3>
+            <ul id="page-toc"></ul>
+        </div>
+    </aside>
+
+    <main class="content">
+        <article>
+            <span class="eyebrow">الدليل 11 · مدير الحساب</span>
+            <h1>الأدوار والصلاحيات</h1>
+            <p class="lead">الدور يحدد ما يستطيع كل عضو رؤيته وتعديله داخل مساحة العمل. في هذا الدليل: كيف تعمل الصلاحيات، الأدوار الثلاثة الأساسية، إنشاء أدوار مخصصة من القوالب الخمسة الجاهزة، وتعيينها للفريق دون فتح أبواب لا تحتاجها.</p>
+
+            <div class="callout warn">
+                <span class="ico">⚠️</span>
+                <p>شاشة <strong>الأدوار والصلاحيات</strong> وشاشة <strong>الفريق</strong> متاحتان لمدير الحساب فقط. الدور لا يمنح ميزة غير مشمولة في الباقة؛ هو يحدد ما يستطيع العضو فعله داخل الميزات المتاحة.</p>
+            </div>
+
+            <h2 id="1-كيف-تعمل-الصلاحيات">1. كيف تعمل الصلاحيات</h2>
+            <p>يتكوّن كل دور من صلاحيات على مستوى <strong>الوحدة</strong>، وبإجراءين فقط:</p>
+            <ul>
+                <li><strong>عرض (View):</strong> فتح الشاشة والاطّلاع على بياناتها وتصدير ما تسمح به.</li>
+                <li><strong>إنشاء وتعديل (Create &amp; edit):</strong> إضافة وتعديل وحذف داخل الوحدة.</li>
+            </ul>
+            <p>تُفحص الصلاحية في الخادم عند كل طلب حسب المسار، وليس بإخفاء الأزرار فقط. أي مسار لا ينتمي إلى وحدة معروفة يُرفض تلقائيًا، وأي دور غير معروف أو محذوف لا يمنح أي صلاحية.</p>
+
+            <h3 id="العلاقة-بين-الباقة-والدور">العلاقة بين الباقة والدور</h3>
+            <p>الباقة تحدد الميزات المتاحة للمساحة كلها (عدد الأعضاء، القنوات، الذكاء الاصطناعي، الـAPI…)، والدور يحدد ما يستطيع العضو فعله <em>داخل</em> المتاح. مثال: لو لم تشمل الباقة الـAPI، فلن يفتحه أي دور. ولو شملته، فلن يفتحه إلا دور يملك صلاحية <strong>إعدادات مساحة العمل</strong>.</p>
+
+            <h2 id="2-الأدوار-الثلاثة-الأساسية">2. الأدوار الثلاثة الأساسية</h2>
+            <figure class="shot">
+                <a href="../assets/img/ar/roles.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/ar/roles.webp?v=4" alt="الأدوار والصلاحيات: الأدوار الأساسية وأدوارك المخصصة مع عدد الصلاحيات والأعضاء لكل دور." decoding="async" loading="lazy" width="1600" height="1000">
+                </a>
+                <figcaption>الأدوار والصلاحيات: الأدوار الأساسية وأدوارك المخصصة مع عدد الصلاحيات والأعضاء لكل دور.</figcaption>
+            </figure>
+
+            <p>من <strong>الإعدادات ← الفريق ← الأدوار والصلاحيات</strong> (أو من زر <strong>الأدوار والصلاحيات</strong> أعلى صفحة الفريق). تظهر الأدوار الأساسية أولًا بشارة <strong>دور أساسي</strong>، ثم الأدوار التي أنشأتها مساحتك.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>الدور</th><th>الصلاحيات</th><th>لا يستطيع</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>مسؤول (Administrator)</strong></td><td>كل الوحدات والإجراءات، بما فيها الفريق والفوترة وسجل التدقيق والخصوصية</td><td>لا شيء داخل المساحة</td></tr>
+                        <tr><td><strong>موظف (Staff)</strong></td><td>العمل اليومي في كل الوحدات: المحادثات، جهات الاتصال، الليدز، المبيعات، التسويق، الأتمتة، التقارير</td><td>الفريق والأدوار، سجل التدقيق، الخصوصية وGDPR</td></tr>
+                        <tr><td><strong>مشاهد (Viewer)</strong></td><td>العرض والتقارير في كل الوحدات، بدون أي تعديل</td><td>الإنشاء والتعديل والحذف، والفريق وسجل التدقيق والخصوصية</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>لا يمكن تعديل الأدوار الأساسية أو حذفها: النظام يعتمد عليها، خصوصًا في حماية آخر مدير. تحتاج سلوكًا مختلفًا؟ أنشئ دورًا مخصصًا وانقل إليه الأعضاء.</p>
+            <div class="callout tip">
+                <span class="ico">💡</span>
+                <p>لأغلب الفرق تكفي البداية: <strong>مسؤول</strong> للمالك أو مدير التشغيل، <strong>موظف</strong> لفريق المبيعات والدعم، و<strong>مشاهد</strong> لمن يتابع فقط. أضف دورًا مخصصًا عندما يختلف احتياج شخص عن هذه الحالات.</p>
+            </div>
+
+            <h2 id="3-إنشاء-دور-مخصص">3. إنشاء دور مخصص</h2>
+            <figure class="shot">
+                <a href="../assets/img/ar/roles-matrix.webp?v=4" target="_blank" rel="noopener">
+                    <img src="../assets/img/ar/roles-matrix.webp?v=4" alt="محرّر الدور: ابدأ من قالب جاهز، اكتب اسم الدور ووصفه، ثم حدّد عرض أو إنشاء وتعديل لكل وحدة." decoding="async" loading="lazy" width="1600" height="1000">
+                </a>
+                <figcaption>محرّر الدور: ابدأ من قالب جاهز، اكتب اسم الدور ووصفه، ثم حدّد «عرض» أو «إنشاء وتعديل» لكل وحدة.</figcaption>
+            </figure>
+
+            <ol class="steps">
+                <li>من صفحة <strong>الأدوار والصلاحيات</strong> اضغط <strong>إضافة دور</strong>.</li>
+                <li>اختر <strong>قالبًا جاهزًا</strong> (انظر القسم التالي) أو <strong>ابدأ من الصفر</strong>.</li>
+                <li>اكتب اسمًا واضحًا يدل على الوظيفة، مثل «مشرف مبيعات»، ووصفًا مختصرًا يساعد بقية المدراء.</li>
+                <li>لكل وحدة فعّل <strong>عرض</strong> و/أو <strong>إنشاء وتعديل</strong>. تفعيل «إنشاء وتعديل» يفعّل «عرض» تلقائيًا، وإلغاء «عرض» يلغي «إنشاء وتعديل» معه.</li>
+                <li>وحدات <strong>«للمسؤولين فقط»</strong> تظهر معطّلة ولا يمكن منحها لدور مخصص: الفريق والأدوار، سجل التدقيق، الخصوصية وGDPR.</li>
+                <li>احفظ. يظهر الدور فورًا في قوائم تعيين الأدوار، دون الحاجة لتسجيل خروج ودخول.</li>
+            </ol>
+
+            <h3 id="الوحدات-المتاحة-للتعيين">الوحدات المتاحة للتعيين</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>المنطقة</th><th>الوحدات</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>صندوق الوارد</strong></td><td>صندوق الوارد (المحادثات والردود والتسميات)</td></tr>
+                        <tr><td><strong>جهات الاتصال</strong></td><td>جهات الاتصال والشرائح</td></tr>
+                        <tr><td><strong>المبيعات</strong></td><td>العملاء المحتملون والمهام · عروض الأسعار والمنتجات · الفواتير · الحجز والنماذج · سجل المكالمات · تسلسلات المتابعة · المندوب الذكي (AI SDR) · التجارة الإلكترونية</td></tr>
+                        <tr><td><strong>التسويق</strong></td><td>الحملات · تسويق واتساب · بوابات SMS · خادم البريد · التواصل الاجتماعي</td></tr>
+                        <tr><td><strong>الأتمتة</strong></td><td>الأتمتة</td></tr>
+                        <tr><td><strong>التقارير</strong></td><td>التقارير والتصدير</td></tr>
+                        <tr><td><strong>الإعدادات</strong></td><td>إعدادات AI · إعدادات مساحة العمل (بما فيها الـAPI والـWebhooks والدعم) · الفوترة والاشتراك · تصدير البيانات · الفريق والأدوار <sup>*</sup> · سجل التدقيق <sup>*</sup> · الخصوصية وGDPR <sup>*</sup></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><sup>*</sup> للمسؤولين فقط. تبقى هذه الوحدات في المصفوفة لأن دور مسؤول (Administrator) يملكها، لكنها معطّلة لأي دور مخصص.</p>
+            <p>الأدوار المخصصة تُحفظ لكل مساحة عمل على حدة؛ لا ترى مساحة عمل أخرى أدوارك ولا تستطيع تعيينها لأعضائها.</p>
+
+            <h2 id="4-القوالب-الخمسة-الجاهزة">4. القوالب الخمسة الجاهزة</h2>
+            <p>القوالب نقطة بداية وليست أدوارًا جاهزة للاستخدام المباشر: عند اختيار قالب تُنسخ صلاحياته إلى الدور الجديد، ثم تعدّلها كما تشاء. تعديل الدور لاحقًا لا يغيّر القالب ولا أي دور آخر.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>القالب</th><th>ما يمنحه افتراضيًا</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>مشرف (Supervisor)</strong></td><td>كل الوحدات تقريبًا ما عدا الفوترة والخصوصية وسجل التدقيق. مناسب لمدير فريق يحتاج كل العمل اليومي دون صلاحيات المالك المالية.</td></tr>
+                        <tr><td><strong>مندوب مبيعات (Sales agent)</strong></td><td>صندوق الوارد وجهات الاتصال والليدز وعروض الأسعار والحجز والمكالمات وتسلسلات المتابعة (عرض وتعديل)، مع عرض الفواتير والتقارير، وإعدادات مساحة العمل.</td></tr>
+                        <tr><td><strong>موظف دعم (Support agent)</strong></td><td>صندوق الوارد وجهات الاتصال (عرض وتعديل)، وعرض الليدز والحجز، وإعدادات مساحة العمل. لا يمسّ الحملات أو الفوترة.</td></tr>
+                        <tr><td><strong>مسوّق (Marketer)</strong></td><td>عرض جهات الاتصال، وتعديل الحملات وتسويق واتساب والـSMS وخادم البريد والسوشيال والأتمتة، مع عرض التقارير وإعدادات مساحة العمل.</td></tr>
+                        <tr><td><strong>محاسب (Accountant)</strong></td><td>الفواتير (عرض وتعديل)، وعرض عروض الأسعار والتقارير والفوترة، وتصدير البيانات. لا يرى المحادثات أو الحملات أو الفريق.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="callout warn">
+                <span class="ico">⚠️</span>
+                <p>قالب المحاسب يمنح <strong>عرض</strong> الفوترة فقط. ترقية أو تخفيض الباقة أو إلغاء الاشتراك يتطلب صلاحية <strong>إنشاء وتعديل</strong> الفوترة والاشتراك — لا تمنحها إلا لمن يدير الدفع فعليًا.</p>
+            </div>
+
+            <h2 id="5-تعيين-الدور-لأعضاء-الفريق">5. تعيين الدور لأعضاء الفريق</h2>
+            <p>من <strong>الإعدادات ← الفريق</strong>:</p>
+            <ul>
+                <li>عند <strong>دعوة بالبريد</strong> أو <strong>إضافة عضو</strong> اختر الدور قبل الإرسال أو الحفظ (موظف/Staff افتراضيًا).</li>
+                <li>لتغيير دور عضو موجود اضغط أيقونة القلم بجانبه، اختر الدور، ثم احفظ.</li>
+                <li>يظهر الدور كشارة بجانب كل عضو في جدول الفريق، وتُطبَّق الصلاحيات الجديدة على طلبه التالي مباشرة.</li>
+                <li>الدعوات المعلّقة تحتفظ بالدور المختار حتى يقبلها العضو أو تُلغى.</li>
+            </ul>
+            <div class="callout tip">
+                <span class="ico">💡</span>
+                <p>قبل تغيير دور عضو، أعد إسناد محادثاته المفتوحة ومهامه وصفقاته إلى زميل آخر. تغيير الدور لا يحذف بياناته التاريخية، لكنه قد يمنعه من الوصول إليها في اليوم التالي.</p>
+            </div>
+
+            <h2 id="6-تعديل-دور-أو-حذفه">6. تعديل دور أو حذفه</h2>
+            <ul>
+                <li><strong>تعديل:</strong> أيقونة القلم على الدور المخصص. عدّل الاسم أو الوصف أو الصلاحيات، وسيسري التغيير فورًا على كل من يحمل الدور.</li>
+                <li><strong>حذف:</strong> أيقونة سلة المهملات. لا يمكن حذف دور ما زال مستخدمًا؛ أعد تعيين أعضائه إلى دور آخر أولًا. يظهر الزر معطّلًا مع سبب عند التحويم.</li>
+                <li>الأدوار الأساسية بلا أزرار تعديل أو حذف. عند الحاجة إلى سلوك مختلف، أنشئ دورًا مخصصًا وانقل الأعضاء إليه.</li>
+            </ul>
+
+            <h2 id="7-حماية-الحساب">7. حماية الحساب</h2>
+            <ul>
+                <li>يجب أن يبقى <strong>مدير واحد على الأقل</strong> في المساحة: لا يمكن حذف آخر مسؤول (Administrator) أو تخفيض دوره، حتى لا تُقفل الإدارة على الجميع.</li>
+                <li>لا تمنح دور <strong>مسؤول (Administrator)</strong> إلا لمن يدير الفريق والفوترة فعليًا.</li>
+                <li>راجع الأدوار دوريًا: من انتقل من المبيعات إلى المحاسبة يجب أن ينتقل إلى الدور المناسب، لا أن يحتفظ بصلاحياته القديمة.</li>
+                <li>سجل التدقيق والخصوصية يبقيان للمدير فقط، حتى لا يستطيع دور مخصص حذف السجلات أو تنفيذ طلبات المحو.</li>
+            </ul>
+
+            <h2 id="8-أسئلة-متكررة">8. أسئلة متكررة</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>السؤال</th><th>الإجابة</th></tr></thead>
+                    <tbody>
+                        <tr><td>هل يمكن لدور مخصص إدارة الفريق أو الأدوار؟</td><td>لا. الفريق وسجل التدقيق والخصوصية وحدات «للمسؤولين فقط»، وتبقى لمدير الحساب.</td></tr>
+                        <tr><td>هل أستطيع منح المحاسب صلاحية الفوترة؟</td><td>نعم: قالب المحاسب يمنح عرض الفوترة. أما تغيير الباقة أو إلغاء الاشتراك فيحتاج صلاحية إنشاء وتعديل الفوترة.</td></tr>
+                        <tr><td>لماذا لا أرى شاشة رغم أن دوري يسمح بها؟</td><td>تحقق أولًا من الباقة (هل الميزة مشمولة؟)، ثم من مساحة العمل الحالية. الصلاحية لا تتجاوز حدود الباقة.</td></tr>
+                        <tr><td>ماذا يحدث لو حُذف دور ما زال مستخدمًا؟</td><td>الواجهة تمنع ذلك. لو حُذف خارجها، يفقد حامله كل الصلاحيات ويُمنع افتراضيًا حتى يُعيَّن له دور صالح.</td></tr>
+                        <tr><td>هل الأدوار خاصة بكل مساحة عمل؟</td><td>نعم. كل مساحة عمل تملك أدوارها المخصصة، ولا يمكن استخدام دور من مساحة أخرى.</td></tr>
+                        <tr><td>هل صلاحيات الدور تشمل مفاتيح API؟</td><td>لا. مفاتيح API لها صلاحياتها المستقلة (Scopes) وتُدار من إعدادات مساحة العمل.</td></tr>
+                        <tr><td>هل إخفاء الشاشة يعني أن البيانات محمية؟</td><td>الخادم يفحص الصلاحية في كل طلب، فإخفاء الأزرار والروابط ليس الحماية الوحيدة. ومع ذلك، لا تشارك بيانات لا يحتاجها الدور.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout ok">
+                <span class="ico">✅</span>
+                <p>جاهز. لربط القنوات وضبط الفريق من الصفر راجع <a href="10-admin-troubleshooting.html">دليل إدارة الحساب</a>، ولمعرفة معنى كل مصطلح افتح <a href="12-glossary.html">المصطلحات</a>.</p>
+            </div>
+        </article>
+
+        <footer class="doc-footer">
+            <span class="updated">آخر تحديث: 11 نوفمبر 2026 · <a href="/app/support" target="_blank" rel="noopener">أبلغ عن مشكلة</a></span>
+            <span>AYDRA · الإصدار 1.0</span>
+            <span class="pager"><a class="btn" href="10-admin-troubleshooting.html">← السابق</a><a class="btn btn-primary" href="11-whatsapp-coexistence.html">التالي: تشغيل تطبيق واتساب للأعمال →</a></span>
+        </footer>
+    </main>
+</div>
+
+<script src="../assets/docs.js?v=4"></script>
+</body>
+</html>

@@ -106,6 +106,35 @@
         "y": 14.5,
         "label": "Team members and roles"
       }
+    ],
+    "roles": [
+      {
+        "x": 36.03,
+        "y": 17.4,
+        "label": "Built-in and custom roles"
+      },
+      {
+        "x": 58,
+        "y": 33.25,
+        "label": "Permissions and members per role"
+      }
+    ],
+    "roles-matrix": [
+      {
+        "x": 32.73,
+        "y": 5.8,
+        "label": "Name the role"
+      },
+      {
+        "x": 50,
+        "y": 15,
+        "label": "Start from a template"
+      },
+      {
+        "x": 39.91,
+        "y": 23.2,
+        "label": "Pick a clear role name"
+      }
     ]
   },
   "ar": {
@@ -214,6 +243,35 @@
         "x": 78.5,
         "y": 14.5,
         "label": "أعضاء الفريق والأدوار"
+      }
+    ],
+    "roles": [
+      {
+        "x": 67.28,
+        "y": 17.3,
+        "label": "الأدوار الأساسية والمخصصة"
+      },
+      {
+        "x": 42,
+        "y": 33,
+        "label": "عدد الصلاحيات والأعضاء لكل دور"
+      }
+    ],
+    "roles-matrix": [
+      {
+        "x": 67.26,
+        "y": 5.8,
+        "label": "اسم الدور ووصفه"
+      },
+      {
+        "x": 50,
+        "y": 15,
+        "label": "ابدأ من قالب جاهز"
+      },
+      {
+        "x": 60.09,
+        "y": 23.2,
+        "label": "اسم واضح للدور"
       }
     ]
   }

@@ -51,7 +51,7 @@
     "level": 2,
     "title": "4. الأدوار والصلاحيات",
     "guide": "البدء السريع",
-    "text": "4. الأدوار والصلاحيات النظام يعرف ثلاثة أدوار أساسية داخل مساحة العمل. إعطاء الدور الخطأ هو أكثر سبب لشكاوى «مش لاقي الشاشة». الدور يقدر يعمل إيه لا يستطيع Administrator كل شيء: الفريق، الفوترة، التكاملات، الإعدادات، السجلات، الحذف — Staff العمل اليومي: المحادثات، جهات الاتصال، الليدز، الحملات إدارة الفريق والفوترة والتكاملات الحساسة Viewer الاطّلاع والتقارير فقط الإضافة أو التعديل أو الحذف للدعوات: الإعدادات ← الفري"
+    "text": "4. الأدوار والصلاحيات النظام يعرف ثلاثة أدوار أساسية داخل مساحة العمل، ويمكنك إضافة أدوار مخصصة فوقها. إعطاء الدور الخطأ هو أكثر سبب لشكاوى «مش لاقي الشاشة». الدور يقدر يعمل إيه لا يستطيع مسؤول (Administrator) كل شيء: الفريق، الفوترة، التكاملات، الإعدادات، السجلات، الحذف — موظف (Staff) العمل اليومي: المحادثات، جهات الاتصال، الليدز، الحملات إدارة الفريق والفوترة والتكاملات الحساسة مشاهد (Viewer) الاطّلاع والتقارير فقط"
   },
   {
     "lang": "ar",
@@ -96,7 +96,7 @@
     "level": 2,
     "title": "أخطاء شائعة",
     "guide": "البدء السريع",
-    "text": "أخطاء شائعة المشكلة السبب غالبًا الحل لا تصل رسالة التفعيل بريد خاطئ أو Spam راجع البريد وSpam، ثم أعد الإرسال شاشة لا تظهر في القائمة غير مشمولة في الباقة أو الدور راجع الباقة والدور (Administrator/Staff/Viewer) لا أرى بيانات فريق سابق أنت في مساحة عمل أخرى بدّل المساحة من الإعدادات ← مساحات العمل «وصلت للحد الأقصى» تجاوز حد الباقة البيانات القديمة تعمل، لكن الجديد يتوقف — رقّي الباقة ✅ خلصت الأساسيات. الخطوة التالي"
+    "text": "أخطاء شائعة المشكلة السبب غالبًا الحل لا تصل رسالة التفعيل بريد خاطئ أو Spam راجع البريد وSpam، ثم أعد الإرسال شاشة لا تظهر في القائمة غير مشمولة في الباقة أو الدور راجع الباقة والدور (مسؤول/موظف/مشاهد) لا أرى بيانات فريق سابق أنت في مساحة عمل أخرى بدّل المساحة من الإعدادات ← مساحات العمل «وصلت للحد الأقصى» تجاوز حد الباقة البيانات القديمة تعمل، لكن الجديد يتوقف — رقّي الباقة ✅ خلصت الأساسيات. الخطوة التالية إلزامية:"
   },
   {
     "lang": "ar",
@@ -627,7 +627,7 @@
     "level": 2,
     "title": "أخطاء شائعة",
     "guide": "الليدز وخط الأنابيب",
-    "text": "أخطاء شائعة المشكلة السبب الحل البحث يعيد صفر نتائج كلمة مفتاحية/موقع غير دقيق جرّب كلمة أعم أو نطاقًا أكبر «وصلت لحد Lead Credits» تجاوز حد الباقة الشهري الليدز الحالية تعمل، لكن البحث الجديد يتوقف حتى الترقية أو تجديد الشهر لا أستطيع سحب البطاقة صلاحية Viewer أو المرحلة مقفلة راجع الدور أو إعدادات المرحلة درجة الليد لا تتغير لم يُشغّل إعادة الحساب استخدم «إعادة حساب التقييم» لا أرى Companies غير مشمولة في الباقة تر"
+    "text": "أخطاء شائعة المشكلة السبب الحل البحث يعيد صفر نتائج كلمة مفتاحية/موقع غير دقيق جرّب كلمة أعم أو نطاقًا أكبر «وصلت لحد Lead Credits» تجاوز حد الباقة الشهري الليدز الحالية تعمل، لكن البحث الجديد يتوقف حتى الترقية أو تجديد الشهر لا أستطيع سحب البطاقة صلاحية مشاهد (Viewer) أو المرحلة مقفلة راجع الدور أو إعدادات المرحلة درجة الليد لا تتغير لم يُشغّل إعادة الحساب استخدم «إعادة حساب التقييم» لا أرى Companies غير مشمولة في ا"
   },
   {
     "lang": "ar",
@@ -1239,16 +1239,16 @@
     "level": 3,
     "title": "دعوة عضو جديد",
     "guide": "إدارة الحساب واستكشاف الأخطاء",
-    "text": "دعوة عضو جديد اضغط دعوة بالبريد . أدخل بريد العضو واختر الدور (Staff افتراضيًا). أرسل الدعوة. تظهر في قسم الدعوات المعلّقة حتى يقبلها العضو. يمكنك إلغاء الدعوة قبل قبولها."
+    "text": "دعوة عضو جديد اضغط دعوة بالبريد . أدخل بريد العضو واختر الدور (موظف/Staff افتراضيًا). أرسل الدعوة. تظهر في قسم الدعوات المعلّقة حتى يقبلها العضو. يمكنك إلغاء الدعوة قبل قبولها."
   },
   {
     "lang": "ar",
     "page": "10-admin-troubleshooting.html",
-    "id": "الأدوار-الثلاثة",
+    "id": "الأدوار-الأساسية",
     "level": 3,
-    "title": "الأدوار الثلاثة",
+    "title": "الأدوار الأساسية",
     "guide": "إدارة الحساب واستكشاف الأخطاء",
-    "text": "الأدوار الثلاثة الدور الصلاحيات مناسب لـ Administrator كل شيء: الفريق، الفوترة، التكاملات، الإعدادات، السجلات، الحذف مالك الحساب أو مدير التشغيل Staff العمل اليومي: المحادثات، جهات الاتصال، الليدز، الحملات فريق المبيعات والدعم Viewer قراءة وتقارير فقط إدارة أو متابعة بدون تعديل عدد المستخدمين محدود بالباقة. عند الوصول للحد، زر الدعوة يتوقف ويظهر اقتراح بالترقية — الأعضاء الحاليون يستمرون في العمل بلا تأثر. 💡 قبل حذف"
+    "text": "الأدوار الأساسية الدور الصلاحيات مناسب لـ مسؤول (Administrator) كل شيء: الفريق، الفوترة، التكاملات، الإعدادات، السجلات، الحذف مالك الحساب أو مدير التشغيل موظف (Staff) العمل اليومي: المحادثات، جهات الاتصال، الليدز، الحملات فريق المبيعات والدعم مشاهد (Viewer) قراءة وتقارير فقط إدارة أو متابعة بدون تعديل فوق هذه الأدوار، يمكنك إنشاء أدوار مخصصة بصلاحيات مختارة لكل وحدة — بما فيها القوالب الخمسة: مشرف، مندوب مبيعات، موظف"
   },
   {
     "lang": "ar",
@@ -1464,7 +1464,7 @@
     "level": 3,
     "title": "لا أرى شاشة في القائمة",
     "guide": "إدارة الحساب واستكشاف الأخطاء",
-    "text": "لا أرى شاشة في القائمة الدور: Viewer/Staff يريان أقل من Administrator. الباقة: بعض الميزات غير مشمولة. مساحة العمل: أنت في مساحة أخرى — بدّل من مبدّل المساحات."
+    "text": "لا أرى شاشة في القائمة الدور: مشاهد/موظف يريان أقل من مسؤول. الباقة: بعض الميزات غير مشمولة. مساحة العمل: أنت في مساحة أخرى — بدّل من مبدّل المساحات."
   },
   {
     "lang": "ar",
@@ -1527,7 +1527,7 @@
     "level": 2,
     "title": "12. أسئلة متكررة",
     "guide": "إدارة الحساب واستكشاف الأخطاء",
-    "text": "12. أسئلة متكررة السؤال الإجابة هل بياناتي مشتركة مع عملاء آخرين؟ لا. كل مساحة عمل معزولة تمامًا على مستوى قاعدة البيانات. ماذا يحدث لو خفّضت الباقة وتجاوزت الحدود؟ لا يُحذف شيء. تُمنع الإضافات الجديدة ويظهر تنبيه بالترقية. هل يمكن استرجاع عنصر محذوف؟ الحذف نهائي غالبًا. صدّر نسخة دوريًا، أو استخدم تصدير البيانات. هل يمكن نقل الملكية لشخص آخر؟ نعم من إدارة الفريق — عيّن Administrator آخر ثم عدّل أدوارك. هل تعمل المنص"
+    "text": "12. أسئلة متكررة السؤال الإجابة هل بياناتي مشتركة مع عملاء آخرين؟ لا. كل مساحة عمل معزولة تمامًا على مستوى قاعدة البيانات. ماذا يحدث لو خفّضت الباقة وتجاوزت الحدود؟ لا يُحذف شيء. تُمنع الإضافات الجديدة ويظهر تنبيه بالترقية. هل يمكن استرجاع عنصر محذوف؟ الحذف نهائي غالبًا. صدّر نسخة دوريًا، أو استخدم تصدير البيانات. هل يمكن نقل الملكية لشخص آخر؟ نعم من إدارة الفريق — عيّن مسؤولًا آخر ثم عدّل أدوارك. هل تعمل المنصة بدون"
   },
   {
     "lang": "ar",
@@ -1536,7 +1536,106 @@
     "level": 2,
     "title": "13. قائمة تحقق أمنية شهرية",
     "guide": "إدارة الحساب واستكشاف الأخطاء",
-    "text": "13. قائمة تحقق أمنية شهرية راجع قائمة الفريق وأزل من لا يحتاج الوصول. أدر/أبطل مفاتيح API غير المستخدمة. راجع الجلسات النشطة. تأكد أن 2FA مفعّل لكل Administrator. راجع سجل التدقيق بحثًا عن تغييرات غير متوقعة. تأكد أن مفاتيح القنوات (واتساب/SMS/SMTP/AI) إنتاجية وغير منتهية. راجع استهلاك التوكنز والرسائل مقابل حدود الباقة. ✅ وصلت لنهاية الأدلة. لو نسيت خطوة، ارجع إلى فهرس الأدلة أو استخدم البحث في الأعلى."
+    "text": "13. قائمة تحقق أمنية شهرية راجع قائمة الفريق وأزل من لا يحتاج الوصول. أدر/أبطل مفاتيح API غير المستخدمة. راجع الجلسات النشطة. تأكد أن 2FA مفعّل لكل مسؤول (Administrator). راجع سجل التدقيق بحثًا عن تغييرات غير متوقعة. تأكد أن مفاتيح القنوات (واتساب/SMS/SMTP/AI) إنتاجية وغير منتهية. راجع استهلاك التوكنز والرسائل مقابل حدود الباقة. ✅ وصلت لنهاية دليل الإدارة. التالي: الأدوار والصلاحيات لضبط ما يفعله كل عضو. أو ارجع إلى "
+  },
+  {
+    "lang": "ar",
+    "page": "11-roles-permissions.html",
+    "id": "",
+    "level": 1,
+    "title": "الأدوار والصلاحيات",
+    "guide": "الأدوار والصلاحيات",
+    "text": "الأدوار والصلاحيات الدور يحدد ما يستطيع كل عضو رؤيته وتعديله داخل مساحة العمل. في هذا الدليل: كيف تعمل الصلاحيات، الأدوار الثلاثة الأساسية، إنشاء أدوار مخصصة من القوالب الخمسة الجاهزة، وتعيينها للفريق دون فتح أبواب لا تحتاجها."
+  },
+  {
+    "lang": "ar",
+    "page": "11-roles-permissions.html",
+    "id": "1-كيف-تعمل-الصلاحيات",
+    "level": 2,
+    "title": "1. كيف تعمل الصلاحيات",
+    "guide": "الأدوار والصلاحيات",
+    "text": "1. كيف تعمل الصلاحيات يتكوّن كل دور من صلاحيات على مستوى الوحدة ، وبإجراءين فقط: عرض (View): فتح الشاشة والاطّلاع على بياناتها وتصدير ما تسمح به. إنشاء وتعديل (Create & edit): إضافة وتعديل وحذف داخل الوحدة. تُفحص الصلاحية في الخادم عند كل طلب حسب المسار، وليس بإخفاء الأزرار فقط. أي مسار لا ينتمي إلى وحدة معروفة يُرفض تلقائيًا، وأي دور غير معروف أو محذوف لا يمنح أي صلاحية."
+  },
+  {
+    "lang": "ar",
+    "page": "11-roles-permissions.html",
+    "id": "العلاقة-بين-الباقة-والدور",
+    "level": 3,
+    "title": "العلاقة بين الباقة والدور",
+    "guide": "الأدوار والصلاحيات",
+    "text": "العلاقة بين الباقة والدور الباقة تحدد الميزات المتاحة للمساحة كلها (عدد الأعضاء، القنوات، الذكاء الاصطناعي، الـAPI…)، والدور يحدد ما يستطيع العضو فعله داخل المتاح. مثال: لو لم تشمل الباقة الـAPI، فلن يفتحه أي دور. ولو شملته، فلن يفتحه إلا دور يملك صلاحية إعدادات مساحة العمل ."
+  },
+  {
+    "lang": "ar",
+    "page": "11-roles-permissions.html",
+    "id": "2-الأدوار-الثلاثة-الأساسية",
+    "level": 2,
+    "title": "2. الأدوار الثلاثة الأساسية",
+    "guide": "الأدوار والصلاحيات",
+    "text": "2. الأدوار الثلاثة الأساسية الأدوار والصلاحيات: الأدوار الأساسية وأدوارك المخصصة مع عدد الصلاحيات والأعضاء لكل دور. من الإعدادات ← الفريق ← الأدوار والصلاحيات (أو من زر الأدوار والصلاحيات أعلى صفحة الفريق). تظهر الأدوار الأساسية أولًا بشارة دور أساسي ، ثم الأدوار التي أنشأتها مساحتك. الدور الصلاحيات لا يستطيع مسؤول (Administrator) كل الوحدات والإجراءات، بما فيها الفريق والفوترة وسجل التدقيق والخصوصية لا شيء داخل المس"
+  },
+  {
+    "lang": "ar",
+    "page": "11-roles-permissions.html",
+    "id": "3-إنشاء-دور-مخصص",
+    "level": 2,
+    "title": "3. إنشاء دور مخصص",
+    "guide": "الأدوار والصلاحيات",
+    "text": "3. إنشاء دور مخصص محرّر الدور: ابدأ من قالب جاهز، اكتب اسم الدور ووصفه، ثم حدّد «عرض» أو «إنشاء وتعديل» لكل وحدة. من صفحة الأدوار والصلاحيات اضغط إضافة دور . اختر قالبًا جاهزًا (انظر القسم التالي) أو ابدأ من الصفر . اكتب اسمًا واضحًا يدل على الوظيفة، مثل «مشرف مبيعات»، ووصفًا مختصرًا يساعد بقية المدراء. لكل وحدة فعّل عرض و/أو إنشاء وتعديل . تفعيل «إنشاء وتعديل» يفعّل «عرض» تلقائيًا، وإلغاء «عرض» يلغي «إنشاء وتعديل» م"
+  },
+  {
+    "lang": "ar",
+    "page": "11-roles-permissions.html",
+    "id": "الوحدات-المتاحة-للتعيين",
+    "level": 3,
+    "title": "الوحدات المتاحة للتعيين",
+    "guide": "الأدوار والصلاحيات",
+    "text": "الوحدات المتاحة للتعيين المنطقة الوحدات صندوق الوارد صندوق الوارد (المحادثات والردود والتسميات) جهات الاتصال جهات الاتصال والشرائح المبيعات العملاء المحتملون والمهام · عروض الأسعار والمنتجات · الفواتير · الحجز والنماذج · سجل المكالمات · تسلسلات المتابعة · المندوب الذكي (AI SDR) · التجارة الإلكترونية التسويق الحملات · تسويق واتساب · بوابات SMS · خادم البريد · التواصل الاجتماعي الأتمتة الأتمتة التقارير التقارير والتصدي"
+  },
+  {
+    "lang": "ar",
+    "page": "11-roles-permissions.html",
+    "id": "4-القوالب-الخمسة-الجاهزة",
+    "level": 2,
+    "title": "4. القوالب الخمسة الجاهزة",
+    "guide": "الأدوار والصلاحيات",
+    "text": "4. القوالب الخمسة الجاهزة القوالب نقطة بداية وليست أدوارًا جاهزة للاستخدام المباشر: عند اختيار قالب تُنسخ صلاحياته إلى الدور الجديد، ثم تعدّلها كما تشاء. تعديل الدور لاحقًا لا يغيّر القالب ولا أي دور آخر. القالب ما يمنحه افتراضيًا مشرف (Supervisor) كل الوحدات تقريبًا ما عدا الفوترة والخصوصية وسجل التدقيق. مناسب لمدير فريق يحتاج كل العمل اليومي دون صلاحيات المالك المالية. مندوب مبيعات (Sales agent) صندوق الوارد وجهات "
+  },
+  {
+    "lang": "ar",
+    "page": "11-roles-permissions.html",
+    "id": "5-تعيين-الدور-لأعضاء-الفريق",
+    "level": 2,
+    "title": "5. تعيين الدور لأعضاء الفريق",
+    "guide": "الأدوار والصلاحيات",
+    "text": "5. تعيين الدور لأعضاء الفريق من الإعدادات ← الفريق : عند دعوة بالبريد أو إضافة عضو اختر الدور قبل الإرسال أو الحفظ (موظف/Staff افتراضيًا). لتغيير دور عضو موجود اضغط أيقونة القلم بجانبه، اختر الدور، ثم احفظ. يظهر الدور كشارة بجانب كل عضو في جدول الفريق، وتُطبَّق الصلاحيات الجديدة على طلبه التالي مباشرة. الدعوات المعلّقة تحتفظ بالدور المختار حتى يقبلها العضو أو تُلغى. 💡 قبل تغيير دور عضو، أعد إسناد محادثاته المفتوحة و"
+  },
+  {
+    "lang": "ar",
+    "page": "11-roles-permissions.html",
+    "id": "6-تعديل-دور-أو-حذفه",
+    "level": 2,
+    "title": "6. تعديل دور أو حذفه",
+    "guide": "الأدوار والصلاحيات",
+    "text": "6. تعديل دور أو حذفه تعديل: أيقونة القلم على الدور المخصص. عدّل الاسم أو الوصف أو الصلاحيات، وسيسري التغيير فورًا على كل من يحمل الدور. حذف: أيقونة سلة المهملات. لا يمكن حذف دور ما زال مستخدمًا؛ أعد تعيين أعضائه إلى دور آخر أولًا. يظهر الزر معطّلًا مع سبب عند التحويم. الأدوار الأساسية بلا أزرار تعديل أو حذف. عند الحاجة إلى سلوك مختلف، أنشئ دورًا مخصصًا وانقل الأعضاء إليه."
+  },
+  {
+    "lang": "ar",
+    "page": "11-roles-permissions.html",
+    "id": "7-حماية-الحساب",
+    "level": 2,
+    "title": "7. حماية الحساب",
+    "guide": "الأدوار والصلاحيات",
+    "text": "7. حماية الحساب يجب أن يبقى مدير واحد على الأقل في المساحة: لا يمكن حذف آخر مسؤول (Administrator) أو تخفيض دوره، حتى لا تُقفل الإدارة على الجميع. لا تمنح دور مسؤول (Administrator) إلا لمن يدير الفريق والفوترة فعليًا. راجع الأدوار دوريًا: من انتقل من المبيعات إلى المحاسبة يجب أن ينتقل إلى الدور المناسب، لا أن يحتفظ بصلاحياته القديمة. سجل التدقيق والخصوصية يبقيان للمدير فقط، حتى لا يستطيع دور مخصص حذف السجلات أو تنفيذ "
+  },
+  {
+    "lang": "ar",
+    "page": "11-roles-permissions.html",
+    "id": "8-أسئلة-متكررة",
+    "level": 2,
+    "title": "8. أسئلة متكررة",
+    "guide": "الأدوار والصلاحيات",
+    "text": "8. أسئلة متكررة السؤال الإجابة هل يمكن لدور مخصص إدارة الفريق أو الأدوار؟ لا. الفريق وسجل التدقيق والخصوصية وحدات «للمسؤولين فقط»، وتبقى لمدير الحساب. هل أستطيع منح المحاسب صلاحية الفوترة؟ نعم: قالب المحاسب يمنح عرض الفوترة. أما تغيير الباقة أو إلغاء الاشتراك فيحتاج صلاحية إنشاء وتعديل الفوترة. لماذا لا أرى شاشة رغم أن دوري يسمح بها؟ تحقق أولًا من الباقة (هل الميزة مشمولة؟)، ثم من مساحة العمل الحالية. الصلاحية لا تتج"
   },
   {
     "lang": "ar",
@@ -1635,7 +1734,7 @@
     "level": 2,
     "title": "الحساب ومساحة العمل",
     "guide": "المصطلحات",
-    "text": "الحساب ومساحة العمل المصطلح المعنى المستأجر (Tenant) حساب العميل الذي يملك البيانات. يمكن أن يضم عدة مساحات عمل، ولا يرى المستأجرون بيانات بعضهم إطلاقًا. مساحة العمل (Workspace) الوعاء المعزول الذي تعمل داخله: جهات الاتصال والمحادثات والليدز والحملات والإعدادات. بدّل بينها من الإعدادات ← مساحات العمل. الدور (Role) مدير أو موظف أو مشاهد. الدور يحدد الشاشات والإجراءات المتاحة. الخطة (Plan) فئة الاشتراك: مجاني أو Starte"
+    "text": "الحساب ومساحة العمل المصطلح المعنى المستأجر (Tenant) حساب العميل الذي يملك البيانات. يمكن أن يضم عدة مساحات عمل، ولا يرى المستأجرون بيانات بعضهم إطلاقًا. مساحة العمل (Workspace) الوعاء المعزول الذي تعمل داخله: جهات الاتصال والمحادثات والليدز والحملات والإعدادات. بدّل بينها من الإعدادات ← مساحات العمل. الدور (Role) مدير أو موظف أو مشاهد، أو دور مخصص تنشئه مساحتك. يحدد الشاشات والإجراءات المتاحة. راجع دليل الأدوار والص"
   },
   {
     "lang": "ar",
@@ -1743,7 +1842,7 @@
     "level": 2,
     "title": "4. Roles and permissions",
     "guide": "Getting Started",
-    "text": "4. Roles and permissions The system recognizes three basic roles inside a workspace. Assigning the wrong role is the most common cause of “I can’t find the screen” complaints. Role What they can do What they cannot do Administrator Everything: team, billing, integrations, settings, logs, deletion — Staff Daily work: conversations, contacts, leads, campaigns Managing the team, billing and sensitive integrations Viewer"
+    "text": "4. Roles and permissions The system recognizes three built-in roles inside a workspace, and you can add custom roles on top of them. Assigning the wrong role is the most common cause of “I can’t find the screen” complaints. Role What they can do What they cannot do Administrator Everything: team, billing, integrations, settings, logs, deletion — Staff Daily work: conversations, contacts, leads, campaigns Managing the"
   },
   {
     "lang": "en",
@@ -2936,11 +3035,11 @@
   {
     "lang": "en",
     "page": "10-admin-troubleshooting.html",
-    "id": "the-three-roles",
+    "id": "the-built-in-roles",
     "level": 3,
-    "title": "The three roles",
+    "title": "The built-in roles",
     "guide": "Account Admin & Troubleshooting",
-    "text": "The three roles Role Permissions Best for Administrator Everything: team, billing, integrations, settings, logs, deletion Account owner or operations manager Staff Day-to-day work: conversations, contacts, leads, campaigns Sales and support team Viewer Read and reports only Management or oversight without editing The number of users is limited by your plan. When you reach the limit, the invite button is disabled and "
+    "text": "The built-in roles Role Permissions Best for Administrator Everything: team, billing, integrations, settings, logs, deletion Account owner or operations manager Staff Day-to-day work: conversations, contacts, leads, campaigns Sales and support team Viewer Read and reports only Management or oversight without editing On top of these, you can create custom roles with per-module permissions — including the five template"
   },
   {
     "lang": "en",
@@ -3232,6 +3331,105 @@
   },
   {
     "lang": "en",
+    "page": "11-roles-permissions.html",
+    "id": "",
+    "level": 1,
+    "title": "Roles & Permissions",
+    "guide": "Roles & Permissions",
+    "text": "Roles & Permissions A role decides what each member can see and change inside the workspace. This guide covers how permissions work, the three built-in roles, custom roles built from the five templates, and how to assign them without opening doors you do not need."
+  },
+  {
+    "lang": "en",
+    "page": "11-roles-permissions.html",
+    "id": "1-how-permissions-work",
+    "level": 2,
+    "title": "1. How permissions work",
+    "guide": "Roles & Permissions",
+    "text": "1. How permissions work Every role is built from permissions on a module , with exactly two actions: View: open the screen, read its data and export what the screen allows. Create & edit: add, edit and delete inside the module. The permission is checked on the server for every request, based on the route — hiding a button is only a convenience on top of that check. A route that belongs to no known module is denied au"
+  },
+  {
+    "lang": "en",
+    "page": "11-roles-permissions.html",
+    "id": "plan-versus-role",
+    "level": 3,
+    "title": "Plan versus role",
+    "guide": "Roles & Permissions",
+    "text": "Plan versus role The plan decides which features the workspace has at all (member count, channels, AI, the API…). The role decides what a member can do within what is available. For example: if the plan does not include the API, no role can open it. If it does, only a role with Workspace settings can open it."
+  },
+  {
+    "lang": "en",
+    "page": "11-roles-permissions.html",
+    "id": "2-the-three-built-in-roles",
+    "level": 2,
+    "title": "2. The three built-in roles",
+    "guide": "Roles & Permissions",
+    "text": "2. The three built-in roles Roles & permissions: the built-in roles and your custom roles with the number of permissions and members for each. Open Settings → Team → Roles & permissions (or use the Roles & permissions button at the top of the Team page). The built-in roles appear first with a Built-in badge, followed by the roles your workspace created. Role Permissions Cannot Administrator Every module and action, i"
+  },
+  {
+    "lang": "en",
+    "page": "11-roles-permissions.html",
+    "id": "3-create-a-custom-role",
+    "level": 2,
+    "title": "3. Create a custom role",
+    "guide": "Roles & Permissions",
+    "text": "3. Create a custom role The role editor: start from a template, name the role, then choose View or Create & edit for each module. On the Roles & permissions page, click Add role . Pick a template (see the next section) or start from scratch . Give it a clear, role-based name such as “Sales supervisor” and a short description that helps the other administrators. For each module, tick View and/or Create & edit . Tickin"
+  },
+  {
+    "lang": "en",
+    "page": "11-roles-permissions.html",
+    "id": "modules-you-can-grant",
+    "level": 3,
+    "title": "Modules you can grant",
+    "guide": "Roles & Permissions",
+    "text": "Modules you can grant Area Modules Inbox Inbox (conversations, replies and labels) Contacts Contacts & segments Sales Leads & tasks · Quotes & products · Invoices · Bookings & forms · Call log · Sequences · AI SDR · E-commerce Marketing Campaigns · WhatsApp marketing · SMS gateways · Email server · Social media Automation Automations Reports Reports & exports Settings AI settings · Workspace settings (including the A"
+  },
+  {
+    "lang": "en",
+    "page": "11-roles-permissions.html",
+    "id": "4-the-five-templates",
+    "level": 2,
+    "title": "4. The five templates",
+    "guide": "Roles & Permissions",
+    "text": "4. The five templates Templates are a starting point, not roles you use as-is: choosing one copies its permissions into the new role, and you can adjust them freely. Editing the role later changes neither the template nor any other role. Template What it grants by default Supervisor Almost every module except billing, privacy and the audit log. Suited to a team lead who needs the daily work without the owner’s financ"
+  },
+  {
+    "lang": "en",
+    "page": "11-roles-permissions.html",
+    "id": "5-assign-a-role-to-team-members",
+    "level": 2,
+    "title": "5. Assign a role to team members",
+    "guide": "Roles & Permissions",
+    "text": "5. Assign a role to team members From Settings → Team : When using Invite by email or Add member , choose the role before sending or saving (Staff is the default). To change an existing member, click the pencil icon next to them, pick the role and save. The role appears as a badge next to every member in the team table, and the new permissions apply to their very next request. Pending invitations keep the chosen role"
+  },
+  {
+    "lang": "en",
+    "page": "11-roles-permissions.html",
+    "id": "6-edit-or-delete-a-role",
+    "level": 2,
+    "title": "6. Edit or delete a role",
+    "guide": "Roles & Permissions",
+    "text": "6. Edit or delete a role Edit: the pencil icon on a custom role. Change the name, description or permissions, and the change applies immediately to everyone holding the role. Delete: the trash icon. A role that is still in use cannot be deleted; reassign its members to another role first. The button is disabled and explains why on hover. Built-in roles have no edit or delete buttons. When you need different behaviour"
+  },
+  {
+    "lang": "en",
+    "page": "11-roles-permissions.html",
+    "id": "7-keeping-the-account-safe",
+    "level": 2,
+    "title": "7. Keeping the account safe",
+    "guide": "Roles & Permissions",
+    "text": "7. Keeping the account safe There must always be at least one administrator : the last Administrator cannot be removed or demoted, so administration never locks everyone out. Grant Administrator only to people who genuinely manage the team and billing. Review roles regularly: someone who moved from sales to accounting should move to the matching role instead of keeping their old permissions. The audit log and privacy"
+  },
+  {
+    "lang": "en",
+    "page": "11-roles-permissions.html",
+    "id": "8-faq",
+    "level": 2,
+    "title": "8. FAQ",
+    "guide": "Roles & Permissions",
+    "text": "8. FAQ Question Answer Can a custom role manage the team or roles? No. Team, audit log and privacy are “administrators only” modules and stay with the account administrator. Can I give the accountant billing access? Yes: the Accountant template grants view access to billing. Changing or cancelling the subscription requires Create & edit on billing. Why can I not see a screen my role allows? Check the plan first (is t"
+  },
+  {
+    "lang": "en",
     "page": "11-whatsapp-coexistence.html",
     "id": "",
     "level": 1,
@@ -3327,7 +3525,7 @@
     "level": 2,
     "title": "Account and workspace",
     "guide": "Glossary",
-    "text": "Account and workspace Term Meaning Tenant The customer account that owns the data. One tenant can hold several workspaces, and tenants never see each other’s records. Workspace The isolated container you work inside: contacts, conversations, leads, campaigns and settings. Switch between workspaces from Settings → Workspaces. Role Administrator, Staff or Viewer. The role decides which screens and actions are available"
+    "text": "Account and workspace Term Meaning Tenant The customer account that owns the data. One tenant can hold several workspaces, and tenants never see each other’s records. Workspace The isolated container you work inside: contacts, conversations, leads, campaigns and settings. Switch between workspaces from Settings → Workspaces. Role Administrator, Staff or Viewer — or a custom role your workspace creates. The role decid"
   },
   {
     "lang": "en",
