@@ -44,6 +44,7 @@ use App\Listeners\StopSequencesOnWon;
 use App\Models\Workspace;
 use App\Modules\Shared\Services\ChannelManager;
 use App\Services\Billing\BillingGatewayRegistry;
+use App\Services\ClientAccess;
 use App\Services\StorageManager;
 use App\Support\Queue\TenantAwareJob;
 use Dedoc\Scramble\Scramble;
@@ -69,6 +70,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(BillingGatewayRegistry::class, fn () => new BillingGatewayRegistry);
         $this->app->singleton(StorageManager::class);
         $this->app->singleton(ChannelManager::class, fn () => new ChannelManager);
+
+        // Per-request cache of the signed-in user's role permissions. `scoped`
+        // (not singleton) so Octane workers cannot leak one tenant's role into
+        // the next request.
+        $this->app->scoped(ClientAccess::class);
     }
 
     public function boot(): void

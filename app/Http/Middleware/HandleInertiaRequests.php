@@ -10,6 +10,7 @@ use App\Models\SystemSetting;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Modules\Integrations\Services\CredentialResolver;
+use App\Services\ClientAccess;
 use App\Services\FeatureGate;
 use App\Services\I18n\I18nFileService;
 use App\Services\OnboardingService;
@@ -384,6 +385,13 @@ class HandleInertiaRequests extends Middleware
                 'status' => $adminUser->status,
             ];
             $auth['permissions'] = $adminUser->permissionKeys();
+        }
+
+        // Client roles are permission-based (`module.action`). The sidebar uses
+        // this list to hide screens the role cannot open; the server enforces
+        // the same keys in EnsureClientPermission.
+        if ($user instanceof User && ! $isAdminRoute) {
+            $auth['permissions'] = app(ClientAccess::class)->permissionsFor($user);
         }
 
         $impersonation = null;

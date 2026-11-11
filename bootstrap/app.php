@@ -7,6 +7,7 @@ use App\Http\Middleware\BroadcastingAuthDebug;
 use App\Http\Middleware\CheckApiAbility;
 use App\Http\Middleware\EnforceLimit;
 use App\Http\Middleware\EnsureAdminRole;
+use App\Http\Middleware\EnsureClientPermission;
 use App\Http\Middleware\EnsureClientScope;
 use App\Http\Middleware\EnsureLicensed;
 use App\Http\Middleware\EnsureNotDemoMode;
@@ -56,13 +57,13 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::middleware(['web'])
                 ->group(base_path('routes/webhooks.php'));
 
-            Route::middleware(['web', 'auth', 'role:client', 'client.scope', 'readonly.viewer', 'demo'])
+            Route::middleware(['web', 'auth', 'role:client', 'client.scope', 'client.permission', 'readonly.viewer', 'demo'])
                 ->prefix('app')
                 ->name('client.')
                 ->group(base_path('routes/client.php'));
 
             // Reports & CSV exports
-            Route::middleware(['auth', 'role:client', 'client.scope'])
+            Route::middleware(['auth', 'role:client', 'client.scope', 'client.permission'])
                 ->group(base_path('routes/reports.php'));
 
             // Admin sign-in is unified onto the main /login page (the
@@ -119,6 +120,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => RequirePermission::class,
             'redirect.if.admin' => RedirectIfAdminAuthenticated::class,
             'client.scope' => EnsureClientScope::class,
+            'client.permission' => EnsureClientPermission::class,
             'readonly.viewer' => RestrictViewerWrites::class,
             'ip.allowlist' => IpAllowlist::class,
             'licensed' => EnsureLicensed::class,
@@ -132,6 +134,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'verified',
             'role:client',
             EnsureClientScope::class,
+            EnsureClientPermission::class,
             RestrictViewerWrites::class,
             EnsureNotDemoMode::class,
         ]);

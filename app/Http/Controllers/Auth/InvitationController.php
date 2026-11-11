@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Invitation;
 use App\Models\User;
+use App\Services\ClientAccess;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,6 +16,8 @@ use Inertia\Response;
 
 class InvitationController extends Controller
 {
+    public function __construct(private readonly ClientAccess $access) {}
+
     /**
      * Show the invitation acceptance page.
      */
@@ -51,12 +54,21 @@ class InvitationController extends Controller
 
         $user = User::where('email', $invitation->email)->first();
 
+        // The role may have been deleted between sending and accepting the
+        // invitation; fall back to staff rather than writing a slug that no
+        // longer resolves to any permission.
+        $clientRole = $invitation->client_role;
+        if ($invitation->client && ! in_array($clientRole, $this->access->slugsFor($invitation->client), true)) {
+            $clientRole = User::CLIENT_ROLE_STAFF;
+        }
+        $clientRole ??= User::CLIENT_ROLE_STAFF;
+
         if ($user) {
             // Existing user — just link them to the client if needed
             if ($invitation->client_id && ! $user->client_id) {
                 $user->update([
                     'client_id' => $invitation->client_id,
-                    'client_role' => $invitation->client_role ?? User::CLIENT_ROLE_STAFF,
+                    'client_role' => $clientRole,
                 ]);
             }
         } else {
@@ -73,7 +85,7 @@ class InvitationController extends Controller
                 'role' => 'client',
                 'status' => 'active',
                 'client_id' => $invitation->client_id,
-                'client_role' => $invitation->client_role ?? User::CLIENT_ROLE_STAFF,
+                'client_role' => $clientRole,
                 'email_verified_at' => now(),
             ]);
 

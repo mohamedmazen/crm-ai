@@ -1,16 +1,14 @@
 import ClientLayout from '@/Layouts/ClientLayout';
 import { Button, Modal } from '@/Components/ui';
-import { Head, router, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Users, Pencil, Trash2, UserPlus, Mail, X } from 'lucide-react';
+import { Users, Pencil, Trash2, UserPlus, Mail, X, UserCog } from 'lucide-react';
 
 const STATUS_ACTIVE    = 'active';
-const CLIENT_ROLE_ADMIN = 'administrator';
 const CLIENT_ROLE_STAFF = 'staff';
-const CLIENT_ROLE_VIEWER = 'viewer';
 
-export default function TeamIndex({ users = [], client = {}, invitations = [] }) {
+export default function TeamIndex({ users = [], client = {}, invitations = [], roles = [] }) {
     const { t } = useTranslation();
     const { flash = {} } = usePage().props;
     const [addOpen, setAddOpen]         = useState(false);
@@ -18,6 +16,15 @@ export default function TeamIndex({ users = [], client = {}, invitations = [] })
     const [editOpen, setEditOpen]       = useState(false);
     const [editUser, setEditUser]       = useState(null);
     const [deleteConfirm, setDeleteConfirm] = useState(null);
+
+    // Roles come from the server (built-in + the tenant's own), so a custom
+    // role shows its real name instead of falling back to "Staff". Built-in
+    // names are translation keys, custom names are user text.
+    const roleLabel = (role) => (role?.system ? t(role.name) : role?.name);
+    const roleName = (slug) => {
+        const role = roles.find((item) => item.slug === slug);
+        return role ? roleLabel(role) : slug;
+    };
 
     const inviteForm = useForm({ email: '', client_role: CLIENT_ROLE_STAFF });
 
@@ -115,6 +122,12 @@ export default function TeamIndex({ users = [], client = {}, invitations = [] })
                     </div>
                     {(
                         <div className="flex gap-2">
+                            <Link href={route('client.roles.index')}>
+                                <Button variant="outline" className="inline-flex items-center gap-2">
+                                    <UserCog className="h-4 w-4" />
+                                    {t('team.manage_roles') || 'Roles & permissions'}
+                                </Button>
+                            </Link>
                             <Button variant="outline" onClick={() => setInviteOpen(true)} className="inline-flex items-center gap-2">
                                 <Mail className="h-4 w-4" />
                                 {t('client.invite_by_email') || 'Invite by email'}
@@ -173,7 +186,7 @@ export default function TeamIndex({ users = [], client = {}, invitations = [] })
                                         </td>
                                         <td className="px-4 py-3">
                                             <span className="inline-flex rounded-full px-2 py-0.5 text-xs font-medium bg-brand-50 dark:bg-brand-900/30 text-brand-800 dark:text-brand-300">
-                                                {u.client_role === CLIENT_ROLE_ADMIN ? (t('admin.administrator') || 'Administrator') : u.client_role === CLIENT_ROLE_VIEWER ? (t('admin.viewer') || 'Viewer') : (t('admin.staff') || 'Staff')}
+                                                {roleName(u.client_role)}
                                             </span>
                                         </td>
                                         <td className="px-4 py-3">
@@ -270,9 +283,9 @@ export default function TeamIndex({ users = [], client = {}, invitations = [] })
                                     onChange={e => inviteForm.setData('client_role', e.target.value)}
                                     className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm"
                                 >
-                                    <option value={CLIENT_ROLE_STAFF}>{t('admin.staff') || 'Staff'}</option>
-                                    <option value={CLIENT_ROLE_VIEWER}>{t('admin.viewer') || 'Viewer (read-only)'}</option>
-                                    <option value={CLIENT_ROLE_ADMIN}>{t('admin.administrator') || 'Administrator'}</option>
+                                    {roles.map((role) => (
+                                        <option key={role.slug} value={role.slug}>{roleLabel(role)}</option>
+                                    ))}
                                 </select>
                             </div>
                         </form>
@@ -313,9 +326,9 @@ export default function TeamIndex({ users = [], client = {}, invitations = [] })
                                 <div>
                                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('client.role') || 'Role'}</label>
                                     <select value={addForm.data.client_role} onChange={e => addForm.setData('client_role', e.target.value)} className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm">
-                                        <option value={CLIENT_ROLE_STAFF}>{t('admin.staff') || 'Staff'}</option>
-                                        <option value={CLIENT_ROLE_VIEWER}>{t('admin.viewer') || 'Viewer (read-only)'}</option>
-                                        <option value={CLIENT_ROLE_ADMIN}>{t('admin.administrator') || 'Administrator'}</option>
+                                        {roles.map((role) => (
+                                            <option key={role.slug} value={role.slug}>{roleLabel(role)}</option>
+                                        ))}
                                     </select>
                                 </div>
                         </form>
@@ -349,9 +362,9 @@ export default function TeamIndex({ users = [], client = {}, invitations = [] })
                                 <div>
                                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('client.role') || 'Role'}</label>
                                     <select value={editForm.data.client_role} onChange={e => editForm.setData('client_role', e.target.value)} className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm">
-                                        <option value={CLIENT_ROLE_STAFF}>{t('admin.staff') || 'Staff'}</option>
-                                        <option value={CLIENT_ROLE_VIEWER}>{t('admin.viewer') || 'Viewer (read-only)'}</option>
-                                        <option value={CLIENT_ROLE_ADMIN}>{t('admin.administrator') || 'Administrator'}</option>
+                                        {roles.map((role) => (
+                                            <option key={role.slug} value={role.slug}>{roleLabel(role)}</option>
+                                        ))}
                                     </select>
                                 </div>
                                 <div>

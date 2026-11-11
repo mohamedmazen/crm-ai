@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Invitation;
-use App\Models\User;
+use App\Services\ClientAccess;
 use App\Services\Mail\MailService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,7 +13,10 @@ use Illuminate\Validation\Rule;
 
 class InvitationController extends Controller
 {
-    public function __construct(private MailService $mail) {}
+    public function __construct(
+        private MailService $mail,
+        private readonly ClientAccess $access,
+    ) {}
 
     /**
      * Send an email invite to a team member.
@@ -28,7 +31,7 @@ class InvitationController extends Controller
 
         $request->validate([
             'email' => ['required', 'email', 'max:255'],
-            'client_role' => ['required', Rule::in(User::CLIENT_ROLES)],
+            'client_role' => ['required', Rule::in($this->access->slugsFor($user->client))],
         ]);
 
         // Check if there's already a pending invite

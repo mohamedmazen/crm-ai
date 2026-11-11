@@ -12,6 +12,7 @@ use App\Rules\CustomDomain;
 use App\Rules\NotBreachedPassword;
 use App\Rules\WorkspaceSubdomain;
 use App\Services\AuditLogService;
+use App\Services\ClientAccess;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -23,7 +24,10 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ClientController extends Controller
 {
-    public function __construct(private AuditLogService $auditLog) {}
+    public function __construct(
+        private AuditLogService $auditLog,
+        private readonly ClientAccess $access,
+    ) {}
 
     public function index(Request $request): Response
     {
@@ -41,7 +45,7 @@ class ClientController extends Controller
 
         $clients = $query->orderBy('name')->paginate(20)->withQueryString()->through(function (Client $c) {
             // Effective plan: admin-assigned ClientSubscription, else the plan from a
-            // user's own active Subscription — matches what the client's dashboard shows.
+            // user's own active Subscription â€” matches what the client's dashboard shows.
             $plan = $c->effectivePlan();
 
             return [
@@ -154,7 +158,14 @@ class ClientController extends Controller
             'created_at' => $u->created_at->toIso8601String(),
         ]);
 
-        return response()->json(['users' => $users, 'client' => ['id' => $client->id, 'name' => $client->name]]);
+        return response()->json([
+            'users' => $users,
+            'client' => ['id' => $client->id, 'name' => $client->name],
+            'roles' => array_map(
+                fn (array $role) => ['slug' => $role['slug'], 'name' => $role['name'], 'system' => $role['system']],
+                $this->access->roleOptions($client),
+            ),
+        ]);
     }
 
     public function storeUser(Request $request, Client $client): RedirectResponse|JsonResponse
@@ -165,7 +176,7 @@ class ClientController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')],
             'password' => ['required', 'string', 'min:8', 'confirmed', new NotBreachedPassword],
-            'client_role' => ['required', 'string', Rule::in(User::CLIENT_ROLES)],
+            'client_role' => ['required', 'string', Rule::in($this->access->slugsFor($client))],
             'status' => ['required', 'string', 'in:active,inactive'],
         ]);
 
@@ -208,7 +219,7 @@ class ClientController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'password' => ['nullable', 'string', 'min:8', 'confirmed', new NotBreachedPassword],
-            'client_role' => ['required', 'string', Rule::in(User::CLIENT_ROLES)],
+            'client_role' => ['required', 'string', Rule::in($this->access->slugsFor($client))],
             'status' => ['required', 'string', 'in:active,inactive'],
         ]);
 

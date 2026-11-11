@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Invitation;
 use App\Models\User;
 use App\Rules\NotBreachedPassword;
+use App\Services\ClientAccess;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -14,6 +15,8 @@ use Inertia\Response;
 
 class TeamController extends Controller
 {
+    public function __construct(private readonly ClientAccess $access) {}
+
     public function index(Request $request): Response|RedirectResponse
     {
         $user = $request->user();
@@ -42,6 +45,14 @@ class TeamController extends Controller
         return Inertia::render('client/Team/Index', [
             'users' => $users,
             'client' => ['id' => $client->id, 'name' => $client->name],
+            'roles' => array_map(
+                fn (array $role) => [
+                    'slug' => $role['slug'],
+                    'name' => $role['name'],
+                    'system' => $role['system'],
+                ],
+                $this->access->roleOptions($client),
+            ),
             'invitations' => Invitation::where('client_id', $client->id)
                 ->whereNull('accepted_at')
                 ->where('expires_at', '>', now())
@@ -72,7 +83,7 @@ class TeamController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')],
             'password' => ['required', 'string', 'min:8', 'confirmed', new NotBreachedPassword],
-            'client_role' => ['required', 'string', Rule::in(User::CLIENT_ROLES)],
+            'client_role' => ['required', 'string', Rule::in($this->access->slugsFor($client))],
             'status' => ['required', 'string', 'in:active,inactive'],
         ]);
 
@@ -105,7 +116,7 @@ class TeamController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($member->id)],
             'password' => ['nullable', 'string', 'min:8', 'confirmed', new NotBreachedPassword],
-            'client_role' => ['required', 'string', Rule::in(User::CLIENT_ROLES)],
+            'client_role' => ['required', 'string', Rule::in($this->access->slugsFor($client))],
             'status' => ['required', 'string', 'in:active,inactive'],
         ]);
 

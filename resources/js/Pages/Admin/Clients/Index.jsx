@@ -18,7 +18,6 @@ import axios from 'axios';
 import useInertiaLoading from '@/hooks/useInertiaLoading';
 
 const STATUS_ACTIVE = 'active';
-const CLIENT_ROLE_ADMIN = 'administrator';
 const CLIENT_ROLE_STAFF = 'staff';
 
 function ActionIcon({ onClick, title, icon: Icon, className = 'text-brand-500 hover:text-brand-600' }) {
@@ -99,6 +98,9 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {}, t
     const [manageUsersOpen, setManageUsersOpen] = useState(false);
     const [manageUsersClient, setManageUsersClient] = useState(null);
     const [clientUsers, setClientUsers] = useState([]);
+    // Roles the admin can assign: the three built-ins plus whatever custom
+    // roles this tenant defined, returned alongside its users.
+    const [clientRoles, setClientRoles] = useState([]);
     const [assignPlanOpen, setAssignPlanOpen] = useState(false);
     const [assignPlanClient, setAssignPlanClient] = useState(null);
     const [deleteClientConfirm, setDeleteClientConfirm] = useState(null);
@@ -108,6 +110,15 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {}, t
     const [deleteUserConfirm, setDeleteUserConfirm] = useState(null);
     const [usersLoading, setUsersLoading] = useState(false);
     const loading = useInertiaLoading();
+
+    // Custom roles are tenant-defined, so their labels must come from the
+    // server payload; built-in role names are translation keys. Fall back to
+    // the slug if the role was deleted meanwhile.
+    const roleLabel = (slug) => {
+        const role = clientRoles.find((item) => item.slug === slug);
+        if (!role) return slug;
+        return role.system ? t(role.name) : role.name;
+    };
 
     // Blank currency fields are submitted as null and inherit the platform default
     // currency. Defaulting them to USD here would persist USD onto every client the
@@ -186,6 +197,7 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {}, t
         try {
             const { data } = await axios.get(route('admin.clients.users.index', { client: client.id }));
             setClientUsers(data.users || []);
+            setClientRoles(data.roles || []);
             setManageUsersClient(data.client || { id: client.id, name: client.name });
         } finally {
             setUsersLoading(false);
@@ -649,7 +661,7 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {}, t
                                                         <div className="text-neutral-500 dark:text-neutral-400">{u.email}</div>
                                                     </td>
                                                     <td className="py-3 pr-4">
-                                                        <Badge variant="default" className="text-xs">{u.client_role === CLIENT_ROLE_ADMIN ? t('admin.administrator') : u.client_role === 'viewer' ? (t('admin.viewer') || 'Viewer') : t('admin.staff')}</Badge>
+                                                        <Badge variant="default" className="text-xs">{roleLabel(u.client_role)}</Badge>
                                                     </td>
                                                     <td className="py-3 pr-4">
                                                         <Badge variant={u.status === STATUS_ACTIVE ? 'success' : 'default'}>{u.status === STATUS_ACTIVE ? t('common.active') : t('common.inactive')}</Badge>
@@ -698,9 +710,9 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {}, t
                         <div>
                             <label className="mb-1 block text-sm font-medium">{t('admin.role_label')}</label>
                             <select value={addUserForm.data.client_role} onChange={(e) => addUserForm.setData('client_role', e.target.value)} className="w-full rounded-soft border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm">
-                                <option value="administrator">{t('admin.client_administrator')}</option>
-                                <option value="staff">{t('admin.client_staff')}</option>
-                                <option value="viewer">{t('admin.viewer') || 'Viewer (read-only)'}</option>
+                                {clientRoles.map((role) => (
+                                    <option key={role.slug} value={role.slug}>{role.system ? t(role.name) : role.name}</option>
+                                ))}
                             </select>
                         </div>
                         <div>
@@ -746,9 +758,9 @@ export default function AdminClientsIndex({ clients, plans = [], filters = {}, t
                             <div>
                                 <label className="mb-1 block text-sm font-medium">{t('admin.role_label')}</label>
                                 <select value={editUserForm.data.client_role} onChange={(e) => editUserForm.setData('client_role', e.target.value)} className="w-full rounded-soft border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm">
-                                    <option value="administrator">{t('admin.client_administrator')}</option>
-                                    <option value="staff">{t('admin.client_staff')}</option>
-                                    <option value="viewer">{t('admin.viewer') || 'Viewer (read-only)'}</option>
+                                    {clientRoles.map((role) => (
+                                        <option key={role.slug} value={role.slug}>{role.system ? t(role.name) : role.name}</option>
+                                    ))}
                                 </select>
                             </div>
                             <div>

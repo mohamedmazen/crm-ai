@@ -6,6 +6,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Client\ApiTokenController;
 use App\Http\Controllers\Client\AuditLogController as ClientAuditLogController;
 use App\Http\Controllers\Client\BillingController;
+use App\Http\Controllers\Client\ClientRoleController;
 use App\Http\Controllers\Client\DashboardController as ClientDashboardController;
 use App\Http\Controllers\Client\InvitationController;
 use App\Http\Controllers\Client\MediaController;
@@ -43,6 +44,13 @@ Route::middleware(['verified'])->group(function () {
     Route::get('/billing', [BillingController::class, 'index'])->name('billing.index');
     Route::get('/pricing', [PricingController::class, 'index'])->name('pricing');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+
+    // Team roles & permissions (client admins only). Must be registered before
+    // /team/{member} so "roles" is never resolved as a member id.
+    Route::get('/team/roles', [ClientRoleController::class, 'index'])->name('roles.index');
+    Route::post('/team/roles', [ClientRoleController::class, 'store'])->name('roles.store');
+    Route::put('/team/roles/{role}', [ClientRoleController::class, 'update'])->name('roles.update');
+    Route::delete('/team/roles/{role}', [ClientRoleController::class, 'destroy'])->name('roles.destroy');
 
     // Team management (client admins only)
     Route::get('/team', [TeamController::class, 'index'])->name('team.index');
