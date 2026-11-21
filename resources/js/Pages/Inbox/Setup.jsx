@@ -961,6 +961,20 @@ function AccountRow({ account, channel, chatbots }) {
         }
     };
 
+    // Run the health check as soon as the row mounts: a missing page/app
+    // subscription is the top cause of "connected but no messages", and it is
+    // easy to miss behind the shield button.
+    useEffect(() => {
+        runHealthCheck();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const firstProblem = health && health !== 'loading'
+        ? (health.checks?.find(c => !c.ok && c.severity === 'error')?.detail
+            ?? health.checks?.find(c => !c.ok)?.detail
+            ?? health.error)
+        : null;
+
     return (
         <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/60 overflow-hidden">
             <div className="flex items-start justify-between gap-3 px-3.5 py-3">
@@ -1009,6 +1023,19 @@ function AccountRow({ account, channel, chatbots }) {
                     )}
                 </div>
             </div>
+            {firstProblem && (
+                <div className="flex items-start gap-2 px-3.5 py-2.5 text-xs border-t border-red-200 dark:border-red-900/40 bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400">
+                    <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                    <div className="flex-1 min-w-0">
+                        <p className="font-semibold">{t('inbox.webhook_needs_attention')}</p>
+                        <p className="opacity-80">{firstProblem}</p>
+                    </div>
+                    <button onClick={runResubscribe} disabled={resubscribing}
+                        className="shrink-0 rounded-md border border-red-300 dark:border-red-800 px-2 py-1 font-medium hover:bg-red-100 dark:hover:bg-red-950/40 disabled:opacity-60 transition">
+                        {resubscribing ? t('inbox.webhook_resubscribing') : t('inbox.webhook_fix_now')}
+                    </button>
+                </div>
+            )}
             {confirmDelete && (
                 <div className="flex items-start gap-2 px-3.5 py-2 text-xs text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/20 border-t border-red-100 dark:border-red-900/30">
                     <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
@@ -1701,6 +1728,120 @@ function ConnectDrawer({ open, onClose, title, icon: Icon, iconBg, children }) {
 
 /* â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ page root â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
 
+/* ─────────────────── Meta inbound activity panel ─────────────────── */
+
+const META_CHANNEL_LABEL = {
+    messenger: 'inbox.meta_events_provider_page',
+    instagram: 'inbox.meta_events_provider_instagram',
+};
+
+/**
+ * Workspace-scoped view of inbound Instagram/Messenger messages. The message
+ * count is per workspace (the global webhook delivery log is never exposed to a
+ * client); the per-account health check covers whether Meta is wired to call us.
+ */
+function MetaEventsPanel() {
+    const { t } = useTranslation();
+    const [state, setState] = useState(null);   // null | 'loading' | {totals, recent} | {error}
+
+    const load = useCallback(async () => {
+        setState('loading');
+        try {
+            const res = await fetch(route('client.inbox.setup.meta-events'), {
+                headers: { Accept: 'application/json' },
+            });
+            setState(res.ok ? await res.json() : { error: t('inbox.webhook_check_failed') });
+        } catch {
+            setState({ error: t('inbox.webhook_check_failed') });
+        }
+    }, [t]);
+
+    useEffect(() => { load(); }, [load]);
+
+    const ready = state && state !== 'loading' && !state.error;
+    const totals = ready ? (state.totals ?? []) : [];
+    const recent = ready ? (state.recent ?? []) : [];
+    const fmt = (value) => (value ? new Date(value).toLocaleString() : '—');
+    const channelLabel = (c) => (META_CHANNEL_LABEL[c] ? t(META_CHANNEL_LABEL[c]) : c);
+
+    return (
+        <div className="mb-6 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 overflow-hidden">
+            <div className="flex items-center justify-between gap-3 px-4 py-3">
+                <div className="flex items-center gap-2 min-w-0">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 shrink-0">
+                        <Webhook className="h-4 w-4" />
+                    </div>
+                    <div className="min-w-0">
+                        <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t('inbox.meta_events_title')}</p>
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('inbox.meta_events_desc')}</p>
+                    </div>
+                </div>
+                <button onClick={load} disabled={state === 'loading'}
+                    className="flex items-center gap-1 shrink-0 rounded-md border border-neutral-200 dark:border-neutral-700 px-2 py-1 text-xs font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 disabled:opacity-60 transition">
+                    <RefreshCw className={`h-3.5 w-3.5 ${state === 'loading' ? 'animate-spin' : ''}`} /> {t('inbox.meta_events_refresh')}
+                </button>
+            </div>
+
+            {state === 'loading' && (
+                <div className="px-4 py-3 text-xs text-neutral-500 dark:text-neutral-400 border-t border-neutral-200 dark:border-neutral-700">{t('inbox.meta_events_loading')}</div>
+            )}
+
+            {state && state !== 'loading' && state.error && (
+                <div className="px-4 py-3 text-xs text-red-600 dark:text-red-400 border-t border-neutral-200 dark:border-neutral-700 flex items-center gap-1.5">
+                    <AlertTriangle className="h-3.5 w-3.5 shrink-0" /> {state.error}
+                </div>
+            )}
+
+            {ready && (
+                <div className="border-t border-neutral-200 dark:border-neutral-700 divide-y divide-neutral-200 dark:divide-neutral-700">
+                    <div className="px-4 py-3">
+                        {totals.length === 0 ? (
+                            <div className="flex items-start gap-2 text-xs text-red-700 dark:text-red-400">
+                                <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                                <span>{t('inbox.meta_events_none')}</span>
+                            </div>
+                        ) : (
+                            <>
+                                <p className="text-3xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400 mb-1">{t('inbox.meta_events_deliveries')}</p>
+                                <div className="space-y-1">
+                                    {totals.map(row => (
+                                        <div key={row.channel} className="flex items-center justify-between gap-3 text-xs">
+                                            <span className="text-neutral-700 dark:text-neutral-300">{channelLabel(row.channel)}</span>
+                                            <span className="text-neutral-500 dark:text-neutral-400">
+                                                {t('inbox.meta_events_hits', { count: row.total })} · {t('inbox.meta_events_last_seen')}: {fmt(row.last_seen)}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </>
+                        )}
+                    </div>
+
+                    <div className="px-4 py-3">
+                        <p className="text-3xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400 mb-1.5">{t('inbox.meta_events_recent')}</p>
+                        {recent.length === 0 ? (
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('inbox.meta_events_no_recent')}</p>
+                        ) : (
+                            <div className="space-y-1.5">
+                                {recent.map(m => (
+                                    <div key={m.id} className="text-xs">
+                                        <div className="flex items-center gap-2 min-w-0">
+                                            <span className="font-medium text-neutral-800 dark:text-neutral-200 truncate">{m.contact || '—'}</span>
+                                            <span className="text-neutral-500 dark:text-neutral-400 truncate">{m.account || m.channel}</span>
+                                            <span className="text-neutral-400 dark:text-neutral-500 shrink-0">{fmt(m.at)}</span>
+                                        </div>
+                                        {m.body && <p className="text-neutral-500 dark:text-neutral-400 truncate">{m.body}</p>}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
 export default function ChannelSetup({
     wabas, whatsappWebhookGlobalUrl, whatsappWebhookUrl, webhookTokensByWaba,
     channelAccountsByWaba, instagramAccounts, messengerAccounts, metaWebhookUrl,
@@ -1768,6 +1909,9 @@ export default function ChannelSetup({
                     <span>{t('inbox.no_active_chatbots')} <Link href={route('client.ai.chatbots.index')} className="underline font-semibold">{t('inbox.create_one')}</Link> {t('inbox.to_enable_ai_replies')}</span>
                 </div>
             )}
+
+            {/* Meta webhook activity — only meaningful once a social account exists */}
+            {(instagramAccounts.length > 0 || messengerAccounts.length > 0) && <MetaEventsPanel />}
 
             {/* Row 1 — 3-column channel cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">

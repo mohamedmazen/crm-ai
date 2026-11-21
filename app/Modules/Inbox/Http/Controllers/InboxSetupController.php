@@ -7,6 +7,7 @@ use App\Modules\AI\Models\AiChatbot;
 use App\Modules\Inbox\Services\MetaWebhookSubscriptionService;
 use App\Modules\Integrations\Services\CredentialResolver;
 use App\Modules\Shared\Models\ChannelAccount;
+use App\Modules\Shared\Models\Message;
 use App\Modules\Whatsapp\Models\WhatsappBusinessAccount;
 use App\Modules\Whatsapp\Models\WhatsappCoexistencePendingContact;
 use App\Modules\Whatsapp\Services\WhatsappCoexistenceSyncService;
@@ -615,6 +616,58 @@ class InboxSetupController extends Controller
         ]);
 
         return response()->json(['success' => true, 'connected' => 1, 'name' => $pageName, 'warnings' => $warnings]);
+    }
+
+    /**
+     * Recent Meta (Instagram / Messenger) inbound activity for this workspace.
+     *
+     * Strictly workspace-scoped: the global inbound_webhook_events table has no
+     * tenant column, so it is never exposed to a client. This panel answers
+     * "are inbound Meta messages being stored for me, and when was the last
+     * one?" — the per-account health check covers whether Meta is wired up to
+     * call us at all.
+     */
+    public function metaEvents(Request $request): JsonResponse
+    {
+        $workspaceId = $request->user()->current_workspace_id ?? $request->user()->workspace_id;
+
+        $accountIds = ChannelAccount::where('workspace_id', $workspaceId)
+            ->whereIn('channel', ['instagram', 'messenger'])
+            ->pluck('id');
+
+        $baseInbound = fn () => Message::query()
+            ->where('direction', 'in')
+            ->whereHas('conversation', fn ($q) => $q->whereIn('channel_account_id', $accountIds));
+
+        $totals = $accountIds->isEmpty() ? collect() : $baseInbound()
+            ->selectRaw('channel, COUNT(*) as total, MAX(COALESCE(sent_at, created_at)) as last_seen')
+            ->groupBy('channel')
+            ->orderByDesc('last_seen')
+            ->get();
+
+        $recent = $accountIds->isEmpty() ? collect() : $baseInbound()
+            ->with([
+                'conversation:id,channel_account_id,contact_id',
+                'conversation.contact:id,first_name,last_name',
+                'conversation.channelAccount:id,display_name,channel',
+            ])
+            ->latest('id')
+            ->limit(10)
+            ->get(['id', 'conversation_id', 'channel', 'body', 'sent_at', 'created_at'])
+            ->map(fn (Message $message) => [
+                'id' => $message->id,
+                'channel' => $message->channel,
+                'account' => $message->conversation?->channelAccount?->display_name,
+                'contact' => $message->conversation?->contact?->full_name,
+                'body' => mb_substr((string) $message->body, 0, 140),
+                'at' => ($message->sent_at ?? $message->created_at)?->toISOString(),
+            ])
+            ->values();
+
+        return response()->json([
+            'totals' => $totals,
+            'recent' => $recent,
+        ]);
     }
 
     /**

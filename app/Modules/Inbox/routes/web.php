@@ -49,6 +49,7 @@ Route::middleware(['web', 'client-app'])->prefix('app/inbox')->name('client.inbo
 
     // Channel account setup (Instagram / Messenger)
     Route::get('/setup', [InboxSetupController::class, 'index'])->name('setup');
+    Route::get('/setup/meta-events', [InboxSetupController::class, 'metaEvents'])->name('setup.meta-events');
     Route::post('/setup/embedded-signup/instagram', [InboxSetupController::class, 'embeddedSignupInstagram'])->name('setup.embedded-signup.instagram');
     Route::post('/setup/embedded-signup/messenger', [InboxSetupController::class, 'embeddedSignupMessenger'])->name('setup.embedded-signup.messenger');
     Route::post('/setup/manual/instagram', [InboxSetupController::class, 'manualInstagram'])->name('setup.manual.instagram');

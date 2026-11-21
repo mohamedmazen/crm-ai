@@ -4,6 +4,9 @@ namespace Tests\Feature\Inbox;
 
 use App\Modules\Integrations\Models\IntegrationConfig;
 use App\Modules\Shared\Models\ChannelAccount;
+use App\Modules\Shared\Models\Contact;
+use App\Modules\Shared\Models\Conversation;
+use App\Modules\Shared\Models\Message;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
@@ -215,5 +218,109 @@ class MetaWebhookHealthTest extends TestCase
         $this->actingAs($this->ctx['user'])
             ->getJson(route('client.inbox.setup.webhook-health', ['channelAccount' => $whatsapp->id]))
             ->assertForbidden();
+    }
+
+    #[Test]
+    public function meta_events_reports_no_inbound_messages_yet(): void
+    {
+        $this->actingAs($this->ctx['user'])
+            ->getJson(route('client.inbox.setup.meta-events'))
+            ->assertOk()
+            ->assertJsonPath('totals', [])
+            ->assertJsonPath('recent', []);
+    }
+
+    #[Test]
+    public function meta_events_lists_inbound_message_totals_and_recent_messages(): void
+    {
+        $account = $this->makeMessengerAccount();
+
+        $contact = Contact::factory()->create([
+            'workspace_id' => $this->ctx['workspace']->id,
+            'first_name' => 'Amina',
+            'last_name' => 'Khan',
+        ]);
+
+        $conversation = Conversation::create([
+            'workspace_id' => $this->ctx['workspace']->id,
+            'channel_account_id' => $account->id,
+            'contact_id' => $contact->id,
+            'status' => 'open',
+        ]);
+
+        Message::create([
+            'conversation_id' => $conversation->id,
+            'direction' => 'in',
+            'channel' => 'messenger',
+            'type' => 'text',
+            'body' => 'First message',
+            'sent_at' => now()->subMinutes(3),
+        ]);
+        Message::create([
+            'conversation_id' => $conversation->id,
+            'direction' => 'in',
+            'channel' => 'messenger',
+            'type' => 'text',
+            'body' => 'Hello from Messenger',
+            'sent_at' => now()->subMinute(),
+        ]);
+        // Outbound messages must not count as inbound activity.
+        Message::create([
+            'conversation_id' => $conversation->id,
+            'direction' => 'out',
+            'channel' => 'messenger',
+            'type' => 'text',
+            'body' => 'Our reply',
+            'sent_at' => now(),
+        ]);
+
+        $res = $this->actingAs($this->ctx['user'])
+            ->getJson(route('client.inbox.setup.meta-events'))
+            ->assertOk();
+
+        $this->assertSame(['messenger'], collect($res->json('totals'))->pluck('channel')->all());
+        $this->assertSame(2, (int) $res->json('totals.0.total'));
+
+        $this->assertSame('Amina Khan', $res->json('recent.0.contact'));
+        $this->assertSame('Test Page', $res->json('recent.0.account'));
+        $this->assertSame('Hello from Messenger', $res->json('recent.0.body'));
+    }
+
+    #[Test]
+    public function meta_events_recent_messages_are_scoped_to_the_workspace(): void
+    {
+        $this->makeMessengerAccount();
+
+        $other = $this->createWorkspaceContext();
+        $otherAccount = ChannelAccount::create([
+            'workspace_id' => $other['workspace']->id,
+            'channel' => 'messenger',
+            'provider' => 'meta',
+            'display_name' => 'Other Page',
+            'credentials' => ['page_access_token' => 'token'],
+            'meta_json' => ['page_id' => '999888777'],
+            'status' => 'active',
+        ]);
+        $otherContact = Contact::factory()->create(['workspace_id' => $other['workspace']->id]);
+        $otherConversation = Conversation::create([
+            'workspace_id' => $other['workspace']->id,
+            'channel_account_id' => $otherAccount->id,
+            'contact_id' => $otherContact->id,
+            'status' => 'open',
+        ]);
+        Message::create([
+            'conversation_id' => $otherConversation->id,
+            'direction' => 'in',
+            'channel' => 'messenger',
+            'type' => 'text',
+            'body' => 'Foreign message',
+            'sent_at' => now(),
+        ]);
+
+        $res = $this->actingAs($this->ctx['user'])
+            ->getJson(route('client.inbox.setup.meta-events'))
+            ->assertOk();
+
+        $this->assertSame([], $res->json('recent'));
     }
 }
