@@ -90,7 +90,8 @@ const SETUP_GUIDES = {
                 ],
                 steps2: [
                     'Paste the generated token into the "System User Access Token" field below.',
-                    'For the Webhook: go to WhatsApp → Configuration, set Callback URL to: {APP_URL}/webhooks/whatsapp/{VERIFY_TOKEN} (shown in Channel Setup after adding a WABA).',
+                    'For the Webhook: go to WhatsApp → Configuration, then copy the "WhatsApp Callback URL" and the generated "Verify Token" from the Meta Webhook Setup card above. Meta verifies the URL automatically when you save.',
+                    'Do NOT paste the "Webhook Verify Token" field below into WhatsApp — that field is only used by the Instagram/Messenger callback URL.',
                 ],
             },
             {
@@ -398,6 +399,61 @@ function CallbackUrlCard({ url }) {
     );
 }
 
+function MetaWebhookCard({ webhook, enabled }) {
+    const { t } = useTranslation();
+    const [copied, setCopied] = useState(null);
+    if (!webhook) return null;
+
+    const rows = [
+        { key: 'whatsapp', label: t('integrations.webhook_whatsapp_url'), value: webhook.whatsappUrl },
+        { key: 'token', label: t('integrations.webhook_verify_token'), value: webhook.verifyToken },
+        { key: 'social', label: t('integrations.webhook_social_url'), value: webhook.socialUrl },
+    ].filter(row => row.value);
+
+    if (rows.length === 0) return null;
+
+    const copy = (key, value) => {
+        navigator.clipboard?.writeText(value);
+        setCopied(key);
+        setTimeout(() => setCopied(null), 1500);
+    };
+
+    return (
+        <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-5">
+            <div className="flex items-center gap-2 mb-1">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 shrink-0">
+                    <Link2 className="h-4 w-4" />
+                </div>
+                <div>
+                    <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200">{t('integrations.webhooks_title')}</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('integrations.webhooks_desc')}</p>
+                </div>
+            </div>
+
+            <div className="mt-3 space-y-3">
+                {rows.map(row => (
+                    <div key={row.key}>
+                        <p className="text-3xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400 mb-1">{row.label}</p>
+                        <div className="flex items-center gap-2 rounded-lg bg-neutral-50 dark:bg-neutral-800 px-3 py-2">
+                            <code className="flex-1 break-all text-xs text-neutral-600 dark:text-neutral-300">{row.value}</code>
+                            <button type="button" onClick={() => copy(row.key, row.value)}
+                                className="flex items-center gap-1 rounded-md border border-neutral-200 dark:border-neutral-700 px-2 py-1 text-xs font-medium text-neutral-600 dark:text-neutral-300 hover:bg-white dark:hover:bg-neutral-700 shrink-0">
+                                {copied === row.key ? <><Check className="h-3.5 w-3.5 text-green-500" /> {t('integrations.copied')}</> : <><Copy className="h-3.5 w-3.5" /> {t('integrations.copy')}</>}
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {!enabled && (
+                <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-200 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 px-3 py-2.5 text-xs text-amber-700 dark:text-amber-300">
+                    <span>{t('integrations.webhooks_disabled_hint')}</span>
+                </div>
+            )}
+        </div>
+    );
+}
+
 function SetupGuide({ provider }) {
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
@@ -602,7 +658,7 @@ function StorageBanner({ provider }) {
     );
 }
 
-export default function IntegrationsEdit({ provider, label, category, fields, config, callbackUrl = null }) {
+export default function IntegrationsEdit({ provider, label, category, fields, config, callbackUrl = null, metaWebhook = null }) {
     const { t } = useTranslation();
     const adminTz = usePage().props.timezone || 'Africa/Cairo';
     const { data, setData, put, processing, errors } = useForm({
@@ -678,6 +734,8 @@ export default function IntegrationsEdit({ provider, label, category, fields, co
                 <StorageBanner provider={provider} />
 
                 <CallbackUrlCard url={callbackUrl} />
+
+                <MetaWebhookCard webhook={metaWebhook} enabled={data.enabled} />
 
                 <SetupGuide provider={provider} />
 

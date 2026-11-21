@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\Integrations\Models\IntegrationAuditLog;
 use App\Modules\Integrations\Models\IntegrationConfig;
 use App\Modules\Integrations\Services\ConnectionTester;
+use App\Modules\Integrations\Services\Credentials\MetaCredentials;
 use App\Services\StorageManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -64,6 +65,10 @@ class IntegrationConfigController extends Controller
                 'oauth_bigcommerce' => route('client.ecommerce.oauth.bigcommerce.callback'),
                 default => null,
             },
+            // Webhook values to paste into the Meta App dashboard. The WhatsApp
+            // verify token is derived from the credentials, not stored, so it is
+            // computed here instead of being re-typed (and mis-typed) by hand.
+            'metaWebhook' => $provider === 'meta_app' ? $this->metaWebhookProps($config) : null,
             'config' => [
                 'enabled' => $config->enabled ?? false,
                 'mode' => $config->mode ?? 'live',
@@ -232,6 +237,23 @@ class IntegrationConfigController extends Controller
             ->paginate(50);
 
         return Inertia::render('Admin/Integrations/AuditLog', ['logs' => $logs]);
+    }
+
+    /**
+     * Webhook details the admin pastes into the Meta App dashboard.
+     *
+     * @return array{whatsappUrl: string, verifyToken: ?string, socialUrl: ?string}
+     */
+    private function metaWebhookProps(IntegrationConfig $config): array
+    {
+        $meta = new MetaCredentials($config->credentials ?? []);
+        $socialVerifyToken = $meta->verifyToken();
+
+        return [
+            'whatsappUrl' => route('webhooks.whatsapp.global.receive'),
+            'verifyToken' => $meta->globalWebhookVerifyToken(),
+            'socialUrl' => $socialVerifyToken ? url('/webhooks/meta/'.$socialVerifyToken) : null,
+        ];
     }
 
     private function auditLog(Request $request, IntegrationConfig $config, string $action, array $changedKeys): void

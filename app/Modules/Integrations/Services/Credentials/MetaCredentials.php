@@ -24,6 +24,22 @@ class MetaCredentials extends CredentialValueObject
         return $this->get('verify_token');
     }
 
+    /**
+     * Verify token Meta must be given for the app-global WhatsApp webhook
+     * callback URL (/webhooks/whatsapp/global). Derived from the App ID and
+     * App Secret so it never has to be stored or typed by hand.
+     *
+     * Changing the App Secret changes this value — re-register the webhook.
+     */
+    public function globalWebhookVerifyToken(): ?string
+    {
+        if (! $this->appId() || ! $this->appSecret()) {
+            return null;
+        }
+
+        return hash('sha256', $this->appId().$this->appSecret().'wh_global_verify');
+    }
+
     public function configIdWhatsapp(): ?string
     {
         return $this->get('config_id_whatsapp') ?: null;

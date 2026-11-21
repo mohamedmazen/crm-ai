@@ -729,7 +729,7 @@ class WhatsappEmbeddedSignupController extends Controller
         // The App Access Token must be passed as access_token body param (Bearer header not accepted here).
         try {
             $callbackUrl = route('webhooks.whatsapp.global.receive');
-            $globalVerify = hash('sha256', $appId.$appSecret.'wh_global_verify');
+            $globalVerify = $meta->globalWebhookVerifyToken();
 
             $res = Http::post(MetaGraph::url("{$appId}/subscriptions"), [
                 'access_token' => $appToken,

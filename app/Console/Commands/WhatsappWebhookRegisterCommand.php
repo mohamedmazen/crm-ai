@@ -30,7 +30,7 @@ class WhatsappWebhookRegisterCommand extends Command
         $appSecret = $meta->appSecret();
         $appToken = $appId.'|'.$appSecret;
         $callbackUrl = route('webhooks.whatsapp.global.receive');
-        $verifyToken = hash('sha256', $appId.$appSecret.'wh_global_verify');
+        $verifyToken = $meta->globalWebhookVerifyToken();
 
         $this->info('');
         $this->line('  <fg=cyan>App ID:</> '.$appId);
