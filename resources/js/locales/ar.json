@@ -1918,6 +1918,7 @@
         "delete_role": "حذف الدور",
         "builtin_role": "دور أساسي",
         "role_name": "اسم الدور",
+        "role_name_required": "أدخل اسم الدور.",
         "role_description": "الوصف",
         "permissions": "الصلاحيات",
         "permissions_count": "الصلاحيات",

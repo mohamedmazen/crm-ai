@@ -1922,6 +1922,7 @@
         "delete_role": "Delete role",
         "builtin_role": "Built-in",
         "role_name": "Role name",
+        "role_name_required": "Enter a role name.",
         "role_description": "Description",
         "permissions": "Permissions",
         "permissions_count": "Permissions",

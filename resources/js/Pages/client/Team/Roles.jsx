@@ -82,6 +82,18 @@ export default function TeamRoles({
 
     const submit = (event) => {
         event.preventDefault();
+
+        // The name field sits above a long permission matrix, so a native
+        // "required" bubble can fire off-screen and look like the button does
+        // nothing. Validate in JS, surface the message inline and focus the field.
+        if (!form.data.name.trim()) {
+            form.setError('name', t('team.role_name_required') || 'Enter a role name.');
+            document.getElementById('roleName')?.focus();
+            return;
+        }
+
+        form.clearErrors('name');
+
         const options = {
             preserveScroll: true,
             onSuccess: () => { setOpen(false); setEditing(null); form.reset(); },
@@ -213,7 +225,7 @@ export default function TeamRoles({
                         onClose={() => setOpen(false)}
                     />
                     <Modal.Body>
-                        <form id="roleForm" onSubmit={submit} className="space-y-5">
+                        <form id="roleForm" onSubmit={submit} noValidate className="space-y-5">
                             {!editing && (catalog.templates ?? []).length > 0 && (
                                 <div>
                                     <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
@@ -236,9 +248,13 @@ export default function TeamRoles({
                                 <div>
                                     <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('team.role_name') || 'Role name'}</label>
                                     <input
+                                        id="roleName"
                                         type="text"
                                         value={form.data.name}
-                                        onChange={(event) => form.setData('name', event.target.value)}
+                                        onChange={(event) => {
+                                            form.setData('name', event.target.value);
+                                            if (form.errors.name) form.clearErrors('name');
+                                        }}
                                         className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-600 dark:bg-neutral-800"
                                         required
                                     />

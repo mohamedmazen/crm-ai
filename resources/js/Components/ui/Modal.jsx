@@ -29,7 +29,7 @@ export default function Modal({
         <Transition show={show} leave="duration-200">
             <Dialog
                 as="div"
-                className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto px-4 py-6"
+                className="fixed inset-0 z-50 overflow-y-auto"
                 onClose={closeable ? onClose : () => {}}
             >
                 <TransitionChild
@@ -43,20 +43,26 @@ export default function Modal({
                     <div className="fixed inset-0 bg-neutral-900/40 backdrop-blur-[2px]" />
                 </TransitionChild>
 
-                <TransitionChild
-                    enter="ease-out duration-200"
-                    enterFrom="opacity-0 scale-95"
-                    enterTo="opacity-100 scale-100"
-                    leave="ease-in duration-150"
-                    leaveFrom="opacity-100 scale-100"
-                    leaveTo="opacity-0 scale-95"
-                >
-                    <DialogPanel
-                        className={`relative w-full overflow-hidden rounded-soft-lg bg-white dark:bg-neutral-900 shadow-soft-xl border border-soft border-neutral-200 dark:border-neutral-800 transition-all sm:mx-auto ${maxWidthClass} text-neutral-900 dark:text-neutral-100`}
+                {/* A flex wrapper with min-h-full keeps short dialogs centred while
+                    letting tall ones grow and scroll from the top. Centring the
+                    panel directly in the fixed container clips its top (and any
+                    fields there) once it is taller than the viewport. */}
+                <div className="flex min-h-full items-center justify-center px-4 py-6">
+                    <TransitionChild
+                        enter="ease-out duration-200"
+                        enterFrom="opacity-0 scale-95"
+                        enterTo="opacity-100 scale-100"
+                        leave="ease-in duration-150"
+                        leaveFrom="opacity-100 scale-100"
+                        leaveTo="opacity-0 scale-95"
                     >
-                        {children}
-                    </DialogPanel>
-                </TransitionChild>
+                        <DialogPanel
+                            className={`relative w-full overflow-hidden rounded-soft-lg bg-white dark:bg-neutral-900 shadow-soft-xl border border-soft border-neutral-200 dark:border-neutral-800 transition-all sm:mx-auto ${maxWidthClass} text-neutral-900 dark:text-neutral-100`}
+                        >
+                            {children}
+                        </DialogPanel>
+                    </TransitionChild>
+                </div>
             </Dialog>
         </Transition>
     );
